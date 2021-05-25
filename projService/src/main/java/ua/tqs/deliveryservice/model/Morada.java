@@ -17,7 +17,4 @@ public class Morada {
     private String cidade;
     private String pais;
 
-    @OneToOne(mappedBy = "id")
-    private Consumidor consumidor;
-
 }

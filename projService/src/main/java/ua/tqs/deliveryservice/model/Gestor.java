@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.model;
 
+
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -8,11 +9,9 @@ import javax.persistence.OneToOne;
 
 @Data
 @Entity
-public class Condutor {
+public class Gestor extends Utilizador {
     @Id
     @OneToOne(mappedBy = "id")
     private Utilizador utilizador;
 
-    private double sumatorio_reviews;
-    private double num_total_reviews;
 }

@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 @Data
 @Entity
-public class Categoria {
+public class Status {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
