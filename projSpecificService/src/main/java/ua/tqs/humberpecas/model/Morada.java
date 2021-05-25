@@ -3,10 +3,12 @@ package ua.tqs.humberpecas.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
 public class Morada {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -16,7 +18,9 @@ public class Morada {
     private String cidade;
     private String pais;
 
-    @ManyToMany
-    @JoinColumn(name = "id")
+    @ManyToOne
     private Utilizador utilizador;
+
+    @OneToMany
+    private List<Compra> compra;
 }

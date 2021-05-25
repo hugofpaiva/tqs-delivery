@@ -3,11 +3,11 @@ package ua.tqs.humberpecas.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Entity
-public class Categoria {
+public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -15,5 +15,5 @@ public class Categoria {
     private String nome;
 
     @OneToMany
-    private Set<Produto> produtos;
+    private List<Compra> compras;
 }

@@ -3,6 +3,8 @@ package ua.tqs.humberpecas.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -14,11 +16,14 @@ public class Produto {
     private double preco;
     private String nome;
 
-    @OneToOne(mappedBy = "id")
+    @ManyToOne
     private Categoria categoria;
 
     private String descricao;
-    private int stock_atual;
+
+    private long stock;
     private boolean eliminado;
 
+    @ManyToMany(mappedBy = "produtos")
+    private Set<Compra> compra;
 }
