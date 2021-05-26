@@ -25,8 +25,7 @@ public class Compra {
     @ManyToOne
     private Morada morada;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    private long service_order_id;
 
     @ManyToMany
     private List<Produto> produtos;
