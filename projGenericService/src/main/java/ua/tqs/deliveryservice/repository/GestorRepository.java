@@ -1,7 +1,9 @@
 package ua.tqs.deliveryservice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ua.tqs.deliveryservice.model.Encomenda;
+import org.springframework.stereotype.Repository;
+import ua.tqs.deliveryservice.model.Gestor;
 
-public interface EncomendaRepository extends JpaRepository<Encomenda, Long> {
+@Repository
+public interface GestorRepository extends JpaRepository<Gestor, Long> {
 }

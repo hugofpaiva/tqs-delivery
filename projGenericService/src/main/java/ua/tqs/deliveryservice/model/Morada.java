@@ -17,4 +17,6 @@ public class Morada {
     private String cidade;
     private String pais;
 
+    @OneToOne
+    private Loja loja;
 }

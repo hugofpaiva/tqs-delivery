@@ -13,6 +13,6 @@ public class Loja {
     private String nome;
     private String descricao;
 
-    @OneToOne(mappedBy = "id")
+    @OneToOne
     private Morada morada;
 }

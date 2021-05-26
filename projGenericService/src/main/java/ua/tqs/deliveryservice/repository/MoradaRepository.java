@@ -1,8 +1,9 @@
 package ua.tqs.deliveryservice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ua.tqs.deliveryservice.model.Encomenda;
-import ua.tqs.deliveryservice.model.Loja;
+import org.springframework.stereotype.Repository;
+import ua.tqs.deliveryservice.model.Morada;
 
-public interface LojaRepository extends JpaRepository<Loja, Long> {
+@Repository
+public interface MoradaRepository extends JpaRepository<Morada, Long> {
 }

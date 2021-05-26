@@ -10,8 +10,5 @@ import javax.persistence.OneToOne;
 @Data
 @Entity
 public class Gestor extends Utilizador {
-    @Id
-    @OneToOne(mappedBy = "id")
-    private Utilizador utilizador;
 
 }

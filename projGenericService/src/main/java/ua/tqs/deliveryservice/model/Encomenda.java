@@ -19,16 +19,15 @@ public class Encomenda {
     private Date data;
 
     @ManyToOne
-    @JoinColumn(name="id", nullable = false)
     private Morada morada;
 
-    @OneToOne(mappedBy = "id")
+    @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToOne(mappedBy = "id")
+    @ManyToOne
     private Condutor condutor;
 
-    @OneToMany(mappedBy = "id")
+    @ManyToOne
     private Loja loja;
 
     @Min(value = 0, message = "Review should not be under the value of 0.")
