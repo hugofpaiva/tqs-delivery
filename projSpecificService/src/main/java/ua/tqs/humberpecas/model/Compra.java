@@ -25,7 +25,7 @@ public class Compra {
     @ManyToOne
     private Morada morada;
 
-    @ManyToOne
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @ManyToMany

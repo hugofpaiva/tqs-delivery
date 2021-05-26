@@ -4,7 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Set;
-
+/*
 @Data
 @Entity
 public class Categoria {
@@ -16,4 +16,9 @@ public class Categoria {
 
     @OneToMany
     private Set<Produto> produtos;
+}
+*/
+
+public enum Categoria {
+    // ???
 }

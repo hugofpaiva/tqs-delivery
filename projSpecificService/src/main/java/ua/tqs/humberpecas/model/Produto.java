@@ -16,7 +16,7 @@ public class Produto {
     private double preco;
     private String nome;
 
-    @ManyToOne
+    @Enumerated(EnumType.STRING)
     private Categoria categoria;
 
     private String descricao;
