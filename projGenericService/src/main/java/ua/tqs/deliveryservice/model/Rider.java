@@ -10,7 +10,7 @@ import java.util.List;
 public class Rider extends User {
 
     private long reviewsSum;
-    private long totalNumReviews;
+    private int totalNumReviews;
 
     @OneToMany
     private List<Order> orders;
