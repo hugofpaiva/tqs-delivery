@@ -19,4 +19,4 @@ jobs:
         java-version: '11'
     - name: Verify code executing each default lifecycle phase and IT tests
       run: mvn -B clean verify
-      working-directory: ./projService
+      working-directory: ./projGenericService
