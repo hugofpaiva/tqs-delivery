@@ -1,6 +1,5 @@
 
 .PHONY: db-up
-db-up: ## Start all services containers in production mode
-	docker-compose build
+db-up: ## Start all postgreSQL containers in production mode
 	docker-compose up -d db-generic
 	docker-compose up -d db-specific
