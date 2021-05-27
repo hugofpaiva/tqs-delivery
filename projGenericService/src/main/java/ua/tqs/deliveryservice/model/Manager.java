@@ -5,6 +5,6 @@ import javax.persistence.Entity;
 
 @Data
 @Entity
-public class Manager extends User {
+public class Manager extends Person {
 
 }
