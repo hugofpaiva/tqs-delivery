@@ -1,29 +1,27 @@
 package ua.tqs.humberpecas.model;
 
 import lombok.Data;
-
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 @Data
 @Entity
-public class Produto {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private double preco;
-    private String nome;
+    private double price;
+    private String name;
 
     @Enumerated(EnumType.STRING)
-    private Categoria categoria;
+    private Category category;
 
-    private String descricao;
+    private String description;
 
     private long stock;
-    private boolean eliminado;
+    private boolean deleted;
 
     @ManyToMany(mappedBy = "produtos")
-    private Set<Compra> compra;
+    private Set<Purchase> purchase;
 }

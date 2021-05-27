@@ -6,13 +6,17 @@ import javax.persistence.*;
 
 @Data
 @Entity
-public class Utilizador {
+public class Address {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    private String nome;
-    private String pwd;
-    private String email;
 
+    private String address;
+    private String postalCode;
+    private String city;
+    private String country;
 
+    @OneToOne
+    private Store store;
 }

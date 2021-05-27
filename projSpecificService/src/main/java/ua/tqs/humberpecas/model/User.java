@@ -1,24 +1,26 @@
 package ua.tqs.humberpecas.model;
 
 import lombok.Data;
-
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
-/*
+
 @Data
 @Entity
-public class Categoria {
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private String nome;
+    private String name;
+    private String pwd;
+    private String email;
 
     @OneToMany
-    private Set<Produto> produtos;
-}
-*/
+    private List<Purchase> purchases;
 
-public enum Categoria {
-    // ???
+    @OneToMany
+    private Set<Address> addresses;
+
 }

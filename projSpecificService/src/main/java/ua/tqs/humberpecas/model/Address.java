@@ -1,26 +1,25 @@
 package ua.tqs.humberpecas.model;
 
 import lombok.Data;
-
 import javax.persistence.*;
 import java.util.List;
 
 @Data
 @Entity
-public class Morada {
+public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private String morada;
-    private String codigo_postal;
-    private String cidade;
-    private String pais;
+    private String address;
+    private String postalCode;
+    private String city;
+    private String country;
 
     @ManyToOne
-    private Utilizador utilizador;
+    private User user;
 
     @OneToMany
-    private List<Compra> compra;
+    private List<Purchase> purchase;
 }

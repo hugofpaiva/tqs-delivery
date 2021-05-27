@@ -2,8 +2,8 @@ package ua.tqs.humberpecas.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ua.tqs.humberpecas.model.Morada;
+import ua.tqs.humberpecas.model.Product;
 
 @Repository
-public interface MoradaRepository extends JpaRepository<Morada, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 }
