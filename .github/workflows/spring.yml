@@ -17,6 +17,7 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: '11'
-    - name: Verify code executing each default lifecycle phase and IT tests
-      run: mvn -B clean verify
+    - name: Verify and send code to SonarQube server and wait for quality gate
+      run: mvn -B clean verify sonar:sonar -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }} 
       working-directory: ./projGenericService
+
