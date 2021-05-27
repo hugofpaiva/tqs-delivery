@@ -22,6 +22,6 @@ public class Product {
     private long stock;
     private boolean deleted;
 
-    @ManyToMany(mappedBy = "produtos")
+    @ManyToMany(mappedBy = "products")
     private Set<Purchase> purchase;
 }
