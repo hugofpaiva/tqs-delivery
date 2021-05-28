@@ -13,7 +13,7 @@ public class ShoppingCart {
     private long id;
 
     @OneToOne
-    private User user;
+    private Person person;
 
     @ManyToMany
     private List<Product> product;
