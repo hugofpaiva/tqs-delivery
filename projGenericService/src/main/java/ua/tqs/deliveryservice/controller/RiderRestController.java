@@ -43,4 +43,10 @@ public class RiderRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<HttpStatus> test() {
+        Status status = Status.getEnumByString("DELIVERED");
+        System.out.println(status);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
