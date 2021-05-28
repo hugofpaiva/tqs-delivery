@@ -3,10 +3,12 @@ package ua.tqs.deliveryservice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
+import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
 import java.util.List;
@@ -15,16 +17,19 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/rider")
 public class RiderRestController {
-    // dizer q começa td com /rider/ (?)
 
     @Autowired
     private RiderRepository riderRep;
 
-    @PutMapping("/status/{newStatus}")
-    public ResponseEntity<HttpStatus> updateOrderStatus(@PathVariable String newStatus) {
+    @Autowired
+    private PurchaseRepository purchaseRep;
 
-        // TODO: get id of rider somehow
-        long rider_id = 1;
+    @PutMapping("/status/{newStatus}")
+    public ResponseEntity<HttpStatus> updateOrderStatus(
+            // @CurrentSecurityContext(expression="authentication.id") long rider_id, // not sure about this
+            @PathVariable String newStatus
+    ) {
+        long rider_id = 1;  // TODO: check o id quando tiver seguranca
 
         // gets and verifies if rider is in the DB (should always happen if authenticated and rider...)
         Optional<Rider> riderOptional = riderRep.findById(rider_id);
@@ -39,14 +44,9 @@ public class RiderRestController {
         Status status = Status.getEnumByString(newStatus);
         if (status == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         purchase.setStatus(status);
+        purchaseRep.save(purchase);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<HttpStatus> test() {
-        Status status = Status.getEnumByString("DELIVERED");
-        System.out.println(status);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }

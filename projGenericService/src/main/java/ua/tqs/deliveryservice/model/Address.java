@@ -17,6 +17,19 @@ public class Address {
     private String city;
     private String country;
 
-    @OneToOne
+    @OneToOne(mappedBy = "address")
     private Store store;
+
+    @OneToOne(mappedBy = "address")
+    private Purchase purchase;
+
+    public Address(String address, String postalCode, String city, String country) {
+        this.address = address;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
+    }
+
+    public Address() {}
+
 }
