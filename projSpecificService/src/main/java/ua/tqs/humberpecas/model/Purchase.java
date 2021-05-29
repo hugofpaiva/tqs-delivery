@@ -27,4 +27,13 @@ public class Purchase {
     @ManyToMany
     private List<Product> products;
 
+    @Enumerated(value = EnumType.STRING)
+    private PurchageStatus status;
+
+    public Purchase(Address address, List<Product> products) {
+        this.address = address;
+        this.products = products;
+        this.status = PurchageStatus.PENDENT;
+    }
+
 }
