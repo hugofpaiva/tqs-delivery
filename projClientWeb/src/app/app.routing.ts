@@ -3,7 +3,6 @@ import { CommonModule, } from '@angular/common';
 import { BrowserModule  } from '@angular/platform-browser';
 import { Routes, RouterModule } from '@angular/router';
 
-import { HomeComponent } from './home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SignupComponent } from './signup/signup.component';
 import { LoginComponent } from './login/login.component';
@@ -11,7 +10,6 @@ import {ShopComponent} from './shop/shop.component';
 import {ShoppingCartComponent} from './shopping-cart/shopping-cart.component';
 
 const routes: Routes = [
-    { path: 'home',             component: HomeComponent },
     { path: 'profile',     component: ProfileComponent },
     { path: 'register',           component: SignupComponent },
     { path: 'login',          component: LoginComponent },
