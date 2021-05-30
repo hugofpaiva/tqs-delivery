@@ -128,10 +128,6 @@ export class NgbModalOrderDetails {
                                    [ngClass]="{ 'is-invalid': f.address.errors }"/>
                             <div *ngIf=" !requested && f.address.errors"
                                  class="invalid-feedback">
-                                <div *ngIf=" !requested && f.address.errors">Latitude must
-                                    be between -90 and
-                                    90
-                                </div>
                             </div>
                         </div>
 

@@ -14,6 +14,8 @@ import {FooterComponent} from './shared/footer/footer.component';
 import {HomeModule} from './home/home.module';
 import {LoginComponent} from './login/login.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import { ShopComponent } from './shop/shop.component';
+import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +27,9 @@ import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
         LoginComponent,
         NgbModalRiderReview,
         NgbModalOrderDetails,
-        NgbModalManageAddresses
+        NgbModalManageAddresses,
+        ShopComponent,
+        ShoppingCartComponent
     ],
     imports: [
         BrowserModule,

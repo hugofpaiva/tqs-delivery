@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd, NavigationStart } from '@angular/router';
+import {faShoppingCart, faUser} from '@fortawesome/free-solid-svg-icons';
 import { Location, PopStateEvent } from '@angular/common';
 
 @Component({
@@ -11,6 +12,8 @@ export class NavbarComponent implements OnInit {
     public isCollapsed = true;
     private lastPoppedUrl: string;
     private yScrollStack: number[] = [];
+    cartIcon = faShoppingCart;
+    userIcon = faUser;
 
     constructor(public location: Location, private router: Router) {
     }
