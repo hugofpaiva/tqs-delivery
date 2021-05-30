@@ -98,10 +98,14 @@
                                                         João
                                                     </td>
                                                     <td>
-                                                        <button class="btn btn-1 btn-neutral" type="button" (click)="openRiderReview()">Add Review</button>
+                                                        <button class="btn btn-1 btn-neutral" type="button"
+                                                                (click)="openRiderReview()">Add Review
+                                                        </button>
                                                     </td>
                                                     <td>
-                                                        <button class="btn btn-1 btn-primary" type="button" (click)="openOrderDetails()">Details</button>
+                                                        <button class="btn btn-1 btn-primary" type="button"
+                                                                (click)="openOrderDetails()">Details
+                                                        </button>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -125,7 +129,8 @@
                                                         <fa-icon [icon]="starIcon"></fa-icon>
                                                     </td>
                                                     <td>
-                                                        <button class="btn btn-1 btn-primary" type="button">Details</button>
+                                                        <button class="btn btn-1 btn-primary" type="button">Details
+                                                        </button>
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -135,7 +140,21 @@
                                                 There is no requests history</h5>
                                         </div>
                                         <div class="col-12" style="display: flex; justify-content: center">
-
+                                            <nav style="display: flex; justify-content: center" class="mt-4"
+                                                 aria-label="Page navigation sample">
+                                                <ul class="pagination">
+                                                    <li class="page-item disabled"><a class="page-link" href="#">
+                                                        <fa-icon [icon]="arrowLeftIcon"></fa-icon>
+                                                    </a></li>
+                                                    <li class="page-item active"><a class="page-link" href="#">1</a>
+                                                    </li>
+                                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                    <li class="page-item"><a class="page-link" href="#">
+                                                        <fa-icon [icon]="arrowRightIcon"></fa-icon>
+                                                    </a></li>
+                                                </ul>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>

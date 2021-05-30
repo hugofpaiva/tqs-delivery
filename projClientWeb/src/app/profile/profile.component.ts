@@ -1,5 +1,14 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {faArrowDown, faStar, faMotorcycle, faInfoCircle, faPlusCircle, faTimesCircle} from '@fortawesome/free-solid-svg-icons';
+import {
+    faArrowDown,
+    faStar,
+    faMotorcycle,
+    faInfoCircle,
+    faPlusCircle,
+    faTimesCircle,
+    faArrowLeft,
+    faArrowRight
+} from '@fortawesome/free-solid-svg-icons';
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Address} from '../models/address';
@@ -267,6 +276,8 @@ export class NgbModalManageAddresses {
 export class ProfileComponent implements OnInit {
     arrowIcon = faArrowDown;
     starIcon = faStar;
+    arrowLeftIcon = faArrowLeft;
+    arrowRightIcon = faArrowRight;
 
     constructor(private modalService: NgbModal) {
     }

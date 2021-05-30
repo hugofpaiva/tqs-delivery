@@ -18,123 +18,241 @@
             </svg>
         </div>
     </section>
+
     <section class="section-content padding-y">
         <div class="container">
-            <div class="row">
-                <main class="col-md-9">
-                    <div class="card">
-                        <table class="table table-borderless table-shopping-cart">
-                            <thead class="text-muted">
-                            <tr class="small text-uppercase">
-                                <th scope="col">Product</th>
-                                <th scope="col" width="120">Quantity</th>
-                                <th scope="col" width="120">Price</th>
-                                <th scope="col" class="text-right" width="200"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>
-                                    <figure class="itemside">
-                                        <div class="aside"><img src="assets/images/items/1.jpg" class="img-sm"></div>
-                                        <figcaption class="info">
-                                            <a class="title text-dark">Oscillating Tool Blade</a>
-                                        </figcaption>
-                                    </figure>
-                                </td>
-                                <td>
-                                    <select class="form-control">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <div class="price-wrap">
-                                        <var class="price">50.20€ </var>
-                                        <small class="text-muted"> 50.20€ each </small>
-                                    </div>
-                                </td>
-                                <td class="text-right">
-                                    <a [routerLink]="['/shop']" class="btn btn-light"> Remove</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <figure class="itemside">
-                                        <div class="aside"><img src="assets/images/items/2.jpg" class="img-sm"></div>
-                                        <figcaption class="info">
-                                            <a href="#" class="title text-dark">Hammer</a>
-                                        </figcaption>
-                                    </figure>
-                                </td>
-                                <td>
-                                    <select class="form-control">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <div class="price-wrap">
-                                        <var class="price">75.00€</var>
-                                        <small class="text-muted"> 75.00€ each </small>
-                                    </div>
-                                </td>
-                                <td class="text-right">
-                                    <a href="" class="btn btn-light btn-round"> Remove</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <figure class="itemside">
-                                        <div class="aside"><img src="assets/images/items/3.jpg" class="img-sm"></div>
-                                        <figcaption class="info">
-                                            <a class="title text-dark">Pneumatic Hammer</a>
-                                        </figcaption>
-                                    </figure>
-                                </td>
-                                <td>
-                                    <select class="form-control">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <div class="price-wrap">
-                                        <var class="price">578.00€</var>
-                                        <small class="text-muted"> 578.00€ each</small>
-                                    </div>
-                                </td>
-                                <td class="text-right">
-                                    <a href="" class="btn btn-light btn-round"> Remove</a>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
 
-                        <div class="card-body border-top">
-                            <a [routerLink]="['/shop']" class="btn btn-primary float-md-right"> Make Purchase <i
-                                    class="fa fa-chevron-right"></i> </a>
-                            <a [routerLink]="['/shop']" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Continue shopping </a>
-                        </div>
-                    </div>
-                </main>
+            <div class="row">
                 <aside class="col-md-3">
+
                     <div class="card">
-                        <div class="card-body">
-                            <dl class="dlist-align">
-                                <dt>Total:</dt>
-                                <dd class="text-right  h5"><strong>703.20€</strong></dd>
-                            </dl>
-                            <hr>
-                        </div>
-                    </div>
-                </aside>
+                        <article class="filter-group">
+                            <header class="card-header">
+                                <a href="#" data-toggle="collapse" data-target="#collapse_2" aria-expanded="true"
+                                   class="">
+                                    <h6 class="title">Category </h6>
+                                </a>
+                            </header>
+                            <div class="filter-content collapse show" id="collapse_2" style="">
+                                <div class="card-body">
+                                        <button class="btn btn-sm btn-primary" type="button">Cat1</button>
+                                        <button class="btn btn-sm btn-primary" type="button">Cat2</button>
+                                        <button class="btn btn-sm btn-primary" type="button">Cat3</button>
+                                        <button class="btn btn-sm btn-primary" type="button">Cat4</button>
+                                        <button class="btn btn-sm btn-primary" type="button">Cat5</button>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="filter-group">
+                            <header class="card-header">
+                                <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true"
+                                   class="">
+                                    <h6 class="title">Price range </h6>
+                                </a>
+                            </header>
+                            <div class="filter-content collapse show" id="collapse_3" style="">
+                                <div class="card-body">
+                                    <input type="range" class="custom-range" min="0" max="100" name="">
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Min</label>
+                                            <input class="form-control" placeholder="$0" type="number">
+                                        </div>
+                                        <div class="form-group text-right col-md-6">
+                                            <label>Max</label>
+                                            <input class="form-control" placeholder="$1,0000" type="number">
+                                        </div>
+                                    </div> <!-- form-row.// -->
+                                    <button class="btn btn-block btn-primary">Apply</button>
+                                </div><!-- card-body.// -->
+                            </div>
+                        </article> <!-- filter-group .// -->
+                    </div> <!-- card.// -->
+
+                </aside> <!-- col.// -->
+                <main class="col-md-9">
+
+                    <header class="border-bottom  mb-4 pb-3" style="display: flex; align-items: center; margin-bottom: 15px">
+                            <span>32 Items found </span>
+                            <form action="#" class="search col-md-6 col-sm-12" style="margin: 0">
+                                <div class="input-group w-100">
+                                    <input type="text" class="form-control" placeholder="Search">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <select class="mr-2 form-control col-md-3" style="margin: 0">
+                                <option>Latest items</option>
+                                <option>Cheapest</option>
+                            </select>
+                    </header>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap">
+                                    <span class="badge badge-danger"> NEW </span>
+                                    <img src="assets/images/items/1.jpg">
+                                    <a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Quick view</a>
+                                </div> <!-- img-wrap.// -->
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="#" class="title">Great item name goes here</a>
+                                        <div class="price-wrap mt-2">
+                                            <span class="price">$1280</span>
+                                            <del class="price-old">$1980</del>
+                                        </div> <!-- price-wrap.// -->
+                                    </div>
+                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                </figcaption>
+                            </figure>
+                        </div> <!-- col.// -->
+
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap">
+                                    <img src="assets/images/items/2.jpg">
+                                    <a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Quick view</a>
+                                </div> <!-- img-wrap.// -->
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="#" class="title">Product name goes here just for demo item</a>
+                                        <div class="price-wrap mt-2">
+                                            <span class="price">$1280</span>
+                                        </div> <!-- price-wrap.// -->
+                                    </div>
+                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                </figcaption>
+                            </figure>
+                        </div> <!-- col.// -->
+
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap">
+                                    <img src="assets/images/items/3.jpg">
+                                    <a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Quick view</a>
+                                </div> <!-- img-wrap.// -->
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="#" class="title">Product name goes here just for demo item</a>
+                                        <div class="price-wrap mt-2">
+                                            <span class="price">$1280</span>
+                                        </div> <!-- price-wrap.// -->
+                                    </div>
+                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                </figcaption>
+                            </figure>
+                        </div> <!-- col.// -->
+
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap">
+                                    <img src="assets/images/items/4.jpg">
+                                    <a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Quick view</a>
+                                </div> <!-- img-wrap.// -->
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="#" class="title">Product name goes here just for demo item</a>
+                                        <div class="price-wrap mt-2">
+                                            <span class="price">$1280</span>
+                                        </div> <!-- price-wrap.// -->
+                                    </div>
+                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                </figcaption>
+                            </figure>
+                        </div> <!-- col.// -->
+
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap">
+                                    <img src="assets/images/items/5.jpg">
+                                    <a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Quick view</a>
+                                </div> <!-- img-wrap.// -->
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="#" class="title">Product name goes here just for demo item</a>
+                                        <div class="price-wrap mt-2">
+                                            <span class="price">$1280</span>
+                                        </div> <!-- price-wrap.// -->
+                                    </div>
+                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                </figcaption>
+                            </figure>
+                        </div> <!-- col.// -->
+
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap">
+                                    <img src="assets/images/items/6.jpg">
+                                    <a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Quick view</a>
+                                </div> <!-- img-wrap.// -->
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="#" class="title">Product name goes here just for demo item</a>
+                                        <div class="price-wrap mt-2">
+                                            <span class="price">$1280</span>
+                                        </div> <!-- price-wrap.// -->
+                                    </div>
+                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                </figcaption>
+                            </figure>
+                        </div> <!-- col.// -->
+
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap">
+                                    <img src="assets/images/items/7.jpg">
+                                    <a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Quick view</a>
+                                </div> <!-- img-wrap.// -->
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="#" class="title">Product name goes here just for demo item</a>
+                                        <div class="price-wrap mt-2">
+                                            <span class="price">$1280</span>
+                                        </div> <!-- price-wrap.// -->
+                                    </div>
+                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                </figcaption>
+                            </figure>
+                        </div> <!-- col.// -->
+
+                        <div class="col-md-4">
+                            <figure class="card card-product-grid">
+                                <div class="img-wrap">
+                                    <img src="assets/images/items/1.jpg">
+                                    <a class="btn-overlay" href="#"><i class="fa fa-search-plus"></i> Quick view</a>
+                                </div> <!-- img-wrap.// -->
+                                <figcaption class="info-wrap">
+                                    <div class="fix-height">
+                                        <a href="#" class="title">Product name goes here just for demo item</a>
+                                        <div class="price-wrap mt-2">
+                                            <span class="price">$1280</span>
+                                        </div> <!-- price-wrap.// -->
+                                    </div>
+                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
+                                </figcaption>
+                            </figure>
+                        </div> <!-- col.// -->
+                    </div> <!-- row end.// -->
+
+
+                    <nav style="display: flex; justify-content: center" class="mt-4" aria-label="Page navigation sample">
+                        <ul class="pagination">
+                            <li class="page-item disabled"><a class="page-link" href="#"><fa-icon [icon]="arrowLeftIcon"></fa-icon></a></li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#"><fa-icon [icon]="arrowRightIcon"></fa-icon></a></li>
+                        </ul>
+                    </nav>
+
+                </main> <!-- col.// -->
+
             </div>
-        </div>
+
+        </div> <!-- container .//  -->
     </section>
 </main>

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-shop',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./shop.component.css']
 })
 export class ShopComponent implements OnInit {
+  arrowLeftIcon = faArrowLeft;
+  arrowRightIcon = faArrowRight;
 
   constructor() { }
 
