@@ -49,4 +49,24 @@ public class RiderRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping("/review/{order}/{review_value}")
+    public ResponseEntity<HttpStatus> addReviewToRider(@PathVariable long order, @PathVariable int review_value){
+        long rider_id = 1;  // TODO: check o id quando tiver seguranca
+
+        Optional<Rider> riderOptional = riderRep.findById(rider_id);
+        if (riderOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        Rider rider = riderOptional.get();
+
+        List<Purchase> purchases = rider.getPurchases();
+        for (Purchase p : purchases) {
+            if (p.getId() == order) {
+                p.setRiderReview(review_value);
+                purchaseRep.save(p);
+
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
 }
