@@ -339,10 +339,10 @@ export const chartExample2 = {
     }
   },
   data: {
-    labels: ["Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    labels: ["26-05", "27-05", "28-05", "29-05", "30-05", "31-05"],
     datasets: [
       {
-        label: "Sales",
+        label: "Orders",
         data: [25, 20, 30, 22, 17, 29]
       }
     ]
