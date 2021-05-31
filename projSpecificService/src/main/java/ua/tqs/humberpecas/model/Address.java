@@ -18,7 +18,7 @@ public class Address {
     private String country;
 
     @ManyToOne
-    private User user;
+    private Person person;
 
     @OneToMany
     private List<Purchase> purchase;

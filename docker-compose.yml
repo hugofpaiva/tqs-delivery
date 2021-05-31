@@ -45,3 +45,19 @@ services:
         - 8080:8080
       depends_on: 
         - db-specific
+    web-application-client:
+      build: ./projClientWeb
+      container_name: web-application-client
+      restart: unless-stopped
+      ports:
+          - 80:80
+      depends_on: 
+        - specific
+    web-application-manager-rider:
+      build: ./projManagerRiderWeb
+      container_name: web-application-manager-rider
+      restart: unless-stopped
+      ports:
+          - 81:80
+      depends_on: 
+        - generic

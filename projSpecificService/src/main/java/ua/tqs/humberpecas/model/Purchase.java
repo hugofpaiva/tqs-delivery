@@ -14,7 +14,7 @@ public class Purchase {
     private long id;
 
     @ManyToOne
-    private User user;
+    private Person person;
 
     @CreationTimestamp
     private Date date;

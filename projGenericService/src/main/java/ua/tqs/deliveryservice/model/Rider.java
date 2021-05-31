@@ -7,11 +7,11 @@ import java.util.List;
 
 @Data
 @Entity
-public class Rider extends User {
+public class Rider extends Person {
 
     private long reviewsSum;
     private int totalNumReviews;
 
     @OneToMany
-    private List<Order> orders;
+    private List<Purchase> purchases;
 }
