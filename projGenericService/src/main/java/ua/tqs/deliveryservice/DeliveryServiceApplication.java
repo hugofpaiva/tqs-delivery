@@ -44,8 +44,8 @@ public class DeliveryServiceApplication implements CommandLineRunner {
 		Store store1 = new Store("Loja do Manel", "A melhor loja.", "manel", addr2);
 		storeRep.save( store1 );
 
-		Purchase purchase1 = new Purchase(addr1, rider1, store1);
-		Purchase purchase2 = new Purchase(addr1, rider1, store1);
+		Purchase purchase1 = new Purchase(addr1, rider1, store1, "client1");
+		Purchase purchase2 = new Purchase(addr1, rider1, store1, "client2");
 		purchaseRep.save( purchase1 );
 		purchaseRep.save( purchase2 );
 

@@ -27,7 +27,7 @@ public class RiderRestController {
     @Autowired
     private PurchaseRepository purchaseRep;
 
-    @PutMapping("order/{order_id}/status/")
+    @PutMapping("order/{order_id}/status")
     public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(@PathVariable long order_id) {
         // get purchase if exists
         Optional<Purchase> pur = purchaseRep.findById(order_id);
