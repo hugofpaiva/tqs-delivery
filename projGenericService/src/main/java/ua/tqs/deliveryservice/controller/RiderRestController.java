@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.controller;
 
+import com.fasterxml.jackson.databind.ext.CoreXMLDeserializers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,9 @@ import ua.tqs.deliveryservice.model.Status;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -24,29 +27,29 @@ public class RiderRestController {
     @Autowired
     private PurchaseRepository purchaseRep;
 
-    @PutMapping("/status/{newStatus}")
-    public ResponseEntity<HttpStatus> updateOrderStatus(
-            // @CurrentSecurityContext(expression="authentication.id") long rider_id, // not sure about this
-            @PathVariable String newStatus
-    ) {
-        long rider_id = 1;  // TODO: check o id quando tiver seguranca
+    @PutMapping("order/{order_id}/status/")
+    public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(@PathVariable long order_id) {
+        // get purchase if exists
+        Optional<Purchase> pur = purchaseRep.findById(order_id);
+        if (pur.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Purchase purchase = pur.get();
 
-        // gets and verifies if rider is in the DB (should always happen if authenticated and rider...)
-        Optional<Rider> riderOptional = riderRep.findById(rider_id);
-        if (riderOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        Rider rider = riderOptional.get();
+        // todo: check if the authenticated rider is the 'correct'
+        // (needs security implemented)
 
-        // get the last purchase assigned to rider
-        List<Purchase> purchases = rider.getPurchases();
-        Purchase purchase = purchases.get(purchases.size() -1);
+        // gets 'next' status and updates
+        Status next = Status.getNext(purchase.getStatus());
 
-        // checks if 'newStatus' is valid and updates the statue of the last purchase/order
-        Status status = Status.getEnumByString(newStatus);
-        if (status == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        purchase.setStatus(status);
+        if (next == Status.PENDENT) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        purchase.setStatus(next);
         purchaseRep.save(purchase);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        // return order id and status
+        Map<String, Object> ret = new HashMap<>();
+        ret.put("order_id", order_id);
+        ret.put("status", next);
+        return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
 }
