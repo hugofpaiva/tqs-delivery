@@ -36,8 +36,8 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Spacer(flex: 5),
-              Image.network(
-                'https://picsum.photos/seed/840/600',
+              Image.asset(
+                'assets/images/logo.png',
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
@@ -172,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Align(
-                alignment: Alignment(0.6, 0),
+                alignment: Alignment(0.8, 0),
                 child: Container(
                   width: 100,
                   height: 100,
