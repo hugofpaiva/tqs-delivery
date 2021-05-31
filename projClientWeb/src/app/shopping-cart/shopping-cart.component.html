@@ -1,0 +1,140 @@
+<main class="profile-page" style="min-height: 80vh">
+    <section class="section-profile-cover section-shaped my-0" style="height: 150px">
+        <!-- Circles background -->
+        <div class="shape shape-style-1 shape-primary alpha-4">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <!-- SVG separator -->
+        <div class="separator separator-bottom separator-skew">
+            <svg x="0" y="0" viewBox="0 0 2400 100" preserveAspectRatio="none" version="1.1"
+                 xmlns="http://www.w3.org/2000/svg">
+                <polygon class="fill-white" points="2400 0 2400 100 0 100"></polygon>
+            </svg>
+        </div>
+    </section>
+    <section class="section-content padding-y">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-9">
+                    <div class="card">
+                        <table class="table table-borderless table-shopping-cart">
+                            <thead class="text-muted">
+                            <tr class="small text-uppercase">
+                                <th scope="col">Product</th>
+                                <th scope="col" width="120">Quantity</th>
+                                <th scope="col" width="120">Price</th>
+                                <th scope="col" class="text-right" width="200"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <figure class="itemside">
+                                        <div class="aside"><img src="assets/items/1.jpeg" style="height: 100px" class="img-sm"></div>
+                                        <figcaption class="info">
+                                            <a class="title text-dark">Oscillating Tool Blade</a>
+                                        </figcaption>
+                                    </figure>
+                                </td>
+                                <td>
+                                    <select class="form-control">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="price-wrap">
+                                        <var class="price">50.20€ </var>
+                                        <small class="text-muted"> 50.20€ each </small>
+                                    </div>
+                                </td>
+                                <td class="text-right">
+                                    <a [routerLink]="['/shop']" class="btn btn-light"> Remove</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <figure class="itemside">
+                                        <div class="aside"><img src="assets/items/2.jpeg" style="height: 100px" class="img-sm"></div>
+                                        <figcaption class="info">
+                                            <a href="#" class="title text-dark">Hammer</a>
+                                        </figcaption>
+                                    </figure>
+                                </td>
+                                <td>
+                                    <select class="form-control">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="price-wrap">
+                                        <var class="price">75.00€</var>
+                                        <small class="text-muted"> 75.00€ each </small>
+                                    </div>
+                                </td>
+                                <td class="text-right">
+                                    <a href="" class="btn btn-light btn-round"> Remove</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <figure class="itemside">
+                                        <div class="aside"><img src="assets/items/3.jpeg" style="height: 100px" class="img-sm"></div>
+                                        <figcaption class="info">
+                                            <a class="title text-dark">Pneumatic Hammer</a>
+                                        </figcaption>
+                                    </figure>
+                                </td>
+                                <td>
+                                    <select class="form-control">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="price-wrap">
+                                        <var class="price">578.00€</var>
+                                        <small class="text-muted"> 578.00€ each</small>
+                                    </div>
+                                </td>
+                                <td class="text-right">
+                                    <a href="" class="btn btn-light btn-round"> Remove</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="card-body border-top">
+                            <a [routerLink]="['/shop']" class="btn btn-primary float-md-right"> Make Purchase <i
+                                    class="fa fa-chevron-right"></i> </a>
+                            <a [routerLink]="['/shop']" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Continue shopping </a>
+                        </div>
+                    </div>
+                </main>
+                <aside class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <dl class="dlist-align">
+                                <dt>Total:</dt>
+                                <dd class="text-right  h5"><strong>703.20€</strong></dd>
+                            </dl>
+                            <hr>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+</main>
