@@ -58,9 +58,7 @@ class RiderRestControllerTest {
     // ----------------------------------------------
     @Test
     public void testOrderStatusWhenInvalidId_thenBadRequest() {
-        HttpEntity<Map> entity = new HttpEntity<>(new HashMap<>(), headers);
-        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/order/-1/status", HttpMethod.PUT, entity,  HttpStatus.class);
-
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/order/-1/status", HttpMethod.PUT, null,  HttpStatus.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
@@ -71,9 +69,7 @@ class RiderRestControllerTest {
         data.put("status", Status.ACCEPTED.toString());
         JSONObject json = new JSONObject(data);
 
-        HttpEntity<Map> entity = new HttpEntity<>(data, headers);
-
-        ResponseEntity<String> response = testRestTemplate.exchange(getBaseUrl() + "/order/5/status", HttpMethod.PUT, entity,  String.class);
+        ResponseEntity<String> response = testRestTemplate.exchange(getBaseUrl() + "/order/5/status", HttpMethod.PUT, null,  String.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         assertThat(response.getBody(), equalTo(json.toString()));
@@ -84,26 +80,58 @@ class RiderRestControllerTest {
     // ----------------------------------------------
     @Test
     public void testReviewWhenInvalidMin_thenBadRequest() {
-        ResponseEntity<HttpStatus> response = testRestTemplate.getForEntity(getBaseUrl() + "/review?order=5&review_value=-1", HttpStatus.class);
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/review?order=5&review_value=-1", HttpMethod.PUT, null , HttpStatus.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
     @Test
     public void testReviewWhenInvalidMax_thenBadRequest() {
-        ResponseEntity<HttpStatus> response = testRestTemplate.getForEntity(getBaseUrl() + "/review?order=5&review_value=6", HttpStatus.class);
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/review?order=5&review_value=6", HttpMethod.PUT, null, HttpStatus.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
     @Test
     public void testReviewWhenInvalidOrderId_thenNotFound() {
-        ResponseEntity<HttpStatus> response = testRestTemplate.getForEntity(getBaseUrl() + "/review?order=-1&review_value=3", HttpStatus.class);
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/review?order=-1&review_value=3", HttpMethod.PUT, null, HttpStatus.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
     @Test
     public void testValidOrderIdValidReviewValue_thenCodeOK() {
-        ResponseEntity<HttpStatus> response = testRestTemplate.getForEntity(getBaseUrl() + "/review?order=5&review_value=5", HttpStatus.class);
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/review?order=5&review_value=5", HttpMethod.PUT, null, HttpStatus.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+    }
+
+
+    // ----------------------------------------------
+    // --              register tests              --
+    // ----------------------------------------------
+    @Test
+    public void testRegisterBadPwd_thenBadRequest() {
+        Map<String, String> data = new HashMap<>();
+
+        data.put("name", "delivery tqs tests");
+        data.put("email", "delivery@tqs.com");
+        data.put("pwd", "123");
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(data, headers);
+
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/register", HttpMethod.POST, entity, HttpStatus.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testRegisterEverythingValid_thenCreated() {
+        Map<String, String> data = new HashMap<>();
+
+        data.put("name", "delivery tqs tests");
+        data.put("email", "delivery@tqs.com");
+        data.put("pwd", "delivery__password__strong_!enough");
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(data, headers);
+
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/register", HttpMethod.POST, entity, HttpStatus.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
     }
 
     public String getBaseUrl() {
