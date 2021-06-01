@@ -17,14 +17,14 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.okhttp3.Response;
-import ua.tqs.deliveryservice.model.Address;
-import ua.tqs.deliveryservice.model.Purchase;
-import ua.tqs.deliveryservice.model.Rider;
-import ua.tqs.deliveryservice.model.Store;
+import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.AddressRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,7 +61,22 @@ class RiderRestControllerTest {
     // ----------------------------------------------
     // --               status tests               --
     // ----------------------------------------------
-    
+    @Test
+    public void testOrderStatusWhenInvalidId_thenBadRequest() {
+        ResponseEntity<HttpStatus> response = testRestTemplate.getForEntity(getBaseUrl() + "/order/-1/status", HttpStatus.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testOrderStatusEverythingValid_thenOK() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("order_id", 5);
+        data.put("status", Status.PENDENT);
+
+        ResponseEntity<HttpStatus> response = testRestTemplate.(getBaseUrl() + "/order/5/status", HttpStatus.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(response.getBody(), equalTo(data));
+    }
 
     // ----------------------------------------------
     // --               review tests               --

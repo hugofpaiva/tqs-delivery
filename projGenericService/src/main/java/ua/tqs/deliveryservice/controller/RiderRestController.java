@@ -54,23 +54,20 @@ public class RiderRestController {
 
     @GetMapping("/review")
     public ResponseEntity<HttpStatus> addReviewToRider(@RequestParam long order, @RequestParam int review_value) {
-        long rider_id = 1;  // TODO: check o id quando tiver seguranca
+        // todo: check if the authenticated rider is the 'correct'
+        // (needs security implemented)
 
-        Optional<Rider> riderOptional = riderRep.findById(rider_id);
-        if (riderOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        Rider rider = riderOptional.get();
+        Optional<Purchase> pur = purchaseRep.findById(order);
+        if (pur.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Purchase purchase = pur.get();
 
-        List<Purchase> purchases = rider.getPurchases();
-        for (Purchase p : purchases) {
-            if (p.getId() == order) {
-                if (review_value >= 0 && review_value <= 5) {
-                    p.setRiderReview(review_value);
-                    purchaseRep.save(p);
+        if (review_value >= 0 && review_value <= 5) {
+            purchase.setRiderReview(review_value);
+            purchaseRep.save(purchase);
 
-                    return new ResponseEntity<>(HttpStatus.OK);
-                }
-            }
+            return new ResponseEntity<>(HttpStatus.OK);
         }
+
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
