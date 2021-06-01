@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.controller;
 
+import jdk.jfr.consumer.RecordedStackTrace;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.shaded.okhttp3.Response;
 import ua.tqs.deliveryservice.model.Address;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
@@ -56,6 +58,14 @@ class RiderRestControllerTest {
     @Autowired
     private RiderRepository riderRepository;
 
+    // ----------------------------------------------
+    // --               status tests               --
+    // ----------------------------------------------
+    
+
+    // ----------------------------------------------
+    // --               review tests               --
+    // ----------------------------------------------
     @Test
     public void testReviewWhenInvalidMin_thenBadRequest() {
         ResponseEntity<HttpStatus> response = testRestTemplate.getForEntity(getBaseUrl() + "/review?order=5&review_value=-1", HttpStatus.class);
@@ -79,7 +89,6 @@ class RiderRestControllerTest {
         ResponseEntity<HttpStatus> response = testRestTemplate.getForEntity(getBaseUrl() + "/review?order=5&review_value=5", HttpStatus.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
-
 
     public String getBaseUrl() {
         return "http://localhost:" + randomServerPort + "/rider";
