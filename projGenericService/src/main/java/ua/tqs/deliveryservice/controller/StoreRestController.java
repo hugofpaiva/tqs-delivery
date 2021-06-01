@@ -36,7 +36,7 @@ public class StoreRestController {
          * { "purchase" : {
          *          "date" : idkkk,
          *          "address" : {...}
-         *          "idStore" : 3,
+         *          "idStore" : 3, <- este se calhar dps vai-se buscar à sessao
          *          "clientName" : João
          *      }
          * }
@@ -56,7 +56,7 @@ public class StoreRestController {
             Object addressMap = purchase.getOrDefault("address", null);
             objectToAddress(addressMap, address); // <- TODO
 
-            Long idStore = (Long) purchase.getOrDefault("idStore", null);
+            Long idStore = (Long) purchase.getOrDefault("idStore", null); // for now
             store = storeRep.findById(idStore).get();
 
             clientName = (String) purchase.getOrDefault("clientName", null);
@@ -75,6 +75,6 @@ public class StoreRestController {
 
     /* -- helper -- */
     private void objectToAddress(Object object, Address address) {
-        ;
+        ; // TODO
     }
 }
