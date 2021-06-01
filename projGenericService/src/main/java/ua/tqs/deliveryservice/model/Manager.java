@@ -7,4 +7,9 @@ import javax.persistence.Entity;
 @Entity
 public class Manager extends Person {
 
+    public Manager(String name, String pwd, String email) {
+        super(name, pwd, email);
+    }
+
+    public Manager() {}
 }
