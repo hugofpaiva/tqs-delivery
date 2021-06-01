@@ -1,14 +1,13 @@
 package ua.tqs.deliveryservice.controller;
 
-import jdk.jfr.consumer.RecordedStackTrace;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -16,20 +15,14 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.shaded.okhttp3.Response;
 import ua.tqs.deliveryservice.model.*;
-import ua.tqs.deliveryservice.repository.AddressRepository;
-import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
-import ua.tqs.deliveryservice.repository.StoreRepository;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.http.HttpHeaders;
 
-import static org.hamcrest.CoreMatchers.any;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -58,12 +51,16 @@ class RiderRestControllerTest {
     @Autowired
     private RiderRepository riderRepository;
 
+    HttpHeaders headers = new HttpHeaders();
+
     // ----------------------------------------------
     // --               status tests               --
     // ----------------------------------------------
     @Test
     public void testOrderStatusWhenInvalidId_thenBadRequest() {
-        ResponseEntity<HttpStatus> response = testRestTemplate.getForEntity(getBaseUrl() + "/order/-1/status", HttpStatus.class);
+        HttpEntity<Map> entity = new HttpEntity<>(new HashMap<>(), headers);
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/order/-1/status", HttpMethod.PUT, entity,  HttpStatus.class);
+
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
@@ -71,11 +68,15 @@ class RiderRestControllerTest {
     public void testOrderStatusEverythingValid_thenOK() {
         Map<String, Object> data = new HashMap<>();
         data.put("order_id", 5);
-        data.put("status", Status.PENDENT);
+        data.put("status", Status.ACCEPTED.toString());
+        JSONObject json = new JSONObject(data);
 
-        ResponseEntity<HttpStatus> response = testRestTemplate.(getBaseUrl() + "/order/5/status", HttpStatus.class);
+        HttpEntity<Map> entity = new HttpEntity<>(data, headers);
+
+        ResponseEntity<String> response = testRestTemplate.exchange(getBaseUrl() + "/order/5/status", HttpMethod.PUT, entity,  String.class);
+
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        assertThat(response.getBody(), equalTo(data));
+        assertThat(response.getBody(), equalTo(json.toString()));
     }
 
     // ----------------------------------------------

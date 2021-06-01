@@ -39,6 +39,7 @@ public class RiderRestController {
 
         // gets 'next' status and updates
         Status next = Status.getNext(purchase.getStatus());
+        System.out.println(next);
 
         if (next == Status.PENDENT) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
