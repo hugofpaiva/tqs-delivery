@@ -1,5 +1,6 @@
 package ua.tqs.humberpecas.model;
 
+import ch.qos.logback.core.hook.ShutdownHook;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -16,6 +17,11 @@ public class ShoppingCart {
     private Person person;
 
     @ManyToMany
-    private List<Product> product;
+    private List<Product> products;
 
+    public ShoppingCart(Person person, List<Product> products) {
+        this.person = person;
+        this.products = products;
+    }
+    public ShoppingCart() {}
 }

@@ -23,4 +23,11 @@ public class Person {
     @OneToMany
     private Set<Address> addresses;
 
+    public Person(String name, String pwd, String email) {
+        this.name = name;
+        this.pwd = pwd;
+        this.email = email;
+    }
+
+    public Person() {}
 }
