@@ -4,6 +4,7 @@ package ua.tqs.humberpecas.contoller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.tqs.humberpecas.model.Person;
 import ua.tqs.humberpecas.model.Product;
 
 import java.util.List;
@@ -31,6 +32,9 @@ public class HumberController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<HttpStatus> register(@RequestBody )
+    public ResponseEntity<HttpStatus> register(@RequestBody Person person ){
+
+        return null;
+    }
 
 }

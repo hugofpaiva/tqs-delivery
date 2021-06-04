@@ -1,4 +1,11 @@
 # misc
 *.DS_Store
 docker/
-data/
+data/**
+.idea/
+
+#angular
+**/node_modules 
+**/dist  
+**/tmp  
+**/out-tsc  

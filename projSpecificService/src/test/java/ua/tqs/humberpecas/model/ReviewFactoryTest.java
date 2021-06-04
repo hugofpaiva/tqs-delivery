@@ -10,8 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ReviewFactoryTest {
 
-
-
+    
     @Test
     public void whenStarsCorrect_thenReturnReview(){
 
@@ -21,7 +20,7 @@ class ReviewFactoryTest {
 
 
     @ParameterizedTest
-    @ValueSource(ints = { 5, -1 })
+    @ValueSource(ints = { 6, -1 })
     public void whenStarsIncorrect_thenReturnIllegalArgumentException(int star){
 
         assertThat(ReviewFactory.createReview(star, "espetaculo!"), instanceOf(IllegalArgumentException.class));
