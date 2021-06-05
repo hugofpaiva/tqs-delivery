@@ -8,8 +8,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ua.tqs.deliveryservice.configuration.JwtTokenUtil;
+import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.Person;
+import ua.tqs.deliveryservice.model.Store;
 import ua.tqs.deliveryservice.repository.PersonRepository;
+import ua.tqs.deliveryservice.repository.StoreRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +22,13 @@ import java.util.List;
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtUserDetailsService.class);
+
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private StoreRepository storeRepository;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -31,6 +41,25 @@ public class JwtUserDetailsService implements UserDetailsService {
         authorities.add(new SimpleGrantedAuthority(user.getClass().getSimpleName()));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPwd(),
                 authorities);
+    }
+
+    public UserDetails loadUserByStore(Store store) throws UsernameNotFoundException {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(store.getClass().getSimpleName()));
+        return new org.springframework.security.core.userdetails.User(store.getName(), store.getToken(),
+                authorities);
+    }
+
+    public Store getStoreFromToken(String headerAuthorization) {
+        String jwtToken = headerAuthorization.substring(7);
+        Store store = null;
+        try {
+            store = storeRepository.findByToken(jwtToken).orElseThrow(() -> new ResourceNotFoundException("Store not found for this Token"));
+        } catch (ResourceNotFoundException e1) {
+            logger.info("Unable to get Store from JWT Token");
+        }
+
+        return store;
     }
 
     public String getEmailFromToken(String headerAuthorization) {

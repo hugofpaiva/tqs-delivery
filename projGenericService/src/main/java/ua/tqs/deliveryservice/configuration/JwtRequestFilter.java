@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
+import ua.tqs.deliveryservice.model.Store;
+import ua.tqs.deliveryservice.repository.StoreRepository;
 import ua.tqs.deliveryservice.services.JwtUserDetailsService;
 
 import javax.servlet.FilterChain;
@@ -23,6 +26,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private JwtUserDetailsService jwtUserDetailsService;
 
     @Autowired
+    private StoreRepository storeRepository;
+
+    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
@@ -33,6 +39,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwtToken = null;
+        Store store = null;
         // JWT Token is in the form "Bearer token". Remove Bearer word and get
         // only the Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
@@ -40,7 +47,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
-                logger.info("Unable to get JWT Token");
+                logger.info("Unable to get JWT Token, Checking if it is a Store Token...");
+                try {
+                    store = storeRepository.findByToken(jwtToken).orElseThrow(() -> new ResourceNotFoundException("Store not found for this Token"));
+                } catch (ResourceNotFoundException e1) {
+                    logger.info("Unable to get JWT Token for Store");
+                }
+
             } catch (ExpiredJwtException e) {
                 logger.info("JWT Token has expired");
             }
@@ -49,9 +62,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         // Once we get the token validate it.
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if ((username != null || store != null) && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = null;
+
+            if (username != null) {
+                userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+            } else if (store != null) {
+                userDetails = this.jwtUserDetailsService.loadUserByStore(store);
+            }
 
             // if token is valid configure Spring Security to manually set
             // authentication
