@@ -39,8 +39,6 @@ public class AuthController {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
                     authenticationRequest.getPassword()));
-        } catch (DisabledException e) {
-            throw new InvalidLoginException("USER DISABLED");
         } catch (BadCredentialsException e) {
             throw new InvalidLoginException("INVALID CREDENTIALS");
         }

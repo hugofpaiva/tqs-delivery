@@ -85,6 +85,13 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<scope>test</scope>
+			<version>4.5.11</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
