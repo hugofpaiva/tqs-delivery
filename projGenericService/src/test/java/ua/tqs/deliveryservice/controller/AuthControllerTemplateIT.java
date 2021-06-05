@@ -76,6 +76,7 @@ class AuthControllerTemplateIT  {
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
         personRepository.delete(rider);
+        personRepository.flush();
     }
 
     @Test
@@ -91,6 +92,7 @@ class AuthControllerTemplateIT  {
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
         personRepository.delete(manager);
+        personRepository.flush();
     }
 
     @Test
@@ -110,6 +112,7 @@ class AuthControllerTemplateIT  {
         assertEquals(((Map<String, String>) response.getBody().get("type")).get("authority"), rider.getClass().getSimpleName());
         assertEquals(response.getBody().get("name"), rider.getName());
         personRepository.delete(rider);
+        personRepository.flush();
     }
 
     @Test
@@ -129,6 +132,7 @@ class AuthControllerTemplateIT  {
         assertEquals(((Map<String, String>) response.getBody().get("type")).get("authority"), manager.getClass().getSimpleName());
         assertEquals(response.getBody().get("name"), manager.getName());
         personRepository.delete(manager);
+        personRepository.flush();
     }
 
     public String getBaseUrl() {

@@ -75,6 +75,7 @@ class AuthControllerTemplateIT  {
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
         personRepository.delete(person);
+        personRepository.flush();
     }
 
     @Test
@@ -94,6 +95,7 @@ class AuthControllerTemplateIT  {
         assertEquals(((Map<String, String>) response.getBody().get("type")).get("authority"), person.getClass().getSimpleName());
         assertEquals(response.getBody().get("name"), person.getName());
         personRepository.delete(person);
+        personRepository.flush();
 
     }
 
