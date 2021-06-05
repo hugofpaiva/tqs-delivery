@@ -44,6 +44,10 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     public UserDetails loadUserByStore(Store store) throws UsernameNotFoundException {
+        if (store == null){
+            throw new UsernameNotFoundException("Store cannot be null to create User");
+        }
+
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(store.getClass().getSimpleName()));
         return new org.springframework.security.core.userdetails.User(store.getName(), store.getToken(),

@@ -13,7 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import ua.tqs.deliveryservice.configuration.JwtTokenUtil;
 import ua.tqs.deliveryservice.model.Manager;
 import ua.tqs.deliveryservice.model.Rider;
+import ua.tqs.deliveryservice.model.Store;
 import ua.tqs.deliveryservice.repository.PersonRepository;
+import ua.tqs.deliveryservice.repository.StoreRepository;
 
 import java.util.Optional;
 
@@ -24,6 +26,9 @@ import static org.mockito.ArgumentMatchers.anyString;
 class JwtUserDetailsServiceTest {
     @Mock
     private PersonRepository personRepository;
+
+    @Mock
+    private StoreRepository storeRepository;
 
     @Mock
     private JwtTokenUtil jwtTokenUtil;
@@ -40,6 +45,27 @@ class JwtUserDetailsServiceTest {
         }, "User not found with email: asd@gmail.com");
         Mockito.verify(personRepository, VerificationModeFactory.times(1))
                 .findByEmail(anyString());
+    }
+
+    @Test
+    public void testGivenNoStore_whenGetUserByStore_thenThrow() {
+        assertThrows(UsernameNotFoundException.class, () -> {
+            jwtUserDetailsService.loadUserByStore(null);
+        }, "Store cannot be null to create User");
+    }
+
+    @Test
+    public void testGivenStore_whenGetUserByStore_thenReturnUserDetails() {
+        Store store = new Store();
+        String name = "Cool Store";
+        String token = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODk1OX0.dgYxgi4nRUUpyL_hcNvkjei2_TX9AAPoUFJo99U_SlTrpE5zH7bTTxubl8-_slIvYSlyvgc_IVHvqTxZTskSsA";
+        store.setName(name);
+        store.setToken(token);
+
+        UserDetails userDetails = jwtUserDetailsService.loadUserByStore(store);
+        assertEquals(userDetails.getUsername(), name);
+        assertEquals(userDetails.getPassword(), token);
+        assertTrue(userDetails.getAuthorities().contains(new SimpleGrantedAuthority(store.getClass().getSimpleName())));
     }
 
     @Test
@@ -93,6 +119,34 @@ class JwtUserDetailsServiceTest {
 
         Mockito.verify(jwtTokenUtil, VerificationModeFactory.times(1))
                 .getUsernameFromToken(headerAuthorization.substring(7));
+    }
+
+    @Test
+    public void testGivenHeaderAuthorizationAndStore_whenGetStoreFromToken_thenReturnStore() {
+        Store store = new Store();
+        String name = "Cool Store";
+        String token = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODk1OX0.dgYxgi4nRUUpyL_hcNvkjei2_TX9AAPoUFJo99U_SlTrpE5zH7bTTxubl8-_slIvYSlyvgc_IVHvqTxZTskSsA";
+        store.setName(name);
+        store.setToken(token);
+        Mockito.when(storeRepository.findByToken(token)).thenReturn(Optional.of(store));
+
+        Store returnedStore = jwtUserDetailsService.getStoreFromToken("Bearer " + token);
+        assertEquals(returnedStore, store);
+
+        Mockito.verify(storeRepository, VerificationModeFactory.times(1))
+                .findByToken(token);
+    }
+
+    @Test
+    public void testGivenOnlyHeaderAuthorization_whenGetStoreFromToken_thenReturnStore() {
+        String token = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODk1OX0.dgYxgi4nRUUpyL_hcNvkjei2_TX9AAPoUFJo99U_SlTrpE5zH7bTTxubl8-_slIvYSlyvgc_IVHvqTxZTskSsA";
+        Mockito.when(storeRepository.findByToken(anyString())).thenReturn(Optional.empty());
+
+        Store returnedStore = jwtUserDetailsService.getStoreFromToken(token);
+        assertEquals(returnedStore, null);
+
+        Mockito.verify(storeRepository, VerificationModeFactory.times(1))
+                .findByToken(anyString());
     }
 
 
