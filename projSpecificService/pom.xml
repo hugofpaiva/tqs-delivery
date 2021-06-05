@@ -16,9 +16,9 @@
 	<properties>
 		<java.version>11</java.version>
 		<testcontainers.version>1.15.3</testcontainers.version>
-		<jacoco.version>0.8.6</jacoco.version>
-		<swagger.version>3.0.0</swagger.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+		<swagger.version>3.0.0</swagger.version>
+		<jacoco.version>0.8.6</jacoco.version>
 	</properties>
 	<dependencies>
 		<dependency>

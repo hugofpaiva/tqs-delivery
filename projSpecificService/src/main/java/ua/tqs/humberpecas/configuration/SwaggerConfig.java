@@ -27,8 +27,8 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().
-                title("Humber Peças REST API")
-                .description("Humber Peças API")
+                title("HumberPeças REST API")
+                .description("API that allows the functioning of a tool shop")
                 .version("0.0.1")
                 .build();
     }
