@@ -6,4 +6,5 @@ COPY . /app/
 
 RUN mvn -DskipTests clean package
 
-ENTRYPOINT ["java","-jar","/app/target/air-quality-service-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","/app/target/delivery-service-0.0.1-SNAPSHOT.jar"]
+
