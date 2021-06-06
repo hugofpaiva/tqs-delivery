@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
@@ -49,25 +50,6 @@ public class RiderRestController {
         ret.put("order_id", order_id);
         ret.put("status", next);
         return new ResponseEntity<>(ret, HttpStatus.OK);
-    }
-
-    @PutMapping("/review")
-    public ResponseEntity<HttpStatus> addReviewToRider(@RequestParam long order, @RequestParam int review_value) {
-        // todo: check if the authenticated rider is the 'correct'
-        // (needs security implemented)
-
-        Optional<Purchase> pur = purchaseRep.findById(order);
-        if (pur.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        Purchase purchase = pur.get();
-
-        if (review_value >= 0 && review_value <= 5) {
-            purchase.setRiderReview(review_value);
-            purchaseRep.save(purchase);
-
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/register")

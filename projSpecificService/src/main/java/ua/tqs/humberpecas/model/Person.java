@@ -15,6 +15,8 @@ public class Person {
 
     private String name;
     private String pwd;
+
+    @Column(unique = true)
     private String email;
 
     @OneToMany

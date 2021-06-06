@@ -13,15 +13,16 @@ public class Store {
     private String name;
     private String description;
 
-    private String pwd;
+    @Column(unique = true)
+    private String token;
 
     @OneToOne
     private Address address;
 
-    public Store(String name, String description, String pwd, Address address) {
+    public Store(String name, String description, String token, Address address) {
         this.name = name;
+        this.token = token;
         this.description = description;
-        this.pwd = pwd;
         this.address = address;
     }
 
