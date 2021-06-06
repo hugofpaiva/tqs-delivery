@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.tqs.humberpecas.model.Category;
-import ua.tqs.humberpecas.model.Person;
-import ua.tqs.humberpecas.model.Product;
+import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.service.HumberService;
 
 import java.io.IOException;
@@ -71,6 +69,91 @@ class HumberControllerTest {
         verify(service, times(1)).getCatolog();
 
     }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 6} )
+    public void whenInvalidNStars_thenReturnStatus400(int number){
+
+        Review r = new Review(1, number);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .body(r)
+                .when()
+                .post("/shop/newReview")
+                .then()
+                .statusCode(400);
+
+        verify(service, times(0)).addReview(r);
+    }
+
+
+    @Test
+    public void whenValidReview_thenReturnOk(){
+        Review review  = new Review(3, 5);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .body(review)
+                .when()
+                .post("/shop/newReview")
+                .then()
+                .statusCode(200);
+
+        verify(service, times(1)).addReview(review);
+
+    }
+
+    @Test
+    public void whenGetOrderStatus_thenReturnStatus(){
+
+        when(service.checkPurchageStatus(anyLong())).thenReturn(PurchageStatus.PENDENT);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .get("/shop/order?orderId=0")
+                .then()
+                .statusCode(200)
+                .body("status",Matchers.equalTo(0) );
+
+        verify(service, times(1)).checkPurchageStatus(0);
+    }
+
+
+    @Test
+    public void whenInvalidOrder_thenReturnStatus400(){
+
+        doThrow(IllegalArgumentException.class).when(service).checkPurchageStatus(anyLong());
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .get("/shop/order?orderId=0")
+                .then()
+                .statusCode(400);
+
+        verify(service, times(1)).checkPurchageStatus(0);
+    }
+
+    @Test
+    public void whenInvalidReviewOrder_thenReturnStatus400(){
+        Review review  = new Review(-1, 5);
+
+        doThrow(IllegalArgumentException.class).when(service).addReview(review);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .body(review)
+                .when()
+                .post("/shop/newReview")
+                .then()
+                .statusCode(400);
+
+        verify(service, times(1)).addReview(review);
+
+    }
+
 
 
     @Test

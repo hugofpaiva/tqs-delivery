@@ -51,7 +51,34 @@ public class HumberController {
     }
 
     @GetMapping("/purchages")
-    public ResponseEntity<List<Purchase>> getUserPurchages(@RequestParam String user){
+    public ResponseEntity<List<Purchase>> getUserPurchages(@RequestParam long userId){
+
+        return null;
+    }
+
+
+
+    // TODO: Assumir que o id é o mesmo (mantem-se) e apenas se alteram os dados
+    @PutMapping("/updateAddress")
+    public ResponseEntity<HttpStatus> updateUserAddress(@RequestParam long userId, @Valid @RequestBody Address address){
+
+        return null;
+    }
+
+    @GetMapping("/address")
+    public ResponseEntity<List<Address>> getUserAddress(@RequestParam long userId){
+
+        return null;
+    }
+
+    @GetMapping("/addressDetails")
+    public ResponseEntity<Address> getAddressDetails(@RequestParam long userId){
+
+        return null;
+    }
+
+    @PostMapping("/addAddress")
+    public ResponseEntity<HttpStatus> addNewAddress(@RequestParam long userId, @Valid @RequestBody Address address){
 
         return null;
     }
@@ -63,16 +90,31 @@ public class HumberController {
     @GetMapping("/order")
     public ResponseEntity<PurchageStatus> getOrderStatus(@RequestParam long orderId){
 
+        try{
 
-        return null;
+            PurchageStatus status = service.checkPurchageStatus(orderId);
+            return ResponseEntity.ok(status);
+
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     // TODO: Ver qual a melhor opção (receber um objeto review ou receber os dados e criar no controller)s
 
-    @PostMapping("/review")
-    public ResponseEntity<HttpStatus> giveReview(@RequestBody Review Review){
+    @PostMapping("/newReview")
+    public ResponseEntity<HttpStatus> giveReview(@Valid @RequestBody Review review){
 
-        return null;
+        try{
+            service.addReview(review);
+
+        }catch (Exception e){
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

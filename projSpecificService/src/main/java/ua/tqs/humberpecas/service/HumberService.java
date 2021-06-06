@@ -48,12 +48,12 @@ public class HumberService {
 
     }
 
-    public void addReview(int purchase_id, Review review){
+    public void addReview( Review review){
 
         // enviar review pra o delivery service
     }
 
-    public String checkPurchageStatus(int purchase_id){
+    public PurchageStatus checkPurchageStatus(long purchase_id){
 
         // verificar se id é valido
             // se correto avnçar
