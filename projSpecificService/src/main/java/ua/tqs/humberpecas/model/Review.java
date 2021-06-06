@@ -1,9 +1,7 @@
 package ua.tqs.humberpecas.model;
 
 
-import lombok.Data;
 
-@Data
 public class Review {
 
     private long orderId;
@@ -17,5 +15,8 @@ public class Review {
         this.msg = msg;
     }
 
+    public Review(){
+
+    }
 
 }
