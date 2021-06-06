@@ -58,6 +58,11 @@ public class RiderRestController {
         // todo: check if the authenticated rider is the 'correct'
         // (needs security implemented)
 
+        // se a order ja tiver uma review -> bad request
+        // com a auth da loja sei qual a loja que está a fazer o pedido, ptt tenho de verificar se a order que está a ser pedida pertence a essa loja -> UNAUTHORIZED
+        // criar novas exceções, throws e throw new ...
+        // isto vai implicar alterar os testes
+
         Optional<Purchase> pur = purchaseRep.findById(order);
         if (pur.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         Purchase purchase = pur.get();
