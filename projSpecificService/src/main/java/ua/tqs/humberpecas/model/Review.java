@@ -1,19 +1,14 @@
 package ua.tqs.humberpecas.model;
 
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class Review {
 
+    private long orderId;
     private int numberStars;
     private String msg;
 
-    public Review(int numberStars, String msg){
-        this.numberStars = numberStars;
-        this.msg = msg;
-    }
 
 }
