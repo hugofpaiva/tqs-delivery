@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.service.HumberService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -36,9 +37,11 @@ public class HumberController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<HttpStatus> register(@RequestBody Person person ){
+    public ResponseEntity<HttpStatus> register(@Valid @RequestBody Person person ){
 
-        return null;
+        service.register(person);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/newOrder")

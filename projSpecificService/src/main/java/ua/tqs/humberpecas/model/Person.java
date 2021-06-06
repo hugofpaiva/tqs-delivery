@@ -1,7 +1,13 @@
 package ua.tqs.humberpecas.model;
 
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
+
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Set;
 
@@ -13,8 +19,15 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @NotBlank(message = "Name is mandatory")
     private String name;
+
+    @NotBlank(message = "Password is mandatory")
+    @Size(min=8)
     private String pwd;
+
+    @NotBlank(message = "Email is mandatory")
+    @Email
     private String email;
 
     @OneToMany
@@ -23,4 +36,14 @@ public class Person {
     @OneToMany
     private Set<Address> addresses;
 
+
+    public Person(){ }
+
+
+    public Person(String name, String pwd, String email){
+
+        this.name = name;
+        this.pwd = pwd;
+        this.email = email;
+    }
 }
