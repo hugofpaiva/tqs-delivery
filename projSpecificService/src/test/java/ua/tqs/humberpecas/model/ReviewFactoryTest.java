@@ -14,7 +14,7 @@ class ReviewFactoryTest {
     @Test
     public void whenStarsCorrect_thenReturnReview(){
 
-        assertThat(ReviewFactory.createReview(4, "bom"), instanceOf(Review.class));
+        assertThat(ReviewFactory.createReview(1, 4, "bom"), instanceOf(Review.class));
 
     }
 
@@ -23,7 +23,7 @@ class ReviewFactoryTest {
     @ValueSource(ints = { 6, -1 })
     public void whenStarsIncorrect_thenReturnIllegalArgumentException(int star){
 
-        assertThat(ReviewFactory.createReview(star, "espetaculo!"), instanceOf(IllegalArgumentException.class));
+        assertThat(ReviewFactory.createReview(1, star, "espetaculo!"), instanceOf(IllegalArgumentException.class));
     }
 
 }

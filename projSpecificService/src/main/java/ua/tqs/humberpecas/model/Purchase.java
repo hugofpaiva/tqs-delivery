@@ -1,12 +1,15 @@
 package ua.tqs.humberpecas.model;
 
-import lombok.Data;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class Purchase {
     @Id
@@ -34,6 +37,9 @@ public class Purchase {
         this.address = address;
         this.products = products;
         this.status = PurchageStatus.PENDENT;
+    }
+
+    public Purchase(){
     }
 
 }

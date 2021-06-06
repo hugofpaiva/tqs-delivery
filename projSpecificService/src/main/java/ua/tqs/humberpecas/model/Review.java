@@ -11,4 +11,11 @@ public class Review {
     private String msg;
 
 
+    public Review(long orderId, int numberStars, String msg){
+        this.orderId = orderId;
+        this.numberStars = numberStars;
+        this.msg = msg;
+    }
+
+
 }

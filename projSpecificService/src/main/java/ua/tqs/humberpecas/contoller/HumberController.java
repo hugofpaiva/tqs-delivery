@@ -1,10 +1,12 @@
 package ua.tqs.humberpecas.contoller;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.tqs.humberpecas.model.*;
+import ua.tqs.humberpecas.service.HumberService;
 
 import java.util.List;
 
@@ -12,6 +14,8 @@ import java.util.List;
 @RequestMapping("/shop") // TODO: Ver nome
 public class HumberController {
 
+    @Autowired
+    private HumberService service;
 
     @GetMapping("/products/{prod_id}")
     public ResponseEntity<Product> getProductById(@PathVariable int prod_id){
@@ -19,10 +23,16 @@ public class HumberController {
         return null;
     }
 
-    @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(@RequestParam(required = false) String category){
 
-        return null;
+    // TODO: se não houver produtos retornar uma lista vazia ou execption
+
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts(@RequestParam(required = false) Category category){
+        if (category != null){
+
+            return ResponseEntity.ok().body(service.getProductsByCategory(category));
+        }
+        return ResponseEntity.ok().body(service.getCatolog());
     }
 
     @PostMapping("/register")

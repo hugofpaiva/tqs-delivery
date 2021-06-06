@@ -82,7 +82,7 @@ public class HumberService {
     }
 
 
-    public List<Product> finProductByCategory(Category category){
+    public List<Product> getProductsByCategory(Category category){
         return null;
     }
 
