@@ -1,11 +1,13 @@
 package ua.tqs.deliveryservice.controller;
 
-import com.fasterxml.jackson.databind.ext.CoreXMLDeserializers;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.model.Purchase;
+import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
@@ -19,7 +21,7 @@ import java.util.Optional;
 public class RiderRestController {
 
     @Autowired
-    private RiderRepository riderRep;
+    private RiderRepository riderRepository;
 
     @Autowired
     private PurchaseRepository purchaseRep;
@@ -50,11 +52,12 @@ public class RiderRestController {
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
-    @GetMapping("/review")
-    public ResponseEntity<HttpStatus> addReviewToRider(@RequestParam long order, @RequestParam int review_value) {
-        // todo: check if the authenticated rider is the 'correct'
-        // (needs security implemented)
-
+    @PostMapping("/register")
+    public ResponseEntity<HttpStatus> registerARider(@RequestBody Map<String, String> payload) throws Exception {
+        // {"name":"carolina","password":"abc","email":"delivery@tqs.com"} @ http://localhost:8080/rider/register
+        System.out.println(payload);
+        Rider newRider = new Rider();
+        
         // se a order ja tiver uma review -> bad request
         // com a auth da loja sei qual a loja que está a fazer o pedido, ptt tenho de verificar se a order que está a ser pedida pertence a essa loja -> UNAUTHORIZED
         // criar novas exceções, throws e throw new ...
@@ -69,9 +72,17 @@ public class RiderRestController {
             purchaseRep.save(purchase);
 
             return new ResponseEntity<>(HttpStatus.OK);
-        }
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if(payload.get("pwd").length() < 8){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        newRider.setPwd(payload.get("pwd"));
+        newRider.setEmail(payload.get("email"));
+        newRider.setName(payload.get("name"));
+
+        riderRepository.save(newRider);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }
