@@ -26,8 +26,10 @@ public class Person {
     @Size(min=8)
     private String pwd;
 
+
     @NotBlank(message = "Email is mandatory")
     @Email
+    @Column(unique = true)
     private String email;
 
     @OneToMany
