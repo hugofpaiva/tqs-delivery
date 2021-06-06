@@ -1,6 +1,7 @@
 # misc
 *.DS_Store
 docker/
+
 data/**
 .idea/
 
