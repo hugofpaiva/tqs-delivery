@@ -54,7 +54,7 @@ public class RiderRestController {
 
     @PostMapping("/register")
     public ResponseEntity<HttpStatus> registerARider(@RequestBody Map<String, String> payload) throws Exception {
-        // curl -H "Content-Type: application/json" -X POST -d '{"name":"carolina","password":"abc","email":"delivery@tqs.com"}' http://localhost:8080/rider/register
+        // {"name":"carolina","password":"abc","email":"delivery@tqs.com"} @ http://localhost:8080/rider/register
         System.out.println(payload);
         Rider newRider = new Rider();
 

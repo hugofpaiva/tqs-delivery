@@ -19,8 +19,9 @@ public class OrderRestController {
     @Autowired
     private PurchaseRepository purchaseRep;
 
-    @PatchMapping("/order/{order_id}/status")
-    public ResponseEntity<HttpStatus> addReviewToRider(@PathVariable long order_id, @RequestBody Map<String, String> payload) throws InvalidLoginException,  {
+    @PatchMapping("/order/{order_id}/review")
+    public ResponseEntity<HttpStatus> addReviewToRider(@PathVariable Long order_id, @RequestBody Map<String, String> payload) throws InvalidLoginException {
+        // {"name":"carolina","password":"abc","email":"delivery@tqs.com"} @ http://localhost:8080/store/order/5/review
         // todo: check if the authenticated rider is the 'correct'
         // (needs security implemented)
 
