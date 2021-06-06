@@ -57,20 +57,50 @@ public class HumberController {
     }
 
 
+
+    // TODO: Assumir que o id é o mesmo (mantem-se) e apenas se alteram os dados
+    @PutMapping("/updateAddress")
+    public ResponseEntity<HttpStatus> updateUserAddress(@RequestParam long userId, @Valid @RequestBody Address address){
+
+        return null;
+    }
+
+    @GetMapping("/address")
+    public ResponseEntity<List<Address>> getUserAddress(@RequestParam long userId){
+
+        return null;
+    }
+
+    @GetMapping("/addressDetails")
+    public ResponseEntity<Address> getAddressDetails(@RequestParam long userId){
+
+        return null;
+    }
+
+    @PostMapping("/addAddress")
+    public ResponseEntity<HttpStatus> addNewAddress(@RequestParam long userId, @Valid @RequestBody Address address){
+
+        return null;
+    }
+
+
     // TODO: ver melhor opção ( ter uma especie de observer que o delivery notificaria caso a order mudasse de status
     // e a order passaria tambem a ter um status ou só fazer um pedido ao delivery service)
 
     @GetMapping("/order")
     public ResponseEntity<PurchageStatus> getOrderStatus(@RequestParam long orderId){
 
-
         return null;
     }
 
     // TODO: Ver qual a melhor opção (receber um objeto review ou receber os dados e criar no controller)s
 
-    @PostMapping("/review")
-    public ResponseEntity<HttpStatus> giveReview(@RequestBody Review Review){
+    @PostMapping("/newReview")
+    public ResponseEntity<HttpStatus> giveReview(@Valid @RequestBody Review Review){
+
+        // enviar pra o service que vai verificar se o order id
+        // se sim não acontece nada
+        // se não o é lamcçada uma execption
 
         return null;
     }

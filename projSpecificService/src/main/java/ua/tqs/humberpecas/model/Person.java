@@ -1,7 +1,6 @@
 package ua.tqs.humberpecas.model;
 
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

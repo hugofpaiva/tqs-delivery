@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.humberpecas.model.Category;
 import ua.tqs.humberpecas.model.Person;
 import ua.tqs.humberpecas.model.Product;
+import ua.tqs.humberpecas.model.Review;
 import ua.tqs.humberpecas.service.HumberService;
 
 import java.io.IOException;
@@ -89,6 +91,26 @@ class HumberControllerTest {
         verify(service, times(1)).getProductsByCategory(Category.CHAVES);
 
     }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 6} )
+    public void whenInvalidNStars_thenReturnStatus404(int number){
+
+        Review r = new Review(1, number);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .get("/shop/newReview")
+                .then()
+                .statusCode(404);
+
+
+        verify(service, times(1)).addReview(r);
+
+    }
+
+
 
     @Test
     public void whenValidRegister_thenReturnCrated(){

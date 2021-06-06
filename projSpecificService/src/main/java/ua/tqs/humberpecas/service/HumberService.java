@@ -48,7 +48,7 @@ public class HumberService {
 
     }
 
-    public void addReview(int purchase_id, Review review){
+    public void addReview( Review review){
 
         // enviar review pra o delivery service
     }
