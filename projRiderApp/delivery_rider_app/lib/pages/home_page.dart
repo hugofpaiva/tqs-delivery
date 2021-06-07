@@ -1,4 +1,5 @@
 import 'package:delivery_rider_app/pages/login_page.dart';
+import 'package:delivery_rider_app/services/generic_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,7 +56,7 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Nome,',
+                              '${GenericService.name},',
                               style: GoogleFonts.nunito(
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
@@ -77,6 +78,7 @@ class _HomePageState extends State<HomePage> {
                         padding: EdgeInsets.fromLTRB(0, 0, 35, 0),
                         child: IconButton(
                           onPressed: () async {
+                            GenericService.loggedIn = false;
                             await Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
