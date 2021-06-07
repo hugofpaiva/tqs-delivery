@@ -25,11 +25,8 @@ public class JwtTokenUtil implements Serializable {
     private String secret;
 
     //retrieve username from jwt token
-    public String getUsernameFromToken(String token) throws IllegalArgumentException{
-        String username = getClaimFromToken(token, Claims::getSubject);
-        if (username == null)
-            throw new IllegalArgumentException("Token not associated with any user.");
-        return username;
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
     }
 
     //retrieve expiration date from jwt token
