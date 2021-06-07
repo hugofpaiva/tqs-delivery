@@ -33,7 +33,7 @@ public class Purchase {
 
     @Min(value = 0, message = "Review should not be under the value of 0.")
     @Max(value = 5, message = "Review should not be above the value of 5.")
-    private int riderReview;
+    private Integer riderReview;
 
     public Purchase(Address address, Rider rider, Store store, String clientName) {
         this.address = address;

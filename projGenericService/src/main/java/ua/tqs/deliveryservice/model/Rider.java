@@ -1,11 +1,8 @@
 package ua.tqs.deliveryservice.model;
 
 import lombok.Data;
-<<<<<<< HEAD
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-=======
->>>>>>> dev
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;

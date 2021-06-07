@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
@@ -15,6 +16,8 @@ import ua.tqs.deliveryservice.repository.RiderRepository;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/rider")
@@ -24,26 +27,25 @@ public class RiderRestController {
     private RiderRepository riderRepository;
 
     @Autowired
-    private PurchaseRepository purchaseRep;
+    private PurchaseRepository purchaseRepository;
 
-    @PutMapping("order/{order_id}/status")
-    public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(@PathVariable long order_id) {
+    @PatchMapping("order/{order_id}/status")
+    public ResponseEntity<Map<String,Object>> updateOrderStatusAuto(@PathVariable long order_id) throws InvalidValueException {
         // get purchase if exists
-        Optional<Purchase> pur = purchaseRep.findById(order_id);
-        if (pur.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        Purchase purchase = pur.get();
+        Optional<Purchase> requested_purchase = purchaseRepository.findById(order_id);
+        if (requested_purchase.isEmpty()) throw new InvalidValueException("Id not associated with a purchase.");
+        Purchase purchase = requested_purchase.get();
 
         // todo: check if the authenticated rider is the 'correct'
         // (needs security implemented)
 
         // gets 'next' status and updates
         Status next = Status.getNext(purchase.getStatus());
-        System.out.println(next);
 
         if (next == Status.PENDENT) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         purchase.setStatus(next);
-        purchaseRep.save(purchase);
+        purchaseRepository.save(purchase);
 
         // return order id and status
         Map<String, Object> ret = new HashMap<>();
@@ -55,27 +57,16 @@ public class RiderRestController {
     @PostMapping("/register")
     public ResponseEntity<HttpStatus> registerARider(@RequestBody Map<String, String> payload) throws Exception {
         // {"name":"carolina","password":"abc","email":"delivery@tqs.com"} @ http://localhost:8080/rider/register
-        System.out.println(payload);
         Rider newRider = new Rider();
-        
-        // se a order ja tiver uma review -> bad request
-        // com a auth da loja sei qual a loja que está a fazer o pedido, ptt tenho de verificar se a order que está a ser pedida pertence a essa loja -> UNAUTHORIZED
-        // criar novas exceções, throws e throw new ...
-        // isto vai implicar alterar os testes
 
-        Optional<Purchase> pur = purchaseRep.findById(order);
-        if (pur.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        Purchase purchase = pur.get();
+        if(payload.get("pwd").length() < 8) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        if (review_value >= 0 && review_value <= 5) {
-            purchase.setRiderReview(review_value);
-            purchaseRep.save(purchase);
+        String regex = "^(.+)@(.+)$";
 
-            return new ResponseEntity<>(HttpStatus.OK);
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(payload.get("email"));
+        if (!matcher.matches()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        if(payload.get("pwd").length() < 8){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
         newRider.setPwd(payload.get("pwd"));
         newRider.setEmail(payload.get("email"));
         newRider.setName(payload.get("name"));

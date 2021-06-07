@@ -1,11 +1,11 @@
 package ua.tqs.deliveryservice.controller;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 
@@ -17,29 +17,32 @@ import java.util.Optional;
 public class OrderRestController {
 
     @Autowired
-    private PurchaseRepository purchaseRep;
+    private PurchaseRepository purchaseRepository;
+    private Long review;
 
     @PatchMapping("/order/{order_id}/review")
-    public ResponseEntity<HttpStatus> addReviewToRider(@PathVariable Long order_id, @RequestBody Map<String, String> payload) throws InvalidLoginException {
-        // {"name":"carolina","password":"abc","email":"delivery@tqs.com"} @ http://localhost:8080/store/order/5/review
+    public Object addReviewToRider(@PathVariable Long order_id, @RequestBody Map<String, String> payload) throws InvalidLoginException {
+        // {"review":4} @ http://localhost:8080/store/order/5/review
         // todo: check if the authenticated rider is the 'correct'
         // (needs security implemented)
 
-        // invalidValueException BAD_REQUEST: se for negativo ou se for um float ou string
-        // se nao vier, bad request apenas
-        // se o cliente que esta a fazer o pedido e o que esta associado aquela order -> login invalido ou bad requesgt
-        //
-        Optional<Purchase> pur = purchaseRep.findById(order);
-        if (pur.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        Purchase purchase = pur.get();
+        // com a auth da loja sei qual a loja que está a fazer o pedido, ptt tenho de verificar se a order que está a ser pedida pertence a essa loja -> UNAUTHORIZED
+        // isto vai implicar alterar os testes
 
-        if (review_value >= 0 && review_value <= 5) {
-            purchase.setRiderReview(review_value);
-            purchaseRep.save(purchase);
+        if (order_id == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
+        Optional<Purchase> requested_purchase = purchaseRepository.findById(order_id);
+        if (requested_purchase.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Purchase purchase = requested_purchase.get();
+        if (purchase.getRiderReview() != null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        try {
+            review = Long.parseLong(payload.get("review"));
+        } catch (NumberFormatException e) { return new ResponseEntity<>(HttpStatus.BAD_REQUEST); }
+        if (review < 0 || review > 5) return new InvalidValueException("Review value cannot be under 0 nor over 5.");
+        purchase.setRiderReview(review.intValue());
+        purchaseRepository.save(purchase);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
