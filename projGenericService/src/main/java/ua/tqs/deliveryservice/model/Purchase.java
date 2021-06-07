@@ -2,6 +2,9 @@ package ua.tqs.deliveryservice.model;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.springframework.data.repository.cdi.Eager;
+
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -23,10 +26,10 @@ public class Purchase {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Rider rider;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Store store;
 
     private String clientName;

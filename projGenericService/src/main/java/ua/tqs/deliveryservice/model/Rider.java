@@ -1,7 +1,6 @@
 package ua.tqs.deliveryservice.model;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Entity;
@@ -12,7 +11,6 @@ import java.util.List;
 @Data
 @Entity
 public class Rider extends Person {
-
     private long reviewsSum;
     private int totalNumReviews;
 

@@ -1,8 +1,6 @@
 package ua.tqs.deliveryservice.controller;
 
-import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -14,7 +12,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.*;
 
@@ -27,6 +24,11 @@ import static org.hamcrest.Matchers.equalTo;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 class RiderRestControllerIT {
+    private Rider rider;
+    private Address address;
+    private Store store;
+    private Purchase purchase;
+
     @Autowired
     private PasswordEncoder bcryptEncoder;
 
@@ -52,9 +54,9 @@ class RiderRestControllerIT {
 
     @Container
     public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
-            .withUsername("demo")
-            .withPassword("demopw")
-            .withDatabaseName("shop");
+                .withUsername("demo")
+                .withPassword("demopw")
+                .withDatabaseName("shop");
 
 
     @DynamicPropertySource
@@ -64,56 +66,42 @@ class RiderRestControllerIT {
         registry.add("spring.datasource.username", container::getUsername);
     }
 
+    @AfterEach
+    public void destroyAll() {
+        purchaseRepository.deleteById(this.purchase.getId());
+        purchaseRepository.flush();
+
+        storeRepository.deleteById(this.store.getId());
+        storeRepository.flush();
+
+        addressRepository.deleteById(this.address.getId());
+        addressRepository.flush();
+
+        personRepository.deleteById(this.rider.getId());
+        personRepository.flush();
+
+        this.rider = new Rider();
+        this.address = new Address();
+        this.store = new Store();
+        this.purchase = new Purchase();
+    }
 
     @BeforeEach
     public void beforeEachSetUp() {
-        Rider rider = new Rider();
-        System.out.println(rider.getId());
-        if ( personRepository.findById(rider.getId()).isEmpty() ) {
-            System.out.println("Entrei 2x");
-            System.out.println(rider.getEmail());
-            rider.setEmail("TQS_delivery@example.com");
-            System.out.println(rider.getEmail());
-            rider.setPwd(bcryptEncoder.encode("aRightPassword"));
-            rider.setName("Joao");
-            personRepository.saveAndFlush(rider);
-        }
+        this.rider = new Rider("TQS_delivery@example.com", bcryptEncoder.encode("aRightPassword"), "Joao");
+        this.address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address);
+        this.purchase = new Purchase(this.address, this.rider, this.store, "Joana");
 
-        Address address = new Address();
+        personRepository.saveAndFlush(this.rider);
 
-        if (addressRepository.findById(address.getId()).isEmpty()) {
-            address.setAddress("Universidade de Aveiro");
-            address.setAddress("3800-000");
-            address.setCountry("Aveiro");
-            address.setCountry("Portugal");
-            addressRepository.saveAndFlush(address);
-        }
-
-        Store store = new Store();
-
-        if (storeRepository.findById(store.getId()).isEmpty()) {
-            store.setName("HumberPecas");
-            store.setDescription("Peça(s) rápido");
-            store.setAddress(address);
-            store.setToken("somestringnewtoken");
-            storeRepository.saveAndFlush(store);
-        }
-
-        Purchase purchase = new Purchase();
-
-        if (purchaseRepository.findById(purchase.getId()).isEmpty()) {
-            purchase.setAddress(address);
-            purchase.setStatus(Status.ACCEPTED);
-            purchase.setRider(rider);
-            purchase.setStore(store);
-            purchase.setClientName("TQS Project");
-            purchaseRepository.saveAndFlush(purchase);
-        }
-
-        JwtRequest request = new JwtRequest(rider.getEmail(), "aRightPassword");
+        JwtRequest request = new JwtRequest(this.rider.getEmail(), "aRightPassword");
         ResponseEntity<Map> response = testRestTemplate.postForEntity("http://localhost:" + randomServerPort + "/login", request, Map.class);
-
         this.token = response.getBody().get("token").toString();
+
+        addressRepository.saveAndFlush(this.address);
+        storeRepository.saveAndFlush(this.store);
+        purchaseRepository.saveAndFlush(this.purchase);
     }
 
     // ----------------------------------------------
@@ -158,12 +146,12 @@ class RiderRestControllerIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
-    @Test
+    /*
+    @Disabled
     public void testOrderStatusEverythingValid_thenOK() {
-        Map<String, Object> data = new HashMap<>();
-        data.put("order_id", 0);
-        data.put("status", Status.ACCEPTED.toString());
-        JSONObject json = new JSONObject(data);
+        HashMap<String, Object> expected = new HashMap<>();
+        expected.put("order_id", purchase.getId());
+        expected.put("status", Status.getNext(purchase.getStatus()));
 
         Map<String, Object> empty = new HashMap<>();
         HttpHeaders headers = new HttpHeaders();
@@ -171,11 +159,13 @@ class RiderRestControllerIT {
 
         HttpEntity<Map> entity = new HttpEntity<Map>(empty, headers);
 
-        ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "/order/0/status", HttpMethod.PATCH, entity,  Map.class);
+        ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/status", HttpMethod.PATCH, entity,  Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        assertThat(response.getBody(), equalTo(json.toString()));
+        assertThat(response.getBody().toString(), equalTo(expected.toString()));
     }
+
+     */
 
     // ----------------------------------------------
     // --              register tests              --
