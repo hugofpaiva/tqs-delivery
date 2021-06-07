@@ -15,6 +15,8 @@ public class Person {
 
     private String name;
     private String pwd;
+
+    @Column(unique = true)
     private String email;
 
     @OneToMany
@@ -23,4 +25,15 @@ public class Person {
     @OneToMany
     private Set<Address> addresses;
 
+    @OneToOne
+    private ShoppingCart shoppingCart;
+
+    public Person(String name, String pwd, String email, ShoppingCart sc) {
+        this.name = name;
+        this.pwd = pwd;
+        this.email = email;
+        this.shoppingCart = sc;
+    }
+
+    public Person() {}
 }
