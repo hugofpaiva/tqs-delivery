@@ -60,7 +60,9 @@ public class PersonRepositoryTests {
 
     /* -- helper -- */
     private Person createAndSavePerson(int i) {
-        Person p = new Person("name" + i, "pwd" + i, "email" + i + "@email.com");
+        ShoppingCart sc = new ShoppingCart();
+        Person p = new Person("name" + i, "pwd" + i, "email" + i + "@email.com", sc);
+        entityManager.persist(sc);
         entityManager.persistAndFlush(p);
         return p;
     }

@@ -1,6 +1,5 @@
 package ua.tqs.humberpecas.model;
 
-import ch.qos.logback.core.hook.ShutdownHook;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,14 +12,13 @@ public class ShoppingCart {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToOne
+    @OneToOne(mappedBy = "shoppingCart")
     private Person person;
 
     @ManyToMany
     private List<Product> products;
 
-    public ShoppingCart(Person person, List<Product> products) {
-        this.person = person;
+    public ShoppingCart(List<Product> products) {
         this.products = products;
     }
     public ShoppingCart() {}

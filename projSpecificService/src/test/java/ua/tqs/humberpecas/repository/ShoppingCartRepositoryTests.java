@@ -65,18 +65,15 @@ public class ShoppingCartRepositoryTests {
 
     /* -- helper -- */
     private ShoppingCart createAndSaveShoppingCart(int i) {
-        Person p = new Person("personName"+i, "pwdpwd"+i, "email"+i+"@email.com");
-
         List<Product> products = new ArrayList<>();
         products.add(new Product("hammer", 10.50, Category.TOOLS , "the best hammer", 3));
         products.add(new Product("hammer v2", 20.50, Category.TOOLS , "the best hammer 2.0", 4));
 
-        ShoppingCart sc = new ShoppingCart(p, products);
+        ShoppingCart sc = new ShoppingCart(products);
 
         for (Product prod : products) {
             entityManager.persist(prod);
         }
-        entityManager.persist(p);
         entityManager.persistAndFlush(sc);
         return sc;
     }
