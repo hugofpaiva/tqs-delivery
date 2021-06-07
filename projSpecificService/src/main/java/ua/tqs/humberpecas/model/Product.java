@@ -24,4 +24,15 @@ public class Product {
 
     @ManyToMany(mappedBy = "products")
     private Set<Purchase> purchase;
+
+    public Product(String name, double price, Category category, String description, long stock) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.description = description;
+        this.stock = stock;
+        deleted = false;
+    }
+
+    public Product() {}
 }
