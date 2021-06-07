@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.sql.SQLOutput;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +25,11 @@ public class JwtTokenUtil implements Serializable {
     private String secret;
 
     //retrieve username from jwt token
-    public String getUsernameFromToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+    public String getUsernameFromToken(String token) throws IllegalArgumentException{
+        String username = getClaimFromToken(token, Claims::getSubject);
+        if (username == null)
+            throw new IllegalArgumentException("Token not associated with any user.");
+        return username;
     }
 
     //retrieve expiration date from jwt token
