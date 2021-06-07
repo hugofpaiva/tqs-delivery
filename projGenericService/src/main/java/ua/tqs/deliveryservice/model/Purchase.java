@@ -26,10 +26,10 @@ public class Purchase {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Rider rider;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private Store store;
 
     private String clientName;

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
@@ -21,8 +20,8 @@ public class OrderRestController {
     private Long review;
 
     @PatchMapping("/order/{order_id}/review")
-    public Object addReviewToRider(@PathVariable Long order_id, @RequestBody Map<String, String> payload) throws InvalidLoginException {
-        // {"review":4} @ http://localhost:8080/store/order/5/review
+    public Object addReviewToRider(@PathVariable Long order_id, @RequestBody Map<String, String> payload) throws InvalidValueException {
+        String token = payload.get("token");
         // todo: check if the authenticated rider is the 'correct'
         // (needs security implemented)
 
@@ -39,7 +38,7 @@ public class OrderRestController {
         try {
             review = Long.parseLong(payload.get("review"));
         } catch (NumberFormatException e) { return new ResponseEntity<>(HttpStatus.BAD_REQUEST); }
-        if (review < 0 || review > 5) return new InvalidValueException("Review value cannot be under 0 nor over 5.");
+        if (review < 0 || review > 5) throw new InvalidValueException("Review value cannot be under 0 nor over 5.");
         purchase.setRiderReview(review.intValue());
         purchaseRepository.save(purchase);
 

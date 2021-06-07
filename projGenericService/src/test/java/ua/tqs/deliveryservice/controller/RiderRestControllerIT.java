@@ -116,7 +116,6 @@ class RiderRestControllerIT {
         HttpEntity<Map> entity = new HttpEntity<Map>(empty, headers);
 
         ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "order/a/status", HttpMethod.PATCH, entity, Map.class);
-        System.out.println(response);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
@@ -129,7 +128,6 @@ class RiderRestControllerIT {
         HttpEntity<Map> entity = new HttpEntity<Map>(empty, headers);
 
         ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "order/1/status", HttpMethod.PATCH, entity, Map.class);
-        System.out.println(response);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
@@ -142,7 +140,6 @@ class RiderRestControllerIT {
         HttpEntity<Map> entity = new HttpEntity<Map>(empty, headers);
 
         ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "order/4/status", HttpMethod.PATCH, entity, Map.class);
-        System.out.println(response);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
