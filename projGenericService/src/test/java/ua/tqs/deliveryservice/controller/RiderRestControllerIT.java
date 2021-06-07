@@ -146,8 +146,8 @@ class RiderRestControllerIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
-    /*
-    @Disabled
+
+    @Test
     public void testOrderStatusEverythingValid_thenOK() {
         HashMap<String, Object> expected = new HashMap<>();
         expected.put("order_id", purchase.getId());
@@ -164,8 +164,6 @@ class RiderRestControllerIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         assertThat(response.getBody().toString(), equalTo(expected.toString()));
     }
-
-     */
 
     // ----------------------------------------------
     // --              register tests              --
