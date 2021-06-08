@@ -78,10 +78,11 @@ public class RiderRestController {
         Person p = personRep.findByEmail(email).orElse(null);
         if (!(p instanceof Rider)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
+        HashMap<String, Object> ret = new HashMap<>();
+
         // verify if Rider has any purchase to deliver
         Purchase unfinished = purchaseRep.findTopByRiderAndStatusIsNot((Rider) p, Status.DELIVERED);
         if (unfinished != null) {
-            HashMap<String, Object> ret = new HashMap<>();
             ret.put("data", "this rider still has an order to deliver");
             return new ResponseEntity<>(ret, HttpStatus.FORBIDDEN);
         }
@@ -92,7 +93,6 @@ public class RiderRestController {
         // exemplo:
         // data: {date=2021-06-08 00:56:33.252, orderId=9, clientMame=client22, store={address={country=Portugal, address=Rua Loja Loja, n. 23, city=Porto, postalCode=3212-333}, name=Loja do Manel, id=8}, clientAddress={country=Portugal, address=Rua ABC, n. 99, city=Aveiro, postalCode=4444-555}}
 
-        HashMap<String, Object> ret = new HashMap<>();
 
         if (purch == null) {
             ret.put("data", "No more orders available");
