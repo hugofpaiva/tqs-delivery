@@ -3,6 +3,7 @@ package ua.tqs.deliveryservice.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Data
 @Entity
@@ -13,6 +14,7 @@ public class Person {
 
     private String name;
 
+    @Size(min = 8)
     private String pwd;
 
     @Column(unique=true)

@@ -56,14 +56,9 @@ public class RiderRestController {
     public ResponseEntity<HttpStatus> registerARider(@RequestBody Map<String, String> payload) throws Exception {
         // {"name":"carolina","password":"abc","email":"delivery@tqs.com"} @ http://localhost:8080/rider/register
         Rider newRider = new Rider();
-
         if(payload.get("pwd").length() < 8) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        String regex = "^(.+)@(.+)$";
-
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(payload.get("email"));
-        if (!matcher.matches()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (payload.get("email") == "") return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (payload.get("name") == "") return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         newRider.setPwd(payload.get("pwd"));
         newRider.setEmail(payload.get("email"));

@@ -166,12 +166,29 @@ class RiderRestControllerIT {
     // --              register tests              --
     // ----------------------------------------------
     @Test
-    public void testRegisterBadPwd_thenBadRequest() {
+    public void testRegisterBadName_thenBadRequest() {
+        Map<String, String> data = new HashMap<>();
+
+        data.put("name", "");
+        data.put("email", "delivery@tqs.com");
+        data.put("pwd", "delivery__password__strong_!enough");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(data, headers);
+
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/register", HttpMethod.POST, entity, HttpStatus.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testRegisterBadPassword_thenBadRequest() {
         Map<String, String> data = new HashMap<>();
 
         data.put("name", "delivery tqs tests");
         data.put("email", "delivery@tqs.com");
-        data.put("pwd", "123");
+        data.put("pwd", "1234");
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
@@ -187,8 +204,8 @@ class RiderRestControllerIT {
         Map<String, String> data = new HashMap<>();
 
         data.put("name", "delivery tqs tests");
-        data.put("email", "this is not_an!email");
-        data.put("pwd", "123but_the_password_is_ok");
+        data.put("email", "");
+        data.put("pwd", "delivery__password__strong_!enough");
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
@@ -199,22 +216,6 @@ class RiderRestControllerIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
-    @Test
-    public void testRegisterBadEmailAndPwd_thenBadRequest() {
-        Map<String, String> data = new HashMap<>();
-
-        data.put("name", "delivery tqs tests");
-        data.put("email", "this is not_an!email");
-        data.put("pwd", "badpwd");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + this.token);
-
-        HttpEntity<Map> entity = new HttpEntity<Map>(data, headers);
-
-        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/register", HttpMethod.POST, entity, HttpStatus.class);
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
-    }
 
     @Test
     public void testRegisterEverythingValid_thenCreated() {
