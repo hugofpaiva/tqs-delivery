@@ -19,14 +19,12 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @NotBlank(message = "Name is mandatory")
+
     private String name;
 
-    @NotBlank(message = "Password is mandatory")
     @Size(min=8)
     private String pwd;
 
-    @NotBlank(message = "Email is mandatory")
     @Email
     private String email;
 

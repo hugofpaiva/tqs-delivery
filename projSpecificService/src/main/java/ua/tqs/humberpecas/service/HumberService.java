@@ -4,6 +4,8 @@ package ua.tqs.humberpecas.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
+import ua.tqs.humberpecas.dto.PersonDTO;
+import ua.tqs.humberpecas.dto.PurchageDTO;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.PersonRepository;
 import ua.tqs.humberpecas.repository.ProductRepository;
@@ -27,7 +29,7 @@ public class HumberService {
     private IDeliveryService service;
 
 
-    public void register(Person user){
+    public void register(PersonDTO user){
 
         // validar os dados (verificar se email ja existe na bd)
 
@@ -37,9 +39,10 @@ public class HumberService {
     }
 
 
-    public void newPurchase(Purchase purchase){
+    public void newPurchase(PurchageDTO purchase){
 
         // validar dados
+        // fazer mapeamentto
 
         // enviar os dados para o delivery service
         // receber o id de encomenda

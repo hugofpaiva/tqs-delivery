@@ -1,16 +1,20 @@
 package ua.tqs.humberpecas.contoller;
 
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.tqs.humberpecas.dto.PersonDTO;
+import ua.tqs.humberpecas.dto.PurchageDTO;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.service.HumberService;
 
 import javax.validation.Valid;
 import java.util.List;
 
+@Log4j2
 @RestController
 @RequestMapping("/shop") // TODO: Ver nome
 public class HumberController {
@@ -19,7 +23,7 @@ public class HumberController {
     private HumberService service;
 
     @GetMapping("/products/{prod_id}")
-    public ResponseEntity<Product> getProductById(@PathVariable int prod_id){
+    public ResponseEntity<Product> getProductById(@PathVariable int prodID) {
 
         return null;
     }
@@ -37,20 +41,33 @@ public class HumberController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<HttpStatus> register(@Valid @RequestBody Person person ){
+    public ResponseEntity<HttpStatus> register(@Valid @RequestBody PersonDTO person ){
 
         service.register(person);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/newOrder")
-    public ResponseEntity<HttpStatus> newOrder(@RequestBody Purchase order){
+    @PostMapping("/purchage")
+    public ResponseEntity<HttpStatus> newOrder(@RequestBody PurchageDTO order){
+        try{
 
-        return null;
+            service.newPurchase(order);
+
+            log.info("Order registed with success !");
+
+            return new ResponseEntity<>(HttpStatus.OK);
+
+
+        } catch (Exception e){
+
+            log.error("Invalid Purchage");
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/purchages")
+    @GetMapping("/purchageList")
     public ResponseEntity<List<Purchase>> getUserPurchages(@RequestParam long userId){
 
         return null;
@@ -92,7 +109,7 @@ public class HumberController {
 
         try{
 
-            PurchageStatus status = service.checkPurchageStatus(orderId);
+            var status = service.checkPurchageStatus(orderId);
             return ResponseEntity.ok(status);
 
         }catch (Exception e){
