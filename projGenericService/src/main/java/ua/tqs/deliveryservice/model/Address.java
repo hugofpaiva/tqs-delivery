@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Data
 @Entity
@@ -35,7 +36,7 @@ public class Address {
     public Address() {}
 
     public Map<String, Object> getMap() {
-        HashMap<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new TreeMap<>();
         map.put("address", address);
         map.put("postalCode", postalCode);
         map.put("city", city);

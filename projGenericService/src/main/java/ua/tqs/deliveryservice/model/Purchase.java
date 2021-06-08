@@ -57,11 +57,11 @@ public class Purchase {
     public Purchase() {}
 
     public Map<String, Object> getMap() {
-        HashMap<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new TreeMap<>();
         map.put("orderId", id);
         map.put("date", date);
         map.put("store", store.getMap());
-        map.put("clientMame", clientName);
+        map.put("clientName", clientName);
         map.put("clientAddress", address.getMap());
         return map;
     }

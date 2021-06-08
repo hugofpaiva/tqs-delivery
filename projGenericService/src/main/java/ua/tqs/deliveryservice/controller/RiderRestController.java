@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 @RestController
 @RequestMapping("/rider")
@@ -112,7 +113,7 @@ public class RiderRestController {
         Person p = personRep.findByEmail(email).orElse(null);
         if (!(p instanceof Rider)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
-        HashMap<String, Object> ret = new HashMap<>();
+        Map<String, Object> ret = new TreeMap<>();
 
         // verify if Rider has any purchase to deliver
         Purchase current = purchaseService.getCurrentRiderOrder((Rider) p);
