@@ -90,10 +90,8 @@ public class RiderRestController {
             return new ResponseEntity<>(ret, HttpStatus.OK);
         }
 
-        purch.setRider(p);
+        purch.setRider((Rider) p);
         purch.setStatus(Status.ACCEPTED);
-
-
 
         ret.put("data", purch.getMap());
         return new ResponseEntity<>(ret, HttpStatus.OK);
