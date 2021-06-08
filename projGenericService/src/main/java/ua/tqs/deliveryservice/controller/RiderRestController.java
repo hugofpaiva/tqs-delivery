@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.tqs.deliveryservice.model.Person;
 import ua.tqs.deliveryservice.model.Purchase;
+import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
 import ua.tqs.deliveryservice.repository.PersonRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
@@ -75,7 +76,7 @@ public class RiderRestController {
 
         // getting Person who is making the request
         Person p = personRep.findByEmail(email).orElse(null);
-        if (p == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (!(p instanceof Rider)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         Purchase purch = purchaseRep.findTopByRiderIsNullOrderByDate();
 
@@ -88,6 +89,11 @@ public class RiderRestController {
             ret.put("data", "No more orders available");
             return new ResponseEntity<>(ret, HttpStatus.OK);
         }
+
+        purch.setRider(p);
+        purch.setStatus(Status.ACCEPTED);
+
+
 
         ret.put("data", purch.getMap());
         return new ResponseEntity<>(ret, HttpStatus.OK);
