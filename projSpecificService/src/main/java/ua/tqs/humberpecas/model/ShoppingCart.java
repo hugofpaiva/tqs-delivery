@@ -12,10 +12,14 @@ public class ShoppingCart {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToOne
+    @OneToOne(mappedBy = "shoppingCart")
     private Person person;
 
     @ManyToMany
-    private List<Product> product;
+    private List<Product> products;
 
+    public ShoppingCart(List<Product> products) {
+        this.products = products;
+    }
+    public ShoppingCart() {}
 }
