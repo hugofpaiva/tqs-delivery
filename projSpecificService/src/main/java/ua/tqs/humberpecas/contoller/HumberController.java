@@ -3,6 +3,7 @@ package ua.tqs.humberpecas.contoller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.dto.PurchageDTO;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.service.HumberService;
-import ua.tqs.humberpecas.exception.ResourceNotFoundException;
+import ua.tqs.humberpecas.execption.ResourceNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -54,9 +55,19 @@ public class HumberController {
     @PostMapping("/register")
     public ResponseEntity<HttpStatus> register(@Valid @RequestBody PersonDTO person ){
 
-        service.register(person);
+        try{
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+            service.register(person);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+
+        }catch (DataIntegrityViolationException e){
+
+            log.error("User already exists!");
+
+        }
+
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+
     }
 
     @PostMapping("/purchage")

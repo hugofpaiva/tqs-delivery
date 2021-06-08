@@ -1,4 +1,4 @@
-package ua.tqs.humberpecas.exception;
+package ua.tqs.humberpecas.execption;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

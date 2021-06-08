@@ -14,11 +14,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.dto.PurchageDTO;
-import ua.tqs.humberpecas.exception.ResourceNotFoundException;
+import ua.tqs.humberpecas.execption.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.service.HumberService;
 import io.restassured.parsing.Parser;
@@ -283,6 +284,26 @@ class HumberControllerTest {
 
         verify(service, times(0)).register(p);
 
+
+    }
+
+
+    @Test
+    void whenUserAlreadyExists_thenReturnStatus409(){
+
+        List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal"));
+
+        PersonDTO p = new PersonDTO("Fernando", "12345678","fernando@ua.pt", addresses);
+        doThrow(new DataIntegrityViolationException("User alerady exists!")).when(service).register(p);
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .body(p)
+                .when()
+                .post("/shop/register")
+                .then()
+                .statusCode(409);
+
+        verify(service, times(1)).register(p);
 
     }
 

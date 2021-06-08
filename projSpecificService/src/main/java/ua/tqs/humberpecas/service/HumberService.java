@@ -2,6 +2,7 @@ package ua.tqs.humberpecas.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.dto.PersonDTO;
@@ -10,7 +11,7 @@ import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.PersonRepository;
 import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
-import ua.tqs.humberpecas.exception.ResourceNotFoundException;
+import ua.tqs.humberpecas.execption.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class HumberService {
     private IDeliveryService service;
 
 
-    public void register(PersonDTO user){
+    public void register(PersonDTO user) throws DataIntegrityViolationException {
 
         // validar os dados (verificar se email ja existe na bd)
 
