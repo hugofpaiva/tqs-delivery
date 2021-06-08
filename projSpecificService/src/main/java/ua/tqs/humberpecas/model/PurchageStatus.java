@@ -1,16 +1,26 @@
 package ua.tqs.humberpecas.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
-import java.util.stream.IntStream;
 
 public enum PurchageStatus {
 
-    PENDENT,
-    ACCEPTED,
-    PICKED_UP,
-    DELIVERED;
+    PENDENT("pendent"),
+    ACCEPTED("accepted"),
+    PICKED_UP("picked_up"),
+    DELIVERED("deliverd");
+
+    private String status;
+
+    private PurchageStatus(String status){
+        this.status = status;
+    }
+
+    @JsonValue
+    public String getStatus(){
+        return status;
+    }
 
 
 }

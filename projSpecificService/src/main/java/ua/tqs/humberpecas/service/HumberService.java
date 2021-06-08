@@ -57,7 +57,7 @@ public class HumberService {
         // enviar review pra o delivery service
     }
 
-    public PurchageStatus checkPurchageStatus(long purchase_id){
+    public PurchageStatus checkPurchageStatus(long purchaseId) throws ResourceNotFoundException{
 
         // verificar se id é valido
             // se correto avnçar

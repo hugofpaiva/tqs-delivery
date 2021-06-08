@@ -1,7 +1,9 @@
 package ua.tqs.humberpecas.contoller;
 
 
+import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import io.restassured.parsing.Parser;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import ua.tqs.humberpecas.dto.PurchageDTO;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.service.HumberService;
+import io.restassured.parsing.Parser;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -27,6 +30,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 
+import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
@@ -145,21 +149,39 @@ class HumberControllerTest {
     }
 
     // TODO: Corrigir enum json serialization
-//    @Test
-//    void whenGetOrderStatus_thenReturnStatus(){
-//
-//        when(service.checkPurchageStatus(anyLong())).thenReturn(PurchageStatus.PENDENT);
-//
-//        RestAssuredMockMvc.given()
-//                .contentType("application/json")
-//                .when()
-//                .get("/shop/order?orderId=0")
-//                .then()
-//                .statusCode(200)
-//                .body("status",Matchers.equalTo(0) );
-//
-//        verify(service, times(1)).checkPurchageStatus(0);
-//    }
+
+    @Test
+    void whenGetOrderStatus_thenReturnStatus() throws ResourceNotFoundException {
+
+        when(service.checkPurchageStatus(anyLong())).thenReturn(PurchageStatus.PENDENT);
+
+        RestAssuredMockMvc
+                .given()
+                .contentType(ContentType.TEXT)
+                .when()
+                .get("/shop/order?orderId=0")
+                .then()
+                .statusCode(200)
+                .body(Matchers.equalTo(PurchageStatus.PENDENT.getStatus()) );
+
+        verify(service, times(1)).checkPurchageStatus(0);
+    }
+
+    @Test
+    void whenGetStatusInvalidOrder_thenReturnStatus400() throws ResourceNotFoundException {
+
+        when(service.checkPurchageStatus(anyLong())).thenThrow(new ResourceNotFoundException("Invalid Order !"));
+
+        RestAssuredMockMvc
+                .given()
+                .contentType(ContentType.TEXT)
+                .when()
+                .get("/shop/order?orderId=0")
+                .then()
+                .statusCode(400);
+
+        verify(service, times(1)).checkPurchageStatus(0);
+    }
 
 
     @Test
@@ -184,20 +206,6 @@ class HumberControllerTest {
 
     }
 
-    @Test
-    void whenInvalidOrder_thenReturnStatus400(){
-
-        doThrow(IllegalArgumentException.class).when(service).checkPurchageStatus(anyLong());
-
-        RestAssuredMockMvc.given()
-                .contentType("application/json")
-                .when()
-                .get("/shop/order?orderId=0")
-                .then()
-                .statusCode(400);
-
-        verify(service, times(1)).checkPurchageStatus(0);
-    }
 
     @Test
     void whenInvalidReviewOrder_thenReturnStatus400(){

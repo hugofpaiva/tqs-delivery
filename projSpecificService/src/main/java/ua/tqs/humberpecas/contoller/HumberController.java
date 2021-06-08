@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.dto.PurchageDTO;
 import ua.tqs.humberpecas.model.*;
@@ -24,10 +25,9 @@ public class HumberController {
 
     @GetMapping("/products/{prodId}")
     public ResponseEntity<Product> getProductById(@PathVariable long prodId) {
-
         try{
 
-            Product p = service.getProductById(prodId);
+            var p = service.getProductById(prodId);
 
             return ResponseEntity.ok().body(p);
 
@@ -36,7 +36,6 @@ public class HumberController {
             log.error("Product with id" + prodId + " not found");
 
         }
-
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -89,7 +88,7 @@ public class HumberController {
 
     // TODO: Assumir que o id é o mesmo (mantem-se) e apenas se alteram os dados
     @PutMapping("/updateAddress")
-    public ResponseEntity<HttpStatus> updateUserAddress(@RequestParam long userId, @Valid @RequestBody Address address){
+    public ResponseEntity<HttpStatus> updateUserAddress(@RequestParam long userId, @Valid @RequestBody AddressDTO address){
 
         return null;
     }
@@ -107,7 +106,7 @@ public class HumberController {
     }
 
     @PostMapping("/addAddress")
-    public ResponseEntity<HttpStatus> addNewAddress(@RequestParam long userId, @Valid @RequestBody Address address){
+    public ResponseEntity<HttpStatus> addNewAddress(@RequestParam long userId, @Valid @RequestBody AddressDTO address){
 
         return null;
     }
@@ -117,14 +116,14 @@ public class HumberController {
     // e a order passaria tambem a ter um status ou só fazer um pedido ao delivery service)
 
     @GetMapping("/order")
-    public ResponseEntity<PurchageStatus> getOrderStatus(@RequestParam long orderId){
+    public ResponseEntity<String> getOrderStatus(@RequestParam long orderId){
 
         try{
 
             var status = service.checkPurchageStatus(orderId);
-            return ResponseEntity.ok(status);
+            return ResponseEntity.ok(status.getStatus());
 
-        }catch (Exception e){
+        }catch (ResourceNotFoundException e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
