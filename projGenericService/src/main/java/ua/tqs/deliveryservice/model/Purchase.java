@@ -35,6 +35,13 @@ public class Purchase {
     @Max(value = 5, message = "Review should not be above the value of 5.")
     private int riderReview;
 
+    public Purchase(Address address, Store store, String clientName) {
+        this.address = address;
+        this.store = store;
+        this.status = Status.PENDENT;
+        this.clientName = clientName;
+    }
+
     public Purchase(Address address, Rider rider, Store store, String clientName) {
         this.address = address;
         this.rider = rider;
