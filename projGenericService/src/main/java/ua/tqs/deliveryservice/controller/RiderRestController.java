@@ -8,10 +8,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.Purchase;
+import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
+import ua.tqs.deliveryservice.repository.PersonRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
+import ua.tqs.deliveryservice.services.JwtUserDetailsService;
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.*;
 
@@ -20,7 +26,10 @@ import java.util.*;
 public class RiderRestController {
 
     @Autowired
-    private RiderRepository riderRep;
+    private JwtUserDetailsService jwtUserDetailsService;
+
+    @Autowired
+    private RiderRepository riderRepository;
 
     @Autowired
     private PurchaseRepository purchaseRepository;
@@ -54,21 +63,33 @@ public class RiderRestController {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<List<Purchase>> getRiderOrders(@RequestParam(defaultValue = "0") int pageNo,
-                                                              @RequestParam(defaultValue = "10") int pageSize){
+    public ResponseEntity<Map<String, Object>> getRiderOrders(HttpServletRequest request,
+                                                         @RequestParam(defaultValue = "0") int pageNo,
+                                                              @RequestParam(defaultValue = "10") int pageSize) throws InvalidLoginException {
             if (pageNo < 0 || pageSize <= 0){
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
+
+            String requestTokenHeader = request.getHeader("Authorization");
+            String email = jwtUserDetailsService.getEmailFromToken(requestTokenHeader);
+
+            Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
 
             Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("date").descending());
 
             Page<Purchase> pagedResult = purchaseRepository.findAll(paging);
 
-            List<Purchase> response = new ArrayList<>();
+            List<Purchase> responseList = new ArrayList<>();
 
             if(pagedResult.hasContent()) {
-                response = pagedResult.getContent();
+                responseList = pagedResult.getContent();
             }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("orders", responseList);
+            response.put("currentPage", pagedResult.getNumber());
+            response.put("totalItems", pagedResult.getTotalElements());
+            response.put("totalPages", pagedResult.getTotalPages());
 
             return new ResponseEntity<>(response, HttpStatus.OK);
     }

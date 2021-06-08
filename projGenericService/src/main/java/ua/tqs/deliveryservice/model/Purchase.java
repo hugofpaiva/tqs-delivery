@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
@@ -24,6 +25,7 @@ public class Purchase {
     private Status status;
 
     @ManyToOne
+    @JsonIgnore
     private Rider rider;
 
     @ManyToOne
@@ -33,7 +35,7 @@ public class Purchase {
 
     @Min(value = 0, message = "Review should not be under the value of 0.")
     @Max(value = 5, message = "Review should not be above the value of 5.")
-    private int riderReview;
+    private Integer riderReview;
 
     public Purchase(Address address, Store store, String clientName) {
         this.address = address;

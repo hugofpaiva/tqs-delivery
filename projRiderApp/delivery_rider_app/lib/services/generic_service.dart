@@ -35,4 +35,26 @@ class GenericService {
     token = '';
     name = '';
   }
+
+  static Future<void> getLastOrders(String email, String password) async {
+    var response = await http.post(Uri.parse(BASE_URL + "/login"),  headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"username": email, "password": password}));
+
+    if (response.statusCode == 200) {
+      error = false;
+      loggedIn = true;
+      var data = json.decode(response.body);
+
+      if (data['type']['authority'] != 'Rider'){
+        error = true;
+        loggedIn = false;
+        return;
+      }
+
+      token = data['token'];
+      name = data['name'];
+    } else{
+      error = true;
+    }
+  }
 }
