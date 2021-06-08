@@ -39,6 +39,9 @@ public class DeliveryServiceApplication implements CommandLineRunner {
 		Rider rider1 = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
 		riderRep.saveAndFlush(rider1);
 
+		Rider new_rider = new Rider("Antonio", bcryptEncoder.encode("difficult-pass"), "antonio@email.com");
+		riderRep.saveAndFlush(new_rider);
+
 		Manager manager1 = new Manager();
 		manager1.setEmail("joao1@email.com");
 		manager1.setPwd(bcryptEncoder.encode("difficult-pass"));

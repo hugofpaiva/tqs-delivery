@@ -78,6 +78,15 @@ public class RiderRestController {
         Person p = personRep.findByEmail(email).orElse(null);
         if (!(p instanceof Rider)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
+        // verify if Rider has any purchase to deliver
+        Purchase unfinished = purchaseRep.findTopByRiderAndStatusIsNot((Rider) p, Status.DELIVERED);
+        if (unfinished != null) {
+            HashMap<String, Object> ret = new HashMap<>();
+            ret.put("data", "this rider still has an order to deliver");
+            return new ResponseEntity<>(ret, HttpStatus.FORBIDDEN);
+        }
+
+
         Purchase purch = purchaseRep.findTopByRiderIsNullOrderByDate();
 
         // exemplo:
@@ -92,6 +101,8 @@ public class RiderRestController {
 
         purch.setRider((Rider) p);
         purch.setStatus(Status.ACCEPTED);
+
+        purchaseRep.save(purch);
 
         ret.put("data", purch.getMap());
         return new ResponseEntity<>(ret, HttpStatus.OK);
