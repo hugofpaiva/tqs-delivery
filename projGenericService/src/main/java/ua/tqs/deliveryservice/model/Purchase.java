@@ -6,6 +6,9 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Data
 @Entity
@@ -43,5 +46,22 @@ public class Purchase {
         this.clientName = clientName;
     }
 
+    public Purchase(Address address, Store store, String clientName) {
+        this.address = address;
+        this.store = store;
+        this.status = Status.PENDENT;
+        this.clientName = clientName;
+    }
+
     public Purchase() {}
+
+    public Map<String, Object> getMap() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("orderId", id);
+        map.put("date", date);
+        map.put("store", store.getMap());
+        map.put("clientMame", clientName);
+        map.put("clientAddress", address.getMap());
+        return map;
+    }
 }

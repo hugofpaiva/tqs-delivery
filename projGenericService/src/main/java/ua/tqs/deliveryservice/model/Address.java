@@ -3,6 +3,8 @@ package ua.tqs.deliveryservice.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Entity
@@ -31,5 +33,14 @@ public class Address {
     }
 
     public Address() {}
+
+    public Map<String, Object> getMap() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("address", address);
+        map.put("postalCode", postalCode);
+        map.put("city", city);
+        map.put("country", country);
+        return map;
+    }
 
 }

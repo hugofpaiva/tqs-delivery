@@ -6,4 +6,5 @@ import ua.tqs.deliveryservice.model.Purchase;
 
 @Repository
 public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
+    Purchase findTopByRiderIsNullOrderByDate();
 }

@@ -67,4 +67,30 @@ public class RiderRestController {
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
+
+    @GetMapping("order")
+    public ResponseEntity<Map<String, Object>> getOrder(HttpServletRequest request) {
+        String requestTokenHeader = request.getHeader("Authorization");
+        String email = jwtUserDetailsService.getEmailFromToken(requestTokenHeader);
+
+        // getting Person who is making the request
+        Person p = personRep.findByEmail(email).orElse(null);
+        if (p == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Purchase purch = purchaseRep.findTopByRiderIsNullOrderByDate();
+
+        // exemplo:
+        // data: {date=2021-06-08 00:56:33.252, orderId=9, clientMame=client22, store={address={country=Portugal, address=Rua Loja Loja, n. 23, city=Porto, postalCode=3212-333}, name=Loja do Manel, id=8}, clientAddress={country=Portugal, address=Rua ABC, n. 99, city=Aveiro, postalCode=4444-555}}
+
+        HashMap<String, Object> ret = new HashMap<>();
+
+        if (purch == null) {
+            ret.put("data", "No more orders available");
+            return new ResponseEntity<>(ret, HttpStatus.OK);
+        }
+
+        ret.put("data", purch.getMap());
+        return new ResponseEntity<>(ret, HttpStatus.OK);
+    }
+
 }

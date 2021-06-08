@@ -2,6 +2,8 @@ package ua.tqs.deliveryservice.model;
 
 import lombok.Data;
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @Entity
@@ -27,4 +29,12 @@ public class Store {
     }
 
     public Store() {}
+
+    public Map<String, Object> getMap() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("name", name);
+        map.put("address", address.getMap());
+        return map;
+    }
 }
