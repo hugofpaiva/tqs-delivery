@@ -6,15 +6,18 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.parsing.Parser;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.NestedTestConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PersonDTO;
@@ -22,7 +25,6 @@ import ua.tqs.humberpecas.dto.PurchageDTO;
 import ua.tqs.humberpecas.execption.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.service.HumberService;
-import io.restassured.parsing.Parser;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,7 +33,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
@@ -48,7 +49,6 @@ class HumberControllerTest {
 
     private List<Product> catalog;
 
-
     @BeforeEach
     void setUp() throws IOException {
         RestAssuredMockMvc.mockMvc(mvc);
@@ -60,7 +60,11 @@ class HumberControllerTest {
 
     }
 
+
+
+
     @Test
+    @DisplayName("Get list of All Products")
     void whenGetAllProducts_thenReturnAllProducts(){
 
 
@@ -81,6 +85,7 @@ class HumberControllerTest {
     }
 
     @Test
+    @DisplayName("Get Specific Product (details)")
     void whenGetValidProduct_thenReturnProduct() throws ResourceNotFoundException {
 
         when(service.getProductById(anyLong())).thenReturn(catalog.get(0));
@@ -99,6 +104,7 @@ class HumberControllerTest {
 
 
     @Test
+    @DisplayName("Get an Inexistent Product return HTTP status Not Found")
     void whenGetInvalidProduct_thenReturnStatus404() throws ResourceNotFoundException {
 
         when(service.getProductById(anyLong())).thenThrow(new ResourceNotFoundException("Product not found"));
@@ -117,6 +123,7 @@ class HumberControllerTest {
 
     @ParameterizedTest
     @ValueSource(ints = {-1, 6} )
+    @DisplayName("Insert a invalid Rating (number of stars) return HTTP status Bad Request")
     void whenInvalidNStars_thenReturnStatus400(int number){
 
         Review r = new Review(1, number);
@@ -134,6 +141,7 @@ class HumberControllerTest {
 
 
     @Test
+    @DisplayName("Insert a valid Rating (number of stars) return HTTP status OK")
     void whenValidReview_thenReturnOk(){
         Review review  = new Review(3, 5);
 
@@ -152,6 +160,7 @@ class HumberControllerTest {
     // TODO: Corrigir enum json serialization
 
     @Test
+    @DisplayName("Get Order Status")
     void whenGetOrderStatus_thenReturnStatus() throws ResourceNotFoundException {
 
         when(service.checkPurchageStatus(anyLong())).thenReturn(PurchageStatus.PENDENT);
@@ -169,6 +178,7 @@ class HumberControllerTest {
     }
 
     @Test
+    @DisplayName("Get Status of an invalid Order return HTTP status BAD Request ")
     void whenGetStatusInvalidOrder_thenReturnStatus400() throws ResourceNotFoundException {
 
         when(service.checkPurchageStatus(anyLong())).thenThrow(new ResourceNotFoundException("Invalid Order !"));
@@ -186,6 +196,7 @@ class HumberControllerTest {
 
 
     @Test
+    @DisplayName("Make Purchage")
     void whenValidPurchage_thenReturnOk(){
 
 
@@ -207,8 +218,9 @@ class HumberControllerTest {
 
     }
 
-
+    // TODO: alterar para rating de uma order invalida
     @Test
+    @DisplayName("Review a invalid Order returs HTTP status Not Found")
     void whenInvalidReviewOrder_thenReturnStatus400(){
         Review review  = new Review(-1, 5);
 
@@ -229,6 +241,7 @@ class HumberControllerTest {
 
 
     @Test
+    @DisplayName("Get Product by Category")
     void whenGetProductsByCategory_thenReturnProducts(){
 
         when(service.getProductsByCategory(Category.CHAVES)).thenReturn(catalog.subList(1,2));
@@ -247,6 +260,7 @@ class HumberControllerTest {
     }
 
     @Test
+    @DisplayName("User registration")
     void whenValidRegister_thenReturnCrated(){
 
         List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal"));
@@ -268,6 +282,7 @@ class HumberControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidAccounts")
+    @DisplayName("When User inserts invalids accounts's parameter returns HTTP status Bad Request")
     void whenInvalidRegister_thenReturnStatus400(String name, String pwd,String email){
 
         List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal"));
@@ -289,6 +304,7 @@ class HumberControllerTest {
 
 
     @Test
+    @DisplayName("When account already exists returns HTTP status Conflict")
     void whenUserAlreadyExists_thenReturnStatus409(){
 
         List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal"));
