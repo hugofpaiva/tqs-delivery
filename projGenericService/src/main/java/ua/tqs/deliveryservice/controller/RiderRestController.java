@@ -13,6 +13,7 @@ import ua.tqs.deliveryservice.repository.PersonRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 import ua.tqs.deliveryservice.services.JwtUserDetailsService;
+import ua.tqs.deliveryservice.services.PurchaseService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -34,6 +35,9 @@ public class RiderRestController {
 
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
+
+    @Autowired
+    private PurchaseService purchaseService;
 
     @PutMapping("order/{order_id}/status")
     public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(HttpServletRequest request, @PathVariable long order_id) {
@@ -81,28 +85,19 @@ public class RiderRestController {
         HashMap<String, Object> ret = new HashMap<>();
 
         // verify if Rider has any purchase to deliver
-        Purchase unfinished = purchaseRep.findTopByRiderAndStatusIsNot((Rider) p, Status.DELIVERED);
-        if (unfinished != null) {
+        if (purchaseService.riderHashOrder((Rider) p)) {
             ret.put("data", "this rider still has an order to deliver");
             return new ResponseEntity<>(ret, HttpStatus.FORBIDDEN);
         }
 
-
-        Purchase purch = purchaseRep.findTopByRiderIsNullOrderByDate();
-
-        // exemplo:
-        // data: {date=2021-06-08 00:56:33.252, orderId=9, clientMame=client22, store={address={country=Portugal, address=Rua Loja Loja, n. 23, city=Porto, postalCode=3212-333}, name=Loja do Manel, id=8}, clientAddress={country=Portugal, address=Rua ABC, n. 99, city=Aveiro, postalCode=4444-555}}
-
+        Purchase purch = purchaseService.getAvailableOrderForRider();
 
         if (purch == null) {
             ret.put("data", "No more orders available");
             return new ResponseEntity<>(ret, HttpStatus.OK);
         }
 
-        purch.setRider((Rider) p);
-        purch.setStatus(Status.ACCEPTED);
-
-        purchaseRep.save(purch);
+        purchaseService.acceptOrder((Rider) p, purch);
 
         ret.put("data", purch.getMap());
         return new ResponseEntity<>(ret, HttpStatus.OK);
