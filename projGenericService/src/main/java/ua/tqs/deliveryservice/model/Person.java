@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ public class Person {
 
     private String name;
 
+    @JsonIgnore
     private String pwd;
 
     @Column(unique=true)

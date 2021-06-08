@@ -9,14 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
-import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
-import ua.tqs.deliveryservice.repository.PersonRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 import ua.tqs.deliveryservice.services.JwtUserDetailsService;
+import ua.tqs.deliveryservice.services.PurchaseService;
+
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.*;
@@ -30,6 +30,9 @@ public class RiderRestController {
 
     @Autowired
     private RiderRepository riderRepository;
+
+    @Autowired
+    private PurchaseService purchaseService;
 
     @Autowired
     private PurchaseRepository purchaseRepository;
@@ -71,25 +74,8 @@ public class RiderRestController {
             }
 
             String requestTokenHeader = request.getHeader("Authorization");
-            String email = jwtUserDetailsService.getEmailFromToken(requestTokenHeader);
 
-            Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
-
-            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("date").descending());
-
-            Page<Purchase> pagedResult = purchaseRepository.findAll(paging);
-
-            List<Purchase> responseList = new ArrayList<>();
-
-            if(pagedResult.hasContent()) {
-                responseList = pagedResult.getContent();
-            }
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("orders", responseList);
-            response.put("currentPage", pagedResult.getNumber());
-            response.put("totalItems", pagedResult.getTotalElements());
-            response.put("totalPages", pagedResult.getTotalPages());
+            Map<String, Object> response = purchaseService.getLastOrderForRider(pageNo, pageSize, requestTokenHeader);
 
             return new ResponseEntity<>(response, HttpStatus.OK);
     }
