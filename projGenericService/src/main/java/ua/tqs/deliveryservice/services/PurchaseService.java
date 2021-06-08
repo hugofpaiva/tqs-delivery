@@ -23,15 +23,16 @@ public class PurchaseService {
         return purch; // null if none
     }
 
-    public void acceptOrder(Rider r, Purchase p) {
+    public Purchase acceptOrder(Rider r, Purchase p) {
         p.setRider(r);
         p.setStatus(Status.ACCEPTED);
-        purchaseRep.save(p);
+        return purchaseRep.save(p);
     }
 
-    public boolean riderHashOrder(Rider r) {
+    public Purchase getCurrentRiderOrder(Rider r) {
         // verify if Rider has any purchase to deliver
         Purchase unfinished = purchaseRep.findTopByRiderAndStatusIsNot(r, Status.DELIVERED);
-        return (unfinished != null);
+        return unfinished; // null if there's none
     }
+
 }

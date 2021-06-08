@@ -73,8 +73,8 @@ public class RiderRestController {
     }
 
 
-    @GetMapping("order")
-    public ResponseEntity<Map<String, Object>> getOrder(HttpServletRequest request) {
+    @GetMapping("order/new")
+    public ResponseEntity<Map<String, Object>> getNewOrder(HttpServletRequest request) {
         String requestTokenHeader = request.getHeader("Authorization");
         String email = jwtUserDetailsService.getEmailFromToken(requestTokenHeader);
 
@@ -85,7 +85,7 @@ public class RiderRestController {
         HashMap<String, Object> ret = new HashMap<>();
 
         // verify if Rider has any purchase to deliver
-        if (purchaseService.riderHashOrder((Rider) p)) {
+        if (null != purchaseService.getCurrentRiderOrder((Rider) p)) {
             ret.put("data", "this rider still has an order to deliver");
             return new ResponseEntity<>(ret, HttpStatus.FORBIDDEN);
         }
@@ -100,6 +100,28 @@ public class RiderRestController {
         purchaseService.acceptOrder((Rider) p, purch);
 
         ret.put("data", purch.getMap());
+        return new ResponseEntity<>(ret, HttpStatus.OK);
+    }
+
+    @GetMapping("order/current")
+    public ResponseEntity<Map<String, Object>> getCurrentOrder(HttpServletRequest request) {
+        String requestTokenHeader = request.getHeader("Authorization");
+        String email = jwtUserDetailsService.getEmailFromToken(requestTokenHeader);
+
+        // getting Person who is making the request
+        Person p = personRep.findByEmail(email).orElse(null);
+        if (!(p instanceof Rider)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        HashMap<String, Object> ret = new HashMap<>();
+
+        // verify if Rider has any purchase to deliver
+        Purchase current = purchaseService.getCurrentRiderOrder((Rider) p);
+        if (null == current) {
+            ret.put("data", "This rider hasn't accepted an order yet");
+            return new ResponseEntity<>(ret, HttpStatus.OK);
+        }
+
+        ret.put("data", current.getMap());
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
