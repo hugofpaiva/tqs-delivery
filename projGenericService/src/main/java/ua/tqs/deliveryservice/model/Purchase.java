@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 public class Purchase {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
     @CreationTimestamp

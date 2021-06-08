@@ -1,7 +1,10 @@
 package ua.tqs.deliveryservice.controller;
 
-import com.fasterxml.jackson.databind.ext.CoreXMLDeserializers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +13,7 @@ import ua.tqs.deliveryservice.model.Status;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/rider")
@@ -20,6 +21,9 @@ public class RiderRestController {
 
     @Autowired
     private RiderRepository riderRep;
+
+    @Autowired
+    private PurchaseRepository purchaseRepository;
 
     @Autowired
     private PurchaseRepository purchaseRep;
@@ -47,6 +51,26 @@ public class RiderRestController {
         ret.put("order_id", order_id);
         ret.put("status", next);
         return new ResponseEntity<>(ret, HttpStatus.OK);
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<List<Purchase>> getRiderOrders(@RequestParam(defaultValue = "0") int pageNo,
+                                                              @RequestParam(defaultValue = "10") int pageSize){
+            if (pageNo < 0 || pageSize <= 0){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("date").descending());
+
+            Page<Purchase> pagedResult = purchaseRepository.findAll(paging);
+
+            List<Purchase> response = new ArrayList<>();
+
+            if(pagedResult.hasContent()) {
+                response = pagedResult.getContent();
+            }
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
