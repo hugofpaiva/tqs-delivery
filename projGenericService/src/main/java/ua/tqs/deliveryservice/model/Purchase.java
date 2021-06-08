@@ -2,8 +2,6 @@ package ua.tqs.deliveryservice.model;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Fetch;
-import org.springframework.data.repository.cdi.Eager;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -40,7 +38,14 @@ public class Purchase {
 
     public Purchase(Address address, Rider rider, Store store, String clientName) {
         this.address = address;
+        this.store = store;
         this.rider = rider;
+        this.status = Status.PENDENT;
+        this.clientName = clientName;
+    }
+
+    public Purchase(Address address, Store store, String clientName) {
+        this.address = address;
         this.store = store;
         this.status = Status.PENDENT;
         this.clientName = clientName;
