@@ -10,6 +10,7 @@ import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.PersonRepository;
 import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
+import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -80,7 +81,7 @@ public class HumberService {
     }
 
 
-    public Product findProductByName(String name){
+    public Product getProductById(long productId) throws ResourceNotFoundException {
         return null;
     }
 

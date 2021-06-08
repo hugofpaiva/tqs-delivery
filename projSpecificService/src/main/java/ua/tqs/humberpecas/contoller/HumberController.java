@@ -10,7 +10,7 @@ import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.dto.PurchageDTO;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.service.HumberService;
-
+import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -22,10 +22,22 @@ public class HumberController {
     @Autowired
     private HumberService service;
 
-    @GetMapping("/products/{prod_id}")
-    public ResponseEntity<Product> getProductById(@PathVariable int prodID) {
+    @GetMapping("/products/{prodId}")
+    public ResponseEntity<Product> getProductById(@PathVariable long prodId) {
 
-        return null;
+        try{
+
+            Product p = service.getProductById(prodId);
+
+            return ResponseEntity.ok().body(p);
+
+        }catch (ResourceNotFoundException e){
+
+            log.error("Product with id" + prodId + " not found");
+
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 

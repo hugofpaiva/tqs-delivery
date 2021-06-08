@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.dto.PurchageDTO;
+import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.service.HumberService;
 
@@ -73,6 +74,41 @@ class HumberControllerTest {
         verify(service, times(1)).getCatolog();
 
     }
+
+    @Test
+    void whenGetValidProduct_thenReturnProduct() throws ResourceNotFoundException {
+
+        when(service.getProductById(anyLong())).thenReturn(catalog.get(0));
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .get("/shop/products/1")
+                .then()
+                .statusCode(200)
+                .body("name", Matchers.equalTo("Parafuso"));
+
+        verify(service, times(1)).getProductById(1);
+
+    }
+
+
+    @Test
+    void whenGetInvalidProduct_thenReturnStatus404() throws ResourceNotFoundException {
+
+        when(service.getProductById(anyLong())).thenThrow(new ResourceNotFoundException("Product not found"));
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .when()
+                .get("/shop/products/1")
+                .then()
+                .statusCode(404);
+
+        verify(service, times(1)).getProductById(1);
+
+    }
+
 
     @ParameterizedTest
     @ValueSource(ints = {-1, 6} )
