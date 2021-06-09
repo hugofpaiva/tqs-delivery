@@ -39,7 +39,7 @@ class PurchaseServiceTest {
     private PurchaseService purchaseService;
 
     @Test
-    public void testWhenGetWithInvalidUser_thenThrow() {
+    public void testGetLastOrderForRiderWhenGetWithInvalidUser_thenThrow() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
 
@@ -54,7 +54,7 @@ class PurchaseServiceTest {
     }
 
     @Test
-    public void testWhenGetInvalidPageNo_thenThrow() {
+    public void testGetLastOrderForRiderWhenGetInvalidPageNo_thenThrow() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.rider));
 
@@ -71,7 +71,7 @@ class PurchaseServiceTest {
     }
 
     @Test
-    public void testWhenGetInvalidPageSize_thenThrow() {
+    public void testGetLastOrderForRiderWhenGetInvalidPageSize_thenThrow() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.rider));
 
@@ -88,7 +88,7 @@ class PurchaseServiceTest {
     }
 
     @Test
-    public void testGivenNoPurchases_whenGetPurchases_thenReturn0Records() throws InvalidLoginException {
+    public void testGetLastOrderForRiderGivenNoPurchases_whenGetPurchases_thenReturn0Records() throws InvalidLoginException {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.rider));
 
@@ -110,7 +110,7 @@ class PurchaseServiceTest {
     }
 
     @Test
-    public void testGiven3Requests_whenGetRequests_thenReturn3Records() throws InvalidLoginException {
+    public void testGetLastOrderForRiderGiven3Requests_whenGetRequests_thenReturn3Records() throws InvalidLoginException {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.rider));
 
