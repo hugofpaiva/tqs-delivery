@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.*;
+import ua.tqs.deliveryservice.services.PurchaseService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +51,9 @@ class PurchaseRestControllerIT {
 
     @Autowired
     private AddressRepository addressRepository;
+
+    @Autowired
+    private PurchaseService purchaseService;
 
     @LocalServerPort
     int randomServerPort;
@@ -106,6 +110,37 @@ class PurchaseRestControllerIT {
     // --               review tests               --
     // ----------------------------------------------
     @Test
+    public void testReviewWhenNullOrderId_thenBadRequest() {
+        Map<String, Long> data = new HashMap<>();
+        data.put("review", 3L);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        headers.set("Authorization", "Bearer " + this.store.getToken());
+        HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
+
+        ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + null + "/review", HttpMethod.PATCH, entity, Object.class);
+        System.out.println(response.getStatusCode());
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testReviewWhenNullReview_thenBadRequest() {
+        Map<String, Long> data = new HashMap<>();
+        data.put("review", null);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        headers.set("Authorization", "Bearer " + this.store.getToken());
+        HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
+
+        ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PATCH, entity, Object.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
     public void testReviewWhenInvalidMin_thenBadRequest() {
         Map<String, Long> data = new HashMap<>();
         data.put("review", -1L);
@@ -116,7 +151,7 @@ class PurchaseRestControllerIT {
         headers.set("Authorization", "Bearer " + this.store.getToken());
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
-        ResponseEntity<String> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PATCH, entity, String.class);
+        ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PATCH, entity, Object.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
@@ -130,54 +165,7 @@ class PurchaseRestControllerIT {
         headers.set("Authorization", "Bearer " + this.store.getToken());
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
-        ResponseEntity<String> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PATCH, entity, String.class);
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
-    }
-
-
-    @Test
-    public void testReviewWhenInvalidOrderId_thenNotFound() {
-        Map<String, Long> data = new HashMap<>();
-        data.put("review", 3L);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + this.store.getToken());
-        HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
-
-        ResponseEntity<String> response = testRestTemplate.exchange(getBaseUrl() + "/order/5/review", HttpMethod.PATCH, entity, String.class);
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
-    }
-
-    @Test
-    public void testReviewWhenNoReviewSent_thenNotFound() {
-        Map<String, Long> data = new HashMap<>();
-        data.put("review", null);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + this.store.getToken());
-        HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
-
-        ResponseEntity<String> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PATCH, entity, String.class);
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
-    }
-
-    @Test
-    public void testReviewWhenReviewAlreadyExisted_thenNotFound() {
-        this.purchase.setRiderReview(3);
-
-        purchaseRepository.saveAndFlush(this.purchase);
-
-        Map<String, Long> data = new HashMap<>();
-        data.put("review", 3L);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + this.store.getToken());
-        HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
-
-        ResponseEntity<String> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PATCH, entity, String.class);
+        ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PATCH, entity, Object.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
@@ -191,56 +179,29 @@ class PurchaseRestControllerIT {
         headers.set("Authorization", "Beareaaar " + this.store.getToken());
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
-        ResponseEntity<String> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PATCH, entity, String.class);
+        ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PATCH, entity, Object.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
     }
 
     @Test
-    public void testValidTokenButWrongStoreAndPurchase_thenCodeBadRequest() {
-        Address new_address = new Address("Uma Rua Nova, n77", "5656-221", "Aveiro", "Portugal");
-        addressRepository.saveAndFlush(new_address);
-
-        Store new_store = new Store("OutraLoja", "Descricao", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjIzMTczNjU3MzUsImlhdCI6MTYyMzE0MTczNX0._gvC50t5mx5rwoCrXCWhFRiM_RZzCrsRNeLXRVi1IUurV6mruKtehBGIYFYTrQ5dkKIqcGk5yLFTxYQwG8q8dA", new_address);
-        Purchase new_purchase = new Purchase(new_address, this.rider, new_store, "Outro");
-        storeRepository.saveAndFlush(new_store);
-        purchaseRepository.saveAndFlush(new_purchase);
-
-        Map<String, Long> data = new HashMap<>();
-        data.put("review", 4L);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + new_store.getToken());
-        HttpEntity<Map<String, Long> > entity = new HttpEntity<>(data, headers);
-
-        ResponseEntity<String> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PATCH, entity, String.class);
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
-
-
-        purchaseRepository.deleteById(new_purchase.getId());
-        purchaseRepository.flush();
-
-        storeRepository.deleteById(new_store.getId());
-        storeRepository.flush();
-
-        addressRepository.deleteById(new_address.getId());
-        addressRepository.flush();
-    }
-
-    @Test
     public void testValidOrderIdValidReviewValue_thenCodeOK() {
+        Long review = 3L;
+        Purchase expectedPurchase = new Purchase();
+
         Map<String, Long> data = new HashMap<>();
-        data.put("review", 3L);
+        data.put("review", review);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + this.store.getToken());
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
-        ResponseEntity<String> response = testRestTemplate.exchange( getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PATCH, entity, String.class);
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange( getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PATCH, entity, HttpStatus.class);
+
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        // como isto é um patch, não tem de se enviar o objeto de volta.
+        // src: https://stackoverflow.com/questions/37718119/should-the-patch-method-return-all-fields-of-the-resource-in-the-response-body/37718786
     }
 
     public String getBaseUrl() { return "http://localhost:" + randomServerPort + "/store"; }
-
 }
