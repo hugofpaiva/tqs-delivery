@@ -10,9 +10,6 @@ import ua.tqs.deliveryservice.model.Store;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
 
-import java.util.Optional;
-
-
 @Service
 public class PurchaseService {
     @Autowired
@@ -23,6 +20,7 @@ public class PurchaseService {
 
     public Purchase reviewRiderFromSpecificOrder(String storeToken, Long order_id, int review)
             throws InvalidLoginException, ResourceNotFoundException, InvalidValueException {
+
         // The store token that was passed did not match any in the db.
         if (storeRepository.findByToken(storeToken).isEmpty()) throw new InvalidLoginException("Unauthorized store.");
         Store store = storeRepository.findByToken(storeToken).get();
