@@ -89,10 +89,26 @@ public class HumberController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+
+
+
+
+
     @GetMapping("/purchageList")
     public ResponseEntity<List<Purchase>> getUserPurchages(@RequestParam long userId){
 
-        return null;
+        try{
+
+            List<Purchase> purchaseList = service.getUserPurchases(userId);
+
+            return ResponseEntity.ok().body(purchaseList);
+
+        }catch( ResourceNotFoundException e){
+
+            log.error("Invalid UserId");
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
