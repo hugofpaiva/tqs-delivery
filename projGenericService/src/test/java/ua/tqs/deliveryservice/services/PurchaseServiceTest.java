@@ -9,9 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
@@ -31,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
+
 class PurchaseServiceTest {
     @Mock
     private PurchaseRepository purchaseRepository;
@@ -41,22 +39,6 @@ class PurchaseServiceTest {
     @InjectMocks
     private PurchaseService purchaseService;
 
-
-    private String rider_name;
-    private String rider_pwd;
-    private String rider_email;
-
-    private String address_address;
-    private String address_postalCode;
-    private String address_city;
-    private String address_country;
-
-    private String store_name;
-    private String store_descricao;
-    private String store_token;
-
-    private String purchase_clientName;
-
     private Rider rider;
     private Address address;
     private Store store;
@@ -64,35 +46,42 @@ class PurchaseServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.rider_name = RandomStringUtils.randomAlphabetic(7);
-        this.rider_pwd = RandomStringUtils.randomAlphabetic(10);
-        this.rider_email = RandomStringUtils.randomAlphabetic(20);
+        this.rider = new Rider(
+                RandomStringUtils.randomAlphabetic(7),
+                RandomStringUtils.randomAlphabetic(10),
+                RandomStringUtils.randomAlphabetic(20))
+        ;
 
-        this.address_address = RandomStringUtils.randomAlphabetic(17);
-        this.address_postalCode = RandomStringUtils.randomAlphabetic(8);
-        this.address_city = RandomStringUtils.randomAlphabetic(10);
-        this.address_country = RandomStringUtils.randomAlphabetic(10);
+        this.address = new Address(
+                RandomStringUtils.randomAlphabetic(17),
+                RandomStringUtils.randomAlphabetic(8),
+                RandomStringUtils.randomAlphabetic(10),
+                RandomStringUtils.randomAlphabetic(10)
+        );
 
-        this.store_name = RandomStringUtils.randomAlphabetic(6);
-        this.store_descricao = RandomStringUtils.randomAlphabetic(10);
-        this.store_token = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
+        this.store = new Store(
+                RandomStringUtils.randomAlphabetic(6),
+                RandomStringUtils.randomAlphabetic(10),
+                "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw",
+                this.address
+        );
 
-        this.purchase_clientName = RandomStringUtils.randomAlphabetic(10);
-
-        this.rider = new Rider(rider_name, rider_pwd, rider_email);
-        this.address = new Address(address_address, address_postalCode, address_city, address_country);
-        this.store = new Store(store_name, store_descricao, store_token, this.address);
-        this.purchase = new Purchase(this.address, this.rider, this.store, purchase_clientName);
+        this.purchase = new Purchase(
+                this.address,
+                this.rider,
+                this.store,
+                RandomStringUtils.randomAlphabetic(10)
+        );
     }
 
 
     @Test
     public void testWhenStoreRepositoryDoesntFindStoreByToken_ThenThrowInvalidLogin() {
-        this.store.setToken("somerandomtoken_" + this.store_token);
-        Mockito.when(storeRepository.findByToken(this.store_token)).thenReturn(Optional.empty());
+        this.store.setToken("somerandomtoken_" + this.store.getToken());
+        Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.empty());
 
         assertThrows(InvalidLoginException.class, () -> {
-            purchaseService.reviewRiderFromSpecificOrder(this.store_token, this.purchase.getId(), 3);
+            purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), this.purchase.getId(), 3);
         }, "Unauthorized store.");
 
         Mockito.verify(storeRepository, VerificationModeFactory.times(1)).findByToken(anyString());
@@ -102,11 +91,11 @@ class PurchaseServiceTest {
 
     @Test
     public void testWhenPurchaseRepositoryDoesntFindPurchaseByOrderId_ThenThrowResourceNotFound() {
-        Mockito.when(storeRepository.findByToken(this.store_token)).thenReturn(Optional.of(this.store));
+        Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
         Mockito.when(purchaseRepository.findById(-1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> {
-            purchaseService.reviewRiderFromSpecificOrder(this.store_token, -1L, 3);
+            purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), -1L, 3);
         }, "Order not found.");
 
 
@@ -120,11 +109,11 @@ class PurchaseServiceTest {
     @Test
     public void whenPurchaseAlreadyHasAnAssociatedReviewValue_ThenThrowInvalidValue() {
         this.purchase.setRiderReview(3);
-        Mockito.when(storeRepository.findByToken(this.store_token)).thenReturn(Optional.of(this.store));
+        Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
         Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
 
         assertThrows(InvalidValueException.class, () -> {
-            purchaseService.reviewRiderFromSpecificOrder(this.store_token, this.purchase.getId(), 4);
+            purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), this.purchase.getId(), 4);
         }, "Invalid, purchased already had review.");
 
 
@@ -170,7 +159,7 @@ class PurchaseServiceTest {
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
         Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
 
-        Purchase returned = purchaseService.reviewRiderFromSpecificOrder(this.store_token, this.purchase.getId(), 4);
+        Purchase returned = purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), this.purchase.getId(), 4);
 
         // two times findByToken is called because the best usage of the Optional class is to first
         // check it the object is empty or present, and then get it with .get(), thus twice

@@ -121,7 +121,6 @@ class PurchaseRestControllerIT {
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
         ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + null + "/review", HttpMethod.PATCH, entity, Object.class);
-        System.out.println(response.getStatusCode());
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
@@ -198,7 +197,6 @@ class PurchaseRestControllerIT {
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
         ResponseEntity<String> response = testRestTemplate.exchange( getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PATCH, entity, String.class);
-        System.out.println(response);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         // como isto é um patch, não tem de se enviar o objeto de volta.
         // src: https://stackoverflow.com/questions/37718119/should-the-patch-method-return-all-fields-of-the-resource-in-the-response-body/37718786
