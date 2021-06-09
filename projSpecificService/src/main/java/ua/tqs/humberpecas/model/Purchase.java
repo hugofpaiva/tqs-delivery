@@ -26,12 +26,13 @@ public class Purchase {
     @ManyToOne
     private Address address;
 
-    private long service_order_id;
+    private Long service_order_id;
 
 
     // TODO: quantidade de cada produto
     @ManyToMany
     private List<Product> products;
+
 
     @Enumerated(value = EnumType.STRING)
     private PurchageStatus status;

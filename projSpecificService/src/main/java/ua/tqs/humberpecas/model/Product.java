@@ -35,6 +35,7 @@ public class Product {
     private Set<Purchase> purchase;
 
 
+
     public Product(double price, String name, String description, long stock, boolean deleted, Category category){
         this.price = price;
         this.name = name;
@@ -43,5 +44,17 @@ public class Product {
         this.deleted = deleted;
         this.category = category;
     }
+
+
+    public Product(String name, double price, Category category, String description, long stock) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+        this.description = description;
+        this.stock = stock;
+        deleted = false;
+    }
+
+    public Product() {}
 
 }

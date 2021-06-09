@@ -35,9 +35,15 @@ public class Address {
     private Person person;
 
     @OneToMany
-    private List<Purchase> purchase;
+    private List<Purchase> purchases;
 
-
-
+    public Address(String address, String postalCode, String city, String country) {
+        this.address = address;
+        this.postalCode = postalCode;
+        this.city = city;
+        this.country = country;
     }
+
+    public Address() {}
+}
 

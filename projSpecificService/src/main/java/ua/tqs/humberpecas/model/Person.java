@@ -25,7 +25,9 @@ public class Person {
     @Size(min=8)
     private String pwd;
 
+
     @Email
+    @Column(unique = true)
     private String email;
 
     @OneToMany
@@ -33,6 +35,7 @@ public class Person {
 
     @OneToMany
     private Set<Address> addresses;
+
 
 
     public Person(){ }
@@ -44,4 +47,16 @@ public class Person {
         this.pwd = pwd;
         this.email = email;
     }
+    @OneToOne
+    private ShoppingCart shoppingCart;
+
+    public Person(String name, String pwd, String email, ShoppingCart sc) {
+        this.name = name;
+        this.pwd = pwd;
+        this.email = email;
+        this.shoppingCart = sc;
+    }
+
+    public Person() {}
+
 }
