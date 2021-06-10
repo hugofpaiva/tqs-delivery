@@ -1,4 +1,4 @@
-import 'package:delivery_rider_app/pages/home_page.dart';
+import 'package:delivery_rider_app/services/generic_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    GenericService.error = false;
     userNameController = TextEditingController();
     pwController = TextEditingController();
   }
@@ -43,10 +44,9 @@ class _LoginPageState extends State<LoginPage> {
                 fit: BoxFit.cover,
               ),
               Spacer(),
-              Text(
-                'Sign in to your account',
-                style: GoogleFonts.oswald(fontWeight: FontWeight.w300, fontSize: 20)
-              ),
+              Text('Sign in to your account',
+                  style: GoogleFonts.oswald(
+                      fontWeight: FontWeight.w300, fontSize: 20)),
               Spacer(flex: 3),
               Padding(
                 padding: EdgeInsets.fromLTRB(2, 0, 0, 0),
@@ -77,8 +77,9 @@ class _LoginPageState extends State<LoginPage> {
                             controller: userNameController,
                             obscureText: false,
                             decoration: InputDecoration(
-                              hintText: 'Username',
-                              hintStyle: GoogleFonts.oswald(fontWeight: FontWeight.w300),
+                              hintText: 'Email',
+                              hintStyle: GoogleFonts.oswald(
+                                  fontWeight: FontWeight.w300),
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.transparent,
@@ -100,7 +101,8 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
-                            style: GoogleFonts.nunito(fontWeight: FontWeight.w300),
+                            style:
+                                GoogleFonts.nunito(fontWeight: FontWeight.w300),
                             textAlign: TextAlign.center,
                           ),
                         )
@@ -137,10 +139,11 @@ class _LoginPageState extends State<LoginPage> {
                         Expanded(
                           child: TextFormField(
                             controller: pwController,
-                            obscureText: false,
+                            obscureText: true,
                             decoration: InputDecoration(
                               hintText: 'Password',
-                              hintStyle: GoogleFonts.oswald(fontWeight: FontWeight.w300),
+                              hintStyle: GoogleFonts.oswald(
+                                  fontWeight: FontWeight.w300),
                               enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Colors.transparent,
@@ -162,7 +165,8 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
-                            style: GoogleFonts.nunito(fontWeight: FontWeight.w300),
+                            style:
+                                GoogleFonts.nunito(fontWeight: FontWeight.w300),
                             textAlign: TextAlign.center,
                           ),
                         )
@@ -182,19 +186,25 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text(
-                        'Sign in',
-                        style: GoogleFonts.oswald(fontWeight: FontWeight.w300)
-                      ),
+                      Text('Sign in',
+                          style:
+                              GoogleFonts.oswald(fontWeight: FontWeight.w300)),
                       IconButton(
                         onPressed: () async {
-                          await Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NavLayout(),
-                            ),
-                                (r) => false,
-                          );
+                          await GenericService.login(
+                              userNameController.text, pwController.text);
+                          if (GenericService.loggedIn) {
+                            await Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NavLayout(),
+                              ),
+                              (r) => false,
+                            );
+                          } else {
+                            setState(() {
+                            });
+                          }
                         },
                         icon: FaIcon(
                           FontAwesomeIcons.arrowCircleRight,
@@ -206,6 +216,20 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  (GenericService.error == true
+                      ? Text(GenericService.errorMsg,
+                          style: GoogleFonts.oswald(
+                              fontWeight: FontWeight.w300, fontSize: 20,
+                              color: Colors.redAccent))
+                      : Container()),
+                  (GenericService.requested == true
+                      ? CircularProgressIndicator()
+                      : Container())
+                ],
               ),
               Spacer(flex: 5)
             ],
