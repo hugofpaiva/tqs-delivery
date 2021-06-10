@@ -210,8 +210,10 @@ class _HomePageState extends State<HomePage> {
                               Spacer(),
                               InkWell(
                                 onTap: () async {
-                                  navigateTo(
-                                      49.46800006494457, 17.11514008755796);
+                                  navigateTo((GenericService.actualOrder!.status ==
+                                          'ACCEPTED'
+                                          ? '${GenericService.actualOrder!.store.address.address}, ${GenericService.actualOrder!.store.address.city}, ${GenericService.actualOrder!.store.address.postalCode}'
+                                          : '${GenericService.actualOrder!.clientAddress.address}, ${GenericService.actualOrder!.clientAddress.city}, ${GenericService.actualOrder!.clientAddress.postalCode}'));
                                 },
                                 child: Image.asset(
                                   'assets/images/map.jpeg',
@@ -315,8 +317,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  static void navigateTo(double lat, double lng) async {
-    var uri = Uri.parse("google.navigation:q=$lat,$lng&mode=d");
+  static void navigateTo(String location) async {
+    var uri = Uri.parse("https://www.google.com/maps/dir//$location");
     if (await canLaunch(uri.toString())) {
       await launch(uri.toString());
     } else {
