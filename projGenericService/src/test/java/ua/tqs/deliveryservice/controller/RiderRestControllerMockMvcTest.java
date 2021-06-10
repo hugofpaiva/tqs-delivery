@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.deliveryservice.configuration.JwtRequestFilter;
 import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.services.PurchaseService;
 
@@ -43,6 +44,11 @@ class RiderRestControllerMockMvcTest {
     // Without a mock of the Autowire there, it will fail
     @MockBean
     private JwtRequestFilter jwtRequestFilter;
+
+    /* ----------------------------- *
+     * GET ORDER HISTORY FOR RIDER   *
+     * ----------------------------- *
+     */
 
     @Test
     public void testGetRiderOrderHistoryWhenInvalidPageNo_thenBadRequest() throws Exception {
@@ -186,4 +192,66 @@ class RiderRestControllerMockMvcTest {
         verify(purchaseService, times(1)).getLastOrderForRider(0, 10, "Bearer example_token");
     }
 
+
+    /* ----------------------------- *
+     * GET CURRENT PURCHASE OF RIDER *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testGetCurrentPurchaseButNoAuthorization_thenUnauthorized() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        when(purchaseService.getCurrentPurchase("Bearer example_token")).thenThrow(InvalidLoginException.class);
+        mvc.perform(get("/rider/order/current")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+
+                ;
+
+        verify(purchaseService, times(1)).getCurrentPurchase(any());
+    }
+
+    @Test
+    public void givenRiderWithoutPurchase_whenGetCurrentPurchase_then404() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        when(purchaseService.getCurrentPurchase("Bearer example_token")).thenThrow(ResourceNotFoundException.class);
+
+        mvc.perform(get("/rider/order/current")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verify(purchaseService, times(1)).getCurrentPurchase(any());
+    }
+
+    @Test
+    public void givenRiderWithPurchase_whenGetCurrentPurchase_then200() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
+        Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Purchase purchase = new Purchase(address, rider, store, "Joana");
+
+        when(purchaseService.getCurrentPurchase("Bearer example_token")).thenReturn(purchase);
+
+        mvc.perform(get("/rider/order/current")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("data.orderId", is(((Long) purchase.getId()).intValue())))
+                .andExpect(jsonPath("data.clientName", is(purchase.getClientName())))
+                .andExpect(jsonPath("data.status", is("ACCEPTED")))
+                ;
+
+        verify(purchaseService, times(1)).getCurrentPurchase(any());
+    }
 }
