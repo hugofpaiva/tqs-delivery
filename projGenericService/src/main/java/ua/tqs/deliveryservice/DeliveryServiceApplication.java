@@ -4,16 +4,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.*;
 
 @SpringBootApplication
-public class DeliveryServiceApplication implements CommandLineRunner {
+public class DeliveryServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DeliveryServiceApplication.class, args);
 	}
+}
+
+@Profile("!test")
+@Component
+class DBLoader implements CommandLineRunner {
 
 	@Autowired
 	private RiderRepository riderRep;
@@ -33,6 +40,7 @@ public class DeliveryServiceApplication implements CommandLineRunner {
 	@Autowired
 	private StoreRepository storeRep;
 
+	@Override
 	public void run(String... args) {
 		System.out.println("Populating database");
 
@@ -58,6 +66,5 @@ public class DeliveryServiceApplication implements CommandLineRunner {
 		Purchase purchase2 = new Purchase(addr1, rider1, store1, "client2");
 		purchaseRep.saveAndFlush(purchase1);
 		purchaseRep.saveAndFlush(purchase2);
-
 	}
 }
