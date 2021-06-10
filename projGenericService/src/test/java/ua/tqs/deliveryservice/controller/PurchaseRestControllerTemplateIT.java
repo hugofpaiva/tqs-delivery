@@ -26,7 +26,7 @@ import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-class PurchaseRestControllerIT {
+class PurchaseRestControllerTemplateIT {
     private Rider rider;
     private Address address;
     private Store store;

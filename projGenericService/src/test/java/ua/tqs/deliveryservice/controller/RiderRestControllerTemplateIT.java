@@ -3,6 +3,7 @@ package ua.tqs.deliveryservice.controller;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +24,7 @@ import ua.tqs.deliveryservice.repository.PersonRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,6 +96,10 @@ class RiderRestControllerTemplateIT {
     public void destroyAll() {
         this.deleteAll();
     }
+
+    // ----------------------------------------------
+    // --              Orders History tests        --
+    // ----------------------------------------------
 
 
     @Test
@@ -219,6 +225,137 @@ class RiderRestControllerTemplateIT {
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+    }
+
+    // ----------------------------------------------
+    // --               status tests               --
+    // ----------------------------------------------
+
+    @Disabled
+    public void testOrderStatusWhenStringId_thenBadRequest() {
+        Map<String, Object> empty = new HashMap<>();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(empty, headers);
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "order/a/status", HttpMethod.PATCH, entity, Map.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Disabled
+    public void testOrderStatusWhenInvalidId_thenBadRequest() {
+        Map<String, Object> empty = new HashMap<>();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(empty, headers);
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "order/1/status", HttpMethod.PATCH, entity, Map.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Disabled
+    public void testOrderStatusWhenInvalidStatus_thenBadRequest() {
+        Map<String, Object> empty = new HashMap<>();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(empty, headers);
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "order/4/status", HttpMethod.PATCH, entity, Map.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+
+    @Disabled
+    public void testOrderStatusEverythingValid_thenOK() {
+        HashMap<String, Object> expected = new HashMap<>();
+        expected.put("order_id", purchase.getId());
+        expected.put("status", Status.getNext(purchase.getStatus()));
+
+        Map<String, Object> empty = new HashMap<>();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(empty, headers);
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/status", HttpMethod.PATCH, entity, Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(response.getBody().toString(), equalTo(expected.toString()));
+    }
+
+    // ----------------------------------------------
+    // --              register tests              --
+    // ----------------------------------------------
+
+    @Test
+    public void testRegisterBadPwd_thenBadRequest() {
+        Map<String, String> data = new HashMap<>();
+
+        data.put("name", "delivery tqs tests");
+        data.put("email", "delivery@tqs.com");
+        data.put("pwd", "123");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(data, headers);
+
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/register", HttpMethod.POST, entity, HttpStatus.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testRegisterBadEmail_thenBadRequest() {
+        Map<String, String> data = new HashMap<>();
+
+        data.put("name", "delivery tqs tests");
+        data.put("email", "this is not_an!email");
+        data.put("pwd", "123but_the_password_is_ok");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(data, headers);
+
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/register", HttpMethod.POST, entity, HttpStatus.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testRegisterBadEmailAndPwd_thenBadRequest() {
+        Map<String, String> data = new HashMap<>();
+
+        data.put("name", "delivery tqs tests");
+        data.put("email", "this is not_an!email");
+        data.put("pwd", "badpwd");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(data, headers);
+
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/register", HttpMethod.POST, entity, HttpStatus.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Disabled
+    public void testRegisterEverythingValid_thenCreated() {
+        Map<String, String> data = new HashMap<>();
+
+        data.put("name", "delivery tqs tests");
+        data.put("email", "delivery@tqs.com");
+        data.put("pwd", "delivery__password__strong_!enough");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        HttpEntity<Map> entity = new HttpEntity<Map>(data, headers);
+
+        ResponseEntity<HttpStatus> response = testRestTemplate.exchange(getBaseUrl() + "/register", HttpMethod.POST, entity, HttpStatus.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
     }
 
 
