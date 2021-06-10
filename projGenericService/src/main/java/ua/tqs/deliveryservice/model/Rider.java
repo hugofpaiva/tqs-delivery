@@ -12,7 +12,10 @@ import java.util.List;
 @Data
 @Entity
 public class Rider extends Person {
+    @JsonIgnore
     private long reviewsSum;
+
+    @JsonIgnore
     private int totalNumReviews;
 
     @CreationTimestamp

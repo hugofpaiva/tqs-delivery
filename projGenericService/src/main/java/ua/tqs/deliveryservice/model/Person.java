@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Data
 @Entity
@@ -15,6 +16,7 @@ public class Person {
     private String name;
 
     @JsonIgnore
+    @Size(min = 8)
     private String pwd;
 
     @Column(unique=true)

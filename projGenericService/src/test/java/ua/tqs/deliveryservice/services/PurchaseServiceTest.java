@@ -11,6 +11,7 @@ import ua.tqs.deliveryservice.model.Address;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Store;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -21,6 +22,7 @@ import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
+
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -31,7 +33,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 
 import java.util.*;
-
 
 @ExtendWith(MockitoExtension.class)
 public class PurchaseServiceTest {
@@ -60,7 +61,6 @@ public class PurchaseServiceTest {
      * UPDATE PURCHASE STATUS        *
      * ----------------------------- *
      */
-
 
     @Test
     public void testUpdatePurchaseStatusOfRider_whenInvalidUser() {
@@ -314,9 +314,8 @@ public class PurchaseServiceTest {
                 .findTopByRiderAndStatusIsNot(any(), any());
     }
 
-
     /* ----------------------------- *
-     * GET LAST ORDER FOR RIDER      *
+     * Review Rider of Specific Order      *
      * ----------------------------- *
      */
 
@@ -416,6 +415,10 @@ public class PurchaseServiceTest {
         assertThat(returned.getRiderReview()).isEqualTo(4);
     }
 
+    /* ----------------------------- *
+     * GET LAST ORDER FOR RIDER      *
+     * ----------------------------- *
+     */
 
     @Test
     public void testGetLastOrderForRiderWhenGetWithInvalidUser_thenThrow() {
