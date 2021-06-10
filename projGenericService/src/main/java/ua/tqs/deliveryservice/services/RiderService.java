@@ -13,7 +13,6 @@ public class RiderService {
     RiderRepository riderRepository;
 
     public Rider save(Rider rider) {
-
         riderRepository.saveAndFlush(rider);
         return rider;
     }

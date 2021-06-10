@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class RiderServiceTest {
     private Rider rider = new Rider("Nice Rider", "chunky_password", "email@TQS.ua");
+
     @Mock
     private RiderRepository riderRepository;
 
@@ -28,9 +29,10 @@ class RiderServiceTest {
     public void testWhenRiderIsSent_thenReturnIt() {
         Mockito.when(riderRepository.saveAndFlush(rider)).thenReturn(rider);
 
-        Mockito.verify(riderRepository, VerificationModeFactory.times(1)).saveAndFlush(rider);
         Rider response = riderService.save(rider);
 
         assertThat(response).isEqualTo(rider);
+
+        Mockito.verify(riderRepository, VerificationModeFactory.times(1)).saveAndFlush(rider);
     }
 }

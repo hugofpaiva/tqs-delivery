@@ -164,7 +164,6 @@ class AuthControllerMockMvcTest {
         JSONObject data = new JSONObject();
         data.put("username", "mail@example.com");
         data.put("password", "aRightPassword");
-        JwtRequest request = new JwtRequest("mail@example.com", "aRightPassword");
 
         when(jwtUserDetailsService.newAuthenticationToken(any())).thenReturn(new JwtResponse("new_token", new SimpleGrantedAuthority("Rider"), "João"));
 
@@ -185,7 +184,6 @@ class AuthControllerMockMvcTest {
         JSONObject data = new JSONObject();
         data.put("username", "mail@example.com");
         data.put("password", "aRightPassword");
-        JwtRequest request = new JwtRequest("mail@example.com", "aRightPassword");
 
         when(jwtUserDetailsService.newAuthenticationToken(any())).thenReturn(new JwtResponse("new_token", new SimpleGrantedAuthority("Manager"), "João"));
 
