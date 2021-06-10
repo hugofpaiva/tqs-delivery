@@ -7,27 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
-import ua.tqs.deliveryservice.model.Person;
 import ua.tqs.deliveryservice.model.Purchase;
-import ua.tqs.deliveryservice.model.Rider;
-import ua.tqs.deliveryservice.model.Status;
-import ua.tqs.deliveryservice.repository.PersonRepository;
-import ua.tqs.deliveryservice.repository.PurchaseRepository;
-import ua.tqs.deliveryservice.repository.RiderRepository;
-import ua.tqs.deliveryservice.services.JwtUserDetailsService;
 import ua.tqs.deliveryservice.services.PurchaseService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
-import ua.tqs.deliveryservice.exception.InvalidLoginException;
-import ua.tqs.deliveryservice.services.PurchaseService;
-
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.*;
 
 @RestController
 @RequestMapping("/rider")
