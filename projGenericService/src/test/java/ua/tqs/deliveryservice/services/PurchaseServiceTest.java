@@ -51,6 +51,7 @@ public class PurchaseServiceTest {
      * UPDATE PURCHASE STATUS        *
      * ----------------------------- *
      */
+
     @Test
     public void testUpdatePurchaseStatusOfRider_whenInvalidUser() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
