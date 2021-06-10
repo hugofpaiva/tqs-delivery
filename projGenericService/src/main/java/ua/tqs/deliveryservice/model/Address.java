@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Data
 @Entity
@@ -34,5 +37,14 @@ public class Address {
     }
 
     public Address() {}
+
+    public Map<String, Object> getMap() {
+        Map<String, Object> map = new TreeMap<>();
+        map.put("address", address);
+        map.put("postalCode", postalCode);
+        map.put("city", city);
+        map.put("country", country);
+        return map;
+    }
 
 }
