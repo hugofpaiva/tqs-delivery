@@ -4,35 +4,93 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
+import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.Person;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
+import ua.tqs.deliveryservice.repository.PersonRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
+import ua.tqs.deliveryservice.repository.RiderRepository;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 
 @Service
 public class PurchaseService {
 
     @Autowired
-    private PurchaseRepository purchaseRep;
+    private PurchaseRepository purchaseRepository;
+
+    @Autowired
+    JwtUserDetailsService jwtUserDetailsService;
+
+    @Autowired
+    RiderRepository riderRepository;
+
+
 
     public Purchase getAvailableOrderForRider() {
-        Purchase purch = purchaseRep.findTopByRiderIsNullOrderByDate();
+        Purchase purch = purchaseRepository.findTopByRiderIsNullOrderByDate().orElse(null);
         return purch; // null if none
     }
 
     public Purchase acceptOrder(Rider r, Purchase p) {
         p.setRider(r);
         p.setStatus(Status.ACCEPTED);
-        return purchaseRep.save(p);
+        return purchaseRepository.save(p);
     }
 
     public Purchase getCurrentRiderOrder(Rider r) {
         // verify if Rider has any purchase to deliver
-        Purchase unfinished = purchaseRep.findTopByRiderAndStatusIsNot(r, Status.DELIVERED);
+        Purchase unfinished = purchaseRepository.findTopByRiderAndStatusIsNot(r, Status.DELIVERED).orElse(null);
         return unfinished; // null if there's none
+    }
+
+// ----------- remove up ----------
+    public Purchase updatePurchaseStatus(String token) throws ForbiddenRequestException, InvalidLoginException, ResourceNotFoundException {
+        String email = jwtUserDetailsService.getEmailFromToken(token);
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
+        Purchase unfinished = purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).orElseThrow( ()-> new ResourceNotFoundException("This rider hasn't accepted an order yet"));
+
+        Status next = Status.getNext(unfinished.getStatus());
+        if (next == Status.PENDENT) throw new ForbiddenRequestException("This order has already been delivered");
+
+        unfinished.setStatus(next);
+        purchaseRepository.save(unfinished);
+
+        return unfinished;
+    }
+
+    public Purchase getNewPurchase(String token) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
+        String email = jwtUserDetailsService.getEmailFromToken(token);
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
+
+        // verify if Rider has any purchase to deliver
+        if (purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).isPresent()) {
+            throw new ForbiddenRequestException("This rider still has an order to deliver");
+        }
+
+        // get available order for rider
+        Purchase purch = purchaseRepository.findTopByRiderIsNullOrderByDate().orElseThrow(() -> new ResourceNotFoundException("There are no more orders available"));
+
+        // accept order
+        purch.setRider(rider);
+        purch.setStatus(Status.ACCEPTED);
+        purchaseRepository.save(purch);
+
+        return purch;
+    }
+
+    public Purchase getCurrentPurchase(String token) throws InvalidLoginException, ResourceNotFoundException {
+        String email = jwtUserDetailsService.getEmailFromToken(token);
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
+        Purchase unfinished = purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).orElseThrow( ()-> new ResourceNotFoundException("This rider hasn't accepted an order yet"));
+        return unfinished;
     }
 
 }

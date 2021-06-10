@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
+import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.Person;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
@@ -40,88 +43,37 @@ public class RiderRestController {
     @Autowired
     private PurchaseService purchaseService;
 
-    @PutMapping("order/{order_id}/status")
-    public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(HttpServletRequest request, @PathVariable long order_id) {
+    @PatchMapping("order/status")
+    public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(HttpServletRequest request) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
         String requestTokenHeader = request.getHeader("Authorization");
-        String email = jwtUserDetailsService.getEmailFromToken(requestTokenHeader);
-
-        // getting Person who is making the request
-        Person p = personRep.findByEmail(email).orElse(null);
-        if (p == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
 
-        // get purchase if exists
-        Optional<Purchase> pur = purchaseRep.findById(order_id);
-        if (pur.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        Purchase purchase = pur.get();
-
-        // check if the authenticated rider is the 'correct'
-        if (!purchase.getRider().equals(p)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        // gets 'next' status and updates
-        Status next = Status.getNext(purchase.getStatus());
-
-        if (next == Status.PENDENT) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        purchase.setStatus(next);
-        purchaseRep.save(purchase);
-
+        Purchase purchase = purchaseService.updatePurchaseStatus(requestTokenHeader);
         // return order id and status
         Map<String, Object> ret = new HashMap<>();
-        ret.put("order_id", order_id);
-        ret.put("status", next);
+        ret.put("order_id", purchase.getId());
+        ret.put("status", purchase.getStatus());
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
 
     @GetMapping("order/new")
-    public ResponseEntity<Map<String, Object>> getNewOrder(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> getNewOrder(HttpServletRequest request) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
         String requestTokenHeader = request.getHeader("Authorization");
-        String email = jwtUserDetailsService.getEmailFromToken(requestTokenHeader);
 
-        // getting Person who is making the request
-        Person p = personRep.findByEmail(email).orElse(null);
-        if (!(p instanceof Rider)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
+        Purchase purch = purchaseService.getNewPurchase(requestTokenHeader);
         HashMap<String, Object> ret = new HashMap<>();
-
-        // verify if Rider has any purchase to deliver
-        if (null != purchaseService.getCurrentRiderOrder((Rider) p)) {
-            ret.put("data", "this rider still has an order to deliver");
-            return new ResponseEntity<>(ret, HttpStatus.FORBIDDEN);
-        }
-
-        Purchase purch = purchaseService.getAvailableOrderForRider();
-
-        if (purch == null) {
-            ret.put("data", "No more orders available");
-            return new ResponseEntity<>(ret, HttpStatus.OK);
-        }
-
-        purchaseService.acceptOrder((Rider) p, purch);
-
         ret.put("data", purch.getMap());
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
     @GetMapping("order/current")
-    public ResponseEntity<Map<String, Object>> getCurrentOrder(HttpServletRequest request) {
+    public ResponseEntity<Map<String, Object>> getCurrentOrder(HttpServletRequest request) throws InvalidLoginException, ResourceNotFoundException {
         String requestTokenHeader = request.getHeader("Authorization");
-        String email = jwtUserDetailsService.getEmailFromToken(requestTokenHeader);
-
-        // getting Person who is making the request
-        Person p = personRep.findByEmail(email).orElse(null);
-        if (!(p instanceof Rider)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        Purchase current = purchaseService.getCurrentPurchase(requestTokenHeader);
 
         Map<String, Object> ret = new TreeMap<>();
-
-        // verify if Rider has any purchase to deliver
-        Purchase current = purchaseService.getCurrentRiderOrder((Rider) p);
-        if (null == current) {
-            ret.put("data", "This rider hasn't accepted an order yet");
-            return new ResponseEntity<>(ret, HttpStatus.OK);
-        }
-
         ret.put("data", current.getMap());
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }

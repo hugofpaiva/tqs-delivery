@@ -62,6 +62,7 @@ public class Purchase {
         map.put("date", date);
         map.put("store", store.getMap());
         map.put("clientName", clientName);
+        map.put("status", status);
         map.put("clientAddress", address.getMap());
         return map;
     }

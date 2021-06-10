@@ -67,7 +67,7 @@ public class DeliveryServiceApplication implements CommandLineRunner {
 		storeRep.saveAndFlush(store1);
 
 		Purchase purchase1 = new Purchase(addr1, rider1, store1, "client1");
-		Purchase purchase2 = new Purchase(addr3, rider1, store1, "client2");
+		// Purchase purchase2 = new Purchase(addr3, rider1, store1, "client2");
 
 		Purchase purchase_no_rider = new Purchase(addr4, store1, "client22");
 		Purchase purchase_no_rider2 = new Purchase(addr5, store1, "client222");
@@ -75,7 +75,7 @@ public class DeliveryServiceApplication implements CommandLineRunner {
 		purchaseRep.saveAndFlush(purchase_no_rider);
 		purchaseRep.saveAndFlush(purchase_no_rider2);
 		purchaseRep.saveAndFlush(purchase1);
-		purchaseRep.saveAndFlush(purchase2);
+		//purchaseRep.saveAndFlush(purchase2);
 
 	}
 }

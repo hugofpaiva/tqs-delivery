@@ -31,7 +31,7 @@ public class PurchaseServiceTest {
 
         Mockito
                 .when( purchaseRepository.findTopByRiderIsNullOrderByDate() )
-                .thenReturn( available );
+                .thenReturn(java.util.Optional.of(available));
 
         // test ...
         Purchase ret = purchaseService.getAvailableOrderForRider();
@@ -104,7 +104,7 @@ public class PurchaseServiceTest {
 
         Mockito
                 .when( purchaseRepository.findTopByRiderAndStatusIsNot( r1, Status.DELIVERED) )
-                .thenReturn(purch);
+                .thenReturn(java.util.Optional.of(purch));
 
         // test ...
         Purchase ret = purchaseService.getCurrentRiderOrder(r1);

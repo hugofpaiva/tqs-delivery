@@ -6,8 +6,10 @@ import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
 
+import java.util.Optional;
+
 @Repository
 public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
-    Purchase findTopByRiderIsNullOrderByDate();
-    Purchase findTopByRiderAndStatusIsNot(Rider r, Status s);
+    Optional<Purchase> findTopByRiderIsNullOrderByDate();
+    Optional<Purchase> findTopByRiderAndStatusIsNot(Rider r, Status s);
 }

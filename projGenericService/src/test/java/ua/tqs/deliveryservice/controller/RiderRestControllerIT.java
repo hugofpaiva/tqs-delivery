@@ -154,7 +154,7 @@ class RiderRestControllerIT {
         ParameterizedTypeReference<Map<String, String>> responseType = new ParameterizedTypeReference<Map<String, String>>() {};
 
         ResponseEntity<Map<String, String>> response = testRestTemplate.exchange(getBaseUrl() + "order/current", HttpMethod.GET, entity, responseType);
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
         Map<String, String> ret = response.getBody();
         assertThat(ret).isNotNull();
         assertThat(ret.containsKey("data")).isTrue();
