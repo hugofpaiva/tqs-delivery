@@ -1,7 +1,6 @@
 package ua.tqs.deliveryservice.controller;
 
 import net.minidev.json.JSONObject;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
@@ -13,8 +12,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.*;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import springfox.documentation.spring.web.json.Json;
 import ua.tqs.deliveryservice.configuration.JwtRequestFilter;
 import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
 import ua.tqs.deliveryservice.model.Rider;
@@ -23,8 +20,10 @@ import ua.tqs.deliveryservice.services.RiderService;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // Disables Security
@@ -104,21 +103,27 @@ class AuthControllerMockMvcTest {
 
     @Test
     public void testEverythingValid_thenCreated() throws Exception {
+        Rider rider = new Rider("A very nice name", "strongggg", "example@tqs.ua");
+
         JSONObject data = new JSONObject();
         data.put("email", "example@tqs.ua");
         data.put("name", "A very nice name");
         data.put("pwd", "strongggg");
 
+        when(riderService.save(rider)).thenReturn(rider);
 
-        MvcResult result = mvc.perform(post("/register")
+        mvc.perform(post("/register")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
                     .characterEncoding("UTF-8")
                     .content(String.valueOf(data)))
-                    .andExpect(status().isCreated()).andReturn();
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("email", is("example@tqs.ua")))
+                    .andExpect(jsonPath("name", is("A very nice name")))
+                    .andExpect(jsonPath("pwd", is("strongggg")))
+        ;
 
-        Rider r = new Rider("A very nice name", "strongggg", "example@tqs.ua");
-        Mockito.verify(riderService, VerificationModeFactory.times(1)).save(r);
+        Mockito.verify(riderService, VerificationModeFactory.times(1)).save(rider);
     }
 
 
