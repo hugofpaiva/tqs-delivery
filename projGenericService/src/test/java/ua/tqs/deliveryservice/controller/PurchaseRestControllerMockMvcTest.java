@@ -1,7 +1,6 @@
 package ua.tqs.deliveryservice.controller;
 
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
@@ -13,7 +12,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.deliveryservice.configuration.JwtRequestFilter;
 import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
@@ -26,9 +24,7 @@ import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Store;
 import ua.tqs.deliveryservice.services.PurchaseService;
 
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -51,7 +47,6 @@ public class PurchaseRestControllerMockMvcTest {
 
     // 1. despoletar erros no controller e ver se o service não é chamado, se quer
     @Test
-    @WithMockUser(username = "HumberPecas", password = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", roles = "Store")
     public void testNullOrderId_thenBadRequest() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", 3L);
@@ -72,7 +67,6 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    @WithMockUser(username = "HumberPecas", password = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", roles = "Store")
     public void testNullReview_thenBadRequest() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", null);
@@ -93,7 +87,6 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    @WithMockUser(username = "HumberPecas", password = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", roles = "Store")
     public void testInvalidMinReview_thenBadRequest() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", -1);
@@ -114,7 +107,6 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    @WithMockUser(username = "HumberPecas", password = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", roles = "Store")
     public void testInvalidMaxReview_thenBadRequest() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", 6);
@@ -137,7 +129,6 @@ public class PurchaseRestControllerMockMvcTest {
 
     // 2. despoletar erros no service e ver se o controller ainda faz o que é suposto
     @Test
-    @WithMockUser(username = "HumberPecas", password = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", roles = "Store")
     public void testEverythingOK_thenIsOk() throws Exception {
         Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
@@ -165,7 +156,6 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    @WithMockUser(username = "HumberPecas", password = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", roles = "Store")
     public void testPurchaseNotFound_thenResourceNotFound() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", 3);
@@ -188,7 +178,6 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    @WithMockUser(username = "HumberPecas", password = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", roles = "Store")
     public void testStoreNotFound_thenUnauthorized() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", 3);
@@ -211,7 +200,6 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    @WithMockUser(username = "HumberPecas", password = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", roles = "Store")
     public void testWhenPurchaseAlreadyHas_thenBadRequest() throws Exception {
         // this can either happen when the purchase already has a review or the store where the purchase was made is
         // not the same that has the token passed.
