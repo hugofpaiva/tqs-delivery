@@ -79,7 +79,7 @@ class PurchaseServiceTest {
 
         // two times findByToken is called because the best usage of the Optional class is to first
         // check it the object is empty or present, and then get it with .get(), thus twice
-        Mockito.verify(storeRepository, VerificationModeFactory.times(2)).findByToken(anyString());
+        Mockito.verify(storeRepository, VerificationModeFactory.times(1)).findByToken(anyString());
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(1)).findById(anyLong());
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(0)).saveAndFlush(any());
     }
@@ -97,8 +97,8 @@ class PurchaseServiceTest {
 
         // two times findByToken is called because the best usage of the Optional class is to first
         // check it the object is empty or present, and then get it with .get(), thus twice
-        Mockito.verify(storeRepository, VerificationModeFactory.times(2)).findByToken(anyString());
-        Mockito.verify(purchaseRepository, VerificationModeFactory.times(2)).findById(anyLong());
+        Mockito.verify(storeRepository, VerificationModeFactory.times(1)).findByToken(anyString());
+        Mockito.verify(purchaseRepository, VerificationModeFactory.times(1)).findById(anyLong());
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(0)).saveAndFlush(any());
     }
 
@@ -127,8 +127,8 @@ class PurchaseServiceTest {
 
         // two times findByToken is called because the best usage of the Optional class is to first
         // check it the object is empty or present, and then get it with .get(), thus twice
-        Mockito.verify(storeRepository, VerificationModeFactory.times(2)).findByToken(anyString());
-        Mockito.verify(purchaseRepository, VerificationModeFactory.times(2)).findById(anyLong());
+        Mockito.verify(storeRepository, VerificationModeFactory.times(1)).findByToken(anyString());
+        Mockito.verify(purchaseRepository, VerificationModeFactory.times(1)).findById(anyLong());
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(0)).saveAndFlush(any());
     }
 
@@ -141,8 +141,8 @@ class PurchaseServiceTest {
 
         // two times findByToken is called because the best usage of the Optional class is to first
         // check it the object is empty or present, and then get it with .get(), thus twice
-        Mockito.verify(storeRepository, VerificationModeFactory.times(2)).findByToken(anyString());
-        Mockito.verify(purchaseRepository, VerificationModeFactory.times(2)).findById(anyLong());
+        Mockito.verify(storeRepository, VerificationModeFactory.times(1)).findByToken(anyString());
+        Mockito.verify(purchaseRepository, VerificationModeFactory.times(1)).findById(anyLong());
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(1)).saveAndFlush(any());
 
         assertThat(returned).isEqualTo(this.purchase);
