@@ -42,28 +42,18 @@ public class PurchaseService {
     private PurchaseRepository purchaseRepository;
 
     @Autowired
-    JwtUserDetailsService jwtUserDetailsService;
+    private JwtUserDetailsService jwtUserDetailsService;
 
     @Autowired
-    RiderRepository riderRepository;
-
-    public Purchase acceptOrder(Rider r, Purchase p) {
-        p.setRider(r);
-        p.setStatus(Status.ACCEPTED);
-        return purchaseRepository.save(p);
-    }
+    private RiderRepository riderRepository;
 
 
-// ----------- remove up TODO ----------
-    public Purchase updatePurchaseStatus(String token) throws ForbiddenRequestException, InvalidLoginException, ResourceNotFoundException {
+    public Purchase updatePurchaseStatus(String token) throws InvalidLoginException, ResourceNotFoundException {
         String email = jwtUserDetailsService.getEmailFromToken(token);
         Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
         Purchase unfinished = purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).orElseThrow( ()-> new ResourceNotFoundException("This rider hasn't accepted an order yet"));
 
-        Status next = Status.getNext(unfinished.getStatus());
-        if (next == Status.PENDENT) throw new ForbiddenRequestException("This order has already been delivered");
-
-        unfinished.setStatus(next);
+        unfinished.setStatus(Status.getNext(unfinished.getStatus()));
         purchaseRepository.save(unfinished);
 
         return unfinished;

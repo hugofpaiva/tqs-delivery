@@ -40,7 +40,6 @@ public class RiderRestController {
     public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(HttpServletRequest request) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
         String requestTokenHeader = request.getHeader("Authorization");
 
-
         Purchase purchase = purchaseService.updatePurchaseStatus(requestTokenHeader);
         // return order id and status
         Map<String, Object> ret = new HashMap<>();
