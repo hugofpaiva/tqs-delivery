@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import ua.tqs.deliveryservice.model.Rider;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.services.PurchaseService;
+import ua.tqs.deliveryservice.services.RiderService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 public class RiderRestController {
     @Autowired
     PurchaseService purchaseService;
+
+    @Autowired
+    RiderService riderService;
 
     @GetMapping("/orders")
     public ResponseEntity<Map<String, Object>> getRiderOrders(HttpServletRequest request,
@@ -34,24 +36,6 @@ public class RiderRestController {
         Map<String, Object> response = purchaseService.getLastOrderForRider(pageNo, pageSize, requestTokenHeader);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-
-    @PostMapping("/register")
-    public ResponseEntity<HttpStatus> registerARider(@RequestBody Map<String, String> payload) throws Exception {
-        // falta dividir este em serviço e mudar os testes, alterar a mail confirmation -> está mal
-        Rider newRider = new Rider();
-        if(payload.get("pwd").length() < 8) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (payload.get("email") == "") return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (payload.get("name") == "") return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        newRider.setPwd(payload.get("pwd"));
-        newRider.setEmail(payload.get("email"));
-        newRider.setName(payload.get("name"));
-
-        // riderRepository.save(newRider);
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }

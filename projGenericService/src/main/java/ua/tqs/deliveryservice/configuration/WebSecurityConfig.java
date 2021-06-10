@@ -65,6 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(SWAGGER_WHITELIST).permitAll()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/register").permitAll()
                 .antMatchers("/rider/**").hasAuthority("Rider")
                 .antMatchers("/store/**").hasAuthority("Store")
                 // all other requests need to be authenticated
