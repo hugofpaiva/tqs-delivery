@@ -8,6 +8,7 @@ import ua.tqs.deliveryservice.repository.RiderRepository;
 
 @Service
 public class RiderService {
+
     @Autowired
     RiderRepository riderRepository;
 

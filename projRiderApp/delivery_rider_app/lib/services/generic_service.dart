@@ -8,12 +8,15 @@ class GenericService {
   static const BASE_URL = "http://127.0.0.1:8080";
   static bool loggedIn = false;
   static bool error = false;
+  static String errorMsg = '';
   static String name = '';
   static String token = '';
   static bool requested = false;
+  static Order? actualOrder;
 
   static Future<void> login(String email, String password) async {
     error = false;
+    errorMsg = '';
     requested = true;
     var response = await http.post(Uri.parse(BASE_URL + "/login"),
         headers: {"Content-Type": "application/json"},
@@ -26,6 +29,7 @@ class GenericService {
       if (data['type']['authority'] != 'Rider') {
         error = true;
         loggedIn = false;
+        errorMsg = 'Invalid Permissions';
         return;
       }
 
@@ -33,6 +37,7 @@ class GenericService {
       name = data['name'];
     } else {
       error = true;
+      errorMsg = 'Invalid Credentials';
     }
     requested = false;
   }
@@ -46,6 +51,7 @@ class GenericService {
 
   static Future<List<Order>> getLastOrders(int pageSize) async {
     error = false;
+    errorMsg = '';
     requested = true;
     var response = await http.get(Uri.parse(BASE_URL + "/rider/orders"),
         headers: {"Content-Type": "application/json", "Authorization": token});
@@ -80,4 +86,117 @@ class GenericService {
 
     return responseOrders;
   }
+
+
+  static Future<void> checkOrder() async {
+    error = false;
+    errorMsg = '';
+    requested = true;
+    var response = await http.get(Uri.parse(BASE_URL + "/rider/order/current"),
+        headers: {"Content-Type": "application/json", "Authorization": token});
+
+    if (response.statusCode == 200) {
+        var data = json.decode(utf8.decode(response.bodyBytes));
+        data = data['data'];
+        Address storeAddress = Address(
+            data['store']['address']['address'],
+            data['store']['address']['country'],
+            data['store']['address']['city'],
+            data['store']['address']['postalCode']);
+        Store store =
+        Store(data['store']['id'], data['store']['name'], storeAddress);
+        Address clientAddress = Address(
+            data['clientAddress']['address'],
+            data['clientAddress']['country'],
+            data['clientAddress']['city'],
+            data['clientAddress']['postalCode']);
+
+        actualOrder = Order(data['orderId'], data['clientName'], new DateTime.fromMillisecondsSinceEpoch(data['date']),
+            clientAddress, store, data['status'], null);
+
+    } else if (response.statusCode == 404) {
+      error = true;
+      actualOrder = null;
+    } else {
+      error = true;
+    }
+
+    requested = false;
+
+  }
+
+  static Future<void> getNewOrder() async {
+    error = false;
+    errorMsg = '';
+    requested = true;
+    var response = await http.get(Uri.parse(BASE_URL + "/rider/order/new"),
+        headers: {"Content-Type": "application/json", "Authorization": token});
+
+    if (response.statusCode == 200) {
+      var data = json.decode(utf8.decode(response.bodyBytes));
+      data = data['data'];
+      Address storeAddress = Address(
+          data['store']['address']['address'],
+          data['store']['address']['country'],
+          data['store']['address']['city'],
+          data['store']['address']['postalCode']);
+      Store store =
+      Store(data['store']['id'], data['store']['name'], storeAddress);
+      Address clientAddress = Address(
+          data['clientAddress']['address'],
+          data['clientAddress']['country'],
+          data['clientAddress']['city'],
+          data['clientAddress']['postalCode']);
+
+      actualOrder = Order(data['orderId'], data['clientName'], new DateTime.fromMillisecondsSinceEpoch(data['date']),
+          clientAddress, store, data['status'], null);
+
+    } else if (response.statusCode == 404) {
+      error = true;
+      errorMsg = 'No Orders Available';
+      actualOrder = null;
+    } else {
+      error = true;
+    }
+
+    requested = false;
+
+  }
+
+
+  static Future<void> nextStatusOrder() async {
+    error = false;
+    errorMsg = '';
+    requested = true;
+    var response = await http.patch(Uri.parse(BASE_URL + "/rider/order/status"),
+        headers: {"Content-Type": "application/json", "Authorization": token});
+
+    if (response.statusCode == 200) {
+      var data = json.decode(utf8.decode(response.bodyBytes));
+
+      if(actualOrder!.id != data['order_id']){
+        error = true;
+        requested = false;
+        checkOrder();
+        return;
+      }
+
+      actualOrder!.status = data['status'];
+
+      if (actualOrder!.status == 'DELIVERED'){
+        actualOrder = null;
+      }
+
+    } else if (response.statusCode == 404) {
+      error = true;
+      actualOrder = null;
+      errorMsg = 'Order no longer existed';
+    } else {
+      error = true;
+    }
+
+    requested = false;
+
+  }
+
 }

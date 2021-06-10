@@ -11,16 +11,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.*;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.deliveryservice.configuration.JwtRequestFilter;
 import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
+import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.model.JwtRequest;
+import ua.tqs.deliveryservice.model.JwtResponse;
 import ua.tqs.deliveryservice.model.Rider;
+import ua.tqs.deliveryservice.services.JwtUserDetailsService;
 import ua.tqs.deliveryservice.services.RiderService;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,6 +41,9 @@ class AuthControllerMockMvcTest {
 
     @MockBean
     private RiderService riderService;
+
+    @MockBean
+    private JwtUserDetailsService jwtUserDetailsService;
 
     @MockBean
     private JwtRequestFilter jwtRequestFilter;
@@ -130,4 +139,65 @@ class AuthControllerMockMvcTest {
     // ----------------------------------------------
     // --                login tests               --
     // ----------------------------------------------
+
+
+    @Test
+    public void testLoginWhenInvalidCredentials_thenUnauthorized() throws Exception {
+        JSONObject data = new JSONObject();
+        data.put("username", "email@asd.com");
+        data.put("password", "aswdd");
+
+        when(jwtUserDetailsService.newAuthenticationToken(any())).thenThrow(InvalidLoginException.class);
+
+        mvc.perform(post("/login")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(String.valueOf(data)))
+                .andExpect(status().isUnauthorized());
+
+        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1)).newAuthenticationToken(any());
+    }
+
+    @Test
+    public void testLoginWhenValidDataRider_thenAuthorized() throws Exception {
+        JSONObject data = new JSONObject();
+        data.put("username", "mail@example.com");
+        data.put("password", "aRightPassword");
+        JwtRequest request = new JwtRequest("mail@example.com", "aRightPassword");
+
+        when(jwtUserDetailsService.newAuthenticationToken(any())).thenReturn(new JwtResponse("new_token", new SimpleGrantedAuthority("Rider"), "João"));
+
+        mvc.perform(post("/login")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(String.valueOf(data)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("token", is("new_token")))
+                .andExpect(jsonPath("['type']['authority']", is("Rider")));
+
+        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1)).newAuthenticationToken(any());
+    }
+
+    @Test
+    public void testLoginWhenValidDataManager_thenAuthorized() throws Exception {
+        JSONObject data = new JSONObject();
+        data.put("username", "mail@example.com");
+        data.put("password", "aRightPassword");
+        JwtRequest request = new JwtRequest("mail@example.com", "aRightPassword");
+
+        when(jwtUserDetailsService.newAuthenticationToken(any())).thenReturn(new JwtResponse("new_token", new SimpleGrantedAuthority("Manager"), "João"));
+
+        mvc.perform(post("/login")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(String.valueOf(data)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("['token']", is("new_token")))
+                .andExpect(jsonPath("['type']['authority']", is("Manager")));
+
+        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1)).newAuthenticationToken(any());
+    }
 }
