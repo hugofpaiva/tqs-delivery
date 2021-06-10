@@ -74,8 +74,6 @@ class RiderRestControllerTemplateIT {
 
     @BeforeEach
     public void beforeEachSetUp() {
-        this.deleteAll();
-
         this.rider = new Rider("TQS_delivery@example.com", bcryptEncoder.encode("aRightPassword"), "Joao");
         this.address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
         this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address);
@@ -95,11 +93,6 @@ class RiderRestControllerTemplateIT {
     @AfterEach
     public void destroyAll() {
         this.deleteAll();
-
-        this.rider = new Rider();
-        this.address = new Address();
-        this.store = new Store();
-        this.purchase = new Purchase();
     }
 
 
