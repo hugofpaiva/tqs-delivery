@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.TreeMap;
 public class Address {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
     private String address;
@@ -21,9 +22,11 @@ public class Address {
     private String country;
 
     @OneToOne(mappedBy = "address")
+    @JsonIgnore
     private Store store;
 
     @OneToOne(mappedBy = "address")
+    @JsonIgnore
     private Purchase purchase;
 
     public Address(String address, String postalCode, String city, String country) {

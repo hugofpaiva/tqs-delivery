@@ -15,7 +15,7 @@ import java.util.TreeMap;
 @Entity
 public class Purchase {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
     @CreationTimestamp
@@ -28,6 +28,7 @@ public class Purchase {
     private Status status;
 
     @ManyToOne
+    @JsonIgnore
     private Rider rider;
 
     @ManyToOne
@@ -37,7 +38,14 @@ public class Purchase {
 
     @Min(value = 0, message = "Review should not be under the value of 0.")
     @Max(value = 5, message = "Review should not be above the value of 5.")
-    private int riderReview;
+    private Integer riderReview;
+
+    public Purchase(Address address, Store store, String clientName) {
+        this.address = address;
+        this.store = store;
+        this.status = Status.PENDENT;
+        this.clientName = clientName;
+    }
 
     public Purchase(Address address, Rider rider, Store store, String clientName) {
         this.address = address;
@@ -47,14 +55,10 @@ public class Purchase {
         this.clientName = clientName;
     }
 
-    public Purchase(Address address, Store store, String clientName) {
-        this.address = address;
-        this.store = store;
-        this.status = Status.PENDENT;
-        this.clientName = clientName;
-    }
 
     public Purchase() {}
+
+
 
     public Map<String, Object> getMap() {
         Map<String, Object> map = new TreeMap<>();
