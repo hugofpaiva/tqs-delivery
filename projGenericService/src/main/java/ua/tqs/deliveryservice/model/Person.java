@@ -15,6 +15,7 @@ public class Person {
 
     private String name;
 
+    @JsonIgnore
     @Size(min = 8)
     private String pwd;
 

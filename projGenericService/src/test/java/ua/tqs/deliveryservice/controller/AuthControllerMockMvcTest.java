@@ -128,9 +128,7 @@ class AuthControllerMockMvcTest {
                     .content(String.valueOf(data)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("email", is("example@tqs.ua")))
-                    .andExpect(jsonPath("name", is("A very nice name")))
-                    .andExpect(jsonPath("pwd", is("strongggg")))
-        ;
+                    .andExpect(jsonPath("name", is("A very nice name")));
 
         Mockito.verify(riderService, VerificationModeFactory.times(1)).save(rider);
     }
