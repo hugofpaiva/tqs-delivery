@@ -22,9 +22,16 @@ public class Purchase {
     @ManyToOne
     private Address address;
 
-    private long service_order_id;
+    private Long service_order_id;
 
     @ManyToMany
     private List<Product> products;
 
+    public Purchase(Person person, Address address, List<Product> products) {
+        this.person = person;
+        this.address = address;
+        this.products = products;
+    }
+
+    public Purchase() {}
 }
