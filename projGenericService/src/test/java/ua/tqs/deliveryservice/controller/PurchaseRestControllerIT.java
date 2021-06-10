@@ -16,12 +16,10 @@ import org.testcontainers.junit.jupiter.Container;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.*;
-import ua.tqs.deliveryservice.services.PurchaseService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,9 +49,6 @@ class PurchaseRestControllerIT {
 
     @Autowired
     private AddressRepository addressRepository;
-
-    @Autowired
-    private PurchaseService purchaseService;
 
     @LocalServerPort
     int randomServerPort;

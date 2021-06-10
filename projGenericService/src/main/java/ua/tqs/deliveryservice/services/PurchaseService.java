@@ -10,6 +10,18 @@ import ua.tqs.deliveryservice.model.Store;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import ua.tqs.deliveryservice.model.Rider;
+import ua.tqs.deliveryservice.repository.RiderRepository;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 public class PurchaseService {
     @Autowired
@@ -17,6 +29,12 @@ public class PurchaseService {
 
     @Autowired
     private PurchaseRepository purchaseRepository;
+
+    @Autowired
+    JwtUserDetailsService jwtUserDetailsService;
+
+    @Autowired
+    RiderRepository riderRepository;
 
     public Purchase reviewRiderFromSpecificOrder(String storeToken, Long order_id, int review)
             throws InvalidLoginException, ResourceNotFoundException, InvalidValueException {
@@ -30,7 +48,8 @@ public class PurchaseService {
         Purchase purchase = purchaseRepository.findById(order_id).get();
 
         // A review cannot be added to a purchase that was already reviewed.
-        if (purchase.getRiderReview() != null) throw new InvalidValueException("Invalid, purchased already had review.");
+        if (purchase.getRiderReview() != null)
+            throw new InvalidValueException("Invalid, purchased already had review.");
 
         long store_id_of_where_purchase_was_supposedly_made = purchase.getStore().getId();
         long store_id_associated_to_token_passed = store.getId();
@@ -44,5 +63,29 @@ public class PurchaseService {
         purchaseRepository.saveAndFlush(purchase);
 
         return purchase;
+    }
+
+    public Map<String, Object> getLastOrderForRider(Integer pageNo, Integer pageSize, String riderToken) throws InvalidLoginException {
+        String email = jwtUserDetailsService.getEmailFromToken(riderToken);
+
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
+
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("date").descending());
+
+        Page<Purchase> pagedResult = purchaseRepository.findAllByRider(rider, paging);
+
+        List<Purchase> responseList = new ArrayList<>();
+
+        if (pagedResult.hasContent()) {
+            responseList = pagedResult.getContent();
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("orders", responseList);
+        response.put("currentPage", pagedResult.getNumber());
+        response.put("totalItems", pagedResult.getTotalElements());
+        response.put("totalPages", pagedResult.getTotalPages());
+
+        return response;
     }
 }

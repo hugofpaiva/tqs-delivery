@@ -1,8 +1,8 @@
 package ua.tqs.deliveryservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -12,7 +12,7 @@ import java.util.Date;
 @Entity
 public class Purchase {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
     @CreationTimestamp
@@ -25,6 +25,7 @@ public class Purchase {
     private Status status;
 
     @ManyToOne
+    @JsonIgnore
     private Rider rider;
 
     @ManyToOne
@@ -36,16 +37,16 @@ public class Purchase {
     @Max(value = 5, message = "Review should not be above the value of 5.")
     private Integer riderReview;
 
-    public Purchase(Address address, Rider rider, Store store, String clientName) {
+    public Purchase(Address address, Store store, String clientName) {
         this.address = address;
         this.store = store;
-        this.rider = rider;
         this.status = Status.PENDENT;
         this.clientName = clientName;
     }
 
-    public Purchase(Address address, Store store, String clientName) {
+    public Purchase(Address address, Rider rider, Store store, String clientName) {
         this.address = address;
+        this.rider = rider;
         this.store = store;
         this.status = Status.PENDENT;
         this.clientName = clientName;

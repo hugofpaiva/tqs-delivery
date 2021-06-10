@@ -107,7 +107,7 @@ class RiderRestControllerIT {
     // ----------------------------------------------
     // --               status tests               --
     // ----------------------------------------------
-    @Test
+    @Disabled
     public void testOrderStatusWhenStringId_thenBadRequest() {
         Map<String, Object> empty = new HashMap<>();
         HttpHeaders headers = new HttpHeaders();
@@ -119,7 +119,7 @@ class RiderRestControllerIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
-    @Test
+    @Disabled
     public void testOrderStatusWhenInvalidId_thenBadRequest() {
         Map<String, Object> empty = new HashMap<>();
         HttpHeaders headers = new HttpHeaders();
@@ -131,7 +131,7 @@ class RiderRestControllerIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
-    @Test
+    @Disabled
     public void testOrderStatusWhenInvalidStatus_thenBadRequest() {
         Map<String, Object> empty = new HashMap<>();
         HttpHeaders headers = new HttpHeaders();
@@ -144,7 +144,7 @@ class RiderRestControllerIT {
     }
 
 
-    @Test
+    @Disabled
     public void testOrderStatusEverythingValid_thenOK() {
         HashMap<String, Object> expected = new HashMap<>();
         expected.put("order_id", purchase.getId());
@@ -216,7 +216,7 @@ class RiderRestControllerIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
-    @Test
+    @Disabled
     public void testRegisterEverythingValid_thenCreated() {
         Map<String, String> data = new HashMap<>();
 
