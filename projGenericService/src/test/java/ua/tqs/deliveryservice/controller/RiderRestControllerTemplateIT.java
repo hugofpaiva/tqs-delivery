@@ -254,7 +254,7 @@ class RiderRestControllerTemplateIT {
 
 
     @Test
-    public void whenRiderHashCurrentOrderButNoAuthorization_thenUnauthorized() {
+    public void whenRiderHasCurrentOrderButNoAuthorization_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "order/current", HttpMethod.GET, new HttpEntity<Object>(headers),
@@ -276,7 +276,6 @@ class RiderRestControllerTemplateIT {
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
     }
-
 
     @Test
     public void whenRiderHasCurrentOrder_testGetCurrentOrder() {
@@ -305,7 +304,123 @@ class RiderRestControllerTemplateIT {
         Assertions.assertThat(info.get("status")).isEqualTo("ACCEPTED");
     }
 
-    
+
+    /* ----------------------------- *
+     * GET NEW PURCHASE FOR RIDER    *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void givenRiderHasNoAuthorization_whenGetNewPurchase_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/new", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+    }
+
+    @Test
+    public void whenRiderHasCurrentOrder_whenGetNewOrder_thenForbidden() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/new", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.FORBIDDEN));
+    }
+
+    @Test
+    public void givenThereAreNoOrders_whenGetNewOrder_thenNotFound() {
+        purchaseRepository.delete(this.purchase);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/new", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    public void givenRiderHasNoOrder_whenGetNewOrder_thenGetNewOrder() {
+        purchaseRepository.delete(this.purchase);
+        this.purchase = purchaseRepository.saveAndFlush(new Purchase(address, store, "Joana"));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/new", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found).isNotNull();
+        Assertions.assertThat(found.containsKey("data")).isTrue();
+
+        Map<String, Object> info = mapper.convertValue(
+                found.get("data"),
+                new TypeReference<Map<String, Object>>() {
+                }
+        );
+
+        Assertions.assertThat(info.containsKey("clientAddress")).isTrue();
+        Assertions.assertThat(info.containsKey("orderId")).isTrue();
+        Assertions.assertThat(info.get("status")).isEqualTo("ACCEPTED");
+    }
 
 
+    /* ----------------------------- *
+     * UPDATE STATUS OF PURCHASE     *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void givenRiderHasNoAuthorization_whenUpdatePurchase_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/status", HttpMethod.PATCH, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+    }
+
+
+    @Test
+    public void givenRiderHasNoCurrentOrder_whenUpdatePurchase_get404() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        purchaseRepository.delete(this.purchase);
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/status", HttpMethod.PATCH, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    public void givenRiderHasCurrentOrder_whenUpdatePurchaseStatus_thenSuccess() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/status", HttpMethod.PATCH, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found).isNotNull();
+        Assertions.assertThat(found.containsKey("order_id")).isTrue();
+        Assertions.assertThat(found.containsKey("status")).isTrue();
+
+        Assertions.assertThat(found.get("status")).isEqualTo("PICKED_UP");
+    }
 }
