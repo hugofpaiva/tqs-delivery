@@ -28,17 +28,6 @@ import java.util.TreeMap;
 @RequestMapping("/rider")
 public class RiderRestController {
 
-    @Autowired
-    private RiderRepository riderRep;
-
-    @Autowired
-    private PersonRepository personRep;
-
-    @Autowired
-    private PurchaseRepository purchaseRep;
-
-    @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
 
     @Autowired
     private PurchaseService purchaseService;

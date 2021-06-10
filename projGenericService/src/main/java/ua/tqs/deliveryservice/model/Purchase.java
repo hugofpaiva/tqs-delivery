@@ -43,7 +43,7 @@ public class Purchase {
         this.address = address;
         this.rider = rider;
         this.store = store;
-        this.status = Status.PENDENT;
+        this.status = Status.ACCEPTED;
         this.clientName = clientName;
     }
 
