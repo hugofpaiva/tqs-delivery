@@ -194,7 +194,6 @@ class RiderRestControllerMockMvcTest {
         verify(purchaseService, times(1)).getLastOrderForRider(0, 10, "Bearer example_token");
     }
 
-
     /* ----------------------------- *
      * GET CURRENT PURCHASE OF RIDER *
      * ----------------------------- *
@@ -211,7 +210,7 @@ class RiderRestControllerMockMvcTest {
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                ;
+        ;
 
         verify(purchaseService, times(1)).getCurrentPurchase(any());
     }
@@ -251,7 +250,7 @@ class RiderRestControllerMockMvcTest {
                 .andExpect(jsonPath("data.orderId", is(((Long) purchase.getId()).intValue())))
                 .andExpect(jsonPath("data.clientName", is(purchase.getClientName())))
                 .andExpect(jsonPath("data.status", is("ACCEPTED")))
-                ;
+        ;
 
         verify(purchaseService, times(1)).getCurrentPurchase(any());
     }
@@ -356,7 +355,6 @@ class RiderRestControllerMockMvcTest {
     }
 
 
-
     @Test
     public void givenRiderWithoutPurchase_whenUpdatePurchaseStatus_then404() throws Exception {
         HttpHeaders headers = new HttpHeaders();
@@ -394,7 +392,7 @@ class RiderRestControllerMockMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("order_id", is(((Long) purchase.getId()).intValue())))
                 .andExpect(jsonPath("status", is("PICKED_UP")))
-                ;
+        ;
 
         verify(purchaseService, times(1)).updatePurchaseStatus(any());
 

@@ -28,7 +28,6 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -96,7 +95,6 @@ class RiderRestControllerTemplateIT {
         this.deleteAll();
     }
 
-
     public String getBaseUrl() {
         return "http://localhost:" + randomServerPort + "/rider/";
 
@@ -115,6 +113,7 @@ class RiderRestControllerTemplateIT {
         personRepository.deleteAll();
         personRepository.flush();
     }
+
 
     /* ----------------------------- *
      * GET ORDER HISTORY FOR RIDER   *
@@ -246,7 +245,6 @@ class RiderRestControllerTemplateIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
     }
 
-
     /* ----------------------------- *
      * GET CURRENT PURCHASE OF RIDER *
      * ----------------------------- *
@@ -303,7 +301,6 @@ class RiderRestControllerTemplateIT {
         Assertions.assertThat(info.containsKey("orderId")).isTrue();
         Assertions.assertThat(info.get("status")).isEqualTo("ACCEPTED");
     }
-
 
     /* ----------------------------- *
      * GET NEW PURCHASE FOR RIDER    *

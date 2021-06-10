@@ -46,6 +46,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+
+                if (username == null){
+                    throw new IllegalArgumentException("Username not found for this Token.");
+                }
             } catch (IllegalArgumentException e) {
                 logger.info("Unable to get JWT Token, Checking if it is a Store Token...");
                 try {
@@ -63,9 +67,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // Once we get the token validate it.
         if ((username != null || store != null) && SecurityContextHolder.getContext().getAuthentication() == null) {
-
             UserDetails userDetails = null;
-
             if (username != null) {
                 userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
             } else if (store != null) {
@@ -74,8 +76,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             // if token is valid configure Spring Security to manually set
             // authentication
-            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-
+            if (store != null || jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
