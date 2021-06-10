@@ -47,22 +47,12 @@ public class PurchaseService {
     @Autowired
     RiderRepository riderRepository;
 
-    public Purchase getAvailableOrderForRider() {
-        Purchase purch = purchaseRepository.findTopByRiderIsNullOrderByDate().orElse(null);
-        return purch; // null if none
-    }
-
     public Purchase acceptOrder(Rider r, Purchase p) {
         p.setRider(r);
         p.setStatus(Status.ACCEPTED);
         return purchaseRepository.save(p);
     }
 
-    public Purchase getCurrentRiderOrder(Rider r) {
-        // verify if Rider has any purchase to deliver
-        Purchase unfinished = purchaseRepository.findTopByRiderAndStatusIsNot(r, Status.DELIVERED).orElse(null);
-        return unfinished; // null if there's none
-    }
 
 // ----------- remove up TODO ----------
     public Purchase updatePurchaseStatus(String token) throws ForbiddenRequestException, InvalidLoginException, ResourceNotFoundException {
