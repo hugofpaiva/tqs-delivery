@@ -28,6 +28,7 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -95,6 +96,30 @@ class RiderRestControllerTemplateIT {
         this.deleteAll();
     }
 
+
+    public String getBaseUrl() {
+        return "http://localhost:" + randomServerPort + "/rider/";
+
+    }
+
+    public void deleteAll() {
+        purchaseRepository.deleteAll();
+        purchaseRepository.flush();
+
+        storeRepository.deleteAll();
+        storeRepository.flush();
+
+        addressRepository.deleteAll();
+        addressRepository.flush();
+
+        personRepository.deleteAll();
+        personRepository.flush();
+    }
+
+    /* ----------------------------- *
+     * GET ORDER HISTORY FOR RIDER   *
+     * ----------------------------- *
+     */
 
     @Test
     public void testGetRiderOrderHistoryWhenInvalidPageNo_thenBadRequest() {
@@ -222,24 +247,65 @@ class RiderRestControllerTemplateIT {
     }
 
 
-    public String getBaseUrl() {
-        return "http://localhost:" + randomServerPort + "/rider/";
+    /* ----------------------------- *
+     * GET CURRENT PURCHASE OF RIDER *
+     * ----------------------------- *
+     */
 
+
+    @Test
+    public void whenRiderHashCurrentOrderButNoAuthorization_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/current", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
     }
 
-    public void deleteAll() {
-        purchaseRepository.deleteAll();
-        purchaseRepository.flush();
+    @Test
+    public void whenRiderHasNoCurrentOrder_whenGetCurrentOrder_get404() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
 
-        storeRepository.deleteAll();
-        storeRepository.flush();
+        purchaseRepository.delete(this.purchase);
 
-        addressRepository.deleteAll();
-        addressRepository.flush();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/current", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
 
-        personRepository.deleteAll();
-        personRepository.flush();
-
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
     }
+
+
+    @Test
+    public void whenRiderHasCurrentOrder_testGetCurrentOrder() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/current", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found).isNotNull();
+        Assertions.assertThat(found.containsKey("data")).isTrue();
+
+        Map<String, Object> info = mapper.convertValue(
+                found.get("data"),
+                new TypeReference<Map<String, Object>>() {
+                }
+        );
+
+        Assertions.assertThat(info.containsKey("clientAddress")).isTrue();
+        Assertions.assertThat(info.containsKey("orderId")).isTrue();
+        Assertions.assertThat(info.get("status")).isEqualTo("ACCEPTED");
+    }
+
+    
+
 
 }

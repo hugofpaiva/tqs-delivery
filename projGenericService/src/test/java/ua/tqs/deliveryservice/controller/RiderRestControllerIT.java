@@ -123,7 +123,7 @@ class RiderRestControllerIT {
         purchaseRepository.saveAndFlush(this.purchase);
     }
 
-    @Test
+    @Test // DONE
     public void whenRiderHasCurrentOrder_testGetCurrentOrder() {
         Map<String, Object> empty = new HashMap<>();
         HttpHeaders headers = new HttpHeaders();
@@ -144,7 +144,7 @@ class RiderRestControllerIT {
         // eu queria checkar o ID também mas dá sempre problema pq ele compara um Long com Integer for some reason..?
     }
 
-    @Test
+    @Test // DONE
     public void whenRiderHasNoCurrentOrder_testGetCurrentOrder() {
         Map<String, Object> empty = new HashMap<>();
         HttpHeaders headers = new HttpHeaders();
