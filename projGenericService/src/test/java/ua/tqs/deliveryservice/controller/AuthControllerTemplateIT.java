@@ -5,8 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -18,6 +17,7 @@ import ua.tqs.deliveryservice.model.Manager;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.PersonRepository;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -133,6 +133,73 @@ class AuthControllerTemplateIT  {
         assertEquals(response.getBody().get("name"), manager.getName());
         personRepository.delete(manager);
         personRepository.flush();
+    }
+
+
+    @Test
+    public void testInvalidEmail_thenBadRequest() {
+        Map<String, String> data = new HashMap<>();
+        data.put("email", null);
+        data.put("name", "A Nice Name");
+        data.put("pwd", "And_A_str0ngPasswor2drd");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(data, headers);
+
+        ResponseEntity<Map> response = testRestTemplate.postForEntity(getBaseUrl() + "/register", entity, Map.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testInvalidPwd_thenBadRequest() {
+        Map<String, String> data = new HashMap<>();
+        data.put("email", "example@tqs.ua");
+        data.put("name", "A Nice Name");
+        data.put("pwd", "weak");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(data, headers);
+
+        ResponseEntity<Map> response = testRestTemplate.postForEntity(getBaseUrl() + "/register", entity, Map.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testInvalidName_thenBadRequest() {
+        Map<String, String> data = new HashMap<>();
+        data.put("email", "example@tqs.ua");
+        data.put("name", null);
+        data.put("pwd", "strongggg");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(data, headers);
+
+        ResponseEntity<Map> response = testRestTemplate.postForEntity(getBaseUrl() + "/register", entity, Map.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testEverythingValid_thenCreated() {
+        Map<String, String> data = new HashMap<>();
+        data.put("email", "example@tqs.ua");
+        data.put("name", "A very nice name");
+        data.put("pwd", "strongggg");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(data, headers);
+
+        ResponseEntity<Rider> response = testRestTemplate.postForEntity(getBaseUrl() + "/register", entity, Rider.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
+        assertThat(response.getBody().getEmail(), equalTo(data.get("email")));
+        assertThat(response.getBody().getName(), equalTo(data.get("name")));
     }
 
     public String getBaseUrl() {

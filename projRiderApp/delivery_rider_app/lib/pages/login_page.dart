@@ -18,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    GenericService.error = false;
     userNameController = TextEditingController();
     pwController = TextEditingController();
   }
@@ -190,7 +191,6 @@ class _LoginPageState extends State<LoginPage> {
                               GoogleFonts.oswald(fontWeight: FontWeight.w300)),
                       IconButton(
                         onPressed: () async {
-                          print(GenericService.loggedIn);
                           await GenericService.login(
                               userNameController.text, pwController.text);
                           if (GenericService.loggedIn) {
@@ -220,12 +220,15 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GenericService.error == true
-                      ? Text('Invalid Credentials',
+                  (GenericService.error == true
+                      ? Text(GenericService.errorMsg,
                           style: GoogleFonts.oswald(
                               fontWeight: FontWeight.w300, fontSize: 20,
                               color: Colors.redAccent))
-                      : Container()
+                      : Container()),
+                  (GenericService.requested == true
+                      ? CircularProgressIndicator()
+                      : Container())
                 ],
               ),
               Spacer(flex: 5)

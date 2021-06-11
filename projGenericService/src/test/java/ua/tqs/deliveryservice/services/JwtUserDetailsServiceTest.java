@@ -7,25 +7,31 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import ua.tqs.deliveryservice.configuration.JwtTokenUtil;
-import ua.tqs.deliveryservice.model.Manager;
-import ua.tqs.deliveryservice.model.Rider;
-import ua.tqs.deliveryservice.model.Store;
+import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.PersonRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @ExtendWith(MockitoExtension.class)
 class JwtUserDetailsServiceTest {
     @Mock
     private PersonRepository personRepository;
+
+    @Mock
+    private AuthenticationManager authenticationManager;
 
     @Mock
     private StoreRepository storeRepository;
@@ -147,6 +153,62 @@ class JwtUserDetailsServiceTest {
 
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
                 .findByToken(anyString());
+    }
+
+    @Test
+    public void testJwtRequestWithInvalidCredentials_thenThrow() {
+        Mockito.when(authenticationManager.authenticate(any())).thenThrow(BadCredentialsException.class);
+
+        JwtRequest request = new JwtRequest("mail@example.com", "pw");
+
+        assertThrows(InvalidLoginException.class, () -> {
+            jwtUserDetailsService.newAuthenticationToken(request);
+        }, "INVALID CREDENTIALS");
+
+        Mockito.verify(authenticationManager, VerificationModeFactory.times(1))
+                .authenticate(any());
+        Mockito.verify(personRepository, VerificationModeFactory.times(0))
+                .findByEmail(anyString());
+        Mockito.verify(jwtTokenUtil, VerificationModeFactory.times(0))
+                .generateToken(any());
+    }
+
+    @Test
+    public void testJwtRequestWithPersonInvalid_thenThrow() {
+        Mockito.when(personRepository.findByEmail("mail@example.com")).thenReturn(Optional.empty());
+
+        JwtRequest request = new JwtRequest("mail@example.com", "pw");
+
+        assertThrows(InvalidLoginException.class, () -> {
+            jwtUserDetailsService.newAuthenticationToken(request);
+        }, "Person not found for this email: mail@example.com");
+
+        Mockito.verify(authenticationManager, VerificationModeFactory.times(1))
+                .authenticate(any());
+        Mockito.verify(personRepository, VerificationModeFactory.times(1))
+                .findByEmail(anyString());
+        Mockito.verify(jwtTokenUtil, VerificationModeFactory.times(0))
+                .generateToken(any());
+    }
+
+    @Test
+    public void testJwtRequestValid_thenReturnJwtResponse() throws InvalidLoginException {
+        Rider rider = new Rider("João", "password123", "mail@example.com");
+        Mockito.when(personRepository.findByEmail("mail@example.com")).thenReturn(Optional.of(rider));
+
+        JwtRequest request = new JwtRequest("mail@example.com", "password123");
+
+        JwtResponse response = jwtUserDetailsService.newAuthenticationToken(request);
+
+        assertEquals(response.getName(), rider.getName());
+        assertEquals(response.getType().toString(), "Rider");
+
+        Mockito.verify(authenticationManager, VerificationModeFactory.times(1))
+                .authenticate(any());
+        Mockito.verify(personRepository, VerificationModeFactory.times(2))
+                .findByEmail(anyString());
+        Mockito.verify(jwtTokenUtil, VerificationModeFactory.times(1))
+                .generateToken(any());
     }
 
 
