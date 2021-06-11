@@ -63,7 +63,7 @@ public class PurchaseRepositoryTests {
     /* -- helper -- */
     private Purchase createAndSavePurchase(int i) {
         ShoppingCart sc = new ShoppingCart();
-        Person p = new Person("personName"+i, "pwdpwd"+i, "email"+i+"@email.com", sc);
+        Person p = new Person("personName"+i, "pwdpwdpwd"+i, "email"+i+"@email.com", sc);
         Address address = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal");
 
         List<Product> products = new ArrayList<>();
