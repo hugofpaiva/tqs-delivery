@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 
 @WebMvcTest(value = HumberAddressController.class, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfig.class)})
 @AutoConfigureMockMvc(addFilters = false)
-public class HumberAddressControllerTest {
+class HumberAddressControllerTest {
 
     @Autowired
     private MockMvc mvc;

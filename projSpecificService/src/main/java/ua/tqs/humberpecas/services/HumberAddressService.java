@@ -29,14 +29,14 @@ public class HumberAddressService {
 
         // TODO: verificar ser o address ja existe
 
-        Address newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry(), p);
+        var newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry(), p);
 
         return addressRepository.save(newAddress);
     }
 
     public Address updateAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
 
-        Address address = addressRepository.findById(addressDTO.getAddressId())
+        var address = addressRepository.findById(addressDTO.getAddressId())
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid Address"));
 
         address.setAddress(addressDTO.getAddress());
@@ -50,7 +50,7 @@ public class HumberAddressService {
 
     public void delAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
 
-        Address address = addressRepository.findById(addressDTO.getAddressId())
+        var address = addressRepository.findById(addressDTO.getAddressId())
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid Address"));
 
         addressRepository.delete(address);

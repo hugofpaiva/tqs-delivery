@@ -1,10 +1,5 @@
 package ua.tqs.humberpecas.model;
 
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
-
-
 public enum Category {
 
 
