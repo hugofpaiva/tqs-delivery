@@ -1,17 +1,23 @@
-package ua.tqs.humberpecas.contoller;
+package ua.tqs.humberpecas.controller;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.tqs.humberpecas.execption.ResourceNotFoundException;
+import ua.tqs.humberpecas.configuration.JwtRequestFilter;
+import ua.tqs.humberpecas.configuration.WebSecurityConfig;
+import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Category;
 import ua.tqs.humberpecas.model.Product;
-import ua.tqs.humberpecas.service.HumberService;
+import ua.tqs.humberpecas.services.HumberProductService;
+
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,14 +26,18 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 
-@WebMvcTest(HumberController.class)
-public class HumberProductsControllerTest {
+@WebMvcTest(value = HumberProductsController.class, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfig.class)})
+@AutoConfigureMockMvc(addFilters = false)
+class HumberProductsControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
     @MockBean
-    private HumberService service;
+    private HumberProductService service;
+
+    @MockBean
+    private JwtRequestFilter jwtRequestFilter;
 
     private List<Product> catalog;
 
@@ -51,7 +61,7 @@ public class HumberProductsControllerTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/shop/products")
+                .get("/product/getAll")
                 .then()
                 .statusCode(200)
                 .body("$.size()", Matchers.equalTo(2))
@@ -71,7 +81,7 @@ public class HumberProductsControllerTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/shop/products/1")
+                .get("/product/get/1")
                 .then()
                 .statusCode(200)
                 .body("name", Matchers.equalTo("Parafuso"));
@@ -89,7 +99,7 @@ public class HumberProductsControllerTest {
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/shop/products/1")
+                .get("/product/get/1")
                 .then()
                 .statusCode(404);
 
@@ -99,14 +109,14 @@ public class HumberProductsControllerTest {
 
     @Test
     @DisplayName("Get Product by Category")
-    void whenGetProductsByCategory_thenReturnProducts(){
+    void whenGetProductsByCategory_thenReturnProducts() throws ResourceNotFoundException {
 
         when(service.getProductsByCategory(Category.CHAVES)).thenReturn(catalog.subList(1,2));
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .when()
-                .get("/shop/products?category=CHAVES")
+                .get("/product/getAll?category=CHAVES")
                 .then()
                 .statusCode(200)
                 .body("$.size()", Matchers.equalTo(1))

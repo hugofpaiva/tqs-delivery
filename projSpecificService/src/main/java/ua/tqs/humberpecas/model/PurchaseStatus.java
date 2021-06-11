@@ -1,10 +1,9 @@
 package ua.tqs.humberpecas.model;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.Getter;
 
 
-public enum PurchageStatus {
+public enum PurchaseStatus {
 
     PENDENT("pendent"),
     ACCEPTED("accepted"),
@@ -13,7 +12,7 @@ public enum PurchageStatus {
 
     private String status;
 
-    private PurchageStatus(String status){
+    private PurchaseStatus(String status){
         this.status = status;
     }
 

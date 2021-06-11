@@ -2,11 +2,8 @@ package ua.tqs.humberpecas.model;
 
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
 
@@ -35,13 +32,13 @@ public class Purchase {
 
 
     @Enumerated(value = EnumType.STRING)
-    private PurchageStatus status;
+    private PurchaseStatus status;
 
     public Purchase(Person person, Address address, List<Product> products) {
         this.person = person;
         this.address = address;
         this.products = products;
-        this.status = PurchageStatus.PENDENT;
+        this.status = PurchaseStatus.PENDENT;
     }
 
     public Purchase(){ }

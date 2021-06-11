@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class PurchageDTO {
+public class PurchaseDTO {
 
     @NotNull(message = "Client is mandatory")
     private long personId;
@@ -22,12 +22,12 @@ public class PurchageDTO {
     @NotNull(message = "List of Products is mandatory")
     private List<Long> productsId;
 
-    public PurchageDTO(Long personId, Date date, Long addressId, List<Long> productsId) {
+    public PurchaseDTO(Long personId, Date date, Long addressId, List<Long> productsId) {
         this.personId = personId;
         this.addressId = addressId;
         this.date = date;
         this.productsId = productsId;
     }
 
-    public PurchageDTO(){ }
+    public PurchaseDTO(){ }
 }

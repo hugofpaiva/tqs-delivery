@@ -57,6 +57,5 @@ public class Person {
         this.shoppingCart = sc;
     }
 
-    public Person() {}
 
 }

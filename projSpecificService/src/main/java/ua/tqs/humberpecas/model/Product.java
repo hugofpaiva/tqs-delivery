@@ -55,6 +55,5 @@ public class Product {
         deleted = false;
     }
 
-    public Product() {}
 
 }

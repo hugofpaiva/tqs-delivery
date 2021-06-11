@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 @RequiredArgsConstructor
 public class AddressDTO {
 
+
+    private Long addressId;
+
     @NonNull
     @NotNull(message = "Address is mandatory")
     private String address;
@@ -27,6 +30,8 @@ public class AddressDTO {
     @NotNull(message = "Country is mandatory")
     private String country;
 
+    @NonNull
+    @NotNull(message = "User is mandatory")
     private long personID;
 
     public AddressDTO(){ }
