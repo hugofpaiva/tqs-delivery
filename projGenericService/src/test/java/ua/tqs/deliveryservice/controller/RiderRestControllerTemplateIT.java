@@ -168,7 +168,6 @@ class RiderRestControllerTemplateIT {
         Assertions.assertThat(found.get("totalItems")).isEqualTo(1);
         Assertions.assertThat(found.get("totalPages")).isEqualTo(1);
 
-
     }
 
     @Test
