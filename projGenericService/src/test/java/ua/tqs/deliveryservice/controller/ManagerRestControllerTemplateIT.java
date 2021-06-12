@@ -282,6 +282,4 @@ public class ManagerRestControllerTemplateIT {
         Assertions.assertThat(found.get("totalStores")).isEqualTo(1);
     }
 
-    
-
 }
