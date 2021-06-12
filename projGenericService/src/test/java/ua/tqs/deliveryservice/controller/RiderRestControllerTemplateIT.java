@@ -74,7 +74,7 @@ class RiderRestControllerTemplateIT {
 
     @BeforeEach
     public void beforeEachSetUp() {
-        this.rider = new Rider("TQS_delivery@example.com", bcryptEncoder.encode("aRightPassword"), "Joao");
+        this.rider = new Rider("Joao", bcryptEncoder.encode("aRightPassword"), "TQS_delivery@example.com");
         this.address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
         this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address);
         this.purchase = new Purchase(this.address, this.rider, this.store, "Joana");
