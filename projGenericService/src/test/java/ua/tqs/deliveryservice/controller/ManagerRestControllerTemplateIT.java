@@ -208,6 +208,80 @@ public class ManagerRestControllerTemplateIT {
         Assertions.assertThat(found.get("totalPages")).isEqualTo(0);
     }
 
+    /* ----------------------------- *
+     * GET ORDERS STATISTICS         *
+     * ----------------------------- *
+     */
 
+    @Test
+    public void testGetStatisticsButNoAuthorization_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "statistics", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+    }
+
+
+    @Test
+    public void testGetStatisticsNoStores_then200() {
+        storeRepository.delete(this.store);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "statistics", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found.get("totalPurchases")).isEqualTo(0);
+        Assertions.assertThat(found.get("avgPurchasesPerWeek")).isNull();
+        Assertions.assertThat(found.get("totalStores")).isEqualTo(0);
+    }
+
+
+    @Test
+    public void testGetStatisticsWithStoresButNoOrders_then200() {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "statistics", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found.get("totalPurchases")).isEqualTo(0);
+        Assertions.assertThat(found.get("avgPurchasesPerWeek")).isNull();
+        Assertions.assertThat(found.get("totalStores")).isEqualTo(1);
+    }
+
+    @Test
+    public void testGetStatisticsWithStoresAndOrders_then200() {
+        Purchase p1 = new Purchase(this.address, this.store, "Miguel");
+        purchaseRepository.saveAndFlush(p1);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "statistics", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found.get("totalPurchases")).isEqualTo(1);
+        Assertions.assertThat(found.get("avgPurchasesPerWeek")).isNotNull();
+        Assertions.assertThat(found.get("totalStores")).isEqualTo(1);
+    }
+
+    
 
 }
