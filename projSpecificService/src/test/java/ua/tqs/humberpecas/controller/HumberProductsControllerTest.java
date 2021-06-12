@@ -16,13 +16,8 @@ import ua.tqs.humberpecas.configuration.WebSecurityConfig;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Category;
 import ua.tqs.humberpecas.model.Product;
-<<<<<<< HEAD:projSpecificService/src/test/java/ua/tqs/humberpecas/contoller/HumberControllerTest.java
-import ua.tqs.humberpecas.model.Review;
-import ua.tqs.humberpecas.service.HumberService;
-=======
 import ua.tqs.humberpecas.services.HumberProductService;
 
->>>>>>> ccbfbf3ad8cf20aaf68ee79fc0e4e9477a31ca70:projSpecificService/src/test/java/ua/tqs/humberpecas/controller/HumberProductsControllerTest.java
 
 import java.io.IOException;
 import java.util.Arrays;

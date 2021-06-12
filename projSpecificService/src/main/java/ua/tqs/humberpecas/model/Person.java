@@ -25,10 +25,6 @@ public class Person {
     private String pwd;
 
 
-<<<<<<< HEAD
-    @NotBlank(message = "Email is mandatory")
-=======
->>>>>>> ccbfbf3ad8cf20aaf68ee79fc0e4e9477a31ca70
     @Email
     @Column(unique = true)
     private String email;
