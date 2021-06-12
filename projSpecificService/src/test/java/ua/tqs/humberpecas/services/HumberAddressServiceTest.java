@@ -1,6 +1,5 @@
 package ua.tqs.humberpecas.services;
 
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +37,7 @@ class HumberAddressServiceTest {
     private PersonRepository personRepository;
 
     @InjectMocks
-    private HumberAddressService service;
+    private ua.tqs.humberpecas.services.HumberAddressService service;
 
     private Address  address;
     private AddressDTO addressDTO;
@@ -49,7 +48,7 @@ class HumberAddressServiceTest {
 
         person = new Person("Fernando", "12345678","fernando@ua.pt");
         address  = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
-        addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal", 1);
+        addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal");
 
     }
 
@@ -62,6 +61,8 @@ class HumberAddressServiceTest {
         when(personRepository.findById(anyLong())).thenReturn(Optional.of(person));
         when(addressRepository.save(address)).thenReturn(address);
 
+
+        addressDTO.setPersonID(1L);
         Address newAddress = service.addNewAddress(addressDTO);
 
 
@@ -80,6 +81,7 @@ class HumberAddressServiceTest {
     @DisplayName("Add new Address of Invalid User throws ResourceNotFoundException")
     void whenInvalidUserAddAddress_thenThrowsResourceNotFound() throws ResourceNotFoundException {
 
+        addressDTO.setPersonID(1L);
 
         assertThrows( ResourceNotFoundException.class, () -> {
             service.addNewAddress(addressDTO);

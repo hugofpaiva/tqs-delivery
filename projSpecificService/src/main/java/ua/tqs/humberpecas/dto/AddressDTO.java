@@ -30,8 +30,6 @@ public class AddressDTO {
     @NotNull(message = "Country is mandatory")
     private String country;
 
-    @NonNull
-    @NotNull(message = "User is mandatory")
     private long personID;
 
     public AddressDTO(){ }

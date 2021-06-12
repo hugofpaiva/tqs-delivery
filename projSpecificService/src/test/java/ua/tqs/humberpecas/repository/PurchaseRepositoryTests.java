@@ -67,8 +67,8 @@ public class PurchaseRepositoryTests {
         Address address = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal");
 
         List<Product> products = new ArrayList<>();
-        products.add(new Product("hammer", 10.50, Category.CHAVES , "the best hammer", 3));
-        products.add(new Product("hammer v2", 20.50, Category.CHAVES , "the best hammer 2.0", 4));
+        products.add(new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", 3));
+        products.add(new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", 4));
 
         Purchase purch = new Purchase(p, address, products);
 

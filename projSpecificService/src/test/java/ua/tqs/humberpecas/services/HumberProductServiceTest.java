@@ -1,6 +1,6 @@
 package ua.tqs.humberpecas.services;
 
-
+import ua.tqs.humberpecas.services.HumberProductService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,8 +42,8 @@ class HumberProductServiceTest {
     public void setUp() {
 
         catalog = Arrays.asList(
-                new Product(0.50, "Parafuso", "xpto", 1000, false, Category.PARAFUSOS ),
-                new Product(5.00, "Chave inglesa", "xpto", 500, false, Category.CHAVES)
+                new Product(0.50, "Parafuso", "xpto", 1000, false, Category.SCREWS ),
+                new Product(5.00, "Chave inglesa", "xpto", 500, false, Category.SCREWDRIVER)
         );
     }
 
@@ -94,13 +94,13 @@ class HumberProductServiceTest {
     @DisplayName("Get Products of a Category")
     void whenValidCategory_thenReturnProducts() throws ResourceNotFoundException {
 
-        Mockito.when(repository.findByCategory(Category.CHAVES)).thenReturn(Optional.of(catalog.subList(1,2)));
+        Mockito.when(repository.findByCategory(Category.SCREWDRIVER)).thenReturn(Optional.of(catalog.subList(1,2)));
 
-        List<Product> productList = service.getProductsByCategory(Category.CHAVES);
+        List<Product> productList = service.getProductsByCategory(Category.SCREWDRIVER);
 
         assertThat(productList, hasSize(1));
         assertThat(productList, hasItem(hasProperty("name", Matchers.equalTo("Chave inglesa"))));
-        verify(repository, times(1)).findByCategory(Category.CHAVES);
+        verify(repository, times(1)).findByCategory(Category.SCREWDRIVER);
 
     }
 

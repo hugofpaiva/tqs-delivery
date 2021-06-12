@@ -39,9 +39,9 @@ public class HumberPurchaseController {
 
     // TODO: // userId -> token
     @GetMapping("/getAll")
-    public ResponseEntity<List<Purchase>> getUserPurchases(@RequestParam long userId) throws ResourceNotFoundException {
+    public ResponseEntity<List<Purchase>> getUserPurchases(@RequestHeader("authorization") String token) throws ResourceNotFoundException {
 
-            List<Purchase> purchaseList = service.getUserPurchases(userId);
+            List<Purchase> purchaseList = service.getUserPurchases(token.substring(7));
             return ResponseEntity.ok().body(purchaseList);
 
     }

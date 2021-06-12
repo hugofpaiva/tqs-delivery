@@ -39,6 +39,6 @@ public class HumberPurchaseService {
 
     }
 
-    public List<Purchase> getUserPurchases(long userId) throws ResourceNotFoundException{ return null; }
+    public List<Purchase> getUserPurchases(String userToken) throws ResourceNotFoundException{ return null; }
 
 }

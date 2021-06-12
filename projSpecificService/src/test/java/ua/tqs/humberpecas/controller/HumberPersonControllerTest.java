@@ -55,7 +55,7 @@ class HumberPersonControllerTest {
     @DisplayName("User registration")
     void whenValidRegister_thenReturnCrated() throws DuplicatedObjectException {
 
-        List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal",1));
+        List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal"));
 
         PersonDTO p = new PersonDTO("Fernando", "12345678","fernando@ua.pt", addresses);
 
@@ -77,7 +77,7 @@ class HumberPersonControllerTest {
     @DisplayName("When User inserts invalids accounts's parameter returns HTTP status Bad Request")
     void whenInvalidRegister_thenReturnStatus400(String name, String pwd,String email) throws DuplicatedObjectException {
 
-        List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal",1));
+        List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal"));
 
         PersonDTO p = new PersonDTO(name, pwd, email, addresses);
 
@@ -98,7 +98,7 @@ class HumberPersonControllerTest {
     @DisplayName("When account already exists returns HTTP status Conflict")
     void whenUserAlreadyExists_thenReturnStatus409() throws DuplicatedObjectException {
 
-        List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal",1));
+        List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal"));
 
         PersonDTO p = new PersonDTO("Fernando", "12345678","fernando@ua.pt", addresses);
         doThrow(new DuplicatedObjectException("User alerady exists!")).when(service).register(p);

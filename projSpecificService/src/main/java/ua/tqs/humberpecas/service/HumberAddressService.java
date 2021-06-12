@@ -1,6 +1,7 @@
 package ua.tqs.humberpecas.services;
 
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.dto.AddressDTO;
@@ -12,7 +13,7 @@ import ua.tqs.humberpecas.repository.PersonRepository;
 
 import java.util.List;
 
-
+@Log4j2
 @Service
 public class HumberAddressService {
 
@@ -25,7 +26,9 @@ public class HumberAddressService {
     public Address addNewAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
 
         Person p = personRepository.findById(addressDTO.getPersonID())
-                .orElseThrow(() -> new ResourceNotFoundException("Invalid User"));
+                .orElseThrow(() -> {
+                            log.error("Invalid User");
+                            return new ResourceNotFoundException("Invalid User"); });
 
         // TODO: verificar ser o address ja existe
 
@@ -37,7 +40,10 @@ public class HumberAddressService {
     public Address updateAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
 
         var address = addressRepository.findById(addressDTO.getAddressId())
-                .orElseThrow(() -> new ResourceNotFoundException("Invalid Address"));
+                .orElseThrow(() -> {
+                                log.error("Invalid Address");
+                                return new ResourceNotFoundException("Invalid Address"); });
+
 
         address.setAddress(addressDTO.getAddress());
         address.setCity(addressDTO.getCity());
@@ -51,7 +57,9 @@ public class HumberAddressService {
     public void delAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
 
         var address = addressRepository.findById(addressDTO.getAddressId())
-                .orElseThrow(() -> new ResourceNotFoundException("Invalid Address"));
+                .orElseThrow(() ->  {
+                            log.error("Invalid Address");
+                            return new ResourceNotFoundException("Invalid Address"); });
 
         addressRepository.delete(address);
 
@@ -60,7 +68,9 @@ public class HumberAddressService {
     public List<Address> getUserAddress(long userId) throws ResourceNotFoundException {
 
         List<Address> addresses = addressRepository.findByPersonId(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Invalid Person"));
+                .orElseThrow(() ->{
+                        log.error("Invalid User");
+                        return new ResourceNotFoundException("Invalid User"); });
 
         return addresses;
 

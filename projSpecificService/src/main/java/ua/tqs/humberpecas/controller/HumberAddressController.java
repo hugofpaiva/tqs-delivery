@@ -1,6 +1,7 @@
 package ua.tqs.humberpecas.controller;
 
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,19 +14,21 @@ import ua.tqs.humberpecas.services.HumberAddressService;
 import javax.validation.Valid;
 import java.util.List;
 
+@Log4j2
 @RestController
 @RequestMapping("/address")
 public class HumberAddressController {
 
     @Autowired
     private HumberAddressService service;
-
-    // TODO: Assumir que o id é o mesmo (mantem-se) e apenas se alteram os dados
+    
     @PutMapping("/update")
     public ResponseEntity<HttpStatus> updateUserAddress(@Valid @RequestBody AddressDTO address) throws ResourceNotFoundException {
 
+        log.debug("Update User address");
         service.updateAddress(address);
 
+        log.info("User address updated with success");
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
@@ -33,7 +36,11 @@ public class HumberAddressController {
     @GetMapping("/getAll")
     public ResponseEntity<List<Address>> getUserAddresses(@RequestParam long userId) throws ResourceNotFoundException {
 
+        log.debug("Get User addresses");
         List<Address> userAddresses = service.getUserAddress(userId);
+
+
+        log.info("Return User addresses  with success");
         return ResponseEntity.ok().body(userAddresses);
 
     }
@@ -47,8 +54,11 @@ public class HumberAddressController {
     @PostMapping("/add")
     public ResponseEntity<HttpStatus> addNewAddress(@Valid @RequestBody AddressDTO address) throws ResourceNotFoundException {
 
+        log.debug("Add new User addresses");
         service.addNewAddress(address);
 
+
+        log.info("Add new address with success");
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
@@ -56,8 +66,10 @@ public class HumberAddressController {
     @DeleteMapping("/del")
     public ResponseEntity<HttpStatus> delAddress(@Valid @RequestBody AddressDTO address) throws ResourceNotFoundException {
 
+        log.debug("Delete address");
         service.delAddress(address);
 
+        log.info("Address deleted with success");
         return new ResponseEntity<>(HttpStatus.OK);
 
     }

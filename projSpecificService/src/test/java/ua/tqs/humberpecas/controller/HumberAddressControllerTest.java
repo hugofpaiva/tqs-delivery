@@ -51,7 +51,7 @@ class HumberAddressControllerTest {
 
         person = new Person("Fernando", "12345678","fernando@ua.pt");
         address  = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
-        addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal", 1);
+        addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal");
 
 
     }

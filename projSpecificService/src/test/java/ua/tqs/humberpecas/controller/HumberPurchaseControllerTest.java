@@ -45,10 +45,13 @@ class HumberPurchaseControllerTest {
     private JwtRequestFilter jwtRequestFilter;
 
 
+    private String userToken;
+
     @BeforeEach
     void setUp() throws IOException {
         RestAssuredMockMvc.mockMvc(mvc);
 
+        userToken = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
     }
 
     @Test
@@ -56,16 +59,17 @@ class HumberPurchaseControllerTest {
     void whenGetInvalidUserPurchages_thenReturnStatus404() throws ResourceNotFoundException {
 
 
-        when(service.getUserPurchases(anyLong())).thenThrow(new ResourceNotFoundException("Invalid User!"));
+        when(service.getUserPurchases(userToken)).thenThrow(new ResourceNotFoundException("Invalid User!"));
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
+                .header("authorization", "Bearer " + userToken)
                 .when()
                 .get("/purchase/getAll?userId=1")
                 .then()
                 .statusCode(404);
 
-        verify(service, times(1)).getUserPurchases(1);
+        verify(service, times(1)).getUserPurchases(userToken);
 
     }
 

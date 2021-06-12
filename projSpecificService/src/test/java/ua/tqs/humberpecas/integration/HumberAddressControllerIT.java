@@ -83,7 +83,7 @@ public class HumberAddressControllerIT {
 
         this.address = addressRepository.saveAndFlush(new Address("Aveiro", "3730-123","Aveiro","Portugal", person));
 
-        addressDTO = new AddressDTO("Coimbra", "3730-134","Coimbra","Portugal",this.person.getId());
+        addressDTO = new AddressDTO("Coimbra", "3730-134","Coimbra","Portugal");
         addressDTO.setAddressId(this.address.getId());
     }
 
