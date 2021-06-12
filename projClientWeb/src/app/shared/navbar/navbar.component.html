@@ -1,14 +1,14 @@
 <nav id="navbar-main"
      class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light headroom headroom--top headroom--pinned">
     <div class="container">
-        <a class="navbar-brand mr-lg-5" [routerLink]="['/shop']">
+        <a class="navbar-brand mr-lg-5" style="cursor: pointer" (click)="goHome()">
             <img style="height: 50px" src="./assets/img/logo.png">
         </a>
         <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed"
                 [attr.aria-expanded]="!isCollapsed" aria-controls="navbar_global">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="navbar-collapse collapse" id="navbar_global" [ngbCollapse]="isCollapsed">
+        <div *ngIf="this.accountService.userValue != null"  class="navbar-collapse collapse" id="navbar_global" [ngbCollapse]="isCollapsed">
             <div class="navbar-collapse-header">
                 <div class="row">
                     <div class="col-6 collapse-brand">
@@ -45,7 +45,7 @@
                     </a>
                 </li>
                 <li class="nav-item d-none d-lg-block ml-lg-4">
-                    <a [routerLink]="['/login']" class="btn btn-neutral btn-icon">
+                    <a (click)="logout()" class="btn btn-neutral btn-icon">
                         <span class="btn-inner--icon">
                           <i class="fa fa-sign-out mr-2"></i>
                         </span>

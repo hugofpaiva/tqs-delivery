@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd, NavigationStart } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {Router, NavigationEnd, NavigationStart, ActivatedRoute} from '@angular/router';
 import {faShoppingCart, faUser} from '@fortawesome/free-solid-svg-icons';
-import { Location, PopStateEvent } from '@angular/common';
+import {Location, PopStateEvent} from '@angular/common';
+import {first} from 'rxjs/operators';
+import {AccountService} from '../../services/account/account.service';
 
 @Component({
     selector: 'app-navbar',
@@ -15,45 +17,40 @@ export class NavbarComponent implements OnInit {
     cartIcon = faShoppingCart;
     userIcon = faUser;
 
-    constructor(public location: Location, private router: Router) {
+    constructor(public location: Location, private router: Router,
+                private accountService: AccountService) {
     }
 
     ngOnInit() {
-      this.router.events.subscribe((event) => {
-        this.isCollapsed = true;
-        if (event instanceof NavigationStart) {
-           if (event.url != this.lastPoppedUrl)
-               this.yScrollStack.push(window.scrollY);
-       } else if (event instanceof NavigationEnd) {
-           if (event.url == this.lastPoppedUrl) {
-               this.lastPoppedUrl = undefined;
-               window.scrollTo(0, this.yScrollStack.pop());
-           } else
-               window.scrollTo(0, 0);
-       }
-     });
-     this.location.subscribe((ev:PopStateEvent) => {
-         this.lastPoppedUrl = ev.url;
-     });
+        this.router.events.subscribe((event) => {
+            this.isCollapsed = true;
+            if (event instanceof NavigationStart) {
+                if (event.url != this.lastPoppedUrl) {
+                    this.yScrollStack.push(window.scrollY);
+                }
+            } else if (event instanceof NavigationEnd) {
+                if (event.url == this.lastPoppedUrl) {
+                    this.lastPoppedUrl = undefined;
+                    window.scrollTo(0, this.yScrollStack.pop());
+                } else {
+                    window.scrollTo(0, 0);
+                }
+            }
+        });
+        this.location.subscribe((ev: PopStateEvent) => {
+            this.lastPoppedUrl = ev.url;
+        });
     }
 
-    isHome() {
-        var titlee = this.location.prepareExternalUrl(this.location.path());
-
-        if( titlee === '#/home' ) {
-            return true;
-        }
-        else {
-            return false;
-        }
+    logout() {
+        this.accountService.logout();
     }
-    isDocumentation() {
-        var titlee = this.location.prepareExternalUrl(this.location.path());
-        if( titlee === '#/documentation' ) {
-            return true;
-        }
-        else {
-            return false;
+
+    goHome() {
+        if (this.accountService.userValue != null) {
+            this.router.navigate(['/']);
+        } else {
+            this.router.navigate(['/login']);
         }
     }
 }
