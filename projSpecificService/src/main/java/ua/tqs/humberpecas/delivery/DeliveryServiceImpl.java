@@ -12,7 +12,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
 
     private final RestTemplate restTemplate = new RestTemplateBuilder().build();
 
-    private final String SERVICE = "http://localhost:8081/";
+    private final String serviceHost = "http://localhost:8081/";
     private String token;
 
     @Override
@@ -26,7 +26,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
     }
 
     @Override
-    public Category checkOrderStatus(int order_id) {
+    public Category checkOrderStatus(int orderId) {
         return null;
     }
 

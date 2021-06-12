@@ -1,15 +1,13 @@
 package ua.tqs.humberpecas.model;
 
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Entity
 public class Purchase {
     @Id
@@ -25,21 +23,24 @@ public class Purchase {
     @ManyToOne
     private Address address;
 
-    private long service_order_id;
+    private Long service_order_id;
 
+
+    // TODO: quantidade de cada produto
     @ManyToMany
     private List<Product> products;
 
-    @Enumerated(value = EnumType.STRING)
-    private PurchageStatus status;
 
-    public Purchase(Address address, List<Product> products) {
+    @Enumerated(value = EnumType.STRING)
+    private PurchaseStatus status;
+
+    public Purchase(Person person, Address address, List<Product> products) {
+        this.person = person;
         this.address = address;
         this.products = products;
-        this.status = PurchageStatus.PENDENT;
+        this.status = PurchaseStatus.PENDENT;
     }
 
-    public Purchase(){
-    }
+    public Purchase(){ }
 
 }

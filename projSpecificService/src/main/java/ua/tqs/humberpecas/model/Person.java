@@ -18,15 +18,17 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @NotBlank(message = "Name is mandatory")
+
     private String name;
 
-    @NotBlank(message = "Password is mandatory")
     @Size(min=8)
     private String pwd;
 
 
+<<<<<<< HEAD
     @NotBlank(message = "Email is mandatory")
+=======
+>>>>>>> ccbfbf3ad8cf20aaf68ee79fc0e4e9477a31ca70
     @Email
     @Column(unique = true)
     private String email;
@@ -36,6 +38,17 @@ public class Person {
 
     @OneToMany
     private Set<Address> addresses;
+
+    @OneToOne
+    private ShoppingCart shoppingCart;
+
+    public Person(String name, String pwd, String email, ShoppingCart sc) {
+        this.name = name;
+        this.pwd = pwd;
+        this.email = email;
+        this.shoppingCart = sc;
+    }
+
 
 
     public Person(){ }
@@ -47,4 +60,6 @@ public class Person {
         this.pwd = pwd;
         this.email = email;
     }
+
+
 }

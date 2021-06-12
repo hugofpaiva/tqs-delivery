@@ -1,19 +1,23 @@
 package ua.tqs.deliveryservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import javax.persistence.*;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Data
 @Entity
 public class Store {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
     private String name;
     private String description;
 
     @Column(unique = true)
+    @JsonIgnore
     private String token;
 
     @OneToOne
@@ -27,4 +31,12 @@ public class Store {
     }
 
     public Store() {}
+
+    public Map<String, Object> getMap() {
+        Map<String, Object> map = new TreeMap<>();
+        map.put("id", id);
+        map.put("name", name);
+        map.put("address", address.getMap());
+        return map;
+    }
 }

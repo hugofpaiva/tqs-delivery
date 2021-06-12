@@ -1,5 +1,6 @@
 import 'package:delivery_rider_app/pages/home_page.dart';
 import 'package:delivery_rider_app/pages/orders_history_page.dart';
+import 'package:delivery_rider_app/services/generic_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
