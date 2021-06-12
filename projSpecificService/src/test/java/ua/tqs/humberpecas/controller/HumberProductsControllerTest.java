@@ -90,26 +90,6 @@ class HumberProductsControllerTest {
 
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {-1, 6} )
-    public void whenInvalidNStars_thenReturnStatus404(int number){
-
-        Review r = new Review(1, number);
-
-        RestAssuredMockMvc.given()
-                .contentType("application/json")
-                .when()
-                .get("/shop/newReview")
-                .then()
-                .statusCode(404);
-
-
-        verify(service, times(1)).addReview(r);
-
-    }
-
-
-
     @Test
     @DisplayName("Get an Inexistent Product return HTTP status Not Found")
     void whenGetInvalidProduct_thenReturnStatus404() throws ResourceNotFoundException {
