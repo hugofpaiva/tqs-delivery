@@ -8,7 +8,7 @@
                 [attr.aria-expanded]="!isCollapsed" aria-controls="navbar_global">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div *ngIf="this.accountService.userValue != null"  class="navbar-collapse collapse" id="navbar_global" [ngbCollapse]="isCollapsed">
+        <div *ngIf="accountService.userValue != null"  class="navbar-collapse collapse" id="navbar_global" [ngbCollapse]="isCollapsed">
             <div class="navbar-collapse-header">
                 <div class="row">
                     <div class="col-6 collapse-brand">
