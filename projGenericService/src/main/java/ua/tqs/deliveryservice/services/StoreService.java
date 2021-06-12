@@ -58,14 +58,12 @@ public class StoreService {
         return response;
     }
 
-    public void getStatistics(String managerToken) throws InvalidLoginException, InterruptedException {
+    public Map<String, Object> getStatistics(String managerToken) throws InvalidLoginException {
         String email = jwtUserDetailsService.getEmailFromToken(managerToken);
         managerRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no manager associated with this token"));
 
         long allPurchases = purchaseRepository.count();
-
         Purchase first = purchaseRepository.findTopByOrderByDate().orElse(null);
-
         Double avgPerWeek = null;
         if (first != null) {
             Date f = first.getDate();
@@ -76,10 +74,11 @@ public class StoreService {
         Map<String, Object> response = new HashMap<>();
         response.put("totalPurchases", allPurchases);
         response.put("avgPurchasesPerWeek", avgPerWeek);
-
-
+        response.put("totalStores", storeRepository.count());
+        return response;
     }
 
+    /* --- helper --- */
     public double getNoWeeksUntilNow(Date from) {
         long diffInMillies = Math.abs(from.getTime() - new Date().getTime());
         return diffInMillies / (double) TimeUnit.DAYS.toMillis(1) / 7.0;

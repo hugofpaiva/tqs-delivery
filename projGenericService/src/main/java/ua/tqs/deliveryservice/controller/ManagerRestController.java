@@ -36,13 +36,10 @@ public class ManagerRestController {
     }
 
     @GetMapping("/statistics")
-    public ResponseEntity<Map<String, Object>> getStatistics(HttpServletRequest request) throws InvalidLoginException, InterruptedException {
-
+    public ResponseEntity<Map<String, Object>> getStatistics(HttpServletRequest request) throws InvalidLoginException {
         String requestTokenHeader = request.getHeader("Authorization");
-
-        storeService.getStatistics(requestTokenHeader);
-
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        Map<String, Object> response = storeService.getStatistics(requestTokenHeader);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
