@@ -1,6 +1,8 @@
 package ua.tqs.deliveryservice.controller;
 
 
+import com.sun.source.tree.Tree;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -202,4 +204,77 @@ public class ManagerRestControllerMockMvcTest {
 
         verify(storeService, times(1)).getStores(0, 10, "Bearer example_token");
     }
+
+
+    /* ----------------------------- *
+     * GET STATISTICS (FOR MANAGER)  *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testGetStatisticsButNoAuthorization_thenUnauthorized() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        when(storeService.getStatistics("Bearer example_token")).thenThrow(InvalidLoginException.class);
+
+        mvc.perform(get("/manager/statistics")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+
+        verify(storeService, times(1)).getStatistics("Bearer example_token");
+    }
+
+    @Test
+    public void testGetStatisticsWithoutAnyStore_thenNoResults() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        TreeMap<String, Object> response = new TreeMap<>();
+        response.put("totalPurchases", 0);
+        response.put("avgPurchasesPerWeek", null);
+        response.put("totalStores", 0);
+
+        when(storeService.getStatistics("Bearer example_token")).thenReturn(response);
+
+        mvc.perform(get("/manager/statistics")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("totalPurchases", is(0)))
+                .andExpect(jsonPath("avgPurchasesPerWeek").isEmpty())
+                .andExpect(jsonPath("totalStores", is(0)));
+
+        verify(storeService, times(1)).getStatistics("Bearer example_token");
+    }
+
+    @Test
+    public void testGetStatisticsWithStores_thenNoResults() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        TreeMap<String, Object> response = new TreeMap<>();
+        response.put("totalPurchases", 45);
+        response.put("avgPurchasesPerWeek", 3.4323);
+        response.put("totalStores", 2);
+
+        when(storeService.getStatistics("Bearer example_token")).thenReturn(response);
+
+        mvc.perform(get("/manager/statistics")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("totalPurchases", is(response.get("totalPurchases"))))
+                .andExpect(jsonPath("avgPurchasesPerWeek", is(response.get("avgPurchasesPerWeek"))))
+                .andExpect(jsonPath("totalStores", is(response.get("totalStores"))));
+
+        verify(storeService, times(1)).getStatistics("Bearer example_token");
+    }
+
 }
