@@ -1,4 +1,4 @@
-name: Spring Boot CI Tests
+name: Spring Boot CI Tests Specific
 
 on:
   push:
