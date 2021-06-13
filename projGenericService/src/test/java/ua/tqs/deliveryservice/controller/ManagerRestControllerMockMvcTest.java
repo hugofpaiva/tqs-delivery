@@ -67,7 +67,7 @@ public class ManagerRestControllerMockMvcTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
-        verify(storeService, times(0)).getStores(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(storeService, times(0)).getStores(Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ManagerRestControllerMockMvcTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
-        verify(storeService, times(0)).getStores(Mockito.any(), Mockito.any(), Mockito.any());
+        verify(storeService, times(0)).getStores(Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ManagerRestControllerMockMvcTest {
         response.put("totalPages", 1);
         response.put("stores", stores);
 
-        when(storeService.getStores(0, 10, "Bearer example_token")).thenReturn(response);
+        when(storeService.getStores(0, 10)).thenReturn(response);
 
         mvc.perform(get("/manager/stores")
                 .headers(headers)
@@ -119,7 +119,7 @@ public class ManagerRestControllerMockMvcTest {
                 .andExpect(jsonPath("['stores'][0].id", is(((Long) store1.get("id")).intValue())))
                 .andExpect(jsonPath("['stores'][2].totalOrders", is(store3.get("totalOrders"))));
 
-        verify(storeService, times(1)).getStores(0, 10, "Bearer example_token");
+        verify(storeService, times(1)).getStores(0, 10);
     }
 
 
@@ -145,7 +145,7 @@ public class ManagerRestControllerMockMvcTest {
         response.put("totalPages", 2);
         response.put("stores", stores);
 
-        when(storeService.getStores(0, 2, "Bearer example_token")).thenReturn(response);
+        when(storeService.getStores(0, 2)).thenReturn(response);
 
         mvc.perform(get("/manager/stores")
                 .param("pageSize", String.valueOf(2))
@@ -160,7 +160,7 @@ public class ManagerRestControllerMockMvcTest {
                 .andExpect(jsonPath("['stores'][0].id", is(((Long) store1.get("id")).intValue())))
                 .andExpect(jsonPath("['stores'][1].totalOrders", is( store2.get("totalOrders") )));
 
-        verify(storeService, times(1)).getStores(0, 2, "Bearer example_token");
+        verify(storeService, times(1)).getStores(0, 2);
     }
 
     @Test
@@ -177,7 +177,7 @@ public class ManagerRestControllerMockMvcTest {
         response.put("totalPages", 0);
         response.put("stores", stores);
 
-        when(storeService.getStores(0, 10, "Bearer example_token")).thenReturn(response);
+        when(storeService.getStores(0, 10)).thenReturn(response);
 
         mvc.perform(get("/manager/stores")
                 .headers(headers)
@@ -189,7 +189,7 @@ public class ManagerRestControllerMockMvcTest {
                 .andExpect(jsonPath("totalPages", is(0)))
                 .andExpect(jsonPath("['stores'].size()", is(0)));
 
-        verify(storeService, times(1)).getStores(0, 10, "Bearer example_token");
+        verify(storeService, times(1)).getStores(0, 10);
     }
 
 
@@ -210,7 +210,7 @@ public class ManagerRestControllerMockMvcTest {
         response.put("avgPurchasesPerWeek", null);
         response.put("totalStores", 0);
 
-        when(storeService.getStatistics("Bearer example_token")).thenReturn(response);
+        when(storeService.getStatistics()).thenReturn(response);
 
         mvc.perform(get("/manager/statistics")
                 .headers(headers)
@@ -221,7 +221,7 @@ public class ManagerRestControllerMockMvcTest {
                 .andExpect(jsonPath("avgPurchasesPerWeek").isEmpty())
                 .andExpect(jsonPath("totalStores", is(0)));
 
-        verify(storeService, times(1)).getStatistics("Bearer example_token");
+        verify(storeService, times(1)).getStatistics();
     }
 
     @Test
@@ -235,7 +235,7 @@ public class ManagerRestControllerMockMvcTest {
         response.put("avgPurchasesPerWeek", 3.4323);
         response.put("totalStores", 2);
 
-        when(storeService.getStatistics("Bearer example_token")).thenReturn(response);
+        when(storeService.getStatistics()).thenReturn(response);
 
         mvc.perform(get("/manager/statistics")
                 .headers(headers)
@@ -246,7 +246,7 @@ public class ManagerRestControllerMockMvcTest {
                 .andExpect(jsonPath("avgPurchasesPerWeek", is(response.get("avgPurchasesPerWeek"))))
                 .andExpect(jsonPath("totalStores", is(response.get("totalStores"))));
 
-        verify(storeService, times(1)).getStatistics("Bearer example_token");
+        verify(storeService, times(1)).getStatistics();
     }
 
 }

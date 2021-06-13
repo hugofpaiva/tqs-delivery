@@ -23,22 +23,17 @@ public class ManagerRestController {
     @GetMapping("/stores")
     public ResponseEntity<Map<String, Object>> getRiderOrders(HttpServletRequest request,
                                                               @RequestParam(defaultValue = "0") int pageNo,
-                                                              @RequestParam(defaultValue = "10") int pageSize) throws InvalidLoginException {
+                                                              @RequestParam(defaultValue = "10") int pageSize) {
         if (pageNo < 0 || pageSize <= 0){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        String requestTokenHeader = request.getHeader("Authorization");
-
-        Map<String, Object> response = storeService.getStores(pageNo, pageSize, requestTokenHeader);
-
+        Map<String, Object> response = storeService.getStores(pageNo, pageSize);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/statistics")
-    public ResponseEntity<Map<String, Object>> getStatistics(HttpServletRequest request) throws InvalidLoginException {
-        String requestTokenHeader = request.getHeader("Authorization");
-        Map<String, Object> response = storeService.getStatistics(requestTokenHeader);
+    public ResponseEntity<Map<String, Object>> getStatistics(HttpServletRequest request) {
+        Map<String, Object> response = storeService.getStatistics();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

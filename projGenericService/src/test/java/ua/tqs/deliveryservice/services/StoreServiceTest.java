@@ -50,7 +50,7 @@ public class StoreServiceTest {
     public void testGetStoresWhenGetInvalidPageNo_thenThrow() {
 
         assertThrows(IllegalArgumentException.class, () -> {
-            storeService.getStores(-1, 10, "exampleToken");
+            storeService.getStores(-1, 10);
         });
         Mockito.verify(storeRepository, VerificationModeFactory.times(0))
                 .findAll(any(Pageable.class));
@@ -62,7 +62,7 @@ public class StoreServiceTest {
     public void testGetStoresWhenGetInvalidPageSize_thenThrow() {
 
         assertThrows(IllegalArgumentException.class, () -> {
-            storeService.getStores(0, -1, "exampleToken");
+            storeService.getStores(0, -1);
         });
 
         Mockito.verify(storeRepository, VerificationModeFactory.times(0))
@@ -78,7 +78,7 @@ public class StoreServiceTest {
         Page<Store> pageRequest = new PageImpl(new ArrayList<>(), PageRequest.of(0, 10), new ArrayList<>().size());
         Mockito.when(storeRepository.findAll(PageRequest.of(0, 10))).thenReturn(pageRequest);
 
-        Map<String, Object> found = storeService.getStores(0, 10, "exampleToken");
+        Map<String, Object> found = storeService.getStores(0, 10);
 
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
                 .findAll(any(Pageable.class));
@@ -107,7 +107,7 @@ public class StoreServiceTest {
         Mockito.when(storeRepository.findAll(PageRequest.of(0, 10))).thenReturn(pageRequest);
         Mockito.when(purchaseRepository.countPurchaseByStore(any())).thenReturn(2L);
 
-        Map<String, Object> found = storeService.getStores(0, 10, "exampleToken");
+        Map<String, Object> found = storeService.getStores(0, 10);
 
 
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
@@ -131,15 +131,14 @@ public class StoreServiceTest {
 
 
     @Test
-    public void givenNoPurchases_whenGetStatistics_thenReturnStatistics() throws InvalidLoginException {
-        Manager manager = new Manager("man1", "pwd", "email@email.com");
+    public void givenNoPurchases_whenGetStatistics_thenReturnStatistics() {
         purchaseRepository.deleteAll();
 
         Mockito.when(purchaseRepository.count()).thenReturn((long) 0);
         Mockito.when(storeRepository.count()).thenReturn((long) 0);
         Mockito.when(purchaseRepository.findTopByOrderByDate()).thenReturn(Optional.empty());
 
-        Map<String, Object> found = storeService.getStatistics("exampleToken");
+        Map<String, Object> found = storeService.getStatistics();
 
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))
                 .count();
@@ -153,7 +152,6 @@ public class StoreServiceTest {
 
     @Test
     public void givenPurchases_whenGetStatistics_thenReturnStatistics() throws InvalidLoginException {
-        Manager manager = new Manager("man1", "pwd", "email@email.com");
 
         Purchase p1 = new Purchase();
         p1.setDate(new Date());
@@ -162,7 +160,7 @@ public class StoreServiceTest {
         Mockito.when(storeRepository.count()).thenReturn((long) 1);
         Mockito.when(purchaseRepository.findTopByOrderByDate()).thenReturn(Optional.of(p1));
 
-        Map<String, Object> found = storeService.getStatistics("exampleToken");
+        Map<String, Object> found = storeService.getStatistics();
 
 
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))

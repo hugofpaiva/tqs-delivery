@@ -28,8 +28,8 @@ public class StoreService {
     @Autowired
     private PurchaseRepository purchaseRepository;
 
-    public Map<String, Object> getStores(Integer pageNo, Integer pageSize, String managerToken) {
-        Pageable paging = PageRequest.of(pageNo, pageSize); // e preciso sort?
+    public Map<String, Object> getStores(Integer pageNo, Integer pageSize) {
+        Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Store> pagedResult = storeRepository.findAll(paging);
 
         List<Map<String, Object>> responseList = new ArrayList<>();
@@ -49,7 +49,7 @@ public class StoreService {
         return response;
     }
 
-    public Map<String, Object> getStatistics(String managerToken) {
+    public Map<String, Object> getStatistics() {
         long allPurchases = purchaseRepository.count();
         Purchase first = purchaseRepository.findTopByOrderByDate().orElse(null);
         Double avgPerWeek = null;
