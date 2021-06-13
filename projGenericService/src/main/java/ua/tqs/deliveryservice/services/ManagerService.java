@@ -36,7 +36,7 @@ public class ManagerService {
         throws InvalidLoginException {
 
         String email = jwtUserDetailsService.getEmailFromToken(managerToken);
-        Manager manager = managerRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("No manager with such token was found."));
+        Manager manager = managerRepository.findByEmail(email).get();
 
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Rider> result = riderRepository.findAll(paging);

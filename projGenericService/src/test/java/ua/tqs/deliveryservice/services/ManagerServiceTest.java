@@ -49,9 +49,9 @@ class ManagerServiceTest {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
 
-        assertThrows(InvalidLoginException.class, () -> {
+        assertThrows(NoSuchElementException.class, () -> {
             managerService.getRidersInformation(0, 10, "exampleToken");
-        }, "No manager with such token was found.");
+        });
 
         Mockito.verify(jwtUserDetailsService, times(1))
                 .getEmailFromToken("exampleToken");
