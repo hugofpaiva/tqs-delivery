@@ -41,8 +41,12 @@ export class AccountService {
     this.router.navigate(['/login']);
   }
 
-  register(user: User) {
-    return this.http.post(`${environment.baseURL}/register`, user);
+  register(email: String, password: String, name: String) {
+    const data = {};
+    data['name'] = name;
+    data['email'] = email;
+    data['pwd'] = password;
+    return this.http.post(`${environment.baseURL}/register`, data);
   }
 
 }
