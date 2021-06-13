@@ -3,6 +3,6 @@ export const environment = {
   httpOptions: {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   },
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://172.17.0.1:8081',
   production: true
 };
