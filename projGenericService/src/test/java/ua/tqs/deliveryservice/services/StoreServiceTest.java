@@ -45,36 +45,13 @@ public class StoreServiceTest {
      * ----------------------------- *
      */
 
-    @Test
-    public void testGetStores_whenInvalidUser() {
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
-
-        assertThrows(InvalidLoginException.class, () -> {
-            storeService.getStores(0, 10, "exampleToken");
-        }, "There is no manager associated with this token");
-
-        Mockito.verify(jwtUserDetailsService, times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, times(1))
-                .findByEmail("email@email.com");
-    }
 
     @Test
     public void testGetStoresWhenGetInvalidPageNo_thenThrow() {
-        Manager manager = new Manager("man1", "pwd", "email@email.com");
-
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.of(manager));
 
         assertThrows(IllegalArgumentException.class, () -> {
             storeService.getStores(-1, 10, "exampleToken");
         });
-
-        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, VerificationModeFactory.times(1))
-                .findByEmail("email@email.com");
         Mockito.verify(storeRepository, VerificationModeFactory.times(0))
                 .findAll(any(Pageable.class));
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(0))
@@ -83,19 +60,11 @@ public class StoreServiceTest {
 
     @Test
     public void testGetStoresWhenGetInvalidPageSize_thenThrow() {
-        Manager manager = new Manager("man1", "pwd", "email@email.com");
-
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.of(manager));
 
         assertThrows(IllegalArgumentException.class, () -> {
             storeService.getStores(0, -1, "exampleToken");
         });
 
-        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, VerificationModeFactory.times(1))
-                .findByEmail("email@email.com");
         Mockito.verify(storeRepository, VerificationModeFactory.times(0))
                 .findAll(any(Pageable.class));
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(0))
@@ -105,20 +74,12 @@ public class StoreServiceTest {
 
     @Test
     public void givenNoStores_whenGetStores_thenReturn0Records() throws InvalidLoginException {
-        Manager manager = new Manager("man1", "pwd", "email@email.com");
-
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.of(manager));
 
         Page<Store> pageRequest = new PageImpl(new ArrayList<>(), PageRequest.of(0, 10), new ArrayList<>().size());
         Mockito.when(storeRepository.findAll(PageRequest.of(0, 10))).thenReturn(pageRequest);
 
         Map<String, Object> found = storeService.getStores(0, 10, "exampleToken");
 
-        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, VerificationModeFactory.times(1))
-                .findByEmail("email@email.com");
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
                 .findAll(any(Pageable.class));
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(0))
@@ -132,11 +93,6 @@ public class StoreServiceTest {
 
     @Test
     public void given3Stores_whenGetStores_thenReturn3Records() throws InvalidLoginException {
-        Manager manager = new Manager("man1", "pwd", "email@email.com");
-
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.of(manager));
-
         Address addr1 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr2 = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
         Address addr3 = new Address("Rua ABC, n. 944", "4444-555", "Aveiro", "Portugal");
@@ -153,10 +109,6 @@ public class StoreServiceTest {
 
         Map<String, Object> found = storeService.getStores(0, 10, "exampleToken");
 
-        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, VerificationModeFactory.times(1))
-                .findByEmail("email@email.com");
 
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
                 .findAll(any(Pageable.class));
@@ -177,29 +129,11 @@ public class StoreServiceTest {
      * ----------------------------- *
      */
 
-    @Test
-    public void testGetStatistics_whenInvalidUser() {
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
-
-        assertThrows(InvalidLoginException.class, () -> {
-            storeService.getStatistics("exampleToken");
-        }, "There is no manager associated with this token");
-
-        Mockito.verify(jwtUserDetailsService, times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, times(1))
-                .findByEmail("email@email.com");
-    }
-
 
     @Test
     public void givenNoPurchases_whenGetStatistics_thenReturnStatistics() throws InvalidLoginException {
         Manager manager = new Manager("man1", "pwd", "email@email.com");
         purchaseRepository.deleteAll();
-
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.of(manager));
 
         Mockito.when(purchaseRepository.count()).thenReturn((long) 0);
         Mockito.when(storeRepository.count()).thenReturn((long) 0);
@@ -207,10 +141,6 @@ public class StoreServiceTest {
 
         Map<String, Object> found = storeService.getStatistics("exampleToken");
 
-        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, VerificationModeFactory.times(1))
-                .findByEmail("email@email.com");
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))
                 .count();
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
@@ -228,19 +158,13 @@ public class StoreServiceTest {
         Purchase p1 = new Purchase();
         p1.setDate(new Date());
 
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.of(manager));
-
         Mockito.when(purchaseRepository.count()).thenReturn((long) 2);
         Mockito.when(storeRepository.count()).thenReturn((long) 1);
         Mockito.when(purchaseRepository.findTopByOrderByDate()).thenReturn(Optional.of(p1));
 
         Map<String, Object> found = storeService.getStatistics("exampleToken");
 
-        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, VerificationModeFactory.times(1))
-                .findByEmail("email@email.com");
+
         Mockito.verify(purchaseRepository, VerificationModeFactory.times(1))
                 .count();
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))

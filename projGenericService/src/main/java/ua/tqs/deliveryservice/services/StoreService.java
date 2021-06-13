@@ -23,21 +23,12 @@ import java.util.concurrent.TimeUnit;
 public class StoreService {
 
     @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
-
-    @Autowired
-    private ManagerRepository managerRepository;
-
-    @Autowired
     private StoreRepository storeRepository;
 
     @Autowired
     private PurchaseRepository purchaseRepository;
 
-    public Map<String, Object> getStores(Integer pageNo, Integer pageSize, String managerToken) throws InvalidLoginException {
-        String email = jwtUserDetailsService.getEmailFromToken(managerToken);
-        managerRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no manager associated with this token"));
-
+    public Map<String, Object> getStores(Integer pageNo, Integer pageSize, String managerToken) {
         Pageable paging = PageRequest.of(pageNo, pageSize); // e preciso sort?
         Page<Store> pagedResult = storeRepository.findAll(paging);
 
@@ -58,10 +49,7 @@ public class StoreService {
         return response;
     }
 
-    public Map<String, Object> getStatistics(String managerToken) throws InvalidLoginException {
-        String email = jwtUserDetailsService.getEmailFromToken(managerToken);
-        managerRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no manager associated with this token"));
-
+    public Map<String, Object> getStatistics(String managerToken) {
         long allPurchases = purchaseRepository.count();
         Purchase first = purchaseRepository.findTopByOrderByDate().orElse(null);
         Double avgPerWeek = null;
