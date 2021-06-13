@@ -24,7 +24,7 @@
             <span>My profile</span>
           </a>
           <div class="dropdown-divider"></div>
-          <a [routerLink]="['/login']" class="dropdown-item">
+          <a (click)="logout()" style="cursor: pointer" class="dropdown-item">
             <i class="ni ni-user-run"></i>
             <span>Logout</span>
           </a>
