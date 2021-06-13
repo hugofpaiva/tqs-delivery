@@ -159,8 +159,6 @@ class ManagerRestControllerTemplateIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
     }
 
-
-
     @Test
     public void testGetRidersInfo_thenOk() {
         ObjectMapper mapper = new ObjectMapper();

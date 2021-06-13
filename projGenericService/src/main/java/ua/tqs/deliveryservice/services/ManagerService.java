@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.model.Manager;
+import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.ManagerRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
@@ -45,7 +46,9 @@ public class ManagerService {
             for (Rider r : result.getContent()){
                 Map<String, Object> temp = new HashMap<>();
                 temp.put("name", r.getName());
-                temp.put("numberOrders", r.getPurchases().size());
+
+                List<Purchase> list = r.getPurchases();
+                temp.put("numberOrders", list.isEmpty() ? 0 : list.size());
 
                 long sum = r.getReviewsSum();
                 long total = r.getTotalNumReviews();
