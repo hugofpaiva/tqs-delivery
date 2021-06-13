@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.humberpecas.configuration.JwtRequestFilter;
 import ua.tqs.humberpecas.configuration.WebSecurityConfig;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
+import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.model.Review;
 import ua.tqs.humberpecas.service.HumberReviewService;
 
@@ -94,6 +95,26 @@ public class HumberReviewControllerTest {
                 .post("/review/add")
                 .then()
                 .statusCode(404);
+
+        verify(service, times(1)).addReview(review);
+
+    }
+
+    @Test
+    @DisplayName("Error in communication with Delivery service throws UnreachableServiceExcption")
+    void whenErrorInCommunication_thenThrowsStatusUnreachableService(){
+
+        Review review  = new Review(-1, 5);
+
+        doThrow(UnreachableServiceException.class).when(service).addReview(review);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .body(review)
+                .when()
+                .post("/review/add")
+                .then()
+                .statusCode(500);
 
         verify(service, times(1)).addReview(review);
 

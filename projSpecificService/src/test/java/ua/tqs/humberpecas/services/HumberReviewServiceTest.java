@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
+import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 import ua.tqs.humberpecas.service.HumberReviewService;
@@ -25,9 +26,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class HumberReviewServiceTest {
-
-    @Mock
-    private PurchaseRepository repository;
 
     @Mock
     private IDeliveryService deliveryService;
@@ -60,29 +58,44 @@ public class HumberReviewServiceTest {
     @DisplayName("Review Rider")
     void whenValidPurchage_thenSendReview() throws ResourceNotFoundException {
 
-        when(repository.findById(Mockito.anyLong())).thenReturn(Optional.of(purchase));
-        doNothing().when(deliveryService).reviewRider(review);
-
         service.addReview(review);
 
-        verify(repository, times(1)).findById(1L);
         verify(deliveryService, times(1)).reviewRider(review);
 
     }
 
 
+
     @Test
-    @DisplayName("Review Rider with invalid orderId throws ResourceNotFoundException")
-    void whenInvalidPurchage_thenThrowsStatus404() throws ResourceNotFoundException {
+    @DisplayName("Review Rider with invalid order in Delivery Service throws ResourceNotFoundException")
+    void whenInvalidOrderService_thenThrowsStatusResourceNotFound(){
+
+        doThrow(ResourceNotFoundException.class).when(deliveryService).reviewRider(review);
 
         assertThrows( ResourceNotFoundException.class, () -> {
             service.addReview(review);
         } );
 
-        verify(repository, times(1)).findById(1L);
-        verify(deliveryService, times(0)).reviewRider(review);
+        verify(deliveryService, times(1)).reviewRider(review);
 
     }
+
+    @Test
+    @DisplayName("Cant communicate with delivery service throws UnreachableServiceExcption")
+    void whenErrorInCommunication_thenThrowsStatusUnreachableService(){
+
+
+        doThrow(UnreachableServiceException.class).when(deliveryService).reviewRider(review);
+
+        assertThrows( UnreachableServiceException.class, () -> {
+            service.addReview(review);
+        } );
+
+        verify(deliveryService, times(1)).reviewRider(review);
+
+
+    }
+
 
 
 }

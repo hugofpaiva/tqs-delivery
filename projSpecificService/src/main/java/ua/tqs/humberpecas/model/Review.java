@@ -7,10 +7,11 @@ import lombok.Data;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 
 @Data
-public class Review {
+public class Review implements Serializable {
 
     @NotNull
     private long orderId;
@@ -19,12 +20,12 @@ public class Review {
     @NotNull
     @Min(0)
     @Max(5)
-    private int numberStars;
+    private int review;
 
 
-    public Review(long orderId, int numberStars){
+    public Review(long orderId, int review){
         this.orderId = orderId;
-        this.numberStars = numberStars;
+        this.review = review;
     }
 
     public Review(){ }

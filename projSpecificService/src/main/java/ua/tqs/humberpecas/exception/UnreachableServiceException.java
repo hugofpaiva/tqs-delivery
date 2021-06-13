@@ -3,14 +3,13 @@ package ua.tqs.humberpecas.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.io.IOException;
-
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class ResourceNotFoundException extends RuntimeException{
+@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+public class UnreachableServiceException extends RuntimeException{
 
     private static final long serialVersionUID = 1L;
 
-    public ResourceNotFoundException(String message){
+    public UnreachableServiceException(String message){
         super(message);
     }
+
 }

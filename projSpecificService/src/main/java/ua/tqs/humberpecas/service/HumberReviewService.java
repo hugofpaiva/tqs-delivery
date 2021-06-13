@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
+import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.model.Review;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
@@ -19,16 +20,10 @@ public class HumberReviewService {
     @Autowired
     private PurchaseRepository repository;
 
-    public void addReview( Review review) throws ResourceNotFoundException {
+    public void addReview( Review review) throws ResourceNotFoundException, UnreachableServiceException {
 
-        repository.findById(review.getOrderId()).orElseThrow(() -> {
-            log.error("Invalid Order");
-            return new ResourceNotFoundException("Invalid Order");
-        });
+       deliveryService.reviewRider(review);
 
-        deliveryService.reviewRider(review);
-
-        // enviar review pra o delivery service
 
     }
 
