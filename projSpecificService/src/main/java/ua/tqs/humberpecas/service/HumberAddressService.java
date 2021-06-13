@@ -1,4 +1,4 @@
-package ua.tqs.humberpecas.services;
+package ua.tqs.humberpecas.service;
 
 
 import lombok.extern.log4j.Log4j2;

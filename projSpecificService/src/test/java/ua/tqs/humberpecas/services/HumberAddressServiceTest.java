@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import ua.tqs.humberpecas.service.HumberAddressService;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -37,7 +38,7 @@ class HumberAddressServiceTest {
     private PersonRepository personRepository;
 
     @InjectMocks
-    private ua.tqs.humberpecas.services.HumberAddressService service;
+    private HumberAddressService service;
 
     private Address  address;
     private AddressDTO addressDTO;

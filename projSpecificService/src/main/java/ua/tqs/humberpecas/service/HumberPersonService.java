@@ -1,4 +1,4 @@
-package ua.tqs.humberpecas.services;
+package ua.tqs.humberpecas.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

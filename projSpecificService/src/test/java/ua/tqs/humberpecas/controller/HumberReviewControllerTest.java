@@ -18,7 +18,7 @@ import ua.tqs.humberpecas.configuration.JwtRequestFilter;
 import ua.tqs.humberpecas.configuration.WebSecurityConfig;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Review;
-import ua.tqs.humberpecas.services.HumberReviewService;
+import ua.tqs.humberpecas.service.HumberReviewService;
 
 import java.io.IOException;
 

@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Review;
-import ua.tqs.humberpecas.services.HumberReviewService;
+import ua.tqs.humberpecas.repository.PurchaseRepository;
+import ua.tqs.humberpecas.service.HumberReviewService;
 
 import javax.validation.Valid;
 
@@ -20,6 +21,8 @@ public class HumberReviewController {
 
     @Autowired
     private HumberReviewService service;
+
+
 
     @PostMapping("/add")
     public ResponseEntity<HttpStatus> giveReview(@Valid @RequestBody Review review) throws ResourceNotFoundException {

@@ -1,4 +1,4 @@
-package ua.tqs.humberpecas.services;
+package ua.tqs.humberpecas.service;
 
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
