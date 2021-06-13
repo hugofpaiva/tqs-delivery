@@ -2,10 +2,6 @@ package ua.tqs.deliveryservice.selenium;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +15,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.PersonRepository;
+import ua.tqs.deliveryservice.selenium.pages.LoginPage;
+import ua.tqs.deliveryservice.selenium.pages.RegisterPage;
+import ua.tqs.deliveryservice.selenium.pages.StoresInfoPage;
+import ua.tqs.deliveryservice.selenium.pages.UserInfoPage;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -80,107 +80,35 @@ public class AuthenticationTest {
     @Test
     void testLoginLogoutRider() {
         RemoteWebDriver driver = this.chromeContainer.getWebDriver();
-        driver.get("http://" + webApplicationBaseUrl + ":4200/");
-        driver.manage().window().setSize(new Dimension(1792, 1025));
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")));
-        }
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")).click();
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")).sendKeys("joao@email.com");
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div:nth-child(2) > div > input")).sendKeys("difficult-pass");
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.text-center.form-group > button")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#sidenav-collapse-main > ul > li > a")));
-        }
-        assertThat(driver.findElement(By.cssSelector("#sidenav-collapse-main > ul > li > a")).getText(), is("User profile"));
-        driver.findElement(By.cssSelector("#navbar-main > div > ul > li > a")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#navbar-main > div > ul > li > div > a:nth-child(4)")));
-        }
-        driver.findElement(By.cssSelector("#navbar-main > div > ul > li > div > a:nth-child(4)")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > div > small")));
-        }
-        assertThat(driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > div > small")).getText(), is("Sign in with credentials"));
+        LoginPage loginPage = new LoginPage(driver, this.webApplicationBaseUrl);
+
+        // Check if loaded page is the Rider one
+        assertThat(loginPage.login("joao@email.com", "difficult-pass"), is("User profile"));
+        UserInfoPage userInfoPage = new UserInfoPage(driver);
+        userInfoPage.logoutRider();
     }
 
     @Test
     void testLoginLogoutManager() {
         RemoteWebDriver driver = this.chromeContainer.getWebDriver();
-        driver.get("http://" + webApplicationBaseUrl + ":4200/");
-        driver.manage().window().setSize(new Dimension(1792, 1025));
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")));
-        }
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")).click();
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")).sendKeys("joana@email.com");
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div:nth-child(2) > div > input")).sendKeys("difficult-pass");
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.text-center.form-group > button")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#sidenav-collapse-main > ul > li > a")));
-        }
-        assertThat(driver.findElement(By.cssSelector("#sidenav-collapse-main > ul > li > a")).getText(), is("Stores Info"));
-        driver.findElement(By.cssSelector("#navbar-main > div > ul > li > a")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#navbar-main > div > ul > li > div > a")));
-        }
-        driver.findElement(By.cssSelector("#navbar-main > div > ul > li > div > a")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > div > small")));
-        }
-        assertThat(driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > div > small")).getText(), is("Sign in with credentials"));
+        LoginPage loginPage = new LoginPage(driver, this.webApplicationBaseUrl);
+
+        // Check if loaded page is the Manager one
+        assertThat(loginPage.login("joana@email.com", "difficult-pass"), is("Stores Info"));
+        StoresInfoPage storesInfoPage = new StoresInfoPage(driver);
+        storesInfoPage.logoutManager();
     }
 
     @Test
     void testRegisterLoginLogoutRider() {
         RemoteWebDriver driver = this.chromeContainer.getWebDriver();
-        driver.get("http://" + webApplicationBaseUrl + ":4200/");
-        driver.manage().window().setSize(new Dimension(1792, 1025));
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")));
-        }
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.row.mt-3 > div > a")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > app-root > app-auth-layout > div > app-register > div.container.mt--8.pb-5 > div > div > div > div > form > div:nth-child(1) > div > input")));
-        }
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-register > div.container.mt--8.pb-5 > div > div > div > div > form > div:nth-child(1) > div > input")).click();
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-register > div.container.mt--8.pb-5 > div > div > div > div > form > div:nth-child(1) > div > input")).sendKeys("TesteName");
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-register > div.container.mt--8.pb-5 > div > div > div > div > form > div:nth-child(2) > div > input")).sendKeys("TesteEmail@email.com");
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-register > div.container.mt--8.pb-5 > div > div > div > div > form > div:nth-child(3) > div > input")).sendKeys("teste123");
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-register > div.container.mt--8.pb-5 > div > div > div > div > form > div.text-center.form-group > button")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")));
-        }
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")).click();
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")).sendKeys("TesteEmail@email.com");
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div:nth-child(2) > div > input")).sendKeys("teste123");
-        driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.text-center.form-group > button")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#sidenav-collapse-main > ul > li > a")));
-        }
-        assertThat(driver.findElement(By.cssSelector("#sidenav-collapse-main > ul > li > a")).getText(), is("User profile"));
-        driver.findElement(By.cssSelector("#navbar-main > div > ul > li > a")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#navbar-main > div > ul > li > div > a:nth-child(4)")));
-        }
-        driver.findElement(By.cssSelector("#navbar-main > div > ul > li > div > a:nth-child(4)")).click();
-        {
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > div > small")));
-        }
-        assertThat(driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > div > small")).getText(), is("Sign in with credentials"));
+        RegisterPage registerPage = new RegisterPage(driver, this.webApplicationBaseUrl);
+        registerPage.register("TesteEmail@email.com", "teste123", "TesteName");
+        LoginPage loginPage = new LoginPage(driver, this.webApplicationBaseUrl);
+
+        // Check if loaded page is the Rider one
+        assertThat(loginPage.login("TesteEmail@email.com", "teste123"), is("User profile"));
+        UserInfoPage userInfoPage = new UserInfoPage(driver);
+        userInfoPage.logoutRider();
     }
 }
