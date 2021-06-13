@@ -1,6 +1,7 @@
 package ua.tqs.deliveryservice.controller;
 
 
+import com.github.dockerjava.api.exception.UnauthorizedException;
 import com.sun.source.tree.Tree;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.*;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.client.HttpClientErrorException;
 import ua.tqs.deliveryservice.configuration.JwtRequestFilter;
 import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
 import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
@@ -57,21 +59,6 @@ public class ManagerRestControllerMockMvcTest {
      * ----------------------------- *
      */
 
-    @Test
-    public void testGetStoresButNoAuthorization_thenUnauthorized() throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("authorization", "Bearer " + "example_token");
-
-        when(storeService.getStores(0, 10, "Bearer example_token")).thenThrow(InvalidLoginException.class);
-
-        mvc.perform(get("/manager/stores")
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
-
-        verify(storeService, times(1)).getStores(0, 10, "Bearer example_token");
-    }
 
     @Test
     public void testGetStoresWhenInvalidPageNo_thenBadRequest() throws Exception {
@@ -211,21 +198,6 @@ public class ManagerRestControllerMockMvcTest {
      * ----------------------------- *
      */
 
-    @Test
-    public void testGetStatisticsButNoAuthorization_thenUnauthorized() throws Exception {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("authorization", "Bearer " + "example_token");
-
-        when(storeService.getStatistics("Bearer example_token")).thenThrow(InvalidLoginException.class);
-
-        mvc.perform(get("/manager/statistics")
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
-
-        verify(storeService, times(1)).getStatistics("Bearer example_token");
-    }
 
     @Test
     public void testGetStatisticsWithoutAnyStore_thenNoResults() throws Exception {
