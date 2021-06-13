@@ -1,4 +1,4 @@
-package ua.tqs.humberpecas.controller;
+package ua.tqs.humberpecas.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

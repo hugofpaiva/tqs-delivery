@@ -5,8 +5,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
+import ua.tqs.humberpecas.exception.AccessNotAllowedException;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.exception.UnreachableServiceException;
+import ua.tqs.humberpecas.model.Person;
+import ua.tqs.humberpecas.model.Purchase;
 import ua.tqs.humberpecas.model.Review;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
@@ -18,9 +22,25 @@ public class HumberReviewService {
     private IDeliveryService deliveryService;
 
     @Autowired
-    private PurchaseRepository repository;
+    private PurchaseRepository purchaseRepository;
 
-    public void addReview( Review review) throws ResourceNotFoundException, UnreachableServiceException {
+    @Autowired
+    private JwtUserDetailsService jwtUserDetailsService;
+
+    public void addReview( Review review, String userToken) throws ResourceNotFoundException, UnreachableServiceException, AccessNotAllowedException {
+
+        Purchase purchase = purchaseRepository.findByServiceOrderId(review.getOrderId())
+                .orElseThrow(() -> {
+                    log.error("ReviewService: Invalid Purchase");
+                    throw new ResourceNotFoundException("Invalid Purchase");
+                });
+
+        String personEmail = purchase.getPerson().getEmail();
+
+        if (!personEmail.equals(jwtUserDetailsService.getEmailFromToken(userToken))){
+            log.error("ReviewService: Invalid Purchase Access");
+            throw new AccessNotAllowedException("Not Allowed");
+        }
 
        deliveryService.reviewRider(review);
 

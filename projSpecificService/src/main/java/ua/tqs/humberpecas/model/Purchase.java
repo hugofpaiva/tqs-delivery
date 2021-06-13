@@ -23,7 +23,8 @@ public class Purchase {
     @ManyToOne
     private Address address;
 
-    private Long service_order_id;
+    @Column(unique=true)
+    private Long serviceOrderId;
 
     @ManyToMany
     private List<Product> products;
