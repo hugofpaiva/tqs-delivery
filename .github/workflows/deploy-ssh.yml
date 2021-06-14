@@ -11,15 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: SSH Remote Commands
-        uses: appleboy/ssh-action@v0.1.4
+        uses: fifsky/ssh-action@master
         with:
-          host: ${{ secrets.DOCKER_SSH_HOST }}
-          username: ${{ secrets.DOCKER_SSH_USERNAME }}
-          key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
-          port: ${{ secrets.DOCKER_SSH_PORT }}
-          script: |
+          command: |
             cd tqs-delivery
             git pull
             export API_URL=35.246.29.122
             yes | docker system prune -a
             docker-compose up -d
+          host: ${{ secrets.DOCKER_SSH_HOST }}
+          user: ${{ secrets.DOCKER_SSH_USERNAME }}
+          key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+            
