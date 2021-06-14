@@ -1,5 +1,6 @@
 package ua.tqs.humberpecas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,6 +26,7 @@ public class Product {
 
     private String image_url;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "products")
     private Set<Purchase> purchase;
 

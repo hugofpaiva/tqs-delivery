@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ua.tqs.humberpecas.exception.InvalidParameterException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Category;
 import ua.tqs.humberpecas.model.Product;
@@ -36,13 +35,11 @@ public class HumberProductService {
     }
 
 
-    public Map<String, Object> getProductsFiltered(int pageNo, int pageSize, String name, Double maxPrice, Double minPrice, String orderBy, Category category) throws InvalidParameterException {
-        Sort sort;
+    public Map<String, Object> getProductsFiltered(int pageNo, int pageSize, String name, Double maxPrice, Double minPrice, String orderBy, Category category) {
+        var sort = Sort.by("id").descending();
 
-        if (orderBy.equals("price")) {
+        if (orderBy != null && orderBy.equals("price")) {
             sort = Sort.by("price").ascending();
-        } else {
-            throw new InvalidParameterException("Order By invalid");
         }
 
         Pageable paging = PageRequest.of(pageNo, pageSize, sort);

@@ -11,7 +11,6 @@ import ua.tqs.humberpecas.model.Category;
 import ua.tqs.humberpecas.model.Product;
 import ua.tqs.humberpecas.service.HumberProductService;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,17 +32,17 @@ public class HumberProductsController {
 
     @GetMapping("/getAll")
     public ResponseEntity<Map<String, Object>> getProducts(@RequestParam(defaultValue = "0") int pageNo,
-                                                           @RequestParam(defaultValue = "10") int pageSize,
+                                                           @RequestParam(defaultValue = "9") int pageSize,
                                                            @RequestParam(required = false) String name,
                                                            @RequestParam(defaultValue = "100000") Integer maxPrice,
                                                            @RequestParam(defaultValue = "0") Integer minPrice,
                                                            @RequestParam(required = false) String orderBy,
-                                                           @RequestParam(required = false) Category category) throws InvalidParameterException {
+                                                           @RequestParam(required = false) Category category) {
         if (pageNo < 0 || pageSize <= 0) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        if (minPrice < 0 || maxPrice < 0) {
+        if (minPrice < 0 || maxPrice < 0 || minPrice > maxPrice) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

@@ -9,6 +9,6 @@ export const environment = {
   httpOptions: {
     headers: new HttpHeaders({'Content-Type': 'application/json'})
   },
-  baseURL: 'http://host.docker.internal:8080',
+  baseURL: 'http://localhost:8080',
   production: false
 };
