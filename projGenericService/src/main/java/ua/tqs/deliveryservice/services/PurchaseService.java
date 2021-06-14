@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
@@ -126,25 +127,35 @@ public class PurchaseService {
 
 
     public Purchase receiveNewOrder(String storeToken, Map<String, Object> data) throws InvalidValueException, InvalidLoginException {
-        String error = "Bad body data";
-        Store store = storeRepository.findByToken(storeToken).orElseThrow(() -> new InvalidLoginException("There is no Store associated with this token"));
+        Store store = jwtUserDetailsService.getStoreFromToken(storeToken);
 
         Object personName = Optional.ofNullable(data.get("personName"))
-                .orElseThrow(() -> new InvalidValueException(error));
-        if (!(personName instanceof String)) throw new InvalidValueException(error);
+                .orElseThrow(() -> new InvalidValueException("personName not present"));
+        if (!(personName instanceof String)) throw new InvalidValueException("error casting personName to String");
 
-        Object date = Optional.ofNullable(data.get("date"))
-                .orElseThrow(() -> new InvalidValueException(error));
-        if (!(date instanceof Date)) throw new InvalidValueException(error);
+
+        Object date_obj = Optional.ofNullable(data.get("date"))
+                .orElseThrow(() -> new InvalidValueException("date not present"));
+        if (!(date_obj instanceof Long)) throw new InvalidValueException("date invalid");
+        Date date = new Date((long) date_obj);
 
         Object address = Optional.ofNullable(data.get("address"))
-                .orElseThrow(() -> new InvalidValueException(error));
-        if (!(address instanceof Address)) throw new InvalidValueException(error);
+                .orElseThrow(() -> new InvalidValueException("address not present"));
 
-        Address addr = addressRepository.save((Address) address);
-        Purchase purch = new Purchase(addr, (Date) date, store, (String) personName);
-        purchaseRepository.save(purch);
-        return purch;
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        Address addr;
+        try {
+            addr = objectMapper.convertValue(address, Address.class);
+        } catch(Exception ex) {
+            throw new InvalidValueException("error casting address to Address");
+        }
+
+        addressRepository.save(addr);
+        Purchase purchase = new Purchase(addr, date, store, (String) personName);
+        purchaseRepository.save(purchase);
+
+        return purchase;
 
     }
 }

@@ -17,7 +17,6 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
-    @CreationTimestamp
     private Date date;
 
     @OneToOne
