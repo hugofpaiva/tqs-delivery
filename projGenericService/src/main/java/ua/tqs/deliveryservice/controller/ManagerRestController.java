@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.services.ManagerService;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
