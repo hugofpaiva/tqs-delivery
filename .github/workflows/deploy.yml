@@ -10,9 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
     - name: Deploy to Docker Host
       uses: appleboy/ssh-action@master
       with:
