@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 public class Purchase {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
     @ManyToOne
@@ -23,10 +23,9 @@ public class Purchase {
     @ManyToOne
     private Address address;
 
-    private Long service_order_id;
+    @Column(unique=true)
+    private Long serviceOrderId;
 
-
-    // TODO: quantidade de cada produto
     @ManyToMany
     private List<Product> products;
 

@@ -40,7 +40,6 @@ public class RiderRestController {
     public ResponseEntity<Map<String, Object>> getNewOrder(HttpServletRequest request) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
         String requestTokenHeader = request.getHeader("Authorization");
 
-
         Purchase purch = purchaseService.getNewPurchase(requestTokenHeader);
         HashMap<String, Object> ret = new HashMap<>();
         ret.put("data", purch.getMap());

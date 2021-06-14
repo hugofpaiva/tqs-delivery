@@ -16,7 +16,7 @@ import ua.tqs.humberpecas.configuration.WebSecurityConfig;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Category;
 import ua.tqs.humberpecas.model.Product;
-import ua.tqs.humberpecas.services.HumberProductService;
+import ua.tqs.humberpecas.service.HumberProductService;
 
 
 import java.io.IOException;

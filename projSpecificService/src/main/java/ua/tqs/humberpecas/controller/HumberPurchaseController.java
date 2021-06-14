@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Purchase;
-import ua.tqs.humberpecas.services.HumberPurchaseService;
+import ua.tqs.humberpecas.service.HumberPurchaseService;
 
 import java.util.List;
 
