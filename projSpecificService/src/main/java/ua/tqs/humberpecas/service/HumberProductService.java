@@ -47,12 +47,12 @@ public class HumberProductService {
         Page<Product> pagedResult;
 
         if (name != null && category != null) {
-            pagedResult = repository.findAllByCategoryAndNameContainingAndPriceGreaterThanEqualAndPriceLessThanEqual(category, name, maxPrice, minPrice, paging);
+            pagedResult = repository.findAllByCategoryAndNameContainingAndPriceGreaterThanEqualAndPriceLessThanEqual(category, name, minPrice, maxPrice, paging);
 
         } else if (name != null) {
-            pagedResult = repository.findAllByNameContainingAndPriceGreaterThanEqualAndPriceLessThanEqual(name, maxPrice, minPrice, paging);
+            pagedResult = repository.findAllByNameContainingAndPriceGreaterThanEqualAndPriceLessThanEqual(name, minPrice, maxPrice, paging);
         } else if (category != null){
-            pagedResult = repository.findAllByCategoryAndPriceGreaterThanEqualAndPriceLessThanEqual(category, maxPrice, minPrice, paging);
+            pagedResult = repository.findAllByCategoryAndPriceGreaterThanEqualAndPriceLessThanEqual(category, minPrice, maxPrice, paging);
         } else {
             pagedResult = repository.findAll(paging);
         }

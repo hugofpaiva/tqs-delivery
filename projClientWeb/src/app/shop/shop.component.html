@@ -35,11 +35,13 @@
                             </header>
                             <div class="filter-content collapse show" id="collapse_2" style="">
                                 <div class="card-body">
-                                        <button class="btn btn-sm btn-primary" type="button">Cat1</button>
-                                        <button class="btn btn-sm btn-primary" type="button">Cat2</button>
-                                        <button class="btn btn-sm btn-primary" type="button">Cat3</button>
-                                        <button class="btn btn-sm btn-primary" type="button">Cat4</button>
-                                        <button class="btn btn-sm btn-primary" type="button">Cat5</button>
+                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'LATHES' }" (click)="getCategory($event.target.innerText)" type="button">Lathes</button>
+                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'PRESSES' }" (click)="getCategory($event.target.innerText)" type="button">Presses</button>
+                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'SCREWDRIVER' }" (click)="getCategory($event.target.innerText)" type="button">Screwdriver</button>
+                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'PLIERS' }" (click)="getCategory($event.target.innerText)" type="button">Pliers</button>
+                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'SCREWS' }" (click)="getCategory($event.target.innerText)" type="button">Screws</button>
+                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'NAILS' }" (click)="getCategory($event.target.innerText)" type="button">Nails</button>
+                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'WASHER' }" (click)="getCategory($event.target.innerText)" type="button">Washer</button>
                                 </div>
                             </div>
                         </article>
@@ -51,20 +53,19 @@
                                 </a>
                             </header>
                             <div class="filter-content collapse show" id="collapse_3" style="">
-                                <div class="card-body">
-                                    <input type="range" class="custom-range" min="0" max="100" name="">
-                                    <div class="form-row">
+                                <form ngForm (ngSubmit)="getProducts()" class="card-body">
+                                    <div class="form-row" >
                                         <div class="form-group col-md-6">
                                             <label>Min</label>
-                                            <input class="form-control" placeholder="$0" type="number">
+                                            <input class="form-control" (change)="getMinPrice($event.target.value)" placeholder="0€" type="number">
                                         </div>
                                         <div class="form-group text-right col-md-6">
                                             <label>Max</label>
-                                            <input class="form-control" placeholder="$1,0000" type="number">
+                                            <input class="form-control" (change)="getMinPrice($event.target.value)" placeholder="1000€" type="number">
                                         </div>
                                     </div> <!-- form-row.// -->
-                                    <button class="btn btn-block btn-primary">Apply</button>
-                                </div><!-- card-body.// -->
+                                    <button type="submit" class="btn btn-block btn-primary">Apply</button>
+                                </form><!-- card-body.// -->
                             </div>
                         </article> <!-- filter-group .// -->
                     </div> <!-- card.// -->
@@ -72,87 +73,50 @@
                 </aside> <!-- col.// -->
                 <main class="col-md-9">
 
-                    <header class="border-bottom  mb-4 pb-3" style="display: flex; align-items: center; margin-bottom: 15px">
-                            <span>32 Items found </span>
-                            <form action="#" class="search col-md-6 col-sm-12" style="margin: 0">
-                                <div class="input-group w-100">
-                                    <input type="text" class="form-control" placeholder="Search">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="submit">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </div>
+                    <header class="border-bottom  mb-4 pb-3"
+                            style="display: flex; align-items: center; margin-bottom: 15px">
+                        <span>{{totalItems}} Item{{totalItems !== 1 ? 's' : ''}} found </span>
+                        <form ngForm (ngSubmit)="getProducts()" class="search col-md-6 col-sm-12" style="margin: 0">
+                            <div class="input-group w-100">
+                                <input type="text" class="form-control" (change)="getName($event.target.value)" placeholder="Search">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
                                 </div>
-                            </form>
-                            <select class="mr-2 form-control col-md-3" style="margin: 0">
-                                <option>Latest items</option>
-                                <option>Cheapest</option>
-                            </select>
+                            </div>
+                        </form>
+                        <select (change)="getOrderBy($event.target.value)" class="mr-2 form-control col-md-3" style="margin: 0">
+                            <option>Latest items</option>
+                            <option>Cheapest</option>
+                        </select>
                     </header>
 
+                    <h5 *ngIf="products.length === 0" style="text-align: center">There are no products!</h5>
+
                     <div class="row">
-                        <div class="col-md-4">
+                        <div *ngFor="let product of products | paginate: { itemsPerPage: 9 , currentPage: currentPage,
+                            totalItems: totalItems }" class="col-md-4">
                             <figure class="card card-product-grid">
                                 <div class="img-wrap" style="display: flex; justify-content: center">
-                                    <img src="assets/items/1.jpeg" style="height: 100px">
+                                    <img src="{{product.image_url}}" style="height: 100px">
                                 </div> <!-- img-wrap.// -->
                                 <figcaption class="info-wrap">
                                     <div class="fix-height">
-                                        <a href="#" class="title">Oscillating Tool Blade</a>
+                                        <a href="#" class="title">{{product.name}}</a>
                                         <div class="price-wrap mt-2">
-                                            <span class="price">50.20€</span>
+                                            <span class="price">{{product.price}}€</span>
                                         </div> <!-- price-wrap.// -->
                                     </div>
                                     <a href="#" class="btn btn-block btn-primary">Add to cart </a>
                                 </figcaption>
                             </figure>
                         </div> <!-- col.// -->
-
-                        <div class="col-md-4">
-                            <figure class="card card-product-grid">
-                                <div class="img-wrap" style="display: flex; justify-content: center">
-                                    <img src="assets/items/2.jpeg" style="height: 100px">
-                                </div> <!-- img-wrap.// -->
-                                <figcaption class="info-wrap">
-                                    <div class="fix-height">
-                                        <a href="#" class="title">Hammer</a>
-                                        <div class="price-wrap mt-2">
-                                            <span class="price">75.00€</span>
-                                        </div> <!-- price-wrap.// -->
-                                    </div>
-                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
-                                </figcaption>
-                            </figure>
-                        </div> <!-- col.// -->
-
-                        <div class="col-md-4">
-                            <figure class="card card-product-grid">
-                                <div class="img-wrap" style="display: flex; justify-content: center">
-                                    <img src="assets/items/3.jpeg" style="height: 100px">
-                                </div> <!-- img-wrap.// -->
-                                <figcaption class="info-wrap">
-                                    <div class="fix-height">
-                                        <a href="#" class="title">Pneumatic Hammer</a>
-                                        <div class="price-wrap mt-2">
-                                            <span class="price">578.00€</span>
-                                        </div> <!-- price-wrap.// -->
-                                    </div>
-                                    <a href="#" class="btn btn-block btn-primary">Add to cart </a>
-                                </figcaption>
-                            </figure>
-                        </div> <!-- col.// -->
-
                     </div> <!-- row end.// -->
 
-
-                    <nav style="display: flex; justify-content: center" class="mt-4" aria-label="Page navigation sample">
-                        <ul class="pagination">
-                            <li class="page-item disabled"><a class="page-link" href="#"><fa-icon [icon]="arrowLeftIcon"></fa-icon></a></li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#"><fa-icon [icon]="arrowRightIcon"></fa-icon></a></li>
-                        </ul>
+                    <nav *ngIf="products.length !== 0" style="display: flex; justify-content: center" class="mt-4"
+                         aria-label="Page navigation sample">
+                        <pagination-controls (pageChange)="getPage($event)"></pagination-controls>
                     </nav>
 
                 </main> <!-- col.// -->

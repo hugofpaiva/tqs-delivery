@@ -14,11 +14,11 @@ export class ProductService {
 
     getProducts(pageNo = 0, name: String, maxPrice: Number, minPrice: Number, orderBy: String, category: String): Observable<any> {
         return this.http.get<any>(environment.baseURL + '/product/getAll?pageNo=' + pageNo +
-            (name === undefined ? '' : '&name=' + name)
-            + (maxPrice === undefined ? '' : '&maxPrice=' + maxPrice)
-            + (minPrice === undefined ? '' : '&minPrice=' + minPrice)
-            + (orderBy === undefined ? '' : '&orderBy=' + orderBy)
-            + (category === undefined ? '' : '&category=' + category), environment.httpOptions);
+            (name === null ? '' : '&name=' + name)
+            + (maxPrice === null ? '' : '&maxPrice=' + maxPrice)
+            + (minPrice === null ? '' : '&minPrice=' + minPrice)
+            + (orderBy === null ? '' : '&orderBy=' + orderBy)
+            + (category === null ? '' : '&category=' + category), environment.httpOptions);
     }
 
 }
