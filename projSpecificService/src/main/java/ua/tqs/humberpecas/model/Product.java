@@ -13,10 +13,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
-
-
 
     private Double price;
 

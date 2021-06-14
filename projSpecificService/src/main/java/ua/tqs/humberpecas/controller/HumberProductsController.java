@@ -2,14 +2,17 @@ package ua.tqs.humberpecas.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.tqs.humberpecas.exception.InvalidParameterException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Category;
 import ua.tqs.humberpecas.model.Product;
 import ua.tqs.humberpecas.services.HumberProductService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/product")
@@ -28,16 +31,23 @@ public class HumberProductsController {
     }
 
 
-    // TODO: se não houver produtos retornar uma lista vazia ou execption
-
     @GetMapping("/getAll")
-    public ResponseEntity<List<Product>> getProducts(@RequestParam(required = false) Category category) throws ResourceNotFoundException {
-        if (category != null){
-            var p = service.getProductsByCategory(category);
-            return ResponseEntity.ok().body(p);
+    public ResponseEntity<Map<String, Object>> getProducts(@RequestParam(defaultValue = "0") int pageNo,
+                                                           @RequestParam(defaultValue = "10") int pageSize,
+                                                           @RequestParam(required = false) String name,
+                                                           @RequestParam(defaultValue = "100000") Integer maxPrice,
+                                                           @RequestParam(defaultValue = "0") Integer minPrice,
+                                                           @RequestParam(required = false) String orderBy,
+                                                           @RequestParam(required = false) Category category) throws InvalidParameterException {
+        if (pageNo < 0 || pageSize <= 0) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok().body(service.getCatolog());
+        if (minPrice < 0 || maxPrice < 0) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok().body(service.getProductsFiltered(pageNo, pageSize, name, maxPrice.doubleValue(), minPrice.doubleValue(), orderBy, category));
     }
 
 }
