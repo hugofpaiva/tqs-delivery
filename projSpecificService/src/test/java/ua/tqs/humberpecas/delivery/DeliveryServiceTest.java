@@ -56,7 +56,7 @@ public class DeliveryServiceTest {
     void whenInvalidOrder_thenThrowsStatusResourseNotFound(){
 
         this.server
-                .expect(ExpectedCount.once(), requestTo("http://localhost:8998/store/order/12/review"))
+                .expect(ExpectedCount.once(), requestTo("http://localhost:8081/store/order/12/review"))
                 .andExpect(method(HttpMethod.PATCH))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
@@ -72,7 +72,7 @@ public class DeliveryServiceTest {
     void whenCannotConnect_thenThrowsStatusUnreachableServer(){
 
         this.server
-                .expect(ExpectedCount.once(), requestTo("http://localhost:8998/store/order/12/review"))
+                .expect(ExpectedCount.once(), requestTo("http://localhost:8081/store/order/12/review"))
                 .andExpect(method(HttpMethod.PATCH))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
