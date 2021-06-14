@@ -45,48 +45,17 @@ class ManagerServiceTest {
     // --------------------------------------------
 
     @Test
-    public void testGetRidersInfoButNoManagerFound_thenInvalidLogin() {
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
-
-        assertThrows(NoSuchElementException.class, () -> {
-            managerService.getRidersInformation(0, 10, "exampleToken");
-        });
-
-        Mockito.verify(jwtUserDetailsService, times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, times(1))
-                .findByEmail("email@email.com");
-    }
-
-    @Test
     public void testGetRidersButInvalidPageNo_thenThrow() {
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.manager));
-
         assertThrows(IllegalArgumentException.class, () -> {
-            managerService.getRidersInformation(-1, 10, "exampleToken");
+            managerService.getRidersInformation(-1, 10);
         });
-
-        Mockito.verify(jwtUserDetailsService, times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, times(1))
-                .findByEmail("email@email.com");
     }
 
     @Test
     public void testGetRidersButInvalidPageSize_thenThrow() {
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.manager));
-
         assertThrows(IllegalArgumentException.class, () -> {
-            managerService.getRidersInformation(0, -1, "exampleToken");
+            managerService.getRidersInformation(0, -1);
         });
-
-        Mockito.verify(jwtUserDetailsService, times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, times(1))
-                .findByEmail("email@email.com");
     }
 
     @Test
@@ -95,20 +64,13 @@ class ManagerServiceTest {
         this.rider.setReviewsSum(4);
         this.rider.setTotalNumReviews(1);
 
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.manager));
-
         List<Rider> riderList = Arrays.asList(this.rider);
         Page<Rider> pageRequest = new PageImpl(riderList, PageRequest.of(0, 10), riderList.size());
 
         Mockito.when(riderRepository.findAll(PageRequest.of(0, 10))).thenReturn(pageRequest);
 
-        Map<String, Object> found = managerService.getRidersInformation(0, 10, "exampleToken");
+        Map<String, Object> found = managerService.getRidersInformation(0, 10);
 
-        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, VerificationModeFactory.times(1))
-                .findByEmail("email@email.com");
         Mockito.verify(riderRepository, VerificationModeFactory.times(1))
                 .findAll(any(Pageable.class));
 
@@ -124,21 +86,13 @@ class ManagerServiceTest {
 
     @Test
     public void testGetRiderInfoButNoRiders_thenReturn0Records() throws InvalidLoginException {
-
-        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
-        Mockito.when(managerRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.manager));
-
         List<Rider> riderList = new ArrayList<>();
         Page<Rider> pageRequest = new PageImpl(riderList, PageRequest.of(0, 10), riderList.size());
 
         Mockito.when(riderRepository.findAll(PageRequest.of(0, 10))).thenReturn(pageRequest);
 
-        Map<String, Object> found = managerService.getRidersInformation(0, 10, "exampleToken");
+        Map<String, Object> found = managerService.getRidersInformation(0, 10);
 
-        Mockito.verify(jwtUserDetailsService, VerificationModeFactory.times(1))
-                .getEmailFromToken("exampleToken");
-        Mockito.verify(managerRepository, VerificationModeFactory.times(1))
-                .findByEmail("email@email.com");
         Mockito.verify(riderRepository, VerificationModeFactory.times(1))
                 .findAll(any(Pageable.class));
 

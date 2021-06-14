@@ -20,7 +20,7 @@ public class ManagerRestController {
 
 
     @GetMapping("riders/all")
-    public ResponseEntity<Map<String, Object>> getAllRidersInfo(HttpServletRequest request,
+    public ResponseEntity<Map<String, Object>> getAllRidersInfo(
         @RequestParam(defaultValue = "0") int pageNo,
         @RequestParam(defaultValue = "10") int pageSize) throws InvalidLoginException {
 
@@ -28,9 +28,7 @@ public class ManagerRestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        String requestToken = request.getHeader("Authorization");
-
-        Map<String, Object> response = managerService.getRidersInformation(pageNo, pageSize, requestToken);
+        Map<String, Object> response = managerService.getRidersInformation(pageNo, pageSize);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -32,12 +32,7 @@ public class ManagerService {
     // int countPurchaseByStatus(Status s);
     // double getAverageReview();
 
-    public Map<String, Object> getRidersInformation(Integer pageNo, Integer pageSize, String managerToken)
-        throws InvalidLoginException {
-
-        String email = jwtUserDetailsService.getEmailFromToken(managerToken);
-        Manager manager = managerRepository.findByEmail(email).get();
-
+    public Map<String, Object> getRidersInformation(Integer pageNo, Integer pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Rider> result = riderRepository.findAll(paging);
         List<Map<String, Object>> responseList = new ArrayList<>();

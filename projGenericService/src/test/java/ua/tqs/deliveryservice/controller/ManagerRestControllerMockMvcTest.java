@@ -51,7 +51,7 @@ class ManagerRestControllerMockMvcTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
-        verify(managerService, times(0)).getRidersInformation(any(), any(), any());
+        verify(managerService, times(0)).getRidersInformation(any(), any());
     }
 
     @Test
@@ -62,7 +62,7 @@ class ManagerRestControllerMockMvcTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
-        verify(managerService, times(0)).getRidersInformation(any(), any(), any());
+        verify(managerService, times(0)).getRidersInformation(any(), any());
     }
 
     @Test
@@ -94,7 +94,7 @@ class ManagerRestControllerMockMvcTest {
         response.put("totalItems", 2);
         response.put("totalPages", 1);
 
-        when(managerService.getRidersInformation(0, 10, "Bearer example_token")).thenReturn(response);
+        when(managerService.getRidersInformation(0, 10)).thenReturn(response);
 
         mvc.perform(get("/manager/riders/all")
                 .header("Authorization", "Bearer " + "example_token")
@@ -110,7 +110,7 @@ class ManagerRestControllerMockMvcTest {
                 .andExpect(jsonPath("['riders'][1].numberOrders", is(0)))
                 .andExpect(jsonPath("['riders'][1].average", is(0)));
 
-        verify(managerService, times(1)).getRidersInformation(0, 10, "Bearer example_token");
+        verify(managerService, times(1)).getRidersInformation(0, 10);
     }
 
     @Test
@@ -121,7 +121,7 @@ class ManagerRestControllerMockMvcTest {
         response.put("totalItems", 0);
         response.put("totalPages", 0);
 
-        when(managerService.getRidersInformation(0, 10, "Bearer example_token")).thenReturn(response);
+        when(managerService.getRidersInformation(0, 10)).thenReturn(response);
 
         mvc.perform(get("/manager/riders/all")
                 .header("Authorization", "Bearer " + "example_token")
@@ -133,7 +133,7 @@ class ManagerRestControllerMockMvcTest {
                 .andExpect(jsonPath("totalPages", is(0)))
                 .andExpect(jsonPath("['riders'].size()", is(0)));
 
-        verify(managerService, times(1)).getRidersInformation(0, 10, "Bearer example_token");
+        verify(managerService, times(1)).getRidersInformation(0, 10);
     }
 
 }
