@@ -1,0 +1,28 @@
+name: Spring Boot CI Tests Generic
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    name: Running Verify Lifecycle
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Java 11
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'      
+    - name: Build Angular
+      run: |
+        export API_URL=172.17.0.1
+        docker-compose build web-application-manager-rider
+    - name: Start Angular on Docker
+      run: docker-compose run -p 4200:80 -d web-application-manager-rider     
+    - name: Verify and send code to SonarQube server and wait for quality gate for Generic Service
+      run: mvn -B clean verify sonar:sonar -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }} 
+      working-directory: ./projGenericService

@@ -2,7 +2,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {RouterModule} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {AppRoutingModule} from './app.routing';
 
 import {AppComponent} from './app.component';
@@ -15,6 +15,9 @@ import {LoginComponent} from './login/login.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import { ShopComponent } from './shop/shop.component';
 import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
+import { AlertComponent } from './shared/alert/alert.component';
+import {AccountService} from './services/account/account.service';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
     declarations: [
@@ -28,7 +31,8 @@ import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
         NgbModalOrderDetails,
         NgbModalManageAddresses,
         ShopComponent,
-        ShoppingCartComponent
+        ShoppingCartComponent,
+        AlertComponent
     ],
     imports: [
         BrowserModule,
@@ -37,10 +41,22 @@ import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
         ReactiveFormsModule,
         RouterModule,
         AppRoutingModule,
-        FontAwesomeModule
+        FontAwesomeModule,
+        HttpClientModule
     ],
     providers: [],
     bootstrap: [AppComponent]
 })
 export class AppModule {
+    constructor(
+        private router: Router,
+        private accountService: AccountService
+    ) {
+        // redirect to home if already logged in
+        if (this.accountService.userValue) {
+            this.router.navigate(['/']);
+        } else {
+            this.router.navigate(['/login']);
+        }
+    }
 }
