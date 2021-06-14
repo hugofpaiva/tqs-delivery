@@ -14,7 +14,7 @@ This project aims to create a viable software product (functional specification,
 
 ## Project Bookmarks
 
-### [**Code Quality Dashboard**](http://34.89.70.141:9000/) (SonarQube)
+### [**Code Quality Dashboard (SonarQube)**](http://34.89.70.141:9000/) 
 
 - Login: admin
 - Password: delivery
