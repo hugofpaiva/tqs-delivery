@@ -10,8 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Docker Host
-        uses: appleboy/ssh-action@master
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.DOCKER_SSH_HOST }}
           username: ${{ secrets.DOCKER_SSH_USERNAME }}
