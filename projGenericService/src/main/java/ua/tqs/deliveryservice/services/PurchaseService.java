@@ -5,26 +5,20 @@ import org.springframework.stereotype.Service;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
-import ua.tqs.deliveryservice.model.Purchase;
-import ua.tqs.deliveryservice.model.Status;
-import ua.tqs.deliveryservice.model.Store;
+import ua.tqs.deliveryservice.model.*;
+import ua.tqs.deliveryservice.repository.AddressRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
 
 import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
-import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class PurchaseService {
@@ -39,6 +33,9 @@ public class PurchaseService {
 
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
+
+    @Autowired
+    private AddressRepository addressRepository;
 
     public Purchase reviewRiderFromSpecificOrder(String storeToken, Long order_id, int review)
             throws InvalidLoginException, ResourceNotFoundException, InvalidValueException {
@@ -125,5 +122,29 @@ public class PurchaseService {
         response.put("totalPages", pagedResult.getTotalPages());
 
         return response;
+    }
+
+
+    public Purchase receiveNewOrder(String storeToken, Map<String, Object> data) throws InvalidValueException, InvalidLoginException {
+        String error = "Bad body data";
+        Store store = storeRepository.findByToken(storeToken).orElseThrow(() -> new InvalidLoginException("There is no Store associated with this token"));
+
+        Object personName = Optional.ofNullable(data.get("personName"))
+                .orElseThrow(() -> new InvalidValueException(error));
+        if (!(personName instanceof String)) throw new InvalidValueException(error);
+
+        Object date = Optional.ofNullable(data.get("date"))
+                .orElseThrow(() -> new InvalidValueException(error));
+        if (!(date instanceof Date)) throw new InvalidValueException(error);
+
+        Object address = Optional.ofNullable(data.get("address"))
+                .orElseThrow(() -> new InvalidValueException(error));
+        if (!(address instanceof Address)) throw new InvalidValueException(error);
+
+        Address addr = addressRepository.save((Address) address);
+        Purchase purch = new Purchase(addr, (Date) date, store, (String) personName);
+        purchaseRepository.save(purch);
+        return purch;
+
     }
 }

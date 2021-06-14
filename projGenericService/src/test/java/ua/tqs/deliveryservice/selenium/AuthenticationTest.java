@@ -103,11 +103,11 @@ public class AuthenticationTest {
     void testRegisterLoginLogoutRider() {
         RemoteWebDriver driver = this.chromeContainer.getWebDriver();
         RegisterPage registerPage = new RegisterPage(driver, this.webApplicationBaseUrl);
-        registerPage.register("TesteEmail@email.com", "teste123", "TesteName");
+        registerPage.register("TesteEmail@email.com", "teste1uiopok23", "TesteName");
         LoginPage loginPage = new LoginPage(driver, this.webApplicationBaseUrl);
 
         // Check if loaded page is the Rider one
-        assertThat(loginPage.login("TesteEmail@email.com", "teste123"), is("User profile"));
+        assertThat(loginPage.login("TesteEmail@email.com", "testeiojlo123"), is("User profile"));
         UserInfoPage userInfoPage = new UserInfoPage(driver);
         userInfoPage.logoutRider();
     }

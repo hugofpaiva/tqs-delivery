@@ -46,6 +46,14 @@ public class Purchase {
         this.clientName = clientName;
     }
 
+    public Purchase(Address address, Date date, Store store, String clientName) {
+        this.address = address;
+        this.store = store;
+        this.status = Status.PENDENT;
+        this.clientName = clientName;
+        this.date = date;
+    }
+
     // TODO: APAGAR ESTE PQ N FAZ SENTIDO..
     public Purchase(Address address, Rider rider, Store store, String clientName) {
         this.address = address;

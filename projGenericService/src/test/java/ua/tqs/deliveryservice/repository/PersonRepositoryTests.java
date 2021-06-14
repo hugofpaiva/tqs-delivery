@@ -66,7 +66,7 @@ public class PersonRepositoryTests {
 
     /* -- helper -- */
     private Person createAndSavePerson(int i) {
-        Person p = new Rider("name" + i, "pwd" + i, "email" + i + "@email.com");
+        Person p = new Rider("name" + i, "pwdpwdpwdpwdpwd" + i, "email" + i + "@email.com");
         entityManager.persistAndFlush(p);
         return p;
     }

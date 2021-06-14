@@ -63,7 +63,7 @@ public class RiderRepositoryTests {
 
     /* -- helper -- */
     private Rider createAndSaveRider(int i) {
-        Rider r = new Rider("rider"+i, "pwd"+i, "rider"+i+"@email.com");
+        Rider r = new Rider("rider"+i, "pwddddddd"+i, "rider"+i+"@email.com");
         entityManager.persistAndFlush(r);
         return r;
     }

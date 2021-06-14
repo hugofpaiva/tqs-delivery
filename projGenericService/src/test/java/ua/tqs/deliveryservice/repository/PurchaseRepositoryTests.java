@@ -60,7 +60,7 @@ public class PurchaseRepositoryTests {
 
     /* -- helper -- */
     private Purchase createAndSavePurchase(int i) {
-        Rider r = new Rider("rider"+i, "pwd"+i, "rider"+i+"@email.com");
+        Rider r = new Rider("rider"+i, "gvhjbknutcfyvgkupwd"+i, "rider"+i+"@email.com");
         Address addr_store = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal");
         Store s = new Store("store"+i, "the best store #"+i, "hard-pwd"+i, addr_store);
 
