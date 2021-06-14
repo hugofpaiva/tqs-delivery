@@ -21,6 +21,10 @@ jobs:
       run: docker-compose build web-application-client
     - name: Start Angular on Docker
       run: docker-compose run -p 4200:80 -d web-application-client 
+    - name: Build Generic Service
+      run: docker-compose build generic
+    - name: Start Generic Service on Docker
+      run: docker-compose up -d generic 
     - name: Verify and send code to SonarQube server and wait for quality gate for Specific Service
       run: mvn -B clean verify sonar:sonar -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }} 
       working-directory: ./projSpecificService
