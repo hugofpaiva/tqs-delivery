@@ -416,7 +416,31 @@ class RiderRestControllerTemplateIT {
         Assertions.assertThat(found).isNotNull();
         Assertions.assertThat(found.containsKey("order_id")).isTrue();
         Assertions.assertThat(found.containsKey("status")).isTrue();
+        Assertions.assertThat(found.containsKey("delivery_time")).isFalse();
 
         Assertions.assertThat(found.get("status")).isEqualTo("PICKED_UP");
+    }
+
+    @Test
+    public void givenRiderHasCurrentOrder_whenUpdatePurchaseStatusIsPickedUp_thenSuccess() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        this.purchase.setStatus(Status.PICKED_UP);
+        purchaseRepository.saveAndFlush(this.purchase);
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/status", HttpMethod.PATCH, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found).isNotNull();
+        Assertions.assertThat(found.containsKey("order_id")).isTrue();
+        Assertions.assertThat(found.containsKey("status")).isTrue();
+        Assertions.assertThat(found.containsKey("delivery_time")).isTrue();
+
+        Assertions.assertThat(found.get("status")).isEqualTo("DELIVERED");
     }
 }

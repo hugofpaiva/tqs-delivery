@@ -398,4 +398,32 @@ class RiderRestControllerMockMvcTest {
 
     }
 
+    @Test
+    public void givenRiderWithPurchase_whenUpdateStatusAndStatusWas_thenSuccess() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
+        Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Purchase purchase = new Purchase(address, rider, store, "Joana");
+        purchase.setStatus(Status.PICKED_UP);
+        purchase.setDeliveryTime(15L);
+
+        when(purchaseService.updatePurchaseStatus("Bearer example_token")).thenReturn(purchase);
+
+
+        mvc.perform(patch("/rider/order/status")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("order_id", is(((Long) purchase.getId()).intValue())))
+                .andExpect(jsonPath("status", is("PICKED_UP")))
+                .andExpect(jsonPath("delivery_time", is(15)))
+        ;
+
+        verify(purchaseService, times(1)).updatePurchaseStatus(any());
+
+    }
 }

@@ -32,6 +32,11 @@ public class RiderRestController {
         Map<String, Object> ret = new HashMap<>();
         ret.put("order_id", purchase.getId());
         ret.put("status", purchase.getStatus());
+
+        Long time = purchase.getDeliveryTime();
+        if (time != null) {
+            ret.put("delivery_time", time);
+        }
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 

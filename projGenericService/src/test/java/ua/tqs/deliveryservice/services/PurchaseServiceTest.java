@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.services;
 
+import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.internal.verification.VerificationModeFactory;
@@ -107,7 +108,7 @@ public class PurchaseServiceTest {
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
         Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
-        Purchase p1 = new Purchase(addr, r1, store, "Miguel");
+        Purchase p1 = new Purchase(addr, r1, store, "Miguel"); p1.setDate(new Date());
 
         Mockito
                 .when(jwtUserDetailsService.getEmailFromToken("tokenExample"))
@@ -129,6 +130,35 @@ public class PurchaseServiceTest {
         Mockito.verify(purchaseRepository, times(1)).findTopByRiderAndStatusIsNot(any(), any());
     }
 
+    @Test
+    public void testUpdateCurrentPurchaseOfRiderValid_whenStatusWasPICKED_UP_thenVerifyDeliveryTime() throws InvalidLoginException, ResourceNotFoundException {
+        // set up ...
+        Rider r1 = new Rider("example", "pwd", "email@email.com");
+        Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Purchase p1 = new Purchase(addr, r1, store, "Miguel"); p1.setDate(new Date()); p1.setStatus(Status.PICKED_UP);
+
+        Mockito
+                .when(jwtUserDetailsService.getEmailFromToken("tokenExample"))
+                .thenReturn(rider.getEmail());
+        Mockito
+                .when(riderRepository.findByEmail(any()))
+                .thenReturn(Optional.of(rider));
+        Mockito
+                .when(purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED))
+                .thenReturn(Optional.of(p1));
+
+        // test ...
+        Purchase current = purchaseService.updatePurchaseStatus("tokenExample");
+        assertThat(current).isEqualTo(p1);
+        assertThat(current.getStatus()).isEqualTo(Status.DELIVERED);
+        assertThat(current.getRider()).isEqualTo(r1);
+        assertThat(current.getDeliveryTime()).isCloseTo(15L, Percentage.withPercentage(200));
+        Mockito.verify(jwtUserDetailsService, times(1)).getEmailFromToken(any());
+        Mockito.verify(riderRepository, times(1)).findByEmail(any());
+        Mockito.verify(purchaseRepository, times(1)).findTopByRiderAndStatusIsNot(any(), any());
+    }
 
     /* ----------------------------- *
      * GET CURRENT PURCHASE TESTS    *
