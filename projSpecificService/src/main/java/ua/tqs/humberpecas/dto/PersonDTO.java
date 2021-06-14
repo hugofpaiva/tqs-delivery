@@ -25,7 +25,6 @@ public class PersonDTO {
     @Email
     private String email;
 
-    @NotNull(message = "At least one Address is mandatory")
     private List<AddressDTO> addresses;
 
 

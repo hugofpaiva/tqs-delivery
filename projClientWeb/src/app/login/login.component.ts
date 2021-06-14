@@ -57,11 +57,11 @@ export class LoginComponent implements OnInit {
                         this.router.navigateByUrl('/');
                     } else {
                         this.accountService.logout();
-                        this.alertService.error('Permissões Inválidas');
+                        this.alertService.error('Invalid Permissions');
                     }
                 },
                 error: error => {
-                    this.alertService.error('Credenciais Inválidas');
+                    this.alertService.error('Invalid Credentials');
                     this.loading = false;
                 }
             });
