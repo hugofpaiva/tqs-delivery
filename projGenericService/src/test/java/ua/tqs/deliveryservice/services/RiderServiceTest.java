@@ -56,7 +56,7 @@ class RiderServiceTest {
      * GET RIDER REVIEW STATISTICS   *
      * ----------------------------- *
      */
-    
+
     @Test
     public void givenInvalidRider_whenGetRatingStatistics_throwException() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
