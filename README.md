@@ -1,6 +1,6 @@
 # TQS Delivery
 
-There is more and more demand for delivery services. The idea of TQS Delivery is to promote a platform aggregating delivery services into one. Each store will be able to join the platform, having its individual product system and interface, leaving the entire management of drivers to TQS Delivery
+There is more and more demand for delivery services. The idea of TQS Delivery is to promote a platform aggregating several delivery services into one. Each store will be able to join the platform, having its individual product system and interface, leaving the entire management of drivers to TQS Delivery
 
 As a way to demonstrate the service, an independent system of a tool store was created, Humber Peças, which through TQS Delivery, promotes tool delivery services (Because it is something we need daily and urgently 🤪)
 
