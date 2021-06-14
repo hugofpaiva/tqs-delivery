@@ -3,7 +3,8 @@ name: CD to Google Computer Engine VM
 on:
   push:
     branches: [main]
-
+  pull_request:
+      branches: [ main, dev ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +19,13 @@ jobs:
             cd tqs-delivery
             git pull
             export API_URL=35.246.29.122
-            yes | docker system prune -a
+            docker container stop $(docker container ls -aq)
+            docker container rm $(docker container ls -aq)
+            docker run --rm \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$PWD:$PWD" \
+            -w="$PWD" \
+            docker/compose:1.29.2 build
             docker run --rm \
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v "$PWD:$PWD" \
