@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class PurchaseDTO {
 
-    @NotNull(message = "Client is mandatory")
+
     private long personId;
 
     @NotBlank(message = "Date is mandatory")

@@ -1,14 +1,11 @@
 package ua.tqs.humberpecas.services;
 
-
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.exception.AccessNotAllowedException;
@@ -55,9 +52,8 @@ public class HumberReviewServiceTest {
         Address address  = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
 
         List<Product> products = new ArrayList<>();
-        products.add(new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", 3));
-        products.add(new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", 4));
-
+        products.add(new Product(10.50, "hammer","the best hammer", Category.SCREWDRIVER ));
+        products.add(new Product(20.50, "hammer v2", "the best hammer 2.0", Category.SCREWDRIVER ));
         purchase = new Purchase(person, address, products);
         purchase.setId(1);
 

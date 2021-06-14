@@ -1,16 +1,45 @@
 package ua.tqs.humberpecas.service;
 
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.tqs.humberpecas.delivery.IDeliveryService;
+import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
+import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
+import ua.tqs.humberpecas.exception.AccessNotAllowedException;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
-import ua.tqs.humberpecas.model.PurchaseStatus;
-import ua.tqs.humberpecas.model.Purchase;
+import ua.tqs.humberpecas.model.*;
+import ua.tqs.humberpecas.repository.AddressRepository;
+import ua.tqs.humberpecas.repository.PersonRepository;
+import ua.tqs.humberpecas.repository.ProductRepository;
+import ua.tqs.humberpecas.repository.PurchaseRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 public class HumberPurchaseService {
 
+    @Autowired
+    private IDeliveryService deliveryService;
+
+    @Autowired
+    private PurchaseRepository purchaseRepository;
+
+    @Autowired
+    private PersonRepository personRepository;
+
+    @Autowired
+    private AddressRepository addressRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private JwtUserDetailsService jwtUserDetailsService;
 
     public PurchaseStatus checkPurchaseStatus(long purchaseId) throws ResourceNotFoundException {
 
@@ -27,17 +56,53 @@ public class HumberPurchaseService {
 
     }
 
-    public void newPurchase(PurchaseDTO purchase){
+    public Purchase newPurchase(PurchaseDTO purchaseDTO, String userToken){
 
-        // validar dados
-        // fazer mapeamentto
+        Person person = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(userToken))
+                .orElseThrow(()-> {
+                    log.error("HumberPurchaseService: invalid user token" );
+                    throw new InvalidLoginException("Invalid user token");
+                });
 
-        // enviar os dados para o delivery service
-        // receber o id de encomenda
-        // guardar na bd
-        //
 
+        Address address = addressRepository.findById(purchaseDTO.getAddressId())
+                .orElseThrow(()-> {
+                    log.error("HumberPurchaseService: invalid user addrees" );
+                    throw new ResourceNotFoundException("Invalid Address");
+                });
+
+        List<Product> productList = productRepository.findAllById(purchaseDTO.getProductsId());
+
+        if (address.getPerson().getId() != person.getId()){
+
+            log.error("HumberPurchaseService: Address don't belong to user " );
+            throw new AccessNotAllowedException("Invalid Address");
+        }
+
+        if (productList.size() < purchaseDTO.getProductsId().size()){
+
+            List<Long> differences = productList.stream().map(Product::getId).collect(Collectors.toList());
+            purchaseDTO.getProductsId().forEach(differences::remove);
+
+            log.error("HumberPurchaseService: Invalid Product Id " + differences);
+            throw new ResourceNotFoundException("Invalid Product");
+
+        }
+
+        PurchaseDeliveryDTO purchaseDeliveryDTO = new PurchaseDeliveryDTO(
+                person.getName(),
+                purchaseDTO.getDate(),
+                new AddressDTO(address.getAddress(), address.getPostalCode(), address.getCity(), address.getCountry())
+        );
+
+
+        Purchase purchase = new Purchase(person, address, productList);
+
+        purchase.setServiceOrderId(deliveryService.newOrder(purchaseDeliveryDTO));
+
+        return purchaseRepository.saveAndFlush(purchase);
     }
+
 
     public List<Purchase> getUserPurchases(String userToken) throws ResourceNotFoundException{ return null; }
 

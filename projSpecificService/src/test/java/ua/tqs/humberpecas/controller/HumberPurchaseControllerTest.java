@@ -17,9 +17,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.humberpecas.configuration.JwtRequestFilter;
 import ua.tqs.humberpecas.configuration.WebSecurityConfig;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
+import ua.tqs.humberpecas.exception.AccessNotAllowedException;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
+import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.model.PurchaseStatus;
+import ua.tqs.humberpecas.model.Review;
 import ua.tqs.humberpecas.service.HumberPurchaseService;
+import ua.tqs.humberpecas.service.JwtUserDetailsService;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -40,19 +45,22 @@ class HumberPurchaseControllerTest {
     @MockBean
     private HumberPurchaseService service;
 
-
     @MockBean
     private JwtRequestFilter jwtRequestFilter;
 
-
     private String userToken;
+    private PurchaseDTO purchaseDTO;
 
     @BeforeEach
     void setUp() throws IOException {
         RestAssuredMockMvc.mockMvc(mvc);
-
         userToken = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
+        List<Long> productsId = Arrays.asList( Long.valueOf(6), Long.valueOf(7));
+
+        purchaseDTO = new PurchaseDTO(Long.valueOf(1), new Date(), Long.valueOf(5) , productsId);
+
     }
+
 
     @Test
     @DisplayName("User purchage list of invalid user returns HTTP status Not Found")
@@ -73,27 +81,75 @@ class HumberPurchaseControllerTest {
 
     }
 
+    @Test
+    @DisplayName("Make Purchase with invalid user token throws HTTP status Bad Request ")
+    void whenPuchageInvalidToken_thenThrowsStatus401(){
+
+        doThrow(InvalidLoginException.class).when(service).newPurchase(purchaseDTO, userToken);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .header("authorization", "Bearer " + userToken)
+                .body(purchaseDTO)
+                .when()
+                .post("/purchase/new")
+                .then()
+                .statusCode(401);
+
+        verify(service, times(1)).newPurchase(purchaseDTO, userToken);
+
+    }
+
+
+    @Test
+    @DisplayName("Make Purchase without user token throws HTTP status Bad Request")
+    void whenPurchaseWithOutToken_thenThrowsStatus400() throws AccessNotAllowedException {
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .body(purchaseDTO)
+                .when()
+                .post("/purchase/new")
+                .then()
+                .statusCode(400);
+
+        verify(service, times(0)).newPurchase(purchaseDTO, userToken);
+    }
 
     @Test
     @DisplayName("Make Purchage")
     void whenValidPurchage_thenReturnOk(){
 
-
-        List<Long> productsId = Arrays.asList( Long.valueOf(6), Long.valueOf(7));
-
-        PurchaseDTO p = new PurchaseDTO(Long.valueOf(1), new Date(), Long.valueOf(5) , productsId);
-
-
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .body(p)
+                .header("authorization", "Bearer " + userToken)
+                .body(purchaseDTO)
                 .when()
                 .post("/purchase/new")
                 .then()
                 .statusCode(200);
 
-        verify(service, times(1)).newPurchase(p);
+        verify(service, times(1)).newPurchase(purchaseDTO, userToken);
 
+
+    }
+
+    @Test
+    @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound ")
+    void whenPurchaseWithInvalidData_thenthenThrowsStatus404(){
+
+        doThrow(ResourceNotFoundException.class).when(service).newPurchase(purchaseDTO, userToken);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .header("authorization", "Bearer " + userToken)
+                .body(purchaseDTO)
+                .when()
+                .post("/purchase/new")
+                .then()
+                .statusCode(404);
+
+        verify(service, times(1)).newPurchase(purchaseDTO, userToken);
 
     }
 
@@ -112,6 +168,25 @@ class HumberPurchaseControllerTest {
                 .statusCode(404);
 
         verify(service, times(1)).checkPurchaseStatus(0);
+    }
+
+    @Test
+    @DisplayName("Error in communication with Delivery service throws UnreachableServiceExcption")
+    void whenErrorInCommunication_thenThrowsStatusUnreachableService() throws AccessNotAllowedException {
+
+        doThrow(UnreachableServiceException.class).when(service).newPurchase(purchaseDTO, userToken);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .header("authorization", "Bearer " + userToken)
+                .body(purchaseDTO)
+                .when()
+                .post("/purchase/new")
+                .then()
+                .statusCode(500);
+
+        verify(service, times(1)).newPurchase(purchaseDTO, userToken);
+
     }
 
     @Test
