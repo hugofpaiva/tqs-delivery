@@ -11,6 +11,7 @@ import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.services.PurchaseService;
+import ua.tqs.deliveryservice.services.RiderService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,6 +23,9 @@ import java.util.TreeMap;
 public class RiderRestController {
     @Autowired
     private PurchaseService purchaseService;
+
+    @Autowired
+    private RiderService riderService;
 
     @PatchMapping("order/status")
     public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(HttpServletRequest request) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
@@ -65,10 +69,15 @@ public class RiderRestController {
         }
 
         String requestTokenHeader = request.getHeader("Authorization");
-
         Map<String, Object> response = purchaseService.getLastOrderForRider(pageNo, pageSize, requestTokenHeader);
-
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/reviews")
+    public ResponseEntity<Map<String, Object>> getRatingStatistics(HttpServletRequest request) throws InvalidLoginException {
+        String requestTokenHeader = request.getHeader("Authorization");
+        Map<String, Object> resp = riderService.getRatingStatistics(requestTokenHeader);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
 }
