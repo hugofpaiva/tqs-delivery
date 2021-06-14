@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 
 @WebMvcTest(value = HumberProductsController.class, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfig.class)})
 @AutoConfigureMockMvc(addFilters = false)
-class HumberProductsControllerTest {
+class HumberProductsControllerMockMvcTest {
 
     @Autowired
     private MockMvc mvc;
