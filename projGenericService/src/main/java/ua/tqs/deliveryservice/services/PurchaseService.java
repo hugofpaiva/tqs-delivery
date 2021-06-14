@@ -128,27 +128,28 @@ public class PurchaseService {
 
     public Purchase receiveNewOrder(String storeToken, Map<String, Object> data) throws InvalidValueException, InvalidLoginException {
         Store store = jwtUserDetailsService.getStoreFromToken(storeToken);
+        if (store == null) throw new InvalidLoginException("There is no Store associated with this token");
 
+        String error = "invalid data";
         Object personName = Optional.ofNullable(data.get("personName"))
-                .orElseThrow(() -> new InvalidValueException("personName not present"));
-        if (!(personName instanceof String)) throw new InvalidValueException("error casting personName to String");
+                .orElseThrow(() -> new InvalidValueException(error));
+        if (!(personName instanceof String)) throw new InvalidValueException(error);
 
 
         Object date_obj = Optional.ofNullable(data.get("date"))
-                .orElseThrow(() -> new InvalidValueException("date not present"));
-        if (!(date_obj instanceof Long)) throw new InvalidValueException("date invalid");
+                .orElseThrow(() -> new InvalidValueException(error));
+        if (!(date_obj instanceof Long)) throw new InvalidValueException(error);
         Date date = new Date((long) date_obj);
 
         Object address = Optional.ofNullable(data.get("address"))
-                .orElseThrow(() -> new InvalidValueException("address not present"));
+                .orElseThrow(() -> new InvalidValueException(error));
 
         ObjectMapper objectMapper = new ObjectMapper();
-
         Address addr;
         try {
             addr = objectMapper.convertValue(address, Address.class);
         } catch(Exception ex) {
-            throw new InvalidValueException("error casting address to Address");
+            throw new InvalidValueException(error);
         }
 
         addressRepository.save(addr);
