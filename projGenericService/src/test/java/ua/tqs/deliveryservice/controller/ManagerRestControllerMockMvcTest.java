@@ -225,7 +225,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetStatisticsWithStores_thenNoResults() throws Exception {
+    public void testGetStatisticsWithStores_thenResults() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -247,6 +247,51 @@ public class ManagerRestControllerMockMvcTest {
                 .andExpect(jsonPath("totalStores", is(response.get("totalStores"))));
 
         verify(storeService, times(1)).getStatistics();
+    }
+
+    /* ----------------------------- *
+     * GET RIDER STATS               *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void getRidersStatsWhenNoDeliveredPurchases_thenNoResults() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("average", null);
+        when(purchaseService.getAvgDeliveryTime()).thenReturn(response);
+
+        mvc.perform(get("/manager/riders/stats")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("average").doesNotExist());
+
+        verify(purchaseService, times(1)).getAvgDeliveryTime();
+    }
+
+    @Test
+    public void getRidersStatsWithDeliveredPurchases_thenResults() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("average", 231);
+        when(purchaseService.getAvgDeliveryTime()).thenReturn(response);
+
+        mvc.perform(get("/manager/riders/stats")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("average", is(response.get("average"))));
+
+        verify(purchaseService, times(1)).getAvgDeliveryTime();
     }
 
 }
