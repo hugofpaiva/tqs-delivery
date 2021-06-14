@@ -16,7 +16,7 @@
           <div class="card bg-secondary shadow border-0">
             <div class="card-body px-lg-5 py-lg-5">
               <div class="text-center text-muted mb-4">
-                <small>Or sign in with credentials</small>
+                <small>Sign in with credentials</small>
               </div>
               <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <div class="form-group mb-3" [ngClass]="{ 'has-danger': f.email.errors && f.email.value != '',  'has-success': !f.email.errors}">
