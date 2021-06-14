@@ -19,7 +19,7 @@ import ua.tqs.humberpecas.configuration.WebSecurityConfig;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.PurchaseStatus;
-import ua.tqs.humberpecas.services.HumberPurchaseService;
+import ua.tqs.humberpecas.service.HumberPurchaseService;
 
 import java.io.IOException;
 import java.util.Arrays;

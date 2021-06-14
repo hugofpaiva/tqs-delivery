@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.humberpecas.configuration.JwtRequestFilter;
 import ua.tqs.humberpecas.configuration.WebSecurityConfig;
@@ -21,7 +20,7 @@ import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.exception.DuplicatedObjectException;
 import ua.tqs.humberpecas.model.Person;
-import ua.tqs.humberpecas.services.HumberPersonService;
+import ua.tqs.humberpecas.service.HumberPersonService;
 
 import java.io.IOException;
 import java.util.Arrays;

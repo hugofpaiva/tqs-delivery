@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.deliveryservice.configuration.JwtRequestFilter;
 import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
-import ua.tqs.deliveryservice.model.JwtRequest;
 import ua.tqs.deliveryservice.model.JwtResponse;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.services.JwtUserDetailsService;

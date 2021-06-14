@@ -22,7 +22,6 @@ public class HumberPecasApplication {
 @Profile("!test")
 @Component
 class DBLoader implements CommandLineRunner {
-
 	@Autowired
 	private PersonRepository personRepository;
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Address;
-import ua.tqs.humberpecas.services.HumberAddressService;
+import ua.tqs.humberpecas.service.HumberAddressService;
 
 import javax.validation.Valid;
 import java.util.List;

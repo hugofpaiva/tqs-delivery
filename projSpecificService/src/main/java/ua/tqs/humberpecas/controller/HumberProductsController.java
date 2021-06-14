@@ -9,7 +9,7 @@ import ua.tqs.humberpecas.exception.InvalidParameterException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Category;
 import ua.tqs.humberpecas.model.Product;
-import ua.tqs.humberpecas.services.HumberProductService;
+import ua.tqs.humberpecas.service.HumberProductService;
 
 import java.util.List;
 import java.util.Map;

@@ -1,6 +1,6 @@
 package ua.tqs.humberpecas.services;
 
-import ua.tqs.humberpecas.services.HumberProductService;
+import ua.tqs.humberpecas.service.HumberProductService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
