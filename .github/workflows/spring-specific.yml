@@ -18,7 +18,9 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
     - name: Build Angular
-      run: docker-compose build web-application-client
+      run: |
+        export API_URL=172.17.0.1
+        docker-compose build web-application-client
     - name: Start Angular on Docker
       run: docker-compose run -p 4200:80 -d web-application-client 
     - name: Build Generic Service
