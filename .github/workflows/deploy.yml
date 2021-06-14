@@ -2,24 +2,24 @@ name: CD to Google Computer Engine VM
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main, dev ]
+    branches: [main, dev]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy to Docker Host
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.DOCKER_SSH_HOST }}
-        username: ${{ secrets.DOCKER_SSH_USERNAME }}
-        key: ${{ DOCKER_SSH_PRIVATE_KEY }}
-        port: ${{ secrets.DOCKER_SSH_PORT }}
-        script: |
-          cd tqs-delivery
-          git pull
-          export API_URL=35.246.29.122
-          yes | docker system prune -a
-          docker-compose up -d
+      - name: Deploy to Docker Host
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DOCKER_SSH_HOST }}
+          username: ${{ secrets.DOCKER_SSH_USERNAME }}
+          key: ${{ DOCKER_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DOCKER_SSH_PORT }}
+          script: |
+            cd tqs-delivery
+            git pull
+            export API_URL=35.246.29.122
+            yes | docker system prune -a
+            docker-compose up -d
