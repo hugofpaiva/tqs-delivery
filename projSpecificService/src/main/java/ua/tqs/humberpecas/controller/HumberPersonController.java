@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.exception.DuplicatedObjectException;
-import ua.tqs.humberpecas.services.HumberPersonService;
+import ua.tqs.humberpecas.service.HumberPersonService;
 
 import javax.validation.Valid;
 

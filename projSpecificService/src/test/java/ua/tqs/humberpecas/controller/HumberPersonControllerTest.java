@@ -20,7 +20,7 @@ import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.exception.DuplicatedObjectException;
 import ua.tqs.humberpecas.model.Person;
-import ua.tqs.humberpecas.services.HumberPersonService;
+import ua.tqs.humberpecas.service.HumberPersonService;
 
 import java.io.IOException;
 import java.util.Arrays;

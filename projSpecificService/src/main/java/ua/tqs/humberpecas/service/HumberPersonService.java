@@ -1,7 +1,6 @@
-package ua.tqs.humberpecas.services;
+package ua.tqs.humberpecas.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.dto.PersonDTO;
