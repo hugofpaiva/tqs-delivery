@@ -31,7 +31,10 @@ class DBLoader implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		System.out.println("Populating database");
+
 		Person p1 = new Person("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
 		personRepository.saveAndFlush(p1);
+
+
 	}
 }
