@@ -37,6 +37,7 @@ public class Address {
 
     public Address() {}
 
+    @JsonIgnore
     public Map<String, Object> getMap() {
         Map<String, Object> map = new TreeMap<>();
         map.put("address", address);

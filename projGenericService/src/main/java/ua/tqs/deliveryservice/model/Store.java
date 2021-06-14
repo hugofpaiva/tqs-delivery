@@ -32,10 +32,12 @@ public class Store {
 
     public Store() {}
 
+    @JsonIgnore
     public Map<String, Object> getMap() {
         Map<String, Object> map = new TreeMap<>();
         map.put("id", id);
         map.put("name", name);
+        map.put("description", description);
         map.put("address", address.getMap());
         return map;
     }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.internal.verification.VerificationModeFactory;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
@@ -22,12 +23,16 @@ class RiderServiceTest {
     @Mock
     private RiderRepository riderRepository;
 
+    @Mock
+    private PasswordEncoder bcryptEncoder;
+
     @InjectMocks
     private RiderService riderService;
 
     @Test
     public void testWhenRiderIsSent_thenReturnIt() {
         Mockito.when(riderRepository.saveAndFlush(rider)).thenReturn(rider);
+        Mockito.when(bcryptEncoder.encode(rider.getPwd())).thenReturn(rider.getPwd());
 
         Rider response = riderService.save(rider);
 

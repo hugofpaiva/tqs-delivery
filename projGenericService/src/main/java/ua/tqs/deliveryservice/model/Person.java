@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
 @Data
@@ -19,6 +20,7 @@ public class Person {
     @Size(min = 8)
     private String pwd;
 
+    @Email
     @Column(unique=true)
     private String email;
 
