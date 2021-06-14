@@ -13,13 +13,13 @@ jobs:
       - name: SSH Remote Commands
         uses: fifsky/ssh-action@master
         with:
+          host: ${{ secrets.DOCKER_SSH_HOST }}
+          user: ${{ secrets.DOCKER_SSH_USERNAME }}
+          key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
           command: |
             cd tqs-delivery
             git pull
             export API_URL=35.246.29.122
             yes | docker system prune -a
             docker-compose up -d
-          host: ${{ secrets.DOCKER_SSH_HOST }}
-          user: ${{ secrets.DOCKER_SSH_USERNAME }}
-          key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
             
