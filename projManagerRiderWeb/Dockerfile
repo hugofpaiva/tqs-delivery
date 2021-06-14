@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
+RUN sed -i 's/172.17.0.1/${API_URL}/g' /usr/scr/app/src/environments/environment.prod.ts
 RUN npm run build 
 
 ### STAGE 2: Run ###

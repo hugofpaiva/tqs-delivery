@@ -19,6 +19,6 @@ jobs:
         ssh_public_key: ${{ secrets.DOCKER_SSH_PUBLIC_KEY }}
         deployment_mode: docker-compose
         args: up -d
-        pre_deployment_command_args: 'cd tqs-delivery && git pull'
+        pre_deployment_command_args: 'cd tqs-delivery && git pull && export API_URL=35.246.29.122'
         docker_prune: 'true'
         pull_images_first: 'true'
