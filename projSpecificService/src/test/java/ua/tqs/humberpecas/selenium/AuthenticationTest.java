@@ -21,8 +21,6 @@ import ua.tqs.humberpecas.selenium.pages.LoginPage;
 import ua.tqs.humberpecas.selenium.pages.RegisterPage;
 import ua.tqs.humberpecas.selenium.pages.ShopPage;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 // SpringBootTest to run the REST API
 @Testcontainers
