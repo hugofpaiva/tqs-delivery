@@ -42,8 +42,8 @@ class HumberProductServiceTest {
     public void setUp() {
 
         catalog = Arrays.asList(
-                new Product(0.50, "Parafuso", "xpto", 1000, false, Category.SCREWS ),
-                new Product(5.00, "Chave inglesa", "xpto", 500, false, Category.SCREWDRIVER)
+                new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "image_url"),
+                new Product("Chave ingles", 5.00, Category.SCREWDRIVER, "xpto",  "image_url")
         );
     }
 
@@ -87,33 +87,6 @@ class HumberProductServiceTest {
         } );
 
         verify(repository, times(1)).findById(1L);
-
-    }
-
-    @Test
-    @DisplayName("Get Products of a Category")
-    void whenValidCategory_thenReturnProducts() throws ResourceNotFoundException {
-
-        Mockito.when(repository.findByCategory(Category.SCREWDRIVER)).thenReturn(Optional.of(catalog.subList(1,2)));
-
-        List<Product> productList = service.getProductsByCategory(Category.SCREWDRIVER);
-
-        assertThat(productList, hasSize(1));
-        assertThat(productList, hasItem(hasProperty("name", Matchers.equalTo("Chave inglesa"))));
-        verify(repository, times(1)).findByCategory(Category.SCREWDRIVER);
-
-    }
-
-
-    @Test
-    @DisplayName("Get Products of an invalid Category throws ResourceNotFoundException")
-    void whenInvalidCategory_thenThrowsResourceNotFound(){
-
-        assertThrows( ResourceNotFoundException.class, () -> {
-            service.getProductsByCategory(null);
-        } );
-
-        verify(repository, times(1)).findByCategory(null);
 
     }
 

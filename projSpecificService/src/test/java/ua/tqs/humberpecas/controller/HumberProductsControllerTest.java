@@ -46,8 +46,8 @@ class HumberProductsControllerTest {
         RestAssuredMockMvc.mockMvc(mvc);
 
         catalog = Arrays.asList(
-                new Product(0.50, "Parafuso", "xpto", 1000, false, Category.SCREWS ),
-                new Product(5.00, "Chave inglesa", "xpto", 500, false, Category.SCREWDRIVER)
+                new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "image_url"),
+                new Product("Chave ingles", 5.00, Category.SCREWDRIVER, "xpto",  "image_url")
         );
 
     }
@@ -106,25 +106,6 @@ class HumberProductsControllerTest {
         verify(service, times(1)).getProductById(1);
     }
 
-
-    @Test
-    @DisplayName("Get Product by Category")
-    void whenGetProductsByCategory_thenReturnProducts() throws ResourceNotFoundException {
-
-        when(service.getProductsByCategory(Category.SCREWDRIVER)).thenReturn(catalog.subList(1,2));
-
-        RestAssuredMockMvc.given()
-                .contentType("application/json")
-                .when()
-                .get("/product/getAll?category=SCREWDRIVER")
-                .then()
-                .statusCode(200)
-                .body("$.size()", Matchers.equalTo(1))
-                .body("[0].name", Matchers.equalTo("Chave inglesa"));
-
-        verify(service, times(1)).getProductsByCategory(Category.SCREWDRIVER);
-
-    }
 
 
 
