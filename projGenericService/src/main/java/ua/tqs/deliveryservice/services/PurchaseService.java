@@ -70,8 +70,13 @@ public class PurchaseService {
         Purchase unfinished = purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).orElseThrow(() -> new ResourceNotFoundException("This rider hasn't accepted an order yet"));
 
         unfinished.setStatus(Status.getNext(unfinished.getStatus()));
-        purchaseRepository.save(unfinished);
 
+        if (unfinished.getStatus() == Status.DELIVERED) {
+            Date now = new Date();
+            unfinished.setDeliveryTime(now.getTime() - unfinished.getDate().getTime());
+        }
+
+        purchaseRepository.save(unfinished);
         return unfinished;
     }
 
@@ -161,5 +166,17 @@ public class PurchaseService {
         Purchase purchase = new Purchase(addr, date, store, (String) personName);
         return purchase;
 
+
+    public Map<String, Object> getAvgDeliveryTime() {
+        Map<String, Object> response = new HashMap<>();
+
+        List<Object[]> data = purchaseRepository.getAverageReview();
+        Long totalTime = (Long) data.get(0)[0];
+        Long numPurch = (Long) data.get(0)[1];
+
+        // if there are delivered purchases
+        response.put("average", totalTime != null ? totalTime / numPurch : null);
+
+        return response;
     }
 }
