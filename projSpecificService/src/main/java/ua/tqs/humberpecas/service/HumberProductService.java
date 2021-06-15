@@ -23,7 +23,7 @@ public class HumberProductService {
     @Autowired
     private ProductRepository repository;
 
-    public List<Product> getCatolog() {
+    public List<Product> getCatalog() {
 
         return repository.findAll();
 

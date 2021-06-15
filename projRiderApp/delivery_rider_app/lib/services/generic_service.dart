@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class GenericService {
-  static const BASE_URL = "http://127.0.0.1:8080";
+  static const BASE_URL = "http://127.0.0.1:8081";
   static bool loggedIn = false;
   static bool error = false;
   static String errorMsg = '';

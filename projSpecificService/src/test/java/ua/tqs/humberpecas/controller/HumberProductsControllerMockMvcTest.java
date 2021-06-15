@@ -47,7 +47,7 @@ class HumberProductsControllerMockMvcTest {
 
         catalog = Arrays.asList(
                 new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "image_url"),
-                new Product("Chave ingles", 5.00, Category.SCREWDRIVER, "xpto",  "image_url")
+                new Product("Chave inglesa", 5.00, Category.SCREWDRIVER, "xpto",  "image_url")
         );
 
     }
@@ -56,7 +56,7 @@ class HumberProductsControllerMockMvcTest {
     @DisplayName("Get list of All Products")
     void whenGetAllProducts_thenReturnAllProducts(){
 
-        when(service.getCatolog()).thenReturn(catalog);
+        when(service.getCatalog()).thenReturn(catalog);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -64,11 +64,11 @@ class HumberProductsControllerMockMvcTest {
                 .get("/product/getAll")
                 .then()
                 .statusCode(200)
-                .body("$.size()", Matchers.equalTo(2))
-                .body("[0].name", Matchers.equalTo("Parafuso"))
-                .body("[1].name", Matchers.equalTo("Chave inglesa"));
+                .body("['products'].size()", Matchers.equalTo(2))
+                .body("['products'][0].name", Matchers.equalTo("Parafuso"))
+                .body("['products'][1].name", Matchers.equalTo("Chave inglesa"));
 
-        verify(service, times(1)).getCatolog();
+        verify(service, times(1)).getCatalog();
 
     }
 

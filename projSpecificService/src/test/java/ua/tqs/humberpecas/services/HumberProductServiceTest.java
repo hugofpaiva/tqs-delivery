@@ -43,7 +43,7 @@ class HumberProductServiceTest {
 
         catalog = Arrays.asList(
                 new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "image_url"),
-                new Product("Chave ingles", 5.00, Category.SCREWDRIVER, "xpto",  "image_url")
+                new Product("Chave inglesa", 5.00, Category.SCREWDRIVER, "xpto",  "image_url")
         );
     }
 
@@ -54,7 +54,7 @@ class HumberProductServiceTest {
 
         Mockito.when(repository.findAll()).thenReturn(catalog);
 
-        List<Product> productList = service.getCatolog();
+        List<Product> productList = service.getCatalog();
 
         assertThat(productList, hasSize(2));
         assertThat(productList, hasItem(hasProperty("name", Matchers.equalTo("Parafuso"))));
