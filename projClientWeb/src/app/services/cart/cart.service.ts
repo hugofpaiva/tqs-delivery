@@ -55,6 +55,10 @@ export class CartService {
         this.productsSubject.next(plist);
     }
 
+    empty() {
+        this.productsSubject.next([]);
+    }
+
     removeProduct(product: Product) {
         const plist = this.productsSubject.value;
 
