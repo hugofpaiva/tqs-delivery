@@ -131,7 +131,6 @@ public class PurchaseService {
         if (store == null) throw new InvalidLoginException("There is no Store associated with this token");
 
         String error = "invalid data";
-        System.out.println("antes");
 
         Object personName = Optional.ofNullable(data.get("personName"))
                 .orElseThrow(() -> new InvalidValueException(error));

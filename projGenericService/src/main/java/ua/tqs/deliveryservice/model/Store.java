@@ -25,8 +25,9 @@ public class Store {
     @OneToOne
     private Address address;
 
-    //@OneToMany(mappedBy = "store")
-    //private Set<Purchase> purchases;
+    @JsonIgnore
+    @OneToMany(mappedBy = "store")
+    private Set<Purchase> purchases;
 
     public Store(String name, String description, String token, Address address) {
         this.name = name;

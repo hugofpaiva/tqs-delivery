@@ -54,7 +54,6 @@ public class Purchase {
         this.date = date;
     }
 
-    // TODO: APAGAR ESTE PQ N FAZ SENTIDO..
     public Purchase(Address address, Rider rider, Store store, String clientName) {
         this.address = address;
         this.rider = rider;
