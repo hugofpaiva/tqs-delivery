@@ -1,5 +1,7 @@
 package ua.tqs.deliveryservice.controller;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,9 @@ import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.services.PurchaseService;
+import ua.tqs.deliveryservice.services.RiderService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
@@ -46,6 +46,9 @@ class RiderRestControllerMockMvcTest {
     // Without a mock of the Autowire there, it will fail
     @MockBean
     private JwtRequestFilter jwtRequestFilter;
+
+    @MockBean
+    private RiderService riderService;
 
     /* ----------------------------- *
      * GET ORDER HISTORY FOR RIDER   *
@@ -397,5 +400,78 @@ class RiderRestControllerMockMvcTest {
         verify(purchaseService, times(1)).updatePurchaseStatus(any());
 
     }
+
+    /* ----------------------------- *
+     * GET RIDER REVIEW STATISTICS   *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testGetReviewStatisticsButNoAuthorization_thenUnauthorized() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        when(riderService.getRatingStatistics("Bearer example_token")).thenThrow(InvalidLoginException.class);
+        mvc.perform(get("/rider/reviews")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+        ;
+
+        verify(riderService, times(1)).getRatingStatistics(any());
+    }
+
+
+    @Test
+    public void givenRiderWithoutReviews_whenGetStatistics_thenSuccess() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("totalNumReviews", 0);
+        expected.put("avgReviews", null);
+
+        when(riderService.getRatingStatistics("Bearer example_token")).thenReturn(expected);
+
+
+        mvc.perform(get("/rider/reviews")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("totalNumReviews", is(0)))
+                .andExpect(jsonPath("avgReviews").isEmpty())
+        ;
+
+        verify(riderService, times(1)).getRatingStatistics(any());
+
+    }
+
+    @Test
+    public void givenRiderWithReviews_whenGetStatistics_thenSuccess() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("totalNumReviews", 5);
+        expected.put("avgReviews", 3.5);
+
+        when(riderService.getRatingStatistics("Bearer example_token")).thenReturn(expected);
+
+
+        mvc.perform(get("/rider/reviews")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("totalNumReviews", is(5)))
+                .andExpect(jsonPath("avgReviews", is(3.5)))
+        ;
+
+        verify(riderService, times(1)).getRatingStatistics(any());
+
+    }
+
 
 }
