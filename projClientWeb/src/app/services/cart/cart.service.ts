@@ -26,7 +26,7 @@ export class CartService {
     public get totalProducts(): number {
         let n = 0;
         this.productsSubject.value.forEach((p) => {
-            n = n + p.quantity;
+            n = n + Number(p.quantity);
         });
         return n;
     }
@@ -34,7 +34,7 @@ export class CartService {
     public get totalPrice(): number {
         let n = 0;
         this.productsSubject.value.forEach((p) => {
-            n = n + p.price;
+            n = n + Number(p.price * p.quantity);
         });
         return n;
     }
