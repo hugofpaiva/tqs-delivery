@@ -11,7 +11,7 @@ import ua.tqs.humberpecas.model.Review;
 public interface IDeliveryService {
 
     Long newOrder(PurchaseDeliveryDTO purchase);
-    Category checkOrderStatus(int order_id);
+    Category checkOrderStatus(int orderId);
     void reviewRider(Review review) throws ResourceNotFoundException, UnreachableServiceException;
 
 

@@ -14,6 +14,8 @@ import ua.tqs.humberpecas.handler.RestTemplateErrorHandler;
 import ua.tqs.humberpecas.model.Category;
 import ua.tqs.humberpecas.model.Review;
 
+import java.util.Objects;
+
 @Log4j2
 @Component
 public class DeliveryServiceImpl implements IDeliveryService {
@@ -42,8 +44,17 @@ public class DeliveryServiceImpl implements IDeliveryService {
         ResponseEntity<ServerPurchaseDTO> response = restTemplate.exchange(
                 url.toString(), HttpMethod.POST, new HttpEntity<>(purchase, headers),
                 ServerPurchaseDTO.class);
+        try {
 
-        return response.getBody().getOrderId();
+            return Objects.requireNonNull(response.getBody()).getOrderId();
+
+        } catch (NullPointerException e){
+
+            log.error("DeliveryServiceImpl: Null serverOrderID ");
+            throw new ResourceNotFoundException("Null serverOrderID");
+
+        }
+
     }
 
     @Override

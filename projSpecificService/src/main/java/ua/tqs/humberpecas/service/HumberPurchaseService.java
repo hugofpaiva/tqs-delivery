@@ -58,13 +58,13 @@ public class HumberPurchaseService {
 
     public Purchase newPurchase(PurchaseDTO purchaseDTO, String userToken){
 
-        Person person = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(userToken))
+        var person = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(userToken))
                 .orElseThrow(()-> {
                     log.error("HumberPurchaseService: invalid user token" );
                     throw new InvalidLoginException("Invalid user token");
                 });
 
-        Address address = addressRepository.findById(purchaseDTO.getAddressId())
+        var address = addressRepository.findById(purchaseDTO.getAddressId())
                 .orElseThrow(()-> {
                     log.error("HumberPurchaseService: invalid user addrees" );
                     throw new ResourceNotFoundException("Invalid Address");
@@ -88,14 +88,14 @@ public class HumberPurchaseService {
 
         }
 
-        PurchaseDeliveryDTO purchaseDeliveryDTO = new PurchaseDeliveryDTO(
+        var purchaseDeliveryDTO = new PurchaseDeliveryDTO(
                 person.getName(),
                 purchaseDTO.getDate(),
                 new AddressDTO(address.getAddress(), address.getPostalCode(), address.getCity(), address.getCountry())
         );
 
 
-        Purchase purchase = new Purchase(person, address, productList);
+        var purchase = new Purchase(person, address, productList);
         purchase.setDate(purchaseDTO.getDate());
 
         purchase.setServiceOrderId(deliveryService.newOrder(purchaseDeliveryDTO));

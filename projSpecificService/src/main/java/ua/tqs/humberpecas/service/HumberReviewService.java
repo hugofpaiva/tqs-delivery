@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.exception.AccessNotAllowedException;
-import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.exception.UnreachableServiceException;
-import ua.tqs.humberpecas.model.Person;
 import ua.tqs.humberpecas.model.Purchase;
 import ua.tqs.humberpecas.model.Review;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
@@ -29,7 +27,7 @@ public class HumberReviewService {
 
     public void addReview( Review review, String userToken) throws ResourceNotFoundException, UnreachableServiceException, AccessNotAllowedException {
 
-        Purchase purchase = purchaseRepository.findByServiceOrderId(review.getOrderId())
+        var purchase = purchaseRepository.findByServiceOrderId(review.getOrderId())
                 .orElseThrow(() -> {
                     log.error("ReviewService: Invalid Purchase");
                     throw new ResourceNotFoundException("Invalid Purchase");

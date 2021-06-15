@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class HumberReviewServiceTest {
+class HumberReviewServiceTest {
 
     @Mock
     private IDeliveryService deliveryService;

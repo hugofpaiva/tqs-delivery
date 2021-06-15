@@ -1,7 +1,6 @@
 package ua.tqs.humberpecas.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.exception.DuplicatedObjectException;
@@ -14,10 +13,9 @@ public class HumberPersonService {
     @Autowired
     private PersonRepository repository;
 
-    // TODO: terminar
     public void register(PersonDTO user) throws DuplicatedObjectException {
 
-        Person p  = new Person(user.getName(), user.getPwd(), user.getEmail());
+        var p  = new Person(user.getName(), user.getPwd(), user.getEmail());
         repository.saveAndFlush(p);
 
         // validar os dados (verificar se email ja existe na bd)

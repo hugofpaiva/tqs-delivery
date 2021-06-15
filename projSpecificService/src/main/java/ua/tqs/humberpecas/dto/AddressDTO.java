@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 @RequiredArgsConstructor
 public class AddressDTO {
 
-
     private Long addressId;
 
     @NonNull
@@ -31,8 +30,6 @@ public class AddressDTO {
     private String country;
 
     private long personID;
-
-    public AddressDTO(){ }
-
+    
 
 }

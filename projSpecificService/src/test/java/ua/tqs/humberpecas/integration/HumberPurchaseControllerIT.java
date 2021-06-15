@@ -20,6 +20,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
 import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
+import ua.tqs.humberpecas.exception.AccessNotAllowedException;
+import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.AddressRepository;
 import ua.tqs.humberpecas.repository.PersonRepository;
@@ -32,8 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -142,6 +143,36 @@ public class HumberPurchaseControllerIT {
 //
 //    }
 //
+
+    @Test
+    @DisplayName("Make Purchase without being logged throws HTTP Unauthorized")
+    void whenPurchaseWithOutToken_thenThrowsStatus401() throws AccessNotAllowedException {
+
+        RestAssured.given()
+                .contentType("application/json")
+                .body(purchaseDTO)
+                .when()
+                .post(getBaseUrl() + "/new")
+                .then()
+                .statusCode(401);
+
+
+    }
+
+
+    @Test
+    @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound ")
+    void whenPurchaseWithInvalidData_thenthenThrowsStatus404(){
+
+        RestAssured.given()
+                .contentType("application/json")
+                .body(purchaseDTO)
+                .when()
+                .post(getBaseUrl() + "/new")
+                .then()
+                .statusCode(401);
+
+    }
 
 
     public String getBaseUrl() {

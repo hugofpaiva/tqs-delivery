@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
-public class HumberPurchaseServiceTest {
+class HumberPurchaseServiceTest {
 
     @Mock
     private IDeliveryService deliveryService;

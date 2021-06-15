@@ -108,6 +108,23 @@ public class DeliveryServiceTest {
 
     }
 
+    @Test
+    @DisplayName("Make purchase and not recieving serverOrderId throws ResourseNotFound")
+    void whenPurchaseNoRecieveOrderId_thenThrowsStatusResourseNotFound(){
+
+        this.server
+                .expect(ExpectedCount.once(), requestTo("http://localhost:8081/store/order"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess());
+
+
+        assertThrows( ResourceNotFoundException.class, () -> {
+            deliveryService.newOrder(purchaseDeliveryDTO);
+        } );
+
+
+    }
+
 
 
 }
