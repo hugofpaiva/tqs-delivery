@@ -20,25 +20,33 @@
           <div class="text-center text-muted mb-4">
             <small>Sign in with credentials</small>
           </div>
-          <form role="form">
-            <div class="form-group mb-3">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-group mb-3" [ngClass]="{ 'has-danger': f.email.errors && f.email.value != '',  'has-success': !f.email.errors}">
               <div class="input-group input-group-alternative">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                 </div>
-                <input class="form-control" placeholder="Email" type="email">
+                <input class="form-control" formControlName="email" [ngClass]="{ 'is-invalid': f.email.errors }"
+                       placeholder="Email" type="email">
+              </div>
+              <div *ngIf="submitted && f.email.errors">
+                <p style="font-size: small; color: red" *ngIf="f.email.errors">An email is required</p>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" [ngClass]="{ 'has-danger': f.password.errors && f.password.value != '',  'has-success': !f.password.errors}">
               <div class="input-group input-group-alternative">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                 </div>
-                <input class="form-control" placeholder="Password" type="password">
+                <input class="form-control" type="password" formControlName="password"
+                       [ngClass]="{ 'is-invalid': f.password.errors }" placeholder="Password"></div>
+              <div *ngIf="submitted && f.password.errors">
+                <p style="font-size: small; color: red" *ngIf="f.password.errors">Password is required and must be at
+                  least 8 chars</p>
               </div>
             </div>
-            <div class="text-center">
-              <button type="button" class="btn btn-primary my-4">Sign in</button>
+            <div class="text-center form-group">
+              <button [disabled]="loading" type="submit" class="btn btn-primary my-4">Sign in</button>
             </div>
           </form>
         </div>

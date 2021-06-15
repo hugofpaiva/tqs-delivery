@@ -13,7 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ua.tqs.humberpecas.services.JwtUserDetailsService;
+import ua.tqs.humberpecas.service.JwtUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -65,6 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(SWAGGER_WHITELIST).permitAll()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/person/register").permitAll()
                 // all other requests need to be authenticated
                 .anyRequest().authenticated().and().
                 // make sure we use stateless session; session won't be used to

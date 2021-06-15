@@ -21,33 +21,48 @@
           <div class="text-center text-muted mb-4">
             <small>Sign up to be a rider!</small>
           </div>
-          <form role="form">
-            <div class="form-group">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-group"
+                 [ngClass]="{ 'has-danger': f.name.errors && f.name.value != '',  'has-success': !f.name.errors}">
               <div class="input-group input-group-alternative mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                 </div>
-                <input class="form-control" placeholder="Name" type="text">
+                <input class="form-control" formControlName="name" [ngClass]="{ 'is-invalid': f.name.errors }"
+                       placeholder="Name" type="text">
+              </div>
+              <div *ngIf="submitted && f.name.errors">
+                <p style="font-size: small; color: red" *ngIf="f.name.errors">A name is required</p>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group"
+                 [ngClass]="{ 'has-danger': f.email.errors && f.email.value != '',  'has-success': !f.email.errors}">
               <div class="input-group input-group-alternative mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                 </div>
-                <input class="form-control" placeholder="Email" type="email">
+                <input class="form-control" formControlName="email" [ngClass]="{ 'is-invalid': f.email.errors }"
+                       placeholder="Email" type="email">
+              </div>
+              <div *ngIf="submitted && f.email.errors">
+                <p style="font-size: small; color: red" *ngIf="f.email.errors">An email is required</p>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" [ngClass]="{ 'has-danger': f.password.errors && f.password.value != '',  'has-success': !f.password.errors}">
               <div class="input-group input-group-alternative">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                 </div>
-                <input class="form-control" placeholder="Password" type="password">
+                <input class="form-control" type="password" formControlName="password"
+                       [ngClass]="{ 'is-invalid': f.password.errors }" placeholder="Password">
+              </div>
+              <div *ngIf="submitted && f.password.errors">
+                <p style="font-size: small; color: red" *ngIf="f.password.errors">Password is required and must be at
+                  least 8 chars</p>
               </div>
             </div>
-            <div class="text-center">
-              <button type="button" class="btn btn-primary mt-4">Create account</button>
+            <div class="text-center form-group">
+              <button [disabled]="loading" type="submit" class="btn btn-primary my-4">Sign Up</button>
             </div>
           </form>
         </div>

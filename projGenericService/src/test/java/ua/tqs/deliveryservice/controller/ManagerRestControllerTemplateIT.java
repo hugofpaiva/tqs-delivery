@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,16 +15,16 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ua.tqs.deliveryservice.model.Address;
-import ua.tqs.deliveryservice.model.Manager;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import ua.tqs.deliveryservice.model.*;
-import ua.tqs.deliveryservice.repository.*;
 
 import org.testcontainers.shaded.com.fasterxml.jackson.core.type.TypeReference;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
+
+
+import ua.tqs.deliveryservice.repository.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-class ManagerRestControllerTemplateIT {
+public class ManagerRestControllerTemplateIT {
     private Manager manager;
     private Address address;
     private Rider rider;
@@ -77,7 +78,6 @@ class ManagerRestControllerTemplateIT {
         registry.add("spring.datasource.username", container::getUsername);
     }
 
-
     @BeforeEach
     public void beforeEachSetUp() {
         this.manager = new Manager("joao", bcryptEncoder.encode("aRightPassword"), "TQS_delivery@example.com");
@@ -103,8 +103,18 @@ class ManagerRestControllerTemplateIT {
         purchaseRepository.saveAndFlush(this.purchase);
     }
 
+
     @AfterEach
     public void destroyAll() {
+        this.deleteAll();
+    }
+
+    public String getBaseUrl() {
+        return "http://localhost:" + randomServerPort + "/manager/";
+
+    }
+
+    public void deleteAll() {
         purchaseRepository.deleteAll();
         purchaseRepository.flush();
 
@@ -118,21 +128,17 @@ class ManagerRestControllerTemplateIT {
         personRepository.flush();
     }
 
-    public String getBaseUrl() {
-        return "http://localhost:" + randomServerPort + "/manager/";
-
-    }
-
-    // --------------------------------------------
-    // --      MANAGER: GET ALL RIDERS INFO      --
-    // --------------------------------------------
+    /* ----------------------------- *
+     * GET LAST STORES (FOR MANAGER) *
+     * ----------------------------- *
+     */
 
     @Test
     public void testGetStoresWhenInvalidPageNo_thenBadRequest() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<String> response = testRestTemplate.exchange(
-                getBaseUrl() + "riders/all?pageNo=" + -1, HttpMethod.GET, new HttpEntity<Object>(headers),
+                getBaseUrl() + "stores?pageNo=" + -1, HttpMethod.GET, new HttpEntity<Object>(headers),
                 String.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
@@ -143,7 +149,7 @@ class ManagerRestControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<String> response = testRestTemplate.exchange(
-                getBaseUrl() + "riders/all?pageSize=" + 0, HttpMethod.GET, new HttpEntity<Object>(headers),
+                getBaseUrl() + "stores?pageSize=" + 0, HttpMethod.GET, new HttpEntity<Object>(headers),
                 String.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
@@ -151,6 +157,179 @@ class ManagerRestControllerTemplateIT {
 
     @Test
     public void testGetStoresButNoAuthorization_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "stores?pageSize=2", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+    }
+
+    @Test
+    public void testGetStores_thenStatus200() {
+        ObjectMapper mapper = new ObjectMapper();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "stores", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        List<Map<String, Object>> stores = mapper.convertValue(
+                found.get("stores"),
+                new TypeReference<List<Map<String, Object>>>() {
+                }
+        );
+
+        Assertions.assertThat(stores).hasSize(1).extracting("name").contains(this.store.getName());
+        Assertions.assertThat(stores).hasSize(1).extracting("totalOrders").contains(1);
+
+        Assertions.assertThat(found.get("currentPage")).isEqualTo(0);
+        Assertions.assertThat(found.get("totalItems")).isEqualTo(1);
+        Assertions.assertThat(found.get("totalPages")).isEqualTo(1);
+
+    }
+
+
+    @Test
+    public void testGetStoresNoWithoutResults_thenNoResults() {
+        purchaseRepository.delete(this.purchase);
+        storeRepository.delete(this.store);
+        ObjectMapper mapper = new ObjectMapper();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "stores", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        List<Map<String, Object>> stores = mapper.convertValue(
+                found.get("stores"),
+                new TypeReference<List<Map<String, Object>>>() {
+                }
+        );
+
+        Assertions.assertThat(stores).hasSize(0);
+
+        Assertions.assertThat(found.get("currentPage")).isEqualTo(0);
+        Assertions.assertThat(found.get("totalItems")).isEqualTo(0);
+        Assertions.assertThat(found.get("totalPages")).isEqualTo(0);
+    }
+
+    /* ----------------------------- *
+     * GET ORDERS STATISTICS         *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testGetStatisticsButNoAuthorization_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "statistics", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+    }
+
+
+    @Test
+    public void testGetStatisticsNoStores_then200() {
+        purchaseRepository.delete(this.purchase);
+        storeRepository.delete(this.store);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "statistics", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found.get("totalPurchases")).isEqualTo(0);
+        Assertions.assertThat(found.get("avgPurchasesPerWeek")).isNull();
+        Assertions.assertThat(found.get("totalStores")).isEqualTo(0);
+    }
+
+
+    @Test
+    public void testGetStatisticsWithStoresButNoOrders_then200() {
+        purchaseRepository.deleteAll();
+        purchaseRepository.flush();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "statistics", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found.get("totalPurchases")).isEqualTo(0);
+        Assertions.assertThat(found.get("avgPurchasesPerWeek")).isNull();
+        Assertions.assertThat(found.get("totalStores")).isEqualTo(1);
+    }
+
+    @Test
+    public void testGetStatisticsWithStoresAndOrders_then200() {
+        Address ad1 = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        addressRepository.saveAndFlush(ad1);
+        Purchase p1 = new Purchase(ad1, this.store, "Miguel");
+        purchaseRepository.saveAndFlush(p1);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "statistics", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found.get("totalPurchases")).isEqualTo(2);
+        Assertions.assertThat(found.get("avgPurchasesPerWeek")).isNotNull();
+        Assertions.assertThat(found.get("totalStores")).isEqualTo(1);
+    }
+
+    // --------------------------------------------
+    // --      MANAGER: GET ALL RIDERS INFO      --
+    // --------------------------------------------
+
+    @Test
+    public void testGetRidersWhenInvalidPageNo_thenBadRequest() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                getBaseUrl() + "riders/all?pageNo=" + -1, HttpMethod.GET, new HttpEntity<Object>(headers),
+                String.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testGetRidersWhenInvalidPageSize_thenBadRequest() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<String> response = testRestTemplate.exchange(
+                getBaseUrl() + "riders/all?pageSize=" + 0, HttpMethod.GET, new HttpEntity<Object>(headers),
+                String.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void testGetRidersButNoAuthorization_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "riders/all?pageSize=2", HttpMethod.GET, new HttpEntity<Object>(headers),
