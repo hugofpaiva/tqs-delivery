@@ -158,7 +158,7 @@ public class PurchaseService {
         Address addr;
         try {
             addr = objectMapper.convertValue(address, Address.class);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new InvalidValueException(error);
         }
 
@@ -166,13 +166,13 @@ public class PurchaseService {
         Purchase purchase = new Purchase(addr, date, store, (String) personName);
         return purchase;
 
-
+    }
     public Map<String, Object> getAvgDeliveryTime() {
         Map<String, Object> response = new HashMap<>();
 
-        List<Object[]> data = purchaseRepository.getAverageReview();
-        Long totalTime = (Long) data.get(0)[0];
-        Long numPurch = (Long) data.get(0)[1];
+        List<Object[]> data2 = purchaseRepository.getAverageReview();
+        Long totalTime = (Long) data2.get(0)[0];
+        Long numPurch = (Long) data2.get(0)[1];
 
         // if there are delivered purchases
         response.put("average", totalTime != null ? totalTime / numPurch : null);

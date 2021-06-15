@@ -61,6 +61,7 @@ public class Purchase {
         this.store = store;
         this.status = Status.ACCEPTED;
         this.clientName = clientName;
+        this.date = new Date();
     }
 
     public Purchase() {}
