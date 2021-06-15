@@ -1,6 +1,7 @@
 package ua.tqs.humberpecas.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @RequiredArgsConstructor
+@NoArgsConstructor
 public class AddressDTO {
 
     private Long addressId;
