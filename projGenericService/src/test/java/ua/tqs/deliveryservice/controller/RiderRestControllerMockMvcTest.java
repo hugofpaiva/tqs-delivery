@@ -1,7 +1,5 @@
 package ua.tqs.deliveryservice.controller;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,10 @@ import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.services.PurchaseService;
 import ua.tqs.deliveryservice.services.RiderService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
@@ -42,13 +43,13 @@ class RiderRestControllerMockMvcTest {
     @MockBean
     private PurchaseService purchaseService;
 
+    @MockBean
+    private RiderService riderService;
+
     // Although Spring Security is disabled, Spring Context will still check WebConfig.
     // Without a mock of the Autowire there, it will fail
     @MockBean
     private JwtRequestFilter jwtRequestFilter;
-
-    @MockBean
-    private RiderService riderService;
 
     /* ----------------------------- *
      * GET ORDER HISTORY FOR RIDER   *
@@ -401,6 +402,34 @@ class RiderRestControllerMockMvcTest {
 
     }
 
+    @Test
+    public void givenRiderWithPurchase_whenUpdateStatusAndStatusWasPickedUp_thenSuccess() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
+        Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Purchase purchase = new Purchase(address, rider, store, "Joana");
+        purchase.setStatus(Status.PICKED_UP);
+        purchase.setDeliveryTime(15L);
+
+        when(purchaseService.updatePurchaseStatus("Bearer example_token")).thenReturn(purchase);
+
+
+        mvc.perform(patch("/rider/order/status")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("order_id", is(((Long) purchase.getId()).intValue())))
+                .andExpect(jsonPath("status", is("PICKED_UP")))
+                .andExpect(jsonPath("delivery_time", is(15)));
+
+        verify(purchaseService, times(1)).updatePurchaseStatus(any());
+
+    }
+
     /* ----------------------------- *
      * GET RIDER REVIEW STATISTICS   *
      * ----------------------------- *
@@ -472,6 +501,4 @@ class RiderRestControllerMockMvcTest {
         verify(riderService, times(1)).getRatingStatistics(any());
 
     }
-
-
 }

@@ -15,16 +15,12 @@ import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class PurchaseService {
@@ -72,8 +68,13 @@ public class PurchaseService {
         Purchase unfinished = purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).orElseThrow(() -> new ResourceNotFoundException("This rider hasn't accepted an order yet"));
 
         unfinished.setStatus(Status.getNext(unfinished.getStatus()));
-        purchaseRepository.save(unfinished);
 
+        if (unfinished.getStatus() == Status.DELIVERED) {
+            Date now = new Date();
+            unfinished.setDeliveryTime(now.getTime() - unfinished.getDate().getTime());
+        }
+
+        purchaseRepository.save(unfinished);
         return unfinished;
     }
 
@@ -123,6 +124,19 @@ public class PurchaseService {
         response.put("currentPage", pagedResult.getNumber());
         response.put("totalItems", pagedResult.getTotalElements());
         response.put("totalPages", pagedResult.getTotalPages());
+
+        return response;
+    }
+
+    public Map<String, Object> getAvgDeliveryTime() {
+        Map<String, Object> response = new HashMap<>();
+
+        List<Object[]> data = purchaseRepository.getAverageReview();
+        Long totalTime = (Long) data.get(0)[0];
+        Long numPurch = (Long) data.get(0)[1];
+
+        // if there are delivered purchases
+        response.put("average", totalTime != null ? totalTime / numPurch : null);
 
         return response;
     }

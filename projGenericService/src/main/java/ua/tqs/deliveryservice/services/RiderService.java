@@ -9,11 +9,12 @@ import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
 import java.util.Map;
+
 import java.util.TreeMap;
+
 
 @Service
 public class RiderService {
-
     @Autowired
     RiderRepository riderRepository;
 

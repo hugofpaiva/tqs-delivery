@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.controller;
 
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,16 +9,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.deliveryservice.configuration.JwtRequestFilter;
 import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
-import ua.tqs.deliveryservice.model.Address;
-import ua.tqs.deliveryservice.model.Purchase;
-import ua.tqs.deliveryservice.model.Rider;
-import ua.tqs.deliveryservice.model.Store;
+import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.services.ManagerService;
+import ua.tqs.deliveryservice.services.PurchaseService;
 import ua.tqs.deliveryservice.services.StoreService;
 
 import java.util.*;
@@ -37,10 +35,14 @@ public class ManagerRestControllerMockMvcTest {
     private MockMvc mvc;
 
     @MockBean
+    private StoreService storeService;
+
+    @MockBean
     private ManagerService managerService;
 
     @MockBean
-    private StoreService storeService;
+    private PurchaseService purchaseService;
+
 
     // Although Spring Security is disabled, Spring Context will still check WebConfig.
     // Without a mock of the Autowire there, it will fail
@@ -51,6 +53,7 @@ public class ManagerRestControllerMockMvcTest {
      * GET STORES (FOR MANAGER)      *
      * ----------------------------- *
      */
+
 
     @Test
     public void testGetStoresWhenInvalidPageNo_thenBadRequest() throws Exception {
@@ -217,7 +220,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetStatisticsWithStores_thenNoResults() throws Exception {
+    public void testGetStatisticsWithStores_thenResults() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -336,6 +339,51 @@ public class ManagerRestControllerMockMvcTest {
                 .andExpect(jsonPath("['riders'].size()", is(0)));
 
         verify(managerService, times(1)).getRidersInformation(0, 10);
+    }
+
+    /* ----------------------------- *
+     * GET RIDER STATS               *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void getRidersStatsWhenNoDeliveredPurchases_thenNoResults() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("average", null);
+        when(purchaseService.getAvgDeliveryTime()).thenReturn(response);
+
+        mvc.perform(get("/manager/riders/stats")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("average").doesNotExist());
+
+        verify(purchaseService, times(1)).getAvgDeliveryTime();
+    }
+
+    @Test
+    public void getRidersStatsWithDeliveredPurchases_thenResults() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("average", 231);
+        when(purchaseService.getAvgDeliveryTime()).thenReturn(response);
+
+        mvc.perform(get("/manager/riders/stats")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("average", is(response.get("average"))));
+
+        verify(purchaseService, times(1)).getAvgDeliveryTime();
     }
 
 }
