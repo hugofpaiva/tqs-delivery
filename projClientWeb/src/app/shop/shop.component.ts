@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons';
 import {Product} from '../models/product';
 import {ProductService} from '../services/product/product.service';
+import {CartService} from '../services/cart/cart.service';
+import {AlertService} from '../services/alert/alert.service';
 
 @Component({
     selector: 'app-shop',
@@ -21,7 +23,7 @@ export class ShopComponent implements OnInit {
     orderBy: String = null;
     category: String = null;
 
-    constructor(private productService: ProductService) {
+    constructor(private productService: ProductService, private cartService: CartService, private alertService: AlertService) {
     }
 
     ngOnInit(): void {
@@ -29,13 +31,13 @@ export class ShopComponent implements OnInit {
     }
 
     getProducts() {
-        this.productService.getProducts(this.currentPage - 1 , this.name, this.maxPrice, this.minPrice, this.orderBy, this.category)
+        this.productService.getProducts(this.currentPage - 1, this.name, this.maxPrice, this.minPrice, this.orderBy, this.category)
             .subscribe(
-            data => {
-                this.totalItems = data['totalItems'];
-                this.totalPages = data['totalPages'];
-                this.products = data['products'];
-            });
+                data => {
+                    this.totalItems = data['totalItems'];
+                    this.totalPages = data['totalPages'];
+                    this.products = data['products'];
+                });
     }
 
     getPage(event) {
@@ -82,6 +84,15 @@ export class ShopComponent implements OnInit {
             this.category = event;
         }
         this.getProducts();
+    }
+
+    addToCart(p: Product) {
+        if (p.quantity === undefined || p.quantity < 10) {
+            this.cartService.addProduct(p);
+        } else {
+            this.alertService.error('Max Quantity of Product Added');
+        }
+
     }
 
 }
