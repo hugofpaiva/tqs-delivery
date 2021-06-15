@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.repository;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -49,13 +50,19 @@ public class PersonRepositoryTests {
     @Autowired
     private TestEntityManager entityManager;
 
+    Person person;
+
+    @BeforeEach
+    public void setUp() {
+        person = createAndSavePerson(1);
+    }
+
     @Test
     public void testWhenCreatePersonAndFindById_thenReturnSamePerson() {
-        Person p = createAndSavePerson(1);
 
-        Optional<Person> res = personRepository.findById(p.getId());
+        Optional<Person> res = personRepository.findById(person.getId());
         assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(p);
+        assertThat(res.get()).isEqualTo(person);
     }
 
     @Test
@@ -63,6 +70,26 @@ public class PersonRepositoryTests {
         Optional<Person> res = personRepository.findById(-1L);
         assertThat(res.isPresent()).isFalse();
     }
+
+    /* ----------------------------- *
+     * FIND BY EMAIL TESTS           *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testWhenFindByEmail_whenInvalidEmail_thenReturnEmptyOptional() {
+        Optional<Person> res = personRepository.findByEmail("invalid");
+        assertThat(res.isPresent()).isFalse();
+    }
+
+    @Test
+    public void testWhenFindByEmail_whenValidEmail_thenReturnEmptyOptional() {
+        Optional<Person> res = personRepository.findByEmail("email1@email.com");
+        assertThat(res.isPresent()).isTrue();
+        assertThat(res.get().getId()).isEqualTo(person.getId());
+    }
+
+
 
     /* -- helper -- */
     private Person createAndSavePerson(int i) {
