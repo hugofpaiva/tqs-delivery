@@ -1,6 +1,7 @@
 package ua.tqs.humberpecas.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.exception.DuplicatedObjectException;
@@ -13,9 +14,13 @@ public class HumberPersonService {
     @Autowired
     private PersonRepository repository;
 
+    @Autowired
+    private PasswordEncoder bcryptEncoder;
+
+    // TODO: terminar
     public void register(PersonDTO user) throws DuplicatedObjectException {
 
-        var p  = new Person(user.getName(), user.getPwd(), user.getEmail());
+        Person p  = new Person(user.getName(), bcryptEncoder.encode(user.getPwd()), user.getEmail());
         repository.saveAndFlush(p);
 
         // validar os dados (verificar se email ja existe na bd)

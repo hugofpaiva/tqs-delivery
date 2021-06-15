@@ -46,13 +46,19 @@ services:
       depends_on: 
         - db-specific
     web-application-client:
-      build: ./projClientWeb
+      build: 
+        context: ./projClientWeb
+        args: 
+          API_URL: ${API_URL}
       container_name: web-application-client
       restart: unless-stopped
       ports:
           - 80:80
     web-application-manager-rider:
-      build: ./projManagerRiderWeb
+      build: 
+        context: ./projManagerRiderWeb
+        args: 
+          API_URL: ${API_URL}
       container_name: web-application-manager-rider
       restart: unless-stopped
       ports:

@@ -11,6 +11,7 @@ import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.services.PurchaseService;
+import ua.tqs.deliveryservice.services.RiderService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +24,9 @@ public class RiderRestController {
     @Autowired
     private PurchaseService purchaseService;
 
+    @Autowired
+    private RiderService riderService;
+
     @PatchMapping("order/status")
     public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(HttpServletRequest request) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
         String requestTokenHeader = request.getHeader("Authorization");
@@ -32,6 +36,11 @@ public class RiderRestController {
         Map<String, Object> ret = new HashMap<>();
         ret.put("order_id", purchase.getId());
         ret.put("status", purchase.getStatus());
+
+        Long time = purchase.getDeliveryTime();
+        if (time != null) {
+            ret.put("delivery_time", time);
+        }
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
@@ -65,10 +74,15 @@ public class RiderRestController {
         }
 
         String requestTokenHeader = request.getHeader("Authorization");
-
         Map<String, Object> response = purchaseService.getLastOrderForRider(pageNo, pageSize, requestTokenHeader);
-
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/reviews")
+    public ResponseEntity<Map<String, Object>> getRatingStatistics(HttpServletRequest request) throws InvalidLoginException {
+        String requestTokenHeader = request.getHeader("Authorization");
+        Map<String, Object> resp = riderService.getRatingStatistics(requestTokenHeader);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
 }

@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import ua.tqs.humberpecas.model.Person;
+import ua.tqs.humberpecas.repository.PersonRepository;
 
 @SpringBootApplication
 public class HumberPecasApplication {
@@ -20,10 +22,17 @@ public class HumberPecasApplication {
 @Profile("!test")
 @Component
 class DBLoader implements CommandLineRunner {
+	@Autowired
+	private PersonRepository personRepository;
+
+	@Autowired
+	private PasswordEncoder bcryptEncoder;
 
 	@Override
 	public void run(String... args) {
 		System.out.println("Populating database");
+		Person p1 = new Person("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
+		personRepository.saveAndFlush(p1);
 
 	}
 }

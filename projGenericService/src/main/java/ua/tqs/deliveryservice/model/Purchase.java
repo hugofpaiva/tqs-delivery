@@ -7,7 +7,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -18,7 +17,6 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
-    @CreationTimestamp
     private Date date;
 
     @OneToOne
@@ -35,6 +33,7 @@ public class Purchase {
     private Store store;
 
     private String clientName;
+    private Long deliveryTime;
 
     @Min(value = 0, message = "Review should not be under the value of 0.")
     @Max(value = 5, message = "Review should not be above the value of 5.")
@@ -45,6 +44,15 @@ public class Purchase {
         this.store = store;
         this.status = Status.PENDENT;
         this.clientName = clientName;
+        this.date = new Date(); // just for testing
+    }
+
+    public Purchase(Address address, Date date, Store store, String clientName) {
+        this.address = address;
+        this.store = store;
+        this.status = Status.PENDENT;
+        this.clientName = clientName;
+        this.date = date;
     }
 
     public Purchase(Address address, Rider rider, Store store, String clientName) {
@@ -53,11 +61,10 @@ public class Purchase {
         this.store = store;
         this.status = Status.ACCEPTED;
         this.clientName = clientName;
+        this.date = new Date();
     }
 
-
     public Purchase() {}
-
 
     public Map<String, Object> getMap() {
         Map<String, Object> map = new TreeMap<>();
