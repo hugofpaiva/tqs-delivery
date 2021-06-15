@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.controller;
 
+import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,9 +26,13 @@ import ua.tqs.deliveryservice.model.Store;
 import ua.tqs.deliveryservice.services.PurchaseService;
 
 
+import java.util.regex.Matcher;
+
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -222,4 +227,31 @@ public class PurchaseRestControllerMockMvcTest {
 
         Mockito.verify(purchaseService, VerificationModeFactory.times(1)).reviewRiderFromSpecificOrder(anyString(), anyLong(), anyInt());
     }
+
+    /* ----------------------------- *
+     * CLIENT MAKES NEW ORDER TESTS  *
+     * ----------------------------- *
+     */
+
+    /* // TODO: FINISH
+    @Test
+    public void testMakeNewOrderButNoStoreAuthorization_thenUnauthorized() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        // headers.set("authorization", "Bearer " + "example_token");
+
+        when(purchaseService.receiveNewOrder(any(), any())).thenThrow(InvalidLoginException.class);
+        mvc.perform(post("/store/order")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                //.content()
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+        ;
+
+        verify(purchaseService, times(1)).getNewPurchase(any());
+    }
+     */
+
+
 }

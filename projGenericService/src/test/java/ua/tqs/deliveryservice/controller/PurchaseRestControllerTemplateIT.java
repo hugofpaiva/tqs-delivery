@@ -198,4 +198,90 @@ class PurchaseRestControllerTemplateIT {
     }
 
     public String getBaseUrl() { return "http://localhost:" + randomServerPort + "/store"; }
+
+
+    /* ----------------------------- *
+     * CLIENT MAKES NEW ORDER TESTS  *
+     * ----------------------------- *
+     */
+
+
+    @Test
+    public void givenStoreHasNoAuthorization_whenPostNewOrder_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+    }
+
+    @Test
+    public void givenStore_whenPostNewOrderWithMissingField_then400() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
+
+        Address addr = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("personName", "mmm");
+        input.put("address", addr.getMap());
+
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<>(input, headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void givenStore_whenPostNewOrderWithBadField_then400() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
+
+        Address addr = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("personName", "mmm");
+        input.put("date", "invalid-date");
+        input.put("address", addr.getMap());
+
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<>(input, headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+/*  // TODO :: FALHA NUMA CONSTRAINT QUALQUER
+    @Test
+    public void givenStore_whenPostNewOrderGood_then200() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
+
+        Address addr = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("personName", "mmm");
+        input.put("date", 333334233L);
+        input.put("address", addr.getMap());
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<>(input, headers),
+                Map.class);
+
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+    }
+
+ */
+
+
+
+
+
+
+
 }

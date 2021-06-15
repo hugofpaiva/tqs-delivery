@@ -17,7 +17,6 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
-    @CreationTimestamp
     private Date date;
 
     @OneToOne
@@ -45,6 +44,15 @@ public class Purchase {
         this.store = store;
         this.status = Status.PENDENT;
         this.clientName = clientName;
+        this.date = new Date(); // just for testing
+    }
+
+    public Purchase(Address address, Date date, Store store, String clientName) {
+        this.address = address;
+        this.store = store;
+        this.status = Status.PENDENT;
+        this.clientName = clientName;
+        this.date = date;
     }
 
     public Purchase(Address address, Rider rider, Store store, String clientName) {
@@ -53,12 +61,10 @@ public class Purchase {
         this.store = store;
         this.status = Status.ACCEPTED;
         this.clientName = clientName;
+        this.date = new Date();
     }
 
-
     public Purchase() {}
-
-
 
     public Map<String, Object> getMap() {
         Map<String, Object> map = new TreeMap<>();

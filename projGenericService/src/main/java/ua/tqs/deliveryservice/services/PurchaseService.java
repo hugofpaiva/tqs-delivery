@@ -1,18 +1,17 @@
 package ua.tqs.deliveryservice.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
-import ua.tqs.deliveryservice.model.Purchase;
-import ua.tqs.deliveryservice.model.Status;
-import ua.tqs.deliveryservice.model.Store;
+import ua.tqs.deliveryservice.model.*;
+import ua.tqs.deliveryservice.repository.AddressRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
 
 import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
-import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
 import java.util.*;
@@ -35,6 +34,9 @@ public class PurchaseService {
 
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
+
+    @Autowired
+    private AddressRepository addressRepository;
 
     public Purchase reviewRiderFromSpecificOrder(String storeToken, Long order_id, int review)
             throws InvalidLoginException, ResourceNotFoundException, InvalidValueException {
@@ -128,12 +130,49 @@ public class PurchaseService {
         return response;
     }
 
+
+    public Purchase receiveNewOrder(String storeToken, Map<String, Object> data) throws InvalidValueException, InvalidLoginException {
+        Store store = jwtUserDetailsService.getStoreFromToken(storeToken);
+        if (store == null) throw new InvalidLoginException("There is no Store associated with this token");
+
+        String error = "invalid data";
+
+        Object personName = Optional.ofNullable(data.get("personName"))
+                .orElseThrow(() -> new InvalidValueException(error));
+
+        if (!(personName instanceof String)) throw new InvalidValueException(error);
+
+        System.out.println(data);
+        Object date_obj = Optional.ofNullable(data.get("date"))
+                .orElseThrow(() -> new InvalidValueException(error));
+
+        Date date = null;
+        if (date_obj instanceof Long) date = new Date((long) date_obj);
+        if (date_obj instanceof Integer) date = new Date((int) date_obj);
+        if (date == null) throw new InvalidValueException(error);
+
+        Object address = Optional.ofNullable(data.get("address"))
+                .orElseThrow(() -> new InvalidValueException(error));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Address addr;
+        try {
+            addr = objectMapper.convertValue(address, Address.class);
+        } catch (Exception ex) {
+            throw new InvalidValueException(error);
+        }
+
+        addressRepository.save(addr);
+        Purchase purchase = new Purchase(addr, date, store, (String) personName);
+        return purchase;
+
+    }
     public Map<String, Object> getAvgDeliveryTime() {
         Map<String, Object> response = new HashMap<>();
 
-        List<Object[]> data = purchaseRepository.getAverageReview();
-        Long totalTime = (Long) data.get(0)[0];
-        Long numPurch = (Long) data.get(0)[1];
+        List<Object[]> data2 = purchaseRepository.getAverageReview();
+        Long totalTime = (Long) data2.get(0)[0];
+        Long numPurch = (Long) data2.get(0)[1];
 
         // if there are delivered purchases
         response.put("average", totalTime != null ? totalTime / numPurch : null);
