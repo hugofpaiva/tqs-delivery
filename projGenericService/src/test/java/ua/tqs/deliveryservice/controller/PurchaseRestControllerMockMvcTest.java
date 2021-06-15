@@ -26,6 +26,7 @@ import ua.tqs.deliveryservice.model.Store;
 import ua.tqs.deliveryservice.services.PurchaseService;
 
 
+import java.util.Date;
 import java.util.regex.Matcher;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -233,25 +235,77 @@ public class PurchaseRestControllerMockMvcTest {
      * ----------------------------- *
      */
 
-    /* // TODO: FINISH
     @Test
     public void testMakeNewOrderButNoStoreAuthorization_thenUnauthorized() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        // headers.set("authorization", "Bearer " + "example_token");
-
+        String exampleBody = "{ \"personName\" : \"nomeee\", \"date\" : 1623709488744, \"address\" : {\"address\" : \"Rua 1123\", \"postalCode\" : \"3423-234\", \"city\" : \"aveiro\", \"country\" : \"pt\" }}}";
         when(purchaseService.receiveNewOrder(any(), any())).thenThrow(InvalidLoginException.class);
+
         mvc.perform(post("/store/order")
                 .accept(MediaType.APPLICATION_JSON)
                 .headers(headers)
-                //.content()
+                .content(exampleBody)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
         ;
 
-        verify(purchaseService, times(1)).getNewPurchase(any());
+        verify(purchaseService, times(1)).receiveNewOrder(any(), any());
     }
-     */
 
+    @Test
+    public void testMakeNewOrderButFieldMissing_then400() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String exampleBody = "{\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        when(purchaseService.receiveNewOrder(any(), any())).thenThrow(InvalidValueException.class);
+        mvc.perform(post("/store/order")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .content(exampleBody)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+        ;
+        verify(purchaseService, times(1)).receiveNewOrder(any(), any());
+    }
+
+    @Test
+    public void testMakeNewOrderButBadField_then400() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + token);
+
+        String exampleBody = "{\"personName\":234,\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        when(purchaseService.receiveNewOrder(any(), any())).thenThrow(InvalidValueException.class);
+        mvc.perform(post("/store/order")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .content(exampleBody)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+        ;
+        verify(purchaseService, times(1)).receiveNewOrder(any(), any());
+    }
+
+    @Test
+    public void testMakeNewOrderGood_then200() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + token);
+
+        String exampleBody = "{\"personName\":\"nomeee\",\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Date(1623709488744L), new Store(), "nomeee");
+        when(purchaseService.receiveNewOrder(any(), any())).thenReturn(purchase);
+
+        mvc.perform(post("/store/order")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .content(exampleBody)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("orderId").exists())
+        ;
+        verify(purchaseService, times(1)).receiveNewOrder(any(), any());
+    }
 
 }

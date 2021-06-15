@@ -14,7 +14,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -254,7 +254,7 @@ class PurchaseRestControllerTemplateIT {
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
-/*  // TODO :: FALHA NUMA CONSTRAINT QUALQUER
+
     @Test
     public void givenStore_whenPostNewOrderGood_then200() {
         HttpHeaders headers = new HttpHeaders();
@@ -271,17 +271,17 @@ class PurchaseRestControllerTemplateIT {
                 getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<>(input, headers),
                 Map.class);
 
+        Map<String, Object> found = response.getBody();
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-
+        assertThat(found, notNullValue());
+        assertThat(found.containsKey("orderId"), is(true));
     }
 
- */
-
-
-
-
-
-
-
 }
+
+
+
+
+
+
