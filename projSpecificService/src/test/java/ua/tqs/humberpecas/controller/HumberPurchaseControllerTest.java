@@ -57,7 +57,7 @@ class HumberPurchaseControllerTest {
         userToken = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
         List<Long> productsId = Arrays.asList( Long.valueOf(6), Long.valueOf(7));
 
-        purchaseDTO = new PurchaseDTO(Long.valueOf(1), new Date(), Long.valueOf(5) , productsId);
+        purchaseDTO = new PurchaseDTO(new Date(), Long.valueOf(5) , productsId);
 
     }
 
@@ -82,8 +82,8 @@ class HumberPurchaseControllerTest {
     }
 
     @Test
-    @DisplayName("Make Purchase with invalid user token throws HTTP status Bad Request ")
-    void whenPuchageInvalidToken_thenThrowsStatus401(){
+    @DisplayName("Make Purchase with invalid user throws HTTP status Bad Request ")
+    void whenPuchageInvalidUser_thenThrowsStatus401(){
 
         doThrow(InvalidLoginException.class).when(service).newPurchase(purchaseDTO, userToken);
 

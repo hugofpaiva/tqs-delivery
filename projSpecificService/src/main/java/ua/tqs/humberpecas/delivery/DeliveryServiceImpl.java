@@ -8,10 +8,10 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
+import ua.tqs.humberpecas.dto.ServerPurchaseDTO;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.handler.RestTemplateErrorHandler;
 import ua.tqs.humberpecas.model.Category;
-import ua.tqs.humberpecas.model.Purchase;
 import ua.tqs.humberpecas.model.Review;
 
 @Log4j2
@@ -34,22 +34,16 @@ public class DeliveryServiceImpl implements IDeliveryService {
     }
 
     @Override
-    public void connectDeliveryService() {
-
-    }
-
-    @Override
     public Long newOrder(PurchaseDeliveryDTO purchase) {
 
         StringBuilder url = new StringBuilder().append(HOST)
-                .append("/order/")
-                .append("/purchase");
+                .append("/order");
 
-        ResponseEntity<Long> response = restTemplate.exchange(
+        ResponseEntity<ServerPurchaseDTO> response = restTemplate.exchange(
                 url.toString(), HttpMethod.POST, new HttpEntity<>(purchase, headers),
-                Long.class);
+                ServerPurchaseDTO.class);
 
-        return response.getBody();
+        return response.getBody().getOrderId();
     }
 
     @Override

@@ -64,20 +64,19 @@ public class HumberPurchaseService {
                     throw new InvalidLoginException("Invalid user token");
                 });
 
-
         Address address = addressRepository.findById(purchaseDTO.getAddressId())
                 .orElseThrow(()-> {
                     log.error("HumberPurchaseService: invalid user addrees" );
                     throw new ResourceNotFoundException("Invalid Address");
                 });
 
-        List<Product> productList = productRepository.findAllById(purchaseDTO.getProductsId());
-
-        if (address.getPerson().getId() != person.getId()){
+        if (!address.getPerson().getEmail().equals(person.getEmail())){
 
             log.error("HumberPurchaseService: Address don't belong to user " );
             throw new AccessNotAllowedException("Invalid Address");
         }
+
+        List<Product> productList = productRepository.findAllById(purchaseDTO.getProductsId());
 
         if (productList.size() < purchaseDTO.getProductsId().size()){
 
@@ -97,10 +96,11 @@ public class HumberPurchaseService {
 
 
         Purchase purchase = new Purchase(person, address, productList);
+        purchase.setDate(purchaseDTO.getDate());
 
         purchase.setServiceOrderId(deliveryService.newOrder(purchaseDeliveryDTO));
 
-        return purchaseRepository.saveAndFlush(purchase);
+        return purchaseRepository.save(purchase);
     }
 
 

@@ -22,8 +22,8 @@ public class PurchaseDTO {
     @NotNull(message = "List of Products is mandatory")
     private List<Long> productsId;
 
-    public PurchaseDTO(Long personId, Date date, Long addressId, List<Long> productsId) {
-        this.personId = personId;
+    public PurchaseDTO( Date date, Long addressId, List<Long> productsId) {
+
         this.addressId = addressId;
         this.date = date;
         this.productsId = productsId;

@@ -13,6 +13,7 @@ import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
 import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
+import ua.tqs.humberpecas.exception.AccessNotAllowedException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.model.*;
@@ -25,6 +26,8 @@ import ua.tqs.humberpecas.service.JwtUserDetailsService;
 
 import java.util.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -79,7 +82,7 @@ public class HumberPurchaseServiceTest {
 
 
         productsIds = Arrays.asList(3L, 4L);
-        purchaseDTO = new PurchaseDTO(1L, date, 2L, productsIds);
+        purchaseDTO = new PurchaseDTO( date, 2L, productsIds);
 
         this.purchaseDeliveryDTO = new PurchaseDeliveryDTO(
                 person.getName(),
@@ -110,7 +113,6 @@ public class HumberPurchaseServiceTest {
         verify(addressRepository, times(1)).findById(2L);
         verify(productRepository,times(1)).findAllById(productsIds);
 
-
     }
 
     @Test
@@ -128,6 +130,85 @@ public class HumberPurchaseServiceTest {
         verify(purchaseRepository, times(0)).saveAndFlush(any());
         verify(addressRepository, times(1)).findById(2L);
 
+
+    }
+
+    @Test
+    @DisplayName("Make Purchase where address dont belong to user throws AccessNotAllowedException")
+    void whenPurchaseNotBelongAddress_thenThrowsStatusAccessNotAllowed(){
+
+        Person person1 = new Person("Antonio", "12345678","to@ua.pt");
+
+        when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person1));
+        when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
+        when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
+
+        assertThrows( AccessNotAllowedException.class, () -> {
+            purchaseService.newPurchase(purchaseDTO, userToken);
+        } );
+
+
+        verify(deliveryService, times(0)).newOrder(purchaseDeliveryDTO);
+        verify(purchaseRepository, times(0)).saveAndFlush(any());
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
+        verify(addressRepository, times(1)).findById(2L);
+        verify(productRepository,times(0)).findAllById(productsIds);
+
+    }
+
+    @Test
+    @DisplayName("Make Purchase of invalid Products throws ResourceNotFoundException")
+    void whenPurchaseInvalidProducts_thenThrowStatusResourceNotFound(){
+
+        when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
+        when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
+        when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
+        when(productRepository.findAllById(productsIds)).thenReturn(productList.subList(0,0));
+
+        assertThrows( ResourceNotFoundException.class, () -> {
+            purchaseService.newPurchase(purchaseDTO, userToken);
+        } );
+
+        verify(deliveryService, times(0)).newOrder(purchaseDeliveryDTO);
+        verify(purchaseRepository, times(0)).saveAndFlush(any());
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
+        verify(addressRepository, times(1)).findById(2L);
+        verify(productRepository,times(1)).findAllById(productsIds);
+
+
+
+    }
+
+    @Test
+    @DisplayName("Make Purchase")
+    void whenValidPurchase_thenReturnPuchase(){
+
+
+        Purchase p = new Purchase(person, address, productList);
+        p.setDate(date);
+        p.setServiceOrderId(5L);
+
+        when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
+        when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
+        when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
+        when(productRepository.findAllById(productsIds)).thenReturn(productList);
+        when(deliveryService.newOrder(purchaseDeliveryDTO)).thenReturn(5L);
+        when(purchaseRepository.save(p)).thenReturn(p);
+
+        Purchase purchase = purchaseService.newPurchase(purchaseDTO, userToken);
+
+        assertThat(purchase.getPerson(), equalTo(person));
+        assertThat(purchase.getServiceOrderId(), equalTo(5L));
+        assertThat(purchase.getAddress(), equalTo(address));
+        assertThat(purchase.getProducts(), equalTo(productList));
+        assertThat(purchase.getProducts(), equalTo(productList));
+        assertThat(purchase.getDate(), equalTo(date));
+
+        verify(deliveryService, times(1)).newOrder(purchaseDeliveryDTO);
+        verify(purchaseRepository, times(1)).save(p);
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
+        verify(addressRepository, times(1)).findById(2L);
+        verify(productRepository,times(1)).findAllById(productsIds);
 
     }
 }
