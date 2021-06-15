@@ -131,15 +131,21 @@ public class PurchaseService {
         if (store == null) throw new InvalidLoginException("There is no Store associated with this token");
 
         String error = "invalid data";
+        System.out.println("antes");
+
         Object personName = Optional.ofNullable(data.get("personName"))
                 .orElseThrow(() -> new InvalidValueException(error));
+
         if (!(personName instanceof String)) throw new InvalidValueException(error);
 
-
+        System.out.println(data);
         Object date_obj = Optional.ofNullable(data.get("date"))
                 .orElseThrow(() -> new InvalidValueException(error));
-        if (!(date_obj instanceof Long)) throw new InvalidValueException(error);
-        Date date = new Date((long) date_obj);
+
+        Date date = null;
+        if (date_obj instanceof Long) date = new Date((long) date_obj);
+        if (date_obj instanceof Integer) date = new Date((int) date_obj);
+        if (date == null) throw new InvalidValueException(error);
 
         Object address = Optional.ofNullable(data.get("address"))
                 .orElseThrow(() -> new InvalidValueException(error));
@@ -154,8 +160,6 @@ public class PurchaseService {
 
         addressRepository.save(addr);
         Purchase purchase = new Purchase(addr, date, store, (String) personName);
-        purchaseRepository.save(purchase);
-
         return purchase;
 
     }

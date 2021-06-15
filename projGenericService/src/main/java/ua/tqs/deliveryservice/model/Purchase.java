@@ -43,6 +43,7 @@ public class Purchase {
         this.store = store;
         this.status = Status.PENDENT;
         this.clientName = clientName;
+        this.date = new Date(); // just for testing
     }
 
     public Purchase(Address address, Date date, Store store, String clientName) {

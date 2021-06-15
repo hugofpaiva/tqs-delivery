@@ -3,7 +3,9 @@ package ua.tqs.deliveryservice.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import javax.persistence.*;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 @Data
@@ -22,6 +24,9 @@ public class Store {
 
     @OneToOne
     private Address address;
+
+    //@OneToMany(mappedBy = "store")
+    //private Set<Purchase> purchases;
 
     public Store(String name, String description, String token, Address address) {
         this.name = name;
