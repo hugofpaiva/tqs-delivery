@@ -28,6 +28,7 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -442,5 +443,54 @@ class RiderRestControllerTemplateIT {
         Assertions.assertThat(found.containsKey("delivery_time")).isTrue();
 
         Assertions.assertThat(found.get("status")).isEqualTo("DELIVERED");
+    }
+
+
+    /* ----------------------------- *
+     * GET RIDER REVIEW STATISTICS   *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void givenRiderHasNoAuthorization_whenGetReviewsStatistics_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "reviews", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+    }
+
+    @Test
+    public void givenRiderWithoutReviews_whenGetReviewsStatistics_thenReturnStatistics() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "reviews", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        Map<String, Object> found = response.getBody();
+        assertThat(found.get("totalNumReviews"), equalTo(0));
+        assertThat(found.get("avgReviews"), nullValue());
+    }
+
+    @Test
+    public void givenRiderWithReviews_whenGetReviewsStatistics_thenReturnStatistics() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+
+        this.rider.setTotalNumReviews(4);
+        this.rider.setReviewsSum(15);
+        personRepository.saveAndFlush(this.rider);
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "reviews", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        Map<String, Object> found = response.getBody();
+        assertThat(found.get("totalNumReviews"), equalTo(4));
+        assertThat(found.get("avgReviews"), equalTo((double) 15/4));
     }
 }

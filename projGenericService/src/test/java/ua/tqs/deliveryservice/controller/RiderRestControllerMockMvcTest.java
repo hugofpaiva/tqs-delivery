@@ -17,6 +17,7 @@ import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.services.PurchaseService;
+import ua.tqs.deliveryservice.services.RiderService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +42,9 @@ class RiderRestControllerMockMvcTest {
 
     @MockBean
     private PurchaseService purchaseService;
+
+    @MockBean
+    private RiderService riderService;
 
     // Although Spring Security is disabled, Spring Context will still check WebConfig.
     // Without a mock of the Autowire there, it will fail
@@ -399,7 +403,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenRiderWithPurchase_whenUpdateStatusAndStatusWas_thenSuccess() throws Exception {
+    public void givenRiderWithPurchase_whenUpdateStatusAndStatusWasPickedUp_thenSuccess() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -420,10 +424,81 @@ class RiderRestControllerMockMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("order_id", is(((Long) purchase.getId()).intValue())))
                 .andExpect(jsonPath("status", is("PICKED_UP")))
-                .andExpect(jsonPath("delivery_time", is(15)))
-        ;
+                .andExpect(jsonPath("delivery_time", is(15)));
 
         verify(purchaseService, times(1)).updatePurchaseStatus(any());
+
+    }
+
+    /* ----------------------------- *
+     * GET RIDER REVIEW STATISTICS   *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testGetReviewStatisticsButNoAuthorization_thenUnauthorized() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        when(riderService.getRatingStatistics("Bearer example_token")).thenThrow(InvalidLoginException.class);
+        mvc.perform(get("/rider/reviews")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+        ;
+
+        verify(riderService, times(1)).getRatingStatistics(any());
+    }
+
+
+    @Test
+    public void givenRiderWithoutReviews_whenGetStatistics_thenSuccess() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("totalNumReviews", 0);
+        expected.put("avgReviews", null);
+
+        when(riderService.getRatingStatistics("Bearer example_token")).thenReturn(expected);
+
+
+        mvc.perform(get("/rider/reviews")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("totalNumReviews", is(0)))
+                .andExpect(jsonPath("avgReviews").isEmpty())
+        ;
+
+        verify(riderService, times(1)).getRatingStatistics(any());
+
+    }
+
+    @Test
+    public void givenRiderWithReviews_whenGetStatistics_thenSuccess() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> expected = new HashMap<>();
+        expected.put("totalNumReviews", 5);
+        expected.put("avgReviews", 3.5);
+
+        when(riderService.getRatingStatistics("Bearer example_token")).thenReturn(expected);
+
+
+        mvc.perform(get("/rider/reviews")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("totalNumReviews", is(5)))
+                .andExpect(jsonPath("avgReviews", is(3.5)))
+        ;
+
+        verify(riderService, times(1)).getRatingStatistics(any());
 
     }
 }

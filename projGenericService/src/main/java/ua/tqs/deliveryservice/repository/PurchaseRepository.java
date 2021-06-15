@@ -19,6 +19,8 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     Optional<Purchase> findTopByRiderAndStatusIsNot(Rider r, Status s);
     Page<Purchase> findAllByRider(Rider rider, Pageable pageable);
 
+    int countPurchaseByStatusIsNot(Status s);
+
     Optional<Purchase> findTopByOrderByDate();
 
     Long countPurchaseByStore(Store store);
@@ -28,4 +30,5 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
     @Query("SELECT COUNT(p) FROM Purchase p WHERE p.status = 'PENDENT'")
     int getPendingOrders();
+
 }
