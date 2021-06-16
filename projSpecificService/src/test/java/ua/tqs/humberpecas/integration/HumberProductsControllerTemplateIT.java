@@ -1,4 +1,4 @@
-package ua.tqs.humberpecas.controller;
+package ua.tqs.humberpecas.integration;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;

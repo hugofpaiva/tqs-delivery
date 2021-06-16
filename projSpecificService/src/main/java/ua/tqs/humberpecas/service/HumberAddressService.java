@@ -27,14 +27,11 @@ public class HumberAddressService {
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
-    public Address addNewAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
-
-        Person p = personRepository.findById(addressDTO.getPersonID())
+    public Address addNewAddress(String token, AddressDTO addressDTO) throws ResourceNotFoundException {
+        Person p = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(token))
                 .orElseThrow(() -> {
-                            log.error("Invalid User");
-                            return new ResourceNotFoundException("Invalid User"); });
-
-        // TODO: verificar ser o address ja existe
+                    log.error("Invalid User");
+                    return new ResourceNotFoundException("Invalid User"); });
 
         var newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry());
         newAddress.setPerson(p);
@@ -42,32 +39,23 @@ public class HumberAddressService {
         return addressRepository.save(newAddress);
     }
 
-    public Address updateAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
 
-        var address = addressRepository.findById(addressDTO.getAddressId())
+    public void delAddress(String token, AddressDTO addressDTO) throws ResourceNotFoundException {
+        Person p = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(token))
                 .orElseThrow(() -> {
-                                log.error("Invalid Address");
-                                return new ResourceNotFoundException("Invalid Address"); });
+                    log.error("Invalid User");
+                    return new ResourceNotFoundException("Invalid User"); });
 
 
-        address.setAddress(addressDTO.getAddress());
-        address.setCity(addressDTO.getCity());
-        address.setCountry(addressDTO.getCountry());
-        address.setPostalCode(addressDTO.getPostalCode());
-
-        return addressRepository.save(address);
-
-    }
-
-    public void delAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
 
         var address = addressRepository.findById(addressDTO.getAddressId())
                 .orElseThrow(() ->  {
                             log.error("Invalid Address");
                             return new ResourceNotFoundException("Invalid Address"); });
 
-        addressRepository.delete(address);
+        if (!p.getAddresses().contains(address)) throw new ResourceNotFoundException("Address to be deleted does not belong to this user.");
 
+        addressRepository.delete(address);
     }
 
     public List<Address> getUserAddress(String userToken) throws InvalidLoginException {
@@ -81,7 +69,6 @@ public class HumberAddressService {
         List<Address> addresses = addressRepository.findByPerson(person);
 
         return addresses;
-
     }
 
 

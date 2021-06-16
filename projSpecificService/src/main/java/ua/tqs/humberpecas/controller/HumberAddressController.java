@@ -22,17 +22,6 @@ public class HumberAddressController {
 
     @Autowired
     private HumberAddressService service;
-    
-    @PutMapping("/update")
-    public ResponseEntity<HttpStatus> updateUserAddress(@Valid @RequestBody AddressDTO address) throws ResourceNotFoundException {
-
-        log.debug("Update User address");
-        service.updateAddress(address);
-
-        log.info("User address updated with success");
-        return new ResponseEntity<>(HttpStatus.OK);
-
-    }
 
     @GetMapping("/getAll")
     public ResponseEntity<List<Address>> getUserAddresses(@RequestHeader("authorization") String token) throws InvalidLoginException {
@@ -46,34 +35,24 @@ public class HumberAddressController {
 
     }
 
-//    @GetMapping("/getDetails")
-//    public ResponseEntity<Address> getAddressDetails(@RequestParam long userId, @RequestParam long addressId){
-//
-//        Address address =
-//    }
-
     @PostMapping("/add")
-    public ResponseEntity<HttpStatus> addNewAddress(@Valid @RequestBody AddressDTO address) throws ResourceNotFoundException {
+    public ResponseEntity<Address> addNewAddress(@RequestHeader("authorization") String token, @Valid @RequestBody AddressDTO address) throws ResourceNotFoundException {
 
         log.debug("Add new User addresses");
-        service.addNewAddress(address);
+        Address response = service.addNewAddress(token, address);
 
 
         log.info("Add new address with success");
-        return new ResponseEntity<>(HttpStatus.OK);
-
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/del")
-    public ResponseEntity<HttpStatus> delAddress(@Valid @RequestBody AddressDTO address) throws ResourceNotFoundException {
+    public ResponseEntity<HttpStatus> delAddress(@RequestHeader("authorization") String token, @Valid @RequestBody AddressDTO address) throws ResourceNotFoundException {
 
         log.debug("Delete address");
-        service.delAddress(address);
+        service.delAddress(token, address);
 
         log.info("Address deleted with success");
         return new ResponseEntity<>(HttpStatus.OK);
-
     }
-
-
 }

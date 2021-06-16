@@ -52,45 +52,6 @@ class HumberAddressControllerTest {
         addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal");
     }
 
-
-    @Test
-    @DisplayName("Update User address")
-    void whenUpdateValidAddress_thenReturnStatusOk() throws ResourceNotFoundException {
-
-        when(service.updateAddress(addressDTO)).thenReturn( address);
-
-
-        RestAssuredMockMvc.given()
-                .contentType("application/json")
-                .body(addressDTO)
-                .when()
-                .put("/address/update")
-                .then()
-                .statusCode(200);
-
-        verify(service, times(1)).updateAddress(addressDTO);
-
-    }
-
-
-    @Test
-    @DisplayName("Update nonexistent Address returns HTTP Not Found")
-    void whenUpdateNonexistentAddress_thenReturnsStatus404() throws ResourceNotFoundException {
-
-        when(service.updateAddress(addressDTO)).thenThrow(new ResourceNotFoundException("Invalid Address"));
-
-        RestAssuredMockMvc.given()
-                .contentType("application/json")
-                .body(addressDTO)
-                .when()
-                .put("/address/update")
-                .then()
-                .statusCode(404);
-
-        verify(service, times(1)).updateAddress(addressDTO);
-
-    }
-
     @Test
     @DisplayName("Get User address")
     void whenGetAddressesValidUser_thenReturnAddress() throws ResourceNotFoundException, InvalidLoginException {
