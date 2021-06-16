@@ -30,8 +30,6 @@ public class HumberAddressService {
                             log.error("Invalid User");
                             return new ResourceNotFoundException("Invalid User"); });
 
-        // TODO: verificar ser o address ja existe
-
         var newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry(), p);
 
         return addressRepository.save(newAddress);

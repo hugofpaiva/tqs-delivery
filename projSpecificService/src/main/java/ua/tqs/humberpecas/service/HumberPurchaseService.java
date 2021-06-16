@@ -96,7 +96,6 @@ public class HumberPurchaseService {
 
 
         var purchase = new Purchase(person, address, productList);
-        purchase.setDate(purchaseDTO.getDate());
 
         purchase.setServiceOrderId(deliveryService.newOrder(purchaseDeliveryDTO));
 

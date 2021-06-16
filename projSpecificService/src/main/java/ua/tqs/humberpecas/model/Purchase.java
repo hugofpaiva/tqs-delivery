@@ -30,6 +30,10 @@ public class Purchase {
     private List<Product> products;
 
 
+    private String riderName;
+    private int review;
+
+
     @Enumerated(value = EnumType.STRING)
     private PurchaseStatus status;
 

@@ -185,7 +185,6 @@ class HumberPurchaseServiceTest {
 
 
         Purchase p = new Purchase(person, address, productList);
-        p.setDate(date);
         p.setServiceOrderId(5L);
 
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
@@ -202,7 +201,6 @@ class HumberPurchaseServiceTest {
         assertThat(purchase.getAddress(), equalTo(address));
         assertThat(purchase.getProducts(), equalTo(productList));
         assertThat(purchase.getProducts(), equalTo(productList));
-        assertThat(purchase.getDate(), equalTo(date));
 
         verify(deliveryService, times(1)).newOrder(purchaseDeliveryDTO);
         verify(purchaseRepository, times(1)).save(p);

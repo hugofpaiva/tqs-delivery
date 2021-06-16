@@ -25,7 +25,7 @@ public class HumberReviewService {
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
-    public void addReview( Review review, String userToken) throws ResourceNotFoundException, UnreachableServiceException, AccessNotAllowedException {
+    public Purchase addReview( Review review, String userToken) throws ResourceNotFoundException, UnreachableServiceException, AccessNotAllowedException {
 
         var purchase = purchaseRepository.findByServiceOrderId(review.getOrderId())
                 .orElseThrow(() -> {
@@ -41,6 +41,13 @@ public class HumberReviewService {
         }
 
        deliveryService.reviewRider(review);
+
+        String riderName = deliveryService.reviewRider(review);
+
+        purchase.setReview(review.getReview());
+        purchase.setRiderName(riderName);
+
+        return purchaseRepository.saveAndFlush(purchase);
 
 
     }
