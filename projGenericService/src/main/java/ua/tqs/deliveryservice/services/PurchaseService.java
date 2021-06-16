@@ -164,6 +164,7 @@ public class PurchaseService {
 
         addressRepository.save(addr);
         Purchase purchase = new Purchase(addr, date, store, (String) personName);
+        purchaseRepository.save(purchase);
         return purchase;
 
     }
