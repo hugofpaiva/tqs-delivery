@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -19,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
 @Testcontainers
@@ -157,9 +162,54 @@ public class PurchaseRepositoryTests {
 
 
     /* ------------------------------------------------- *
-     * TODO: FIND ALL BY RIDER (PAGEABLE) TESTS                *
+     * FIND ALL BY RIDER (PAGEABLE) TESTS          *
      * ------------------------------------------------- *
      */
+
+    @Test
+    public void testFindAllByRiderWithPage_whenRiderHasNoPurchase_returnEmpty() {
+        Rider r = new Rider("rider__", "gvhjbknutcfyvgkupwd", "riderrr@email.com");
+        entityManager.persist(r);
+
+        Pageable paging = PageRequest.of(0, 10, Sort.by("date").descending());
+        Page<Purchase> res = purchaseRepository.findAllByRider(r, paging);
+        assertThat(res).isNotNull();
+        assertThat(res.getTotalElements()).isEqualTo(0);
+        assertThat(res.getTotalPages()).isEqualTo(0);
+    }
+
+    @Test
+    public void testFindAllByRiderWithPage_whenRiderHasPurchases_returnPage() {
+        Purchase p1 = createAndSavePurchase(1, true);
+        Purchase p2 = createAndSavePurchase(2, false);
+        Purchase p3 = createAndSavePurchase(3, false);
+        p2.setRider(p1.getRider());
+        p3.setRider(p1.getRider());
+
+        Pageable paging = PageRequest.of(0, 2, Sort.by("date").descending());
+        Page<Purchase> res = purchaseRepository.findAllByRider(p1.getRider(), paging);
+        assertThat(res).isNotNull();
+        assertThat(res.getTotalElements()).isEqualTo(3);
+        assertThat(res.getTotalPages()).isEqualTo(2);
+        assertThat(res).extracting(Purchase::getId).contains(p2.getId(), p3.getId());
+        assertThat(res).extracting(Purchase::getId).doesNotContain(p1.getId());
+    }
+    @Test
+    public void testFindAllByRiderWithEmptyPage_whenRiderHasPurchases_returnPage() {
+        Purchase p1 = createAndSavePurchase(1, true);
+        Purchase p2 = createAndSavePurchase(2, false);
+        Purchase p3 = createAndSavePurchase(3, false);
+        p2.setRider(p1.getRider());
+        p3.setRider(p1.getRider());
+
+        Pageable paging = PageRequest.of(5, 2, Sort.by("date").descending());
+        Page<Purchase> res = purchaseRepository.findAllByRider(p1.getRider(), paging);
+        assertThat(res).isNotNull();
+        assertThat(res.getTotalElements()).isEqualTo(3);
+        assertThat(res.getTotalPages()).isEqualTo(2);
+        assertThat(res).hasSize(0);
+    }
+
 
     /* ------------------------------------------------- *
      * FIND TOP ORDER BY DATE TESTS                      *
