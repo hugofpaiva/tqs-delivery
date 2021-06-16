@@ -12,7 +12,7 @@ public interface IDeliveryService {
 
     Long newOrder(PurchaseDeliveryDTO purchase);
     Category checkOrderStatus(int orderId);
-    void reviewRider(Review review) throws ResourceNotFoundException, UnreachableServiceException;
+    String reviewRider(Review review) throws ResourceNotFoundException, UnreachableServiceException;
 
 
 }

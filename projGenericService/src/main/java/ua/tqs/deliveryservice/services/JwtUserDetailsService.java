@@ -52,9 +52,9 @@ public class JwtUserDetailsService implements UserDetailsService {
                 authorities);
     }
 
-    public UserDetails loadUserByStore(Store store) throws UsernameNotFoundException {
+    public UserDetails loadUserByStore(Store store) throws BadCredentialsException {
         if (store == null) {
-            throw new UsernameNotFoundException("Store cannot be null to create User");
+            throw new BadCredentialsException("Store cannot be null to create User");
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();

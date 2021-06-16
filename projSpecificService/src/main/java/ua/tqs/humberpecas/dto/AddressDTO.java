@@ -1,5 +1,6 @@
 package ua.tqs.humberpecas.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class AddressDTO {
 
+    @JsonIgnore
     private Long addressId;
 
     @NonNull
@@ -31,6 +33,7 @@ public class AddressDTO {
     @NotNull(message = "Country is mandatory")
     private String country;
 
+    @JsonIgnore
     private long personID;
     
 

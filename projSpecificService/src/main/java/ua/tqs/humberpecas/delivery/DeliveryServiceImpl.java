@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
 import ua.tqs.humberpecas.dto.ServerPurchaseDTO;
+import ua.tqs.humberpecas.dto.ServerReviewDTO;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.handler.RestTemplateErrorHandler;
 import ua.tqs.humberpecas.model.Category;
@@ -63,7 +64,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
     }
 
     @Override
-    public void reviewRider(Review review) throws ResourceNotFoundException {
+    public String reviewRider(Review review) throws ResourceNotFoundException {
 
         StringBuilder url  = new StringBuilder().append(HOST)
                 .append("/order/")
@@ -71,11 +72,21 @@ public class DeliveryServiceImpl implements IDeliveryService {
                 .append("/review");
 
 
-        restTemplate.exchange(
+        ResponseEntity<ServerReviewDTO> response = restTemplate.exchange(
                 url.toString(), HttpMethod.PATCH, new HttpEntity<>(review, headers),
-                Review.class);
+                ServerReviewDTO.class);
 
 
+        try {
+
+            return Objects.requireNonNull(response.getBody()).getRider();
+
+        } catch (NullPointerException e){
+
+            log.error("DeliveryServiceImpl: Null riderName ");
+            throw new ResourceNotFoundException("Null riderName");
+
+        }
     }
 
     @Bean
