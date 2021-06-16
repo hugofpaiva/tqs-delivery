@@ -44,6 +44,12 @@ public class StoreRepositoryTests {
     @Autowired
     private TestEntityManager entityManager;
 
+
+    /* ------------------------------------------------- *
+     * FIND BY ID TESTS                                  *
+     * ------------------------------------------------- *
+     */
+
     @Test
     public void testWhenCreateStoreAndFindById_thenReturnSameStore() {
         Store s = createAndSaveStore(1);
@@ -54,8 +60,29 @@ public class StoreRepositoryTests {
     }
 
     @Test
-    public void testWhenFindByInvalidId_thenReturnNull() {
+    public void testWhenFindByInvalidId_thenReturnEmpty() {
         Optional<Store> res = storeRepository.findById(-1L);
+        assertThat(res.isPresent()).isFalse();
+    }
+
+
+    /* ------------------------------------------------- *
+     * FIND BY EMAIL TESTS                               *
+     * ------------------------------------------------- *
+     */
+
+    @Test
+    public void testWhenCreateStoreAndFindByToken_thenReturnSameStore() {
+        Store s = createAndSaveStore(1);
+
+        Optional<Store> res = storeRepository.findByToken(s.getToken());
+        assertThat(res.isPresent()).isTrue();
+        assertThat(res.get()).isEqualTo(s);
+    }
+
+    @Test
+    public void testWhenFindByInvalidToken_thenReturnEmpty() {
+        Optional<Store> res = storeRepository.findByToken("invalid-token");
         assertThat(res.isPresent()).isFalse();
     }
 

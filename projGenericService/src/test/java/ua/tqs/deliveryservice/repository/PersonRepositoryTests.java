@@ -57,6 +57,13 @@ public class PersonRepositoryTests {
         person = createAndSavePerson(1);
     }
 
+
+
+    /* ----------------------------- *
+     * FIND BY ID TESTS              *
+     * ----------------------------- *
+     */
+
     @Test
     public void testWhenCreatePersonAndFindById_thenReturnSamePerson() {
 
