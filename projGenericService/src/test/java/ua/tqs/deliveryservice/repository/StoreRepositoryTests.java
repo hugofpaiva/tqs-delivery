@@ -16,6 +16,7 @@ import ua.tqs.deliveryservice.model.Store;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,6 +64,33 @@ public class StoreRepositoryTests {
     public void testWhenFindByInvalidId_thenReturnEmpty() {
         Optional<Store> res = storeRepository.findById(-1L);
         assertThat(res.isPresent()).isFalse();
+    }
+
+
+    /* ------------------------------------------------- *
+     * FIND BY ALL TESTS                                  *
+     * ------------------------------------------------- *
+     */
+
+    @Test
+    public void testWhenCreateStoresAndFindByAll_thenReturnSameStores() {
+        Store s1 = createAndSaveStore(1);
+        Store s2 = createAndSaveStore(2);
+
+        List<Store> all = storeRepository.findAll();
+
+        assertThat(all).isNotNull();
+        assertThat(all)
+                .hasSize(2)
+                .extracting(Store::getId)
+                .contains(s1.getId(), s2.getId());
+    }
+
+    @Test
+    public void testGivenNoStores_whenFindAll_thenReturnEmpty() {
+        List<Store> all = storeRepository.findAll();
+        assertThat(all).isNotNull();
+        assertThat(all).hasSize(0);
     }
 
 

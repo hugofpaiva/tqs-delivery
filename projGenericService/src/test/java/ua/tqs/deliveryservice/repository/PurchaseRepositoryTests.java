@@ -15,6 +15,7 @@ import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.PersonRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,6 +64,33 @@ public class PurchaseRepositoryTests {
         Optional<Purchase> res = purchaseRepository.findById(-1L);
         assertThat(res.isPresent()).isFalse();
     }
+
+    /* ------------------------------------------------- *
+     * FIND BY ALL TESTS                                  *
+     * ------------------------------------------------- *
+     */
+
+    @Test
+    public void testGivenPurchasesAndFindByAll_thenReturnSameRiders() {
+        Purchase p1 = createAndSavePurchase(1, true);
+        Purchase p2 = createAndSavePurchase(2, false);
+
+        List<Purchase> all = purchaseRepository.findAll();
+
+        assertThat(all).isNotNull();
+        assertThat(all)
+                .hasSize(2)
+                .extracting(Purchase::getId)
+                .contains(p1.getId(), p2.getId());
+    }
+
+    @Test
+    public void testGivenNoPurchases_whenFindAll_thenReturnEmpty() {
+        List<Purchase> all = purchaseRepository.findAll();
+        assertThat(all).isNotNull();
+        assertThat(all).hasSize(0);
+    }
+
 
 
     /* ------------------------------------------------- *

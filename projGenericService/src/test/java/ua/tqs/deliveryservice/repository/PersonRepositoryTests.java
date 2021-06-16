@@ -16,6 +16,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.deliveryservice.model.Person;
+import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.PersonRepository;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,12 +51,6 @@ public class PersonRepositoryTests {
     @Autowired
     private TestEntityManager entityManager;
 
-    Person person;
-
-    @BeforeEach
-    public void setUp() {
-        person = createAndSavePerson(1);
-    }
 
 
 
@@ -66,7 +61,7 @@ public class PersonRepositoryTests {
 
     @Test
     public void testWhenCreatePersonAndFindById_thenReturnSamePerson() {
-
+        Person person = createAndSavePerson(1);
         Optional<Person> res = personRepository.findById(person.getId());
         assertThat(res.isPresent()).isTrue();
         assertThat(res.get()).isEqualTo(person);
@@ -74,9 +69,37 @@ public class PersonRepositoryTests {
 
     @Test
     public void testWhenFindByInvalidId_thenReturnNull() {
+        Person person = createAndSavePerson(1);
         Optional<Person> res = personRepository.findById(-1L);
         assertThat(res.isPresent()).isFalse();
     }
+
+    /* ------------------------------------------------- *
+     * FIND BY ALL TESTS                                  *
+     * ------------------------------------------------- *
+     */
+
+    @Test
+    public void testGivenPeopleAndFindByAll_thenReturnSamePeople() {
+        Person p1 = createAndSavePerson(1);
+        Person p2 = createAndSavePerson(2);
+
+        List<Person> all = personRepository.findAll();
+
+        assertThat(all).isNotNull();
+        assertThat(all)
+                .hasSize(2)
+                .extracting(Person::getId)
+                .contains(p1.getId(), p2.getId());
+    }
+
+    @Test
+    public void testGivenNoPeople_whenFindAll_thenReturnEmpty() {
+        List<Person> all = personRepository.findAll();
+        assertThat(all).isNotNull();
+        assertThat(all).hasSize(0);
+    }
+
 
     /* ----------------------------- *
      * FIND BY EMAIL TESTS           *
@@ -91,16 +114,17 @@ public class PersonRepositoryTests {
 
     @Test
     public void testWhenFindByEmail_whenValidEmail_thenReturnEmptyOptional() {
-        Optional<Person> res = personRepository.findByEmail("email1@email.com");
+        Person p = createAndSavePerson(1);
+        Optional<Person> res = personRepository.findByEmail(p.getEmail());
         assertThat(res.isPresent()).isTrue();
-        assertThat(res.get().getId()).isEqualTo(person.getId());
+        assertThat(res.get().getId()).isEqualTo(p.getId());
     }
 
 
 
     /* -- helper -- */
     private Person createAndSavePerson(int i) {
-        Person p = new Rider("name" + i, "pwdpwdpwdpwdpwd" + i, "email" + i + "@email.com");
+        Person p = new Rider("name" + i, "pwdpwdpwdpwdpwd" + i, "email_" + i + "@email.com");
         entityManager.persistAndFlush(p);
         return p;
     }

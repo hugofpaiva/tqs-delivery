@@ -91,6 +91,33 @@ public class RiderRepositoryTests {
     }
 
     /* ------------------------------------------------- *
+     * FIND BY ALL TESTS                                  *
+     * ------------------------------------------------- *
+     */
+
+    @Test
+    public void testWhenCreateRidersAndFindByAll_thenReturnSameRiders() {
+        Rider r1 = createAndSaveRider(1);
+        Rider r2 = createAndSaveRider(2);
+
+        List<Rider> all = riderRepository.findAll();
+
+        assertThat(all).isNotNull();
+        assertThat(all)
+                .hasSize(2)
+                .extracting(Rider::getId)
+                .contains(r1.getId(), r2.getId());
+    }
+
+    @Test
+    public void testGivenNoRiders_whenFindAll_thenReturnEmpty() {
+        List<Rider> all = riderRepository.findAll();
+        assertThat(all).isNotNull();
+        assertThat(all).hasSize(0);
+    }
+
+
+    /* ------------------------------------------------- *
      * GET AVERAGE REVIEW TESTS                          *
      * ------------------------------------------------- *
      */

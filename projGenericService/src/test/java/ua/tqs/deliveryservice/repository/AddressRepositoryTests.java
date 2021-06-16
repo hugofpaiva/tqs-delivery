@@ -10,11 +10,9 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ua.tqs.deliveryservice.model.Address;
-import ua.tqs.deliveryservice.model.Purchase;
-import ua.tqs.deliveryservice.model.Rider;
-import ua.tqs.deliveryservice.model.Store;
+import ua.tqs.deliveryservice.model.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,6 +54,32 @@ public class AddressRepositoryTests {
     public void testWhenFindByInvalidId_thenReturnNull() {
         Optional<Address> res = addressRepository.findById(-1L);
         assertThat(res.isPresent()).isFalse();
+    }
+
+    /* ------------------------------------------------- *
+     * FIND BY ALL TESTS                                  *
+     * ------------------------------------------------- *
+     */
+
+    @Test
+    public void testGivenAddressesAndFindByAll_thenReturnSameAddresses() {
+        Address a1 = createAndSaveAddress(1);
+        Address a2 = createAndSaveAddress(2);
+
+        List<Address> all = addressRepository.findAll();
+
+        assertThat(all).isNotNull();
+        assertThat(all)
+                .hasSize(2)
+                .extracting(Address::getId)
+                .contains(a1.getId(), a2.getId());
+    }
+
+    @Test
+    public void testGivenNoAddresses_whenFindAll_thenReturnEmpty() {
+        List<Address> all = addressRepository.findAll();
+        assertThat(all).isNotNull();
+        assertThat(all).hasSize(0);
     }
 
 

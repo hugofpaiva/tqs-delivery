@@ -12,8 +12,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.deliveryservice.model.Address;
 import ua.tqs.deliveryservice.model.Manager;
+import ua.tqs.deliveryservice.model.Person;
 import ua.tqs.deliveryservice.model.Store;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,6 +44,14 @@ public class ManagerRepositoryTests {
     @Autowired
     private TestEntityManager entityManager;
 
+
+
+    /* ------------------------------------------------- *
+     * FIND BY ID TESTS                                  *
+     * ------------------------------------------------- *
+     */
+
+
     @Test
     public void testWhenCreateManagerAndFindById_thenReturnSameManager() {
         Manager m = createAndSaveManager(1);
@@ -56,6 +66,33 @@ public class ManagerRepositoryTests {
         Optional<Manager> res = managerRepository.findById(-1L);
         assertThat(res.isPresent()).isFalse();
     }
+
+    /* ------------------------------------------------- *
+     * FIND BY ALL TESTS                                  *
+     * ------------------------------------------------- *
+     */
+
+    @Test
+    public void testGivenManagersAndFindByAll_thenReturnSameManagers() {
+        Manager m1 = createAndSaveManager(1);
+        Manager m2 = createAndSaveManager(2);
+
+        List<Manager> all = managerRepository.findAll();
+
+        assertThat(all).isNotNull();
+        assertThat(all)
+                .hasSize(2)
+                .extracting(Manager::getId)
+                .contains(m1.getId(), m2.getId());
+    }
+
+    @Test
+    public void testGivenNoManagers_whenFindAll_thenReturnEmpty() {
+        List<Manager> all = managerRepository.findAll();
+        assertThat(all).isNotNull();
+        assertThat(all).hasSize(0);
+    }
+
 
 
     /* -- helper -- */
