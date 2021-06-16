@@ -12,6 +12,6 @@ export class ReviewService {
   constructor(private http: HttpClient) { }
 
   giveReview(review: Review): Observable<any> {
-    return this.http.post(`${environment.baseURL}/review/add`, review);
+    return this.http.post(`${environment.baseURL}/review/add`, review, environment.httpOptions);
   }
 }

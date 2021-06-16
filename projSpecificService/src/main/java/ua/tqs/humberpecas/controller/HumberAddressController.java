@@ -27,7 +27,7 @@ public class HumberAddressController {
     public ResponseEntity<List<Address>> getUserAddresses(@RequestHeader("authorization") String token) throws InvalidLoginException {
 
         log.debug("Get User addresses");
-        List<Address> userAddresses = service.getUserAddress(token.substring(7));
+        List<Address> userAddresses = service.getUserAddress(token);
 
 
         log.info("Return User addresses  with success");

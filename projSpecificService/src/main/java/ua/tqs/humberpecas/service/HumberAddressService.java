@@ -66,7 +66,7 @@ public class HumberAddressService {
                     return new InvalidLoginException("Invalid user token");
                 });
 
-        List<Address> addresses = addressRepository.findByPerson(person);
+        List<Address> addresses = addressRepository.findAllByPerson(person);
 
         return addresses;
     }

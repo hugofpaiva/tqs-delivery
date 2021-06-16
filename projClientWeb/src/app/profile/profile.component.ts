@@ -19,6 +19,7 @@ import {Purchase} from '../models/purchase';
 import {ReviewService} from '../services/review/review.service';
 import {Review} from '../models/review';
 import {AlertService} from '../services/alert/alert.service';
+import {AddressService} from '../services/address/address.service';
 
 @Component({
     selector: 'app-modal-rider-review',
@@ -71,7 +72,8 @@ export class NgbModalRiderReview {
                 <span style="margin-right: 8px; margin-left: 9px">Status:</span> <b>{{purchase.status}}</b></h6>
             <h6 class="mb-0">
                 <fa-icon [icon]="motorcycleIcon"></fa-icon>
-                <span style="margin-right: 15px; margin-left: 5px">Rider:</span> <b>{{purchase.riderName !== null ? purchase.riderName : '-'}}</b></h6>
+                <span style="margin-right: 15px; margin-left: 5px">Rider:</span>
+                <b>{{purchase.riderName !== null ? purchase.riderName : '-'}}</b></h6>
 
             <div class="table" style="min-height: 200px; margin-top: 5%">
                 <table class="table">
@@ -152,7 +154,7 @@ export class NgbModalOrderDetails {
     selector: 'app-modal-manage-addresses',
     template: `
         <div class="modal-header">
-            <h5 class="modal-title text-center">{{name}}</h5>
+            <h5 class="modal-title text-center">Manage Addresses</h5>
             <button class="btn btn-link  ml-auto">
                 <fa-icon size="lg" (click)="newAddress()" [icon]="plusIcon"></fa-icon>
             </button>
@@ -239,27 +241,28 @@ export class NgbModalOrderDetails {
                     </th>
                     </thead>
                     <tbody>
-                    <tr>
+                    <tr *ngFor="let add of addresses">
                         <td>
-                            Rua Quim Jo
+                            {{add.address}}
                         </td>
                         <td>
-                            3657-123
+                            {{add.postalCode}}
                         </td>
                         <td>
-                            Aveiro
+                            {{add.city}}
                         </td>
                         <td>
-                            Portugal
+                            {{add.country}}
                         </td>
                         <td style="width: 25px">
                             <button class="btn btn-link  ml-auto" style="padding: 0">
-                                <fa-icon size="lg" style="color: red" (click)="deleteAddress()" [icon]="deleteIcon"></fa-icon>
+                                <fa-icon size="lg" style="color: red" (click)="deleteAddress(add)" [icon]="deleteIcon"></fa-icon>
                             </button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <h5 style="text-align: center" *ngIf="addresses.length === 0">There are no addresses</h5>
             </div>
         </div>
         <div class="modal-footer">
@@ -268,8 +271,8 @@ export class NgbModalOrderDetails {
         </div>
     `
 })
-export class NgbModalManageAddresses {
-    @Input() name;
+export class NgbModalManageAddresses implements OnInit {
+    @Input() addresses: Address[] = [];
     creatingAddress = false;
     plusIcon = faPlusCircle;
     deleteIcon = faTimesCircle;
@@ -277,26 +280,53 @@ export class NgbModalManageAddresses {
     requested = false;
     @Input() address: Address = new Address();
 
-    newAddress() {
-        if (!this.creatingAddress) {
-            this.creatingAddress = true;
-        } else {
-            // Clear forms
-            console.log('Olha o novo endereço');
-        }
-
-    }
-
-    deleteAddress() {
-        console.log('Olha a eliminar o endereço');
-    }
-
-    constructor(private formBuilder: FormBuilder, public activeModal: NgbActiveModal) {
+    constructor(private formBuilder: FormBuilder, public activeModal: NgbActiveModal, private addressService: AddressService,
+                private alertService: AlertService) {
         this.newAddressForm = this.formBuilder.group({
             address: ['address', [Validators.required]],
             postalcode: ['postalcode', [Validators.required]],
             city: ['city', [Validators.required]],
             country: ['country', [Validators.required]],
+        });
+    }
+
+    ngOnInit(): void {
+        this.getAddresses();
+    }
+
+    getAddresses() {
+        this.addressService.getAddresses()
+            .subscribe(
+                data => {
+                    this.addresses = data;
+                });
+
+    }
+
+    newAddress() {
+        if (!this.creatingAddress) {
+            this.creatingAddress = true;
+        } else {
+            this.addressService.createAddress(this.address).subscribe(data => {
+                this.alertService.success('Address created!');
+                this.getAddresses();
+                this.requested = false;
+                this.creatingAddress = false;
+                this.address = new Address();
+            }, error => {
+                this.requested = false;
+                this.alertService.error('There was an error. Address was not created!');
+            });
+        }
+
+    }
+
+    deleteAddress(add: Address) {
+        this.addressService.delAddress(add).subscribe(data => {
+            this.alertService.success('Address deleted!');
+            this.getAddresses();
+        }, error => {
+            this.alertService.error('There was an error. Address was not deleted!');
         });
     }
 
@@ -315,8 +345,6 @@ export class NgbModalManageAddresses {
 export class ProfileComponent implements OnInit {
     arrowIcon = faArrowDown;
     starIcon = faStar;
-    arrowLeftIcon = faArrowLeft;
-    arrowRightIcon = faArrowRight;
     purchases: Purchase[] = [];
     totalItems = 0;
     driversReviews = 0;
@@ -343,7 +371,6 @@ export class ProfileComponent implements OnInit {
             scrollable: true,
             windowClass: 'my-class'
         });
-        modalRef.componentInstance.name = 'Manage Addresses';
     }
 
     ngOnInit(): void {
@@ -366,7 +393,6 @@ export class ProfileComponent implements OnInit {
         this.purchaseService.getPurchases(this.currentPage - 1)
             .subscribe(
                 data => {
-                    console.log(data);
                     this.totalItems = data['totalItems'];
                     this.totalPages = data['totalPages'];
                     this.purchases = data['orders'];

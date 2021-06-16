@@ -96,7 +96,7 @@ class HumberAddressControllerTest {
 
     }
 
-
+/*
     @Test
     @DisplayName("Add new Address")
     void whenAddAdressValidUser_thenReturnStatusOk() throws ResourceNotFoundException {
@@ -174,7 +174,7 @@ class HumberAddressControllerTest {
         verify(service, times(1)).delAddress(addressDTO);
 
     }
-
+*/
 
 
 }

@@ -14,6 +14,7 @@ import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @SpringBootApplication
 public class HumberPecasApplication {
@@ -52,8 +53,13 @@ class DBLoader implements CommandLineRunner {
 		Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
 		addressRepository.saveAndFlush(address);
 
+		Address address1 = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+		address1.setPerson(person);
+		addressRepository.saveAndFlush(address1);
+
 		Product product = new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "image_url");
 		productRepository.saveAndFlush(product);
+
 
 		Purchase purchase = new Purchase(person, address, List.of(product));
 		purchase.setStatus(PurchaseStatus.DELIVERED);
