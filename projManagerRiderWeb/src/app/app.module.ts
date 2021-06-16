@@ -1,7 +1,7 @@
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {Router, RouterModule} from '@angular/router';
 
 import {AppComponent} from './app.component';
@@ -16,6 +16,9 @@ import {StoresComponent} from './pages/stores/stores.component';
 import {RidersComponent} from './pages/riders/riders.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {AccountService} from './services/account/account.service';
+import {JwtInterceptor} from './services/jwt.interceptor';
+import {ErrorInterceptor} from './services/error.interceptor';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 
 @NgModule({
@@ -28,7 +31,8 @@ import {AccountService} from './services/account/account.service';
     NgbModule,
     RouterModule,
     AppRoutingModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    NgxPaginationModule
   ],
   declarations: [
     AppComponent,
@@ -37,7 +41,10 @@ import {AccountService} from './services/account/account.service';
     StoresComponent,
     RidersComponent
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

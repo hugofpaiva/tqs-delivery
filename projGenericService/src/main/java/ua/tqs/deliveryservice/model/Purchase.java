@@ -66,6 +66,7 @@ public class Purchase {
 
     public Purchase() {}
 
+    @JsonIgnore
     public Map<String, Object> getMap() {
         Map<String, Object> map = new TreeMap<>();
         map.put("orderId", id);

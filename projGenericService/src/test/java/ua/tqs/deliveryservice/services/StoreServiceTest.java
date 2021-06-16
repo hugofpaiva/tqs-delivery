@@ -146,7 +146,7 @@ public class StoreServiceTest {
                 .count();
 
         assertThat(found.get("totalPurchases")).isEqualTo(0L);
-        assertThat(found.get("avgPurchasesPerWeek")).isNull();
+        assertThat(found.get("avgPurchasesPerWeek")).isEqualTo(0.0);
         assertThat(found.get("totalStores")).isEqualTo(0L);
     }
 

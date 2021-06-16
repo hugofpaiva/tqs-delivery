@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import ua.tqs.deliveryservice.exception.InvalidLoginException;
-import ua.tqs.deliveryservice.model.Manager;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.ManagerRepository;
@@ -20,14 +18,9 @@ import java.util.Map;
 
 @Service
 public class ManagerService {
-    @Autowired
-    private ManagerRepository managerRepository;
 
     @Autowired
     private RiderRepository riderRepository;
-
-    @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
 
     // int countPurchaseByStatus(Status s);
     // double getAverageReview();
