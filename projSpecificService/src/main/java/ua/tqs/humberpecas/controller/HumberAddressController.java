@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.tqs.humberpecas.dto.AddressDTO;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Address;
 import ua.tqs.humberpecas.service.HumberAddressService;
@@ -23,10 +24,10 @@ public class HumberAddressController {
     private HumberAddressService service;
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<Address>> getUserAddresses(@RequestParam long userId) throws ResourceNotFoundException {
+    public ResponseEntity<List<Address>> getUserAddresses(@RequestHeader("authorization") String token) throws InvalidLoginException {
 
         log.debug("Get User addresses");
-        List<Address> userAddresses = service.getUserAddress(userId);
+        List<Address> userAddresses = service.getUserAddress(token.substring(7));
 
 
         log.info("Return User addresses  with success");

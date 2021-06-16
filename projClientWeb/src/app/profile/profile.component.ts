@@ -12,6 +12,7 @@ import {
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Address} from '../models/address';
+import {AccountService} from '../services/account/account.service';
 
 @Component({
     selector: 'app-modal-rider-review',
@@ -279,7 +280,7 @@ export class ProfileComponent implements OnInit {
     arrowLeftIcon = faArrowLeft;
     arrowRightIcon = faArrowRight;
 
-    constructor(private modalService: NgbModal) {
+    constructor(private modalService: NgbModal, private accountService: AccountService) {
     }
 
     openRiderReview() {

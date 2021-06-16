@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.dto.AddressDTO;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Address;
 import ua.tqs.humberpecas.model.Person;
@@ -56,12 +57,15 @@ public class HumberAddressService {
         addressRepository.delete(address);
     }
 
-    public List<Address> getUserAddress(long userId) throws ResourceNotFoundException {
+    public List<Address> getUserAddress(String userToken) throws InvalidLoginException {
 
-        List<Address> addresses = addressRepository.findByPersonId(userId)
-                .orElseThrow(() ->{
-                        log.error("Invalid User");
-                        return new ResourceNotFoundException("Invalid User"); });
+        Person person = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(userToken))
+                .orElseThrow(()-> {
+                    log.error("HumberPurchaseService: invalid user token" );
+                    return new InvalidLoginException("Invalid user token");
+                });
+
+        List<Address> addresses = addressRepository.findByPerson(person);
 
         return addresses;
     }

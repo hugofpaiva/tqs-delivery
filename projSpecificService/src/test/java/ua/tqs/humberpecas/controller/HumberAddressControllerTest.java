@@ -15,12 +15,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.humberpecas.configuration.JwtRequestFilter;
 import ua.tqs.humberpecas.configuration.WebSecurityConfig;
 import ua.tqs.humberpecas.dto.AddressDTO;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Address;
 import ua.tqs.humberpecas.model.Person;
 import ua.tqs.humberpecas.service.HumberAddressService;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,26 +45,22 @@ class HumberAddressControllerTest {
     private Person person;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() {
         RestAssuredMockMvc.mockMvc(mvc);
-
-
         person = new Person("Fernando", "12345678","fernando@ua.pt");
         address  = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
         addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal");
-
-
     }
 
     @Test
     @DisplayName("Get User address")
-    void whenGetAddressesValidUser_thenReturnAddress() throws ResourceNotFoundException {
+    void whenGetAddressesValidUser_thenReturnAddress() throws ResourceNotFoundException, InvalidLoginException {
 
 
         Address address2 = new Address("Coimbra", "3730-125","Coimbra","Portugal", person);
         List<Address> addresses = Arrays.asList(address, address2);
 
-        when(service.getUserAddress(anyLong())).thenReturn( addresses);
+        when(service.getUserAddress(anyString())).thenReturn(addresses);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -76,7 +72,7 @@ class HumberAddressControllerTest {
                 .body("[0].address", Matchers.equalTo("Aveiro"))
                 .body("[1].address", Matchers.equalTo("Coimbra"));
 
-        verify(service, times(1)).getUserAddress(anyLong());
+        verify(service, times(1)).getUserAddress(anyString());
 
 
     }
@@ -84,9 +80,9 @@ class HumberAddressControllerTest {
 
     @Test
     @DisplayName("Get Addresses of Invalid User returns HTTP Status Not Found")
-    void whenGetAddressesInalidUser_thenReturnStatus404() throws ResourceNotFoundException {
+    void whenGetAddressesInalidUser_thenReturnStatus404() throws ResourceNotFoundException, InvalidLoginException {
 
-        when(service.getUserAddress(anyLong())).thenThrow(new ResourceNotFoundException("Invalid User!"));
+        when(service.getUserAddress(anyString())).thenThrow(new ResourceNotFoundException("Invalid User!"));
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -95,7 +91,7 @@ class HumberAddressControllerTest {
                 .then()
                 .statusCode(404);
 
-        verify(service, times(1)).getUserAddress(anyLong());
+        verify(service, times(1)).getUserAddress(anyString());
 
 
     }
@@ -105,7 +101,7 @@ class HumberAddressControllerTest {
     @DisplayName("Add new Address")
     void whenAddAdressValidUser_thenReturnStatusOk() throws ResourceNotFoundException {
 
-        when(service.addNewAddress(addressDTO)).thenReturn( address);
+        when(service.addNewAddress(addressDTO)).thenReturn(address);
 
 
         RestAssuredMockMvc.given()

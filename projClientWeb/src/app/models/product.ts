@@ -5,4 +5,5 @@ export class Product {
     category: string;
     description: string;
     image_url: string;
+    quantity = 0;
 }

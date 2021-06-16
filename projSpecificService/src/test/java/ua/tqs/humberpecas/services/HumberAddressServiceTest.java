@@ -1,6 +1,5 @@
 package ua.tqs.humberpecas.services;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.tqs.humberpecas.dto.AddressDTO;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Address;
 import ua.tqs.humberpecas.model.Person;
@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import ua.tqs.humberpecas.service.HumberAddressService;
+import ua.tqs.humberpecas.service.JwtUserDetailsService;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -99,32 +100,41 @@ class HumberAddressServiceTest {
 
     @Test
     @DisplayName("Get User Addresses")
-    void whenGetValidUser_thenReturnAddress() throws ResourceNotFoundException {
-
+    void whenGetValidUser_thenReturnAddress() throws InvalidLoginException {
         Address address2 = new Address("Coimbra", "3730-125","Coimbra","Portugal", person);
         List<Address> addresses = Arrays.asList(address, address2);
 
-        when(addressRepository.findByPersonId(anyLong())).thenReturn(Optional.of(addresses));
+        when(addressRepository.findByPerson(any())).thenReturn(addresses);
 
-        List<Address> userAddresses = service.getUserAddress(1L);
+        when(personRepository.findByEmail(person.getEmail())).thenReturn(Optional.of(person));
+
+        when(jwtUserDetailsService.getEmailFromToken(any())).thenReturn(person.getEmail());
+
+        List<Address> userAddresses = service.getUserAddress("Token");
 
         assertThat(userAddresses, hasSize(2));
         assertThat(userAddresses, hasItem(address));
         assertThat(userAddresses, hasItem(address2));
 
-        verify(addressRepository, times(1)).findByPersonId(1L);
+        verify(addressRepository, times(1)).findByPerson(person);
 
     }
 
     @Test
-    @DisplayName("Get Addresses of Invalid User throws ResourceNotFoundException")
-    void whenGetAddressesInvalidUser_thenThrowResourceNotFound() throws ResourceNotFoundException {
+    @DisplayName("Get Addresses of Invalid User throws InvalidLoginException")
+    void whenGetAddressesInvalidUser_thenThrowInvalidLoginException() {
 
-        assertThrows( ResourceNotFoundException.class, () -> {
-            service.getUserAddress(1L);
+        when(personRepository.findByEmail(any())).thenReturn(Optional.empty());
+
+        when(jwtUserDetailsService.getEmailFromToken(any())).thenReturn("Invalidemail@email.com");
+
+        assertThrows( InvalidLoginException.class, () -> {
+            service.getUserAddress("Token");
         } );
 
-        verify(addressRepository, times(1)).findByPersonId(1L);
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken(any());
+
+        verify(personRepository, times(1)).findByEmail(any());
 
     }
 
