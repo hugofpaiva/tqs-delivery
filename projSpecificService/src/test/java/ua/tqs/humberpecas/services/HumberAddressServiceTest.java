@@ -37,6 +37,7 @@ class HumberAddressServiceTest {
     @Mock
     private PersonRepository personRepository;
 
+
     @InjectMocks
     private HumberAddressService service;
 
@@ -46,25 +47,24 @@ class HumberAddressServiceTest {
 
     @BeforeEach
     void setUp() throws IOException {
-
         person = new Person("Fernando", "12345678","fernando@ua.pt");
         address  = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
         addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal");
-
     }
 
+
+    // -------------------------------------
+    // --       ADD ADDRESS TESTS         --
+    // -------------------------------------
 
     @Test
     @DisplayName("Add new Address")
     void whenUserAddAddress_thenSaveAddress() throws ResourceNotFoundException {
-
-
         when(personRepository.findById(anyLong())).thenReturn(Optional.of(person));
         when(addressRepository.save(address)).thenReturn(address);
+        when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
 
-
-        addressDTO.setPersonID(1L);
-        Address newAddress = service.addNewAddress(addressDTO);
+        Address newAddress = service.addNewAddress("token", addressDTO);
 
 
         assertThat(newAddress.getAddress(), equalTo(address.getAddress()));
@@ -73,7 +73,7 @@ class HumberAddressServiceTest {
         assertThat(newAddress.getPostalCode(), equalTo(address.getPostalCode()));
         assertThat(newAddress.getPerson(), equalTo(address.getPerson()));
 
-        verify(personRepository, times(1)).findById(1L);
+        verify(personRepository, times(1)).findByEmail(anyString());
         verify(addressRepository, times(1)).save(address);
 
     }
@@ -85,53 +85,17 @@ class HumberAddressServiceTest {
         addressDTO.setPersonID(1L);
 
         assertThrows( ResourceNotFoundException.class, () -> {
-            service.addNewAddress(addressDTO);
+            service.addNewAddress("token", addressDTO);
         } );
 
-        verify(personRepository, times(1)).findById(1L);
+        verify(personRepository, times(1)).findByEmail(anyString());
         verify(addressRepository, times(0)).save(address);
 
     }
 
-    @Test
-    @DisplayName("Update User Address")
-    void whenUserUpdateValidAddress_thenReturnAddress() throws ResourceNotFoundException {
-
-        addressDTO.setAddressId(1L);
-        Address old = new Address("Coimbra", "3730-125","Coimbra","Portugal", person);
-
-        when(addressRepository.findById(anyLong())).thenReturn(Optional.of(old));
-        when(addressRepository.save(address)).thenReturn(address);
-
-        Address newAddress = service.updateAddress(addressDTO);
-
-        assertThat(newAddress.getAddress(), equalTo(address.getAddress()));
-        assertThat(newAddress.getCity(), equalTo(address.getCity()));
-        assertThat(newAddress.getCountry(), equalTo(address.getCountry()));
-        assertThat(newAddress.getPostalCode(), equalTo(address.getPostalCode()));
-        assertThat(newAddress.getPerson(), equalTo(address.getPerson()));
-
-
-        verify(addressRepository, times(1)).findById(anyLong());
-        verify(addressRepository, times(1)).save(address);
-
-
-    }
-
-    @Test
-    @DisplayName("Update Invalid User Address throws ResourceNotFoundException")
-    void whenUserUpdateInvalidAddress_thenThrowsResourceNotFound() throws ResourceNotFoundException {
-        addressDTO.setAddressId(1L);
-
-        assertThrows( ResourceNotFoundException.class, () -> {
-            service.updateAddress(addressDTO);
-        } );
-
-        verify(addressRepository, times(1)).findById(1L);
-        verify(addressRepository, times(0)).save(address);
-
-    }
-
+    // -------------------------------------
+    // --       GET ADDRESS TESTS         --
+    // -------------------------------------
 
     @Test
     @DisplayName("Get User Addresses")
@@ -164,38 +128,56 @@ class HumberAddressServiceTest {
 
     }
 
+    // -------------------------------------
+    // --       DELETE ADDRESS TESTS      --
+    // -------------------------------------
+
     @Test
     @DisplayName("Delete User Address")
     void whenDeleteValidAddress_thenReturnNothing() throws ResourceNotFoundException {
+        when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
 
         addressDTO.setAddressId(1L);
         when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
         doNothing().when(addressRepository).delete(address);
 
-        service.delAddress(addressDTO);
+        service.delAddress("sometoken", addressDTO);
 
+        verify(personRepository, times(1)).findByEmail(anyString());
         verify(addressRepository, times(1)).findById(1L);
         verify(addressRepository, times(1)).delete(address);
-
 
     }
 
     @Test
     @DisplayName("Delete Invalid Address throws ResourceNotFoundException")
     void whenDeleteInvalidAddress_thenThrowResourceNotFound() throws ResourceNotFoundException {
-
+        when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
         addressDTO.setAddressId(1L);
 
         assertThrows( ResourceNotFoundException.class, () -> {
-            service.delAddress(addressDTO);
+            service.delAddress("sometoken", addressDTO);
         } );
 
+        verify(personRepository, times(1)).findByEmail(anyString());
         verify(addressRepository, times(1)).findById(1L);
         verify(addressRepository, times(0)).delete(address);
-
     }
 
+    @Test
+    @DisplayName("Delete address mismatched from person throws ResourceNotFoundException")
+    void whenDeleteButAddressDoesntBelongToPerson_thenThrowResourceNotFound() throws ResourceNotFoundException {
+        Person other_person = new Person("Duarte", "strong!password","duarte@ua.pt");
+        when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(other_person));
+        when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
 
+        assertThrows( ResourceNotFoundException.class, () -> {
+            service.delAddress("sometoken", addressDTO);
+        });
 
+        verify(personRepository, times(1)).findByEmail(anyString());
+        verify(addressRepository, times(1)).findById(address.getId());
+        verify(addressRepository, times(0)).delete(address);
+    }
 
 }
