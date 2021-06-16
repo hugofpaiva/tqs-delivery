@@ -84,8 +84,8 @@ class HumberPurchaseControllerTest {
     @Test
     @DisplayName("Make Purchase with invalid user throws HTTP status Bad Request ")
     void whenPuchageInvalidUser_thenThrowsStatus401(){
+        when(service.newPurchase(purchaseDTO, userToken)).thenThrow(InvalidLoginException.class);
 
-        doThrow(InvalidLoginException.class).when(service).newPurchase(purchaseDTO, userToken);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -135,10 +135,10 @@ class HumberPurchaseControllerTest {
     }
 
     @Test
-    @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound ")
+    @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound")
     void whenPurchaseWithInvalidData_thenthenThrowsStatus404(){
 
-        doThrow(ResourceNotFoundException.class).when(service).newPurchase(purchaseDTO, userToken);
+        when(service.newPurchase(purchaseDTO, userToken)).thenThrow(ResourceNotFoundException.class);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -173,8 +173,8 @@ class HumberPurchaseControllerTest {
     @Test
     @DisplayName("Error in communication with Delivery service throws UnreachableServiceExcption")
     void whenErrorInCommunication_thenThrowsStatusUnreachableService() throws AccessNotAllowedException {
+        when(service.newPurchase(purchaseDTO, userToken)).thenThrow(UnreachableServiceException.class);
 
-        doThrow(UnreachableServiceException.class).when(service).newPurchase(purchaseDTO, userToken);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")

@@ -40,7 +40,6 @@ public class HumberReviewService {
             throw new AccessNotAllowedException("Not Allowed");
         }
 
-       deliveryService.reviewRider(review);
 
         String riderName = deliveryService.reviewRider(review);
 
