@@ -194,6 +194,7 @@ public class PurchaseRepositoryTests {
         assertThat(res).extracting(Purchase::getId).contains(p2.getId(), p3.getId());
         assertThat(res).extracting(Purchase::getId).doesNotContain(p1.getId());
     }
+
     @Test
     public void testFindAllByRiderWithEmptyPage_whenRiderHasPurchases_returnPage() {
         Purchase p1 = createAndSavePurchase(1, true);
@@ -289,6 +290,50 @@ public class PurchaseRepositoryTests {
      * TODO: GET AVERAGE REVIEW TESTS                    *
      * ------------------------------------------------- *
      */
+
+    @Test
+    public void testWhenGetAverageReview_givenNoPurchase_thenReturnNull() {
+        Long[] res = purchaseRepository.getAverageReview().get(0);
+
+        assertThat(res).isNotNull();
+        assertThat(res.length).isEqualTo(2);
+        assertThat(res[0]).isNull();
+        assertThat(res[1]).isEqualTo(0);
+
+    }
+
+    @Test
+    public void testWhenGetAverageReview_givenPurchasesNotDelievered_thenReturnNull() {
+        createAndSavePurchase(1, true);
+        createAndSavePurchase(2, true);
+
+        Long[] res = purchaseRepository.getAverageReview().get(0);
+
+        assertThat(res).isNotNull();
+        assertThat(res.length).isEqualTo(2);
+        assertThat(res[0]).isNull();
+        assertThat(res[1]).isEqualTo(0);
+    }
+
+    @Test
+    public void testWhenGetSumReviewsAndQuantity_givenReviews_thenReturnSums() {
+        Purchase p1 = createAndSavePurchase(1, true);
+        p1.setStatus(Status.DELIVERED);
+        p1.setDeliveryTime(30L);
+
+        Purchase p2 = createAndSavePurchase(2, false);
+        p2.setStatus(Status.DELIVERED);
+        p2.setDeliveryTime(15L);
+
+        createAndSavePurchase(3, false);
+
+        Long[] res = purchaseRepository.getAverageReview().get(0);
+
+        assertThat(res).isNotNull();
+        assertThat(res.length).isEqualTo(2);
+        assertThat(res[0]).isEqualTo(45L);
+        assertThat(res[1]).isEqualTo(2);
+    }
 
 
     /* -- helper -- */

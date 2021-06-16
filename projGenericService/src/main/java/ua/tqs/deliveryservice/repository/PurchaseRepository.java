@@ -25,7 +25,7 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     Long countPurchaseByStatusIs(Status status);
 
     @Query("SELECT SUM(p.deliveryTime), COUNT(p) FROM Purchase p WHERE p.status = 'DELIVERED'")
-    List<Object[]> getAverageReview();
+    List<Long[]> getAverageReview();
 
 
 }

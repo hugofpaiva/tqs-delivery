@@ -129,7 +129,7 @@ public class RiderRepositoryTests {
         assertThat(res).isNotNull();
         assertThat(res.length).isEqualTo(2);
         assertThat(res[0]).isNull();
-        assertThat(res[0]).isNull();
+        assertThat(res[1]).isNull();
 
     }
 
@@ -143,7 +143,7 @@ public class RiderRepositoryTests {
         assertThat(res).isNotNull();
         assertThat(res.length).isEqualTo(2);
         assertThat(res[0]).isEqualTo(0);
-        assertThat(res[0]).isEqualTo(0);
+        assertThat(res[1]).isEqualTo(0);
     }
 
 

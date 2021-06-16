@@ -170,9 +170,9 @@ public class PurchaseService {
     public Map<String, Object> getAvgDeliveryTime() {
         Map<String, Object> response = new HashMap<>();
 
-        List<Object[]> data2 = purchaseRepository.getAverageReview();
-        Long totalTime = (Long) data2.get(0)[0];
-        Long numPurch = (Long) data2.get(0)[1];
+        List<Long[]> data2 = purchaseRepository.getAverageReview();
+        Long totalTime = data2.get(0)[0];
+        Long numPurch = data2.get(0)[1];
 
         // if there are delivered purchases
         response.put("average", totalTime != null ? totalTime / numPurch : null);
