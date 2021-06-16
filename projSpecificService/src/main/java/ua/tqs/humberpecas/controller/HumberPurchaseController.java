@@ -22,7 +22,7 @@ public class HumberPurchaseController {
     @PostMapping("/new")
     public ResponseEntity<HttpStatus> newOrder(@RequestBody PurchaseDTO order, @RequestHeader("authorization") String token) throws ResourceNotFoundException{
 
-            service.newPurchase(order, token.substring(7));
+            service.newPurchase(order, token);
             return new ResponseEntity<>(HttpStatus.OK);
 
     }

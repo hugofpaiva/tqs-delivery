@@ -76,6 +76,7 @@ public class HumberPurchaseService {
             throw new AccessNotAllowedException("Invalid Address");
         }
 
+
         List<Product> productList = productRepository.findAllById(purchaseDTO.getProductsId());
 
         if (productList.size() < purchaseDTO.getProductsId().size()){
@@ -96,6 +97,8 @@ public class HumberPurchaseService {
 
 
         var purchase = new Purchase(person, address, productList);
+
+
 
         purchase.setServiceOrderId(deliveryService.newOrder(purchaseDeliveryDTO));
 

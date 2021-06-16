@@ -68,15 +68,20 @@ class HumberReviewServiceTest {
     @DisplayName("Review Rider")
     void whenValidPurchage_thenSendReview() throws ResourceNotFoundException, AccessNotAllowedException {
 
+        purchase.setReview(3);
+        purchase.setRiderName("Tone");
+
         when(purchaseRepository.findByServiceOrderId(anyLong())).thenReturn(Optional.of(purchase));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
+        when(deliveryService.reviewRider(any())).thenReturn("Tone");
+        when(purchaseRepository.saveAndFlush(any())).thenReturn(purchase);
 
-        service.addReview(review, userToken);
+        Purchase p = service.addReview(review, userToken);
 
         verify(deliveryService, times(1)).reviewRider(review);
         verify(purchaseRepository, times(1)).findByServiceOrderId(review.getOrderId());
         verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
-
+        verify(purchaseRepository, times(1)).saveAndFlush(purchase);
     }
 
 

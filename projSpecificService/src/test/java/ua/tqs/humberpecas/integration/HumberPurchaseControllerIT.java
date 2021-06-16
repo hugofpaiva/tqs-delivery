@@ -67,7 +67,7 @@ public class HumberPurchaseControllerIT {
     private List<Product> catalog;
     private List<Long> productList;
     private PurchaseDTO purchaseDTO;
-    private Date date;
+
 
     @Container
     public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
@@ -117,32 +117,31 @@ public class HumberPurchaseControllerIT {
                 new Product(20.50, "hammer v2", "the best hammer 2.0", Category.SCREWDRIVER )));
 
         this.productList = Arrays.asList(this.catalog.get(0).getId());
-        this.date = new Date();
-        this.purchaseDTO = new PurchaseDTO(this.date ,this.address.getId(), productList);
+        this.purchaseDTO = new PurchaseDTO(new Date() ,this.address.getId(), productList);
 
     }
 
-//    @Test
-//    @DisplayName("Make Purchage")
-//    void whenValidPurchage_thenReturnOk(){
-//
-//        RestAssured.given()
-//                .header("Authorization", "Bearer " + this.token)
-//                .contentType("application/json")
-//                .body(purchaseDTO)
-//                .when()
-//                .put(getBaseUrl() + "/new")
-//                .then()
-//                .statusCode(200);
-//
-//        List<Purchase> purchases = purchaseRepository.findAll();
-//
-//        assertThat(purchases).hasSize(1).extracting(Purchase::getServiceOrderId).isNotNull();
-//        assertThat(purchases).extracting(Purchase::getPerson).containsOnly(person);
-//
-//
-//    }
-//
+    @Test
+    @DisplayName("Make Purchage")
+    void whenValidPurchage_thenReturnOk(){
+
+        RestAssured.given()
+                .header("authorization", "Bearer " + this.token)
+                .contentType("application/json")
+                .body(purchaseDTO)
+                .when()
+                .post(getBaseUrl() + "/new")
+                .then()
+                .statusCode(200);
+
+        List<Purchase> purchases = purchaseRepository.findAll();
+
+        assertThat(purchases).hasSize(1).extracting(Purchase::getServiceOrderId).isNotNull();
+        assertThat(purchases).extracting(Purchase::getPerson).containsOnly(person);
+
+
+    }
+
 
     @Test
     @DisplayName("Make Purchase without being logged throws HTTP Unauthorized")
@@ -170,7 +169,7 @@ public class HumberPurchaseControllerIT {
                 .when()
                 .post(getBaseUrl() + "/new")
                 .then()
-                .statusCode(401);
+                .statusCode(404);
 
     }
 

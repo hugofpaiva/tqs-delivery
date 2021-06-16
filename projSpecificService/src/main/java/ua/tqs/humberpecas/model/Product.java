@@ -1,10 +1,13 @@
 package ua.tqs.humberpecas.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -24,6 +27,8 @@ public class Product {
 
     private String description;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToMany(mappedBy = "products")
     private Set<Purchase> purchase;
 
@@ -34,6 +39,7 @@ public class Product {
         this.name = name;
         this.description =  description;
         this.category = category;
+        this.purchase = new HashSet<>();
     }
 
 
