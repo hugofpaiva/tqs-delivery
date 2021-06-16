@@ -37,12 +37,12 @@
                         </div>
                         <div class="col-lg-4 order-lg-1">
                             <div class="card-profile-stats d-flex justify-content-center">
-                                <div>
-                                    <span class="heading">2</span>
+                                <div *ngIf="totalItems !== null">
+                                    <span class="heading">{{totalItems}}</span>
                                     <span class="description">Orders</span>
                                 </div>
-                                <div>
-                                    <span class="heading">1</span>
+                                <div *ngIf="driversReviews !== null">
+                                    <span class="heading">{{driversReviews}}</span>
                                     <span class="description">Drivers Reviews</span>
                                 </div>
                             </div>
@@ -84,76 +84,51 @@
                                                 </th>
                                                 </thead>
                                                 <tbody>
-                                                <tr>
+                                                <tr *ngFor="let purchase of purchases | paginate: { itemsPerPage: 5 , currentPage: currentPage,
+                            totalItems: totalItems }">
                                                     <td>
-                                                        30-05-2021 15:00PM
+                                                        {{purchase.date | date:'medium'}}
                                                     </td>
                                                     <td>
-                                                        25€
+                                                        {{getTotal(purchase)}}€
                                                     </td>
                                                     <td>
-                                                        Delivered
+                                                        {{purchase.status}}
                                                     </td>
                                                     <td>
-                                                        João
+                                                        {{(purchase.riderName !== null ? purchase.riderName : '-')}}
                                                     </td>
                                                     <td>
-                                                        <button class="btn btn-1 btn-neutral" type="button"
-                                                                (click)="openRiderReview()">Add Review
+                                                        <button *ngIf="purchase.riderReview === null && purchase.status === 'DELIVERED'"
+                                                                class="btn btn-1 btn-neutral" type="button"
+                                                                (click)="openRiderReview(purchase)">Add Review
                                                         </button>
+                                                        <ng-container *ngIf="purchase.riderReview !== null">
+                                                            <ng-container
+                                                                    *ngFor="let i of [].constructor(purchase.riderReview)">
+                                                                <fa-icon [icon]="starIcon"></fa-icon>
+                                                            </ng-container>
+                                                        </ng-container>
+                                                        <ng-container *ngIf="purchase.riderReview === null && purchase.status !== 'DELIVERED'">-</ng-container>
                                                     </td>
                                                     <td>
                                                         <button class="btn btn-1 btn-primary" type="button"
-                                                                (click)="openOrderDetails()">Details
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        30-05-2021 14:00PM
-                                                    </td>
-                                                    <td>
-                                                        15€
-                                                    </td>
-                                                    <td>
-                                                        Delivered
-                                                    </td>
-                                                    <td>
-                                                        António
-                                                    </td>
-                                                    <td>
-                                                        <fa-icon [icon]="starIcon"></fa-icon>
-                                                        <fa-icon [icon]="starIcon"></fa-icon>
-                                                        <fa-icon [icon]="starIcon"></fa-icon>
-                                                        <fa-icon [icon]="starIcon"></fa-icon>
-                                                        <fa-icon [icon]="starIcon"></fa-icon>
-                                                    </td>
-                                                    <td>
-                                                        <button class="btn btn-1 btn-primary" type="button">Details
+                                                                (click)="openOrderDetails(purchase)">Details
                                                         </button>
                                                     </td>
                                                 </tr>
                                                 </tbody>
                                             </table>
-                                            <h5 *ngIf="false"
+                                            <h5 *ngIf="purchases.length === 0"
                                                 style="width: 100%; height: 100%; text-align: center; vertical-align: center">
-                                                There is no requests history</h5>
+                                                There are no orders history</h5>
                                         </div>
                                         <div class="col-12" style="display: flex; justify-content: center">
-                                            <nav style="display: flex; justify-content: center" class="mt-4"
+                                            <nav *ngIf="purchases.length !== 0"
+                                                 style="display: flex; justify-content: center" class="mt-4"
                                                  aria-label="Page navigation sample">
-                                                <ul class="pagination">
-                                                    <li class="page-item disabled"><a class="page-link" href="#">
-                                                        <fa-icon [icon]="arrowLeftIcon"></fa-icon>
-                                                    </a></li>
-                                                    <li class="page-item active"><a class="page-link" href="#">1</a>
-                                                    </li>
-                                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">
-                                                        <fa-icon [icon]="arrowRightIcon"></fa-icon>
-                                                    </a></li>
-                                                </ul>
+                                                <pagination-controls
+                                                        (pageChange)="getPage($event)"></pagination-controls>
                                             </nav>
                                         </div>
                                     </div>

@@ -1,14 +1,11 @@
 package ua.tqs.humberpecas.services;
 
-
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.exception.AccessNotAllowedException;
@@ -50,7 +47,6 @@ public class HumberReviewServiceTest {
     @BeforeEach
     public void setUp(){
 
-        ShoppingCart sc = new ShoppingCart();
         person = new Person("Fernando", "12345678","fernando@ua.pt");
         Address address  = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
 

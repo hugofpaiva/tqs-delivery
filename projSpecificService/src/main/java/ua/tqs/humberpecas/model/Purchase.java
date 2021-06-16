@@ -1,9 +1,12 @@
 package ua.tqs.humberpecas.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +18,7 @@ public class Purchase {
     private long id;
 
     @ManyToOne
+    @JsonIgnore
     private Person person;
 
     @CreationTimestamp
@@ -24,11 +28,17 @@ public class Purchase {
     private Address address;
 
     @Column(unique=true)
+    @JsonIgnore
     private Long serviceOrderId;
 
     @ManyToMany
     private List<Product> products;
 
+    @Min(value = 0, message = "Review should not be under the value of 0.")
+    @Max(value = 5, message = "Review should not be above the value of 5.")
+    private Integer riderReview;
+
+    private String riderName;
 
     @Enumerated(value = EnumType.STRING)
     private PurchaseStatus status;

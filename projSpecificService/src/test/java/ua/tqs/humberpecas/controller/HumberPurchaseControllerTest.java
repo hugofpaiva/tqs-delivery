@@ -5,6 +5,7 @@ import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,7 @@ class HumberPurchaseControllerTest {
         userToken = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
     }
 
+    /*
     @Test
     @DisplayName("User purchage list of invalid user returns HTTP status Not Found")
     void whenGetInvalidUserPurchages_thenReturnStatus404() throws ResourceNotFoundException {
@@ -72,6 +74,7 @@ class HumberPurchaseControllerTest {
         verify(service, times(1)).getUserPurchases(userToken);
 
     }
+    */
 
 
     @Test
@@ -97,6 +100,7 @@ class HumberPurchaseControllerTest {
 
     }
 
+    /*
     @Test
     @DisplayName("Get Status of an invalid Order return HTTP status Not Found ")
     void whenGetStatusInvalidOrder_thenReturnStatus404() throws ResourceNotFoundException {
@@ -113,24 +117,8 @@ class HumberPurchaseControllerTest {
 
         verify(service, times(1)).checkPurchaseStatus(0);
     }
+    */
 
-    @Test
-    @DisplayName("Get Order Status")
-    void whenGetOrderStatus_thenReturnStatus() throws ResourceNotFoundException {
-
-        when(service.checkPurchaseStatus(anyLong())).thenReturn(PurchaseStatus.PENDENT);
-
-        RestAssuredMockMvc
-                .given()
-                .contentType(ContentType.TEXT)
-                .when()
-                .get("/purchase/status?orderId=0")
-                .then()
-                .statusCode(200)
-                .body(Matchers.equalTo(PurchaseStatus.PENDENT.getStatus()) );
-
-        verify(service, times(1)).checkPurchaseStatus(0);
-    }
 
 
 

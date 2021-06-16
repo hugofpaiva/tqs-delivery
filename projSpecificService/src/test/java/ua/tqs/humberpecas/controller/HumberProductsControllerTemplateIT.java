@@ -21,7 +21,6 @@ import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.AddressRepository;
 import ua.tqs.humberpecas.repository.PersonRepository;
 import ua.tqs.humberpecas.repository.ProductRepository;
-import ua.tqs.humberpecas.repository.ShoppingCartRepository;
 
 import java.util.*;
 
@@ -33,7 +32,6 @@ import static org.hamcrest.Matchers.equalTo;
 class HumberProductsControllerTemplateIT {
     private Person person;
     private Address personAddr;
-    private ShoppingCart personSc;
     private String token;
     private Product prod1;
     private Product prod2;
@@ -64,9 +62,6 @@ class HumberProductsControllerTemplateIT {
     private AddressRepository addressRepository;
 
     @Autowired
-    private ShoppingCartRepository shoppingCartRepository;
-
-    @Autowired
     private PasswordEncoder bcryptEncoder;
 
     @Autowired
@@ -78,15 +73,13 @@ class HumberProductsControllerTemplateIT {
 
     @BeforeEach
     public void setUp() {
-        this.personSc = new ShoppingCart();
-        this.person = new Person("Maria Joana", bcryptEncoder.encode("aRightPassword"), "maria2000@gmail.com", this.personSc);
+        this.person = new Person("Maria Joana", bcryptEncoder.encode("aRightPassword"), "maria2000@gmail.com");
         this.personAddr = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
         this.person.setAddresses(Set.of(this.personAddr));
 
         this.prod1 = new Product("Prego Grande", 0.35, Category.NAILS, "10/10 recomendo", "randomFakeImageNail.png");
         this.prod2 = new Product("Alicate para Dentes", 4.21, Category.PLIERS, "Funciona", "nonExistent.jpeg");
 
-        shoppingCartRepository.saveAndFlush(this.personSc);
         addressRepository.saveAndFlush(this.personAddr);
         personRepository.saveAndFlush(this.person);
         productRepository.saveAllAndFlush(Arrays.asList(this.prod1, this.prod2));
@@ -103,9 +96,6 @@ class HumberProductsControllerTemplateIT {
 
         productRepository.deleteAll();
         productRepository.flush();
-
-        shoppingCartRepository.deleteAll();
-        shoppingCartRepository.flush();
 
         addressRepository.deleteAll();
         addressRepository.flush();

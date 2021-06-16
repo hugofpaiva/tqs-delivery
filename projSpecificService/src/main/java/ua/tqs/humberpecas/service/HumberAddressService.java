@@ -36,7 +36,8 @@ public class HumberAddressService {
 
         // TODO: verificar ser o address ja existe
 
-        var newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry(), p);
+        var newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry());
+        newAddress.setPerson(p);
 
         return addressRepository.save(newAddress);
     }

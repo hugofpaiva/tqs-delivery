@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.tqs.humberpecas.exception.InvalidParameterException;
-import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Category;
-import ua.tqs.humberpecas.model.Product;
 import ua.tqs.humberpecas.service.HumberProductService;
 
 import java.util.Map;
@@ -19,15 +16,6 @@ public class HumberProductsController {
 
     @Autowired
     private HumberProductService service;
-
-
-    @GetMapping("/get/{prodId}")
-    public ResponseEntity<Product> getProductById(@PathVariable long prodId) throws ResourceNotFoundException {
-
-        var p = service.getProductById(prodId);
-
-        return ResponseEntity.ok().body(p);
-    }
 
 
     @GetMapping("/getAll")

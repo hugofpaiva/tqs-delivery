@@ -4,8 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Set;
@@ -18,12 +16,10 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-
     private String name;
 
     @Size(min=8)
     private String pwd;
-
 
     @Email
     @Column(unique = true)
@@ -34,18 +30,6 @@ public class Person {
 
     @OneToMany
     private Set<Address> addresses;
-
-    @OneToOne
-    private ShoppingCart shoppingCart;
-
-    public Person(String name, String pwd, String email, ShoppingCart sc) {
-        this.name = name;
-        this.pwd = pwd;
-        this.email = email;
-        this.shoppingCart = sc;
-    }
-
-
 
     public Person(){ }
 

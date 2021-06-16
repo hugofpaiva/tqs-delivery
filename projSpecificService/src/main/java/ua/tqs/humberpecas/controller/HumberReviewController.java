@@ -26,7 +26,7 @@ public class HumberReviewController {
     public ResponseEntity<HttpStatus> giveReview(@Valid @RequestBody Review review, @RequestHeader("authorization") String token)
             throws ResourceNotFoundException, UnreachableServiceException, AccessNotAllowedException {
 
-        service.addReview(review, token.substring(7));
+        service.addReview(review, token);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

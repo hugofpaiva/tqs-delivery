@@ -7,11 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ua.tqs.humberpecas.model.Category;
-import ua.tqs.humberpecas.model.Person;
-import ua.tqs.humberpecas.model.Product;
+import ua.tqs.humberpecas.model.*;
+import ua.tqs.humberpecas.repository.AddressRepository;
 import ua.tqs.humberpecas.repository.PersonRepository;
 import ua.tqs.humberpecas.repository.ProductRepository;
+import ua.tqs.humberpecas.repository.PurchaseRepository;
+
+import java.util.List;
 
 @SpringBootApplication
 public class HumberPecasApplication {
@@ -29,7 +31,13 @@ class DBLoader implements CommandLineRunner {
 	private PersonRepository personRepository;
 
 	@Autowired
+	private PurchaseRepository purchaseRepository;
+
+	@Autowired
 	private ProductRepository productRepository;
+
+	@Autowired
+	private AddressRepository addressRepository;
 
 	@Autowired
 	private PasswordEncoder bcryptEncoder;
@@ -41,9 +49,15 @@ class DBLoader implements CommandLineRunner {
 		Person person = new Person("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
 		personRepository.saveAndFlush(person);
 
+		Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+		addressRepository.saveAndFlush(address);
+
 		Product product = new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "image_url");
 		productRepository.saveAndFlush(product);
 
+		Purchase purchase = new Purchase(person, address, List.of(product));
+		purchase.setStatus(PurchaseStatus.DELIVERED);
+		purchaseRepository.saveAndFlush(purchase);
 
 	}
 }
