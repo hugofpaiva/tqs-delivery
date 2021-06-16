@@ -54,7 +54,7 @@ class HumberPurchaseControllerTest {
     @BeforeEach
     void setUp() throws IOException {
         RestAssuredMockMvc.mockMvc(mvc);
-        userToken = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
+        userToken = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
         List<Long> productsId = Arrays.asList( Long.valueOf(6), Long.valueOf(7));
 
         purchaseDTO = new PurchaseDTO(new Date(), Long.valueOf(5) , productsId);
@@ -71,7 +71,7 @@ class HumberPurchaseControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization",  userToken)
                 .when()
                 .get("/purchase/getAll?userId=1")
                 .then()
@@ -89,7 +89,7 @@ class HumberPurchaseControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization", userToken)
                 .body(purchaseDTO)
                 .when()
                 .post("/purchase/new")
@@ -122,7 +122,7 @@ class HumberPurchaseControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization", userToken)
                 .body(purchaseDTO)
                 .when()
                 .post("/purchase/new")
@@ -142,7 +142,7 @@ class HumberPurchaseControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization", userToken)
                 .body(purchaseDTO)
                 .when()
                 .post("/purchase/new")
@@ -178,7 +178,7 @@ class HumberPurchaseControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization",  userToken)
                 .body(purchaseDTO)
                 .when()
                 .post("/purchase/new")
