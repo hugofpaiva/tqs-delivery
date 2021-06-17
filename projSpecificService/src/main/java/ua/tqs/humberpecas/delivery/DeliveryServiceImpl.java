@@ -64,7 +64,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
     }
 
     @Override
-    public String reviewRider(Review review) throws ResourceNotFoundException {
+    public void reviewRider(Review review) throws ResourceNotFoundException {
 
         StringBuilder url  = new StringBuilder().append(HOST)
                 .append("/order/")
@@ -76,17 +76,6 @@ public class DeliveryServiceImpl implements IDeliveryService {
                 url.toString(), HttpMethod.PATCH, new HttpEntity<>(review, headers),
                 ServerReviewDTO.class);
 
-
-        try {
-
-            return Objects.requireNonNull(response.getBody()).getRider();
-
-        } catch (NullPointerException e){
-
-            log.error("DeliveryServiceImpl: Null riderName ");
-            throw new ResourceNotFoundException("Null riderName");
-
-        }
     }
 
     @Bean

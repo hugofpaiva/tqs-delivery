@@ -40,11 +40,9 @@ public class HumberReviewService {
             throw new AccessNotAllowedException("Not Allowed");
         }
 
-
-        String riderName = deliveryService.reviewRider(review);
+        deliveryService.reviewRider(review);
 
         purchase.setReview(review.getReview());
-        purchase.setRiderName(riderName);
 
         return purchaseRepository.saveAndFlush(purchase);
 

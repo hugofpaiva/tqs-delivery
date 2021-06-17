@@ -58,36 +58,8 @@ public class DeliveryServiceTest {
                 new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal"));
     }
 
-    @Test
-    @DisplayName("Add Review")
-    void whenValidRiview_thenReturnRiderName(){
-
-        String response = "{\n\"rider\": \"Tone\"\n}";
-
-        this.server
-                .expect(ExpectedCount.once(), requestTo("http://localhost:8081/store/order/12/review"))
-                .andExpect(method(HttpMethod.PATCH))
-                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
-
-        assertThat(deliveryService.reviewRider(review), Matchers.equalTo("Tone"));
 
 
-    }
-
-    @Test
-    @DisplayName("Add review and server dont return rider throws ResourseNotFound")
-    void whenReviewAndNoResponse_thenThrowsStatusResourseNotFound(){
-
-        this.server
-                .expect(ExpectedCount.once(), requestTo("http://localhost:8081/store/order/12/review"))
-                .andExpect(method(HttpMethod.PATCH))
-                .andRespond(withStatus(HttpStatus.OK));
-
-        assertThrows( ResourceNotFoundException.class, () -> {
-            deliveryService.reviewRider(review);
-        } );
-
-    }
 
     @Test
     @DisplayName("Add review of invalid order throws ResourseNotFound")

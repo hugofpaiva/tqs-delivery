@@ -1,5 +1,6 @@
 package ua.tqs.humberpecas.services;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -68,15 +70,15 @@ class HumberReviewServiceTest {
     @DisplayName("Review Rider")
     void whenValidPurchage_thenSendReview() throws ResourceNotFoundException, AccessNotAllowedException {
 
-        purchase.setReview(3);
-        purchase.setRiderName("Tone");
-
         when(purchaseRepository.findByServiceOrderId(anyLong())).thenReturn(Optional.of(purchase));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
-        when(deliveryService.reviewRider(any())).thenReturn("Tone");
         when(purchaseRepository.saveAndFlush(any())).thenReturn(purchase);
 
         Purchase p = service.addReview(review, userToken);
+
+        assertThat(p.getReview(), Matchers.equalTo(4));
+        assertThat(p.getPerson(), Matchers.equalTo(person));
+        assertThat(p.getId(), Matchers.equalTo(purchase.getId()));
 
         verify(deliveryService, times(1)).reviewRider(review);
         verify(purchaseRepository, times(1)).findByServiceOrderId(review.getOrderId());

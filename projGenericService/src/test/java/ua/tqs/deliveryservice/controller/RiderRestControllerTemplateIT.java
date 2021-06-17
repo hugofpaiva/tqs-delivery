@@ -76,17 +76,24 @@ class RiderRestControllerTemplateIT {
     @BeforeEach
     public void beforeEachSetUp() {
         this.rider = new Rider("Joao", bcryptEncoder.encode("aRightPassword"), "TQS_delivery@example.com");
-        this.address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address);
-        this.purchase = new Purchase(this.address, this.rider, this.store, "Joana");
-
         personRepository.saveAndFlush(this.rider);
+
+        this.address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        addressRepository.saveAndFlush(this.address);
+
+        Address purchAddres = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        addressRepository.saveAndFlush(purchAddres);
+
+        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address);
+        this.purchase = new Purchase(purchAddres, this.rider, this.store, "Joana");
+
+
 
         JwtRequest request = new JwtRequest(this.rider.getEmail(), "aRightPassword");
         ResponseEntity<Map> response = testRestTemplate.postForEntity("http://localhost:" + randomServerPort + "/login", request, Map.class);
         this.token = response.getBody().get("token").toString();
 
-        addressRepository.saveAndFlush(this.address);
+      
         storeRepository.saveAndFlush(this.store);
         purchaseRepository.saveAndFlush(this.purchase);
     }
