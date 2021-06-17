@@ -1,7 +1,6 @@
 package ua.tqs.humberpecas.controller;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

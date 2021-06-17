@@ -36,5 +36,4 @@ public class HumberProductsController {
 
         return ResponseEntity.ok().body(service.getProductsFiltered(pageNo, pageSize, name, maxPrice.doubleValue(), minPrice.doubleValue(), orderBy, category));
     }
-
 }
