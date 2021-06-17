@@ -14,7 +14,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -68,23 +68,17 @@ class PurchaseRestControllerTemplateIT {
 
     @AfterEach
     public void destroyAll() {
-        purchaseRepository.deleteById(this.purchase.getId());
+        purchaseRepository.deleteAll();
         purchaseRepository.flush();
 
-        storeRepository.deleteById(this.store.getId());
+        storeRepository.deleteAll();
         storeRepository.flush();
 
-        addressRepository.deleteById(this.address.getId());
+        addressRepository.deleteAll();
         addressRepository.flush();
 
-        personRepository.deleteById(this.rider.getId());
+        personRepository.deleteAll();
         personRepository.flush();
-
-
-        this.rider = new Rider();
-        this.address = new Address();
-        this.store = new Store();
-        this.purchase = new Purchase();
     }
 
     @BeforeEach
@@ -198,4 +192,90 @@ class PurchaseRestControllerTemplateIT {
     }
 
     public String getBaseUrl() { return "http://localhost:" + randomServerPort + "/store"; }
+
+
+    /* ----------------------------- *
+     * CLIENT MAKES NEW ORDER TESTS  *
+     * ----------------------------- *
+     */
+
+
+    @Test
+    public void givenStoreHasNoAuthorization_whenPostNewOrder_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+    }
+
+    @Test
+    public void givenStore_whenPostNewOrderWithMissingField_then400() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
+
+        Address addr = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("personName", "mmm");
+        input.put("address", addr.getMap());
+
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<>(input, headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void givenStore_whenPostNewOrderWithBadField_then400() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
+
+        Address addr = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("personName", "mmm");
+        input.put("date", "invalid-date");
+        input.put("address", addr.getMap());
+
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<>(input, headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void givenStore_whenPostNewOrderGood_then200() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
+
+        Address addr = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("personName", "mmm");
+        input.put("date", 333334233L);
+        input.put("address", addr.getMap());
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<>(input, headers),
+                Map.class);
+
+        Map<String, Object> found = response.getBody();
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(found, notNullValue());
+        assertThat(found.containsKey("orderId"), is(true));
+    }
+
 }
+
+
+
+
+
+

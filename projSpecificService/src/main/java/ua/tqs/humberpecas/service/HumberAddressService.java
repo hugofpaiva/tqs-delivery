@@ -1,6 +1,5 @@
 package ua.tqs.humberpecas.service;
 
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,11 +29,10 @@ public class HumberAddressService {
     public Address addNewAddress(String token, AddressDTO addressDTO) throws InvalidLoginException {
         Person p = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(token))
                 .orElseThrow(() -> {
-                    log.error("Invalid User");
-                    return new InvalidLoginException("Invalid User"); });
+                            log.error("Invalid User");
+                            return new InvalidLoginException("Invalid User"); });
 
-        var newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry());
-        newAddress.setPerson(p);
+        var newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry(), p);
 
         return addressRepository.save(newAddress);
     }

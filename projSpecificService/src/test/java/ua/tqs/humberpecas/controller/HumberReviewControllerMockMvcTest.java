@@ -86,7 +86,7 @@ public class HumberReviewControllerMockMvcTest {
                 .then()
                 .statusCode(200);
 
-        verify(service, times(1)).addReview(review, userToken);
+        verify(service, times(1)).addReview(review, "Bearer " + userToken);
 
     }
 
@@ -104,7 +104,7 @@ public class HumberReviewControllerMockMvcTest {
                 .then()
                 .statusCode(400);
 
-        verify(service, times(0)).addReview(r, userToken);
+        verify(service, times(0)).addReview(r, "Bearer " + userToken);
     }
 
     // TODO: alterar para rating de uma order invalida
@@ -113,7 +113,7 @@ public class HumberReviewControllerMockMvcTest {
     void whenInvalidReviewOrder_thenReturnStatus404() throws ResourceNotFoundException, AccessNotAllowedException {
         Review review  = new Review(-1, 5);
 
-        doThrow(ResourceNotFoundException.class).when(service).addReview(review, userToken);
+        doThrow(ResourceNotFoundException.class).when(service).addReview(review, "Bearer " + userToken);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -124,7 +124,7 @@ public class HumberReviewControllerMockMvcTest {
                 .then()
                 .statusCode(404);
 
-        verify(service, times(1)).addReview(review, userToken);
+        verify(service, times(1)).addReview(review, "Bearer " + userToken);
 
     }
 
@@ -134,7 +134,7 @@ public class HumberReviewControllerMockMvcTest {
 
         Review review  = new Review(3, 5);
 
-        doThrow(AccessNotAllowedException.class).when(service).addReview(review, userToken);
+        doThrow(AccessNotAllowedException.class).when(service).addReview(review, "Bearer " + userToken);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -145,7 +145,7 @@ public class HumberReviewControllerMockMvcTest {
                 .then()
                 .statusCode(403);
 
-        verify(service, times(1)).addReview(review, userToken);
+        verify(service, times(1)).addReview(review, "Bearer " + userToken);
 
     }
 
@@ -155,7 +155,7 @@ public class HumberReviewControllerMockMvcTest {
 
         Review review  = new Review(-1, 5);
 
-        doThrow(UnreachableServiceException.class).when(service).addReview(review, userToken);
+        doThrow(UnreachableServiceException.class).when(service).addReview(review, "Bearer " + userToken);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -166,9 +166,8 @@ public class HumberReviewControllerMockMvcTest {
                 .then()
                 .statusCode(500);
 
-        verify(service, times(1)).addReview(review, userToken);
+        verify(service, times(1)).addReview(review, "Bearer " + userToken);
 
     }
-
 
 }

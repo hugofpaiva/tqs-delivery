@@ -5,43 +5,100 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import ua.tqs.humberpecas.delivery.IDeliveryService;
+import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
 import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Person;
 import ua.tqs.humberpecas.model.Purchase;
 import ua.tqs.humberpecas.repository.PersonRepository;
+import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
+import ua.tqs.humberpecas.exception.AccessNotAllowedException;
+import ua.tqs.humberpecas.model.*;
+import ua.tqs.humberpecas.repository.AddressRepository;
+import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 public class HumberPurchaseService {
 
     @Autowired
-    JwtUserDetailsService jwtUserDetailsService;
+    private IDeliveryService deliveryService;
 
     @Autowired
-    PersonRepository personRepository;
+    private PurchaseRepository purchaseRepository;
 
     @Autowired
-    PurchaseRepository purchaseRepository;
+    private PersonRepository personRepository;
 
-    public void newPurchase(PurchaseDTO purchase){
+    @Autowired
+    private AddressRepository addressRepository;
 
-        // validar dados
-        // fazer mapeamentto
+    @Autowired
+    private ProductRepository productRepository;
 
-        // enviar os dados para o delivery service
-        // receber o id de encomenda
-        // guardar na bd
-        //
+    @Autowired
+    private JwtUserDetailsService jwtUserDetailsService;
 
+    public Purchase newPurchase(PurchaseDTO purchaseDTO, String userToken){
+
+        var person = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(userToken))
+                .orElseThrow(()-> {
+                    log.error("HumberPurchaseService: invalid user token" );
+                    throw new InvalidLoginException("Invalid user token");
+                });
+
+        var address = addressRepository.findById(purchaseDTO.getAddressId())
+                .orElseThrow(()-> {
+                    log.error("HumberPurchaseService: invalid user addrees" );
+                    throw new ResourceNotFoundException("Invalid Address");
+                });
+
+        if (!address.getPerson().getEmail().equals(person.getEmail())){
+
+            log.error("HumberPurchaseService: Address don't belong to user " );
+            throw new AccessNotAllowedException("Invalid Address");
+        }
+
+
+        List<Product> productList = productRepository.findAllById(purchaseDTO.getProductsId());
+
+        if (productList.size() < purchaseDTO.getProductsId().size()){
+
+            List<Long> differences = productList.stream().map(Product::getId).collect(Collectors.toList());
+            purchaseDTO.getProductsId().forEach(differences::remove);
+
+            log.error("HumberPurchaseService: Invalid Product Id " + differences);
+            throw new ResourceNotFoundException("Invalid Product");
+
+        }
+
+        var purchaseDeliveryDTO = new PurchaseDeliveryDTO(
+                person.getName(),
+                purchaseDTO.getDate(),
+                new AddressDTO(address.getAddress(), address.getPostalCode(), address.getCity(), address.getCountry())
+        );
+
+
+        var purchase = new Purchase(person, address, productList);
+
+
+
+        purchase.setServiceOrderId(deliveryService.newOrder(purchaseDeliveryDTO));
+
+        return purchaseRepository.save(purchase);
     }
+
 
     public Map<String, Object> getUserPurchases(Integer pageNo, Integer pageSize, String userToken) throws InvalidLoginException {
         String email = jwtUserDetailsService.getEmailFromToken(userToken);

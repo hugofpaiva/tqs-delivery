@@ -1,4 +1,4 @@
-package ua.tqs.humberpecas.repository;
+package ua.tqs.deliveryservice.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,23 +10,23 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ua.tqs.humberpecas.model.*;
+import ua.tqs.deliveryservice.model.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ProductRepositoryTests {
+public class AddressRepositoryTests {
+
     @Container
     public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
             .withPassword("demopw")
-            .withDatabaseName("shop");
-
+            .withDatabaseName("delivery");
 
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
@@ -35,35 +35,60 @@ public class ProductRepositoryTests {
         registry.add("spring.datasource.username", container::getUsername);
     }
 
-
     @Autowired
-    private ProductRepository productRepository;
+    private AddressRepository addressRepository;
 
     @Autowired
     private TestEntityManager entityManager;
 
     @Test
-    public void testWhenCreateProductAndFindById_thenReturnSameProduct() {
-        Product p = createAndSaveProduct(1);
+    public void testWhenCreateAddressAndFindById_thenReturnSameAddress() {
+        Address a = createAndSaveAddress(1);
 
-        Optional<Product> res = productRepository.findById(p.getId());
+        Optional<Address> res = addressRepository.findById(a.getId());
         assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(p);
+        assertThat(res.get()).isEqualTo(a);
     }
 
     @Test
     public void testWhenFindByInvalidId_thenReturnNull() {
-        Optional<Product> res = productRepository.findById(-1L);
+        Optional<Address> res = addressRepository.findById(-1L);
         assertThat(res.isPresent()).isFalse();
+    }
+
+    /* ------------------------------------------------- *
+     * FIND BY ALL TESTS                                  *
+     * ------------------------------------------------- *
+     */
+
+    @Test
+    public void testGivenAddressesAndFindByAll_thenReturnSameAddresses() {
+        Address a1 = createAndSaveAddress(1);
+        Address a2 = createAndSaveAddress(2);
+
+        List<Address> all = addressRepository.findAll();
+
+        assertThat(all).isNotNull();
+        assertThat(all)
+                .hasSize(2)
+                .extracting(Address::getId)
+                .contains(a1.getId(), a2.getId());
+    }
+
+    @Test
+    public void testGivenNoAddresses_whenFindAll_thenReturnEmpty() {
+        List<Address> all = addressRepository.findAll();
+        assertThat(all).isNotNull();
+        assertThat(all).hasSize(0);
     }
 
 
     /* -- helper -- */
-    private Product createAndSaveProduct(int i) {
-        Product p = new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", "image_url");
-
-        entityManager.persistAndFlush(p);
-        return p;
+    private Address createAndSaveAddress(int i) {
+        Address a = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal");
+        entityManager.persistAndFlush(a);
+        return a;
     }
+
 
 }

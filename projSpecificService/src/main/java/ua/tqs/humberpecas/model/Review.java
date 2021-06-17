@@ -1,7 +1,5 @@
 package ua.tqs.humberpecas.model;
 
-
-
 import lombok.Data;
 
 import javax.validation.constraints.Max;

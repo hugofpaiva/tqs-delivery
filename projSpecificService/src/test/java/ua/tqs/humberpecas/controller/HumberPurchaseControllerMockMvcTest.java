@@ -1,11 +1,7 @@
 package ua.tqs.humberpecas.controller;
 
-
-import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +14,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.humberpecas.configuration.JwtRequestFilter;
 import ua.tqs.humberpecas.configuration.WebSecurityConfig;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
+import ua.tqs.humberpecas.exception.AccessNotAllowedException;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
-import ua.tqs.humberpecas.model.PurchaseStatus;
+import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.service.HumberPurchaseService;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 
@@ -41,18 +37,20 @@ class HumberPurchaseControllerMockMvcTest {
     @MockBean
     private HumberPurchaseService service;
 
-
     @MockBean
     private JwtRequestFilter jwtRequestFilter;
 
-
     private String userToken;
+    private PurchaseDTO purchaseDTO;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() {
         RestAssuredMockMvc.mockMvc(mvc);
+        userToken = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
+        List<Long> productsId = Arrays.asList(Long.valueOf(6), Long.valueOf(7));
 
-        userToken = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
+        purchaseDTO = new PurchaseDTO(new Date(), Long.valueOf(5) , productsId);
+
     }
 
     /*
@@ -61,11 +59,11 @@ class HumberPurchaseControllerMockMvcTest {
     void whenGetInvalidUserPurchages_thenReturnStatus404() throws ResourceNotFoundException {
 
 
-        when(service.getUserPurchases(userToken)).thenThrow(new ResourceNotFoundException("Invalid User!"));
+        when(service.getUserPurchases(this.userToken)).thenThrow(new ResourceNotFoundException("Invalid User!"));
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization",  userToken)
                 .when()
                 .get("/purchase/getAll?userId=1")
                 .then()
@@ -76,27 +74,75 @@ class HumberPurchaseControllerMockMvcTest {
     }
     */
 
+    @Test
+    @DisplayName("Make Purchase with invalid user throws HTTP status Bad Request ")
+    void whenPuchageInvalidUser_thenThrowsStatus401(){
+        when(service.newPurchase(purchaseDTO, userToken)).thenThrow(InvalidLoginException.class);
+
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .header("authorization", userToken)
+                .body(purchaseDTO)
+                .when()
+                .post("/purchase/new")
+                .then()
+                .statusCode(401);
+
+        verify(service, times(1)).newPurchase(purchaseDTO, userToken);
+
+    }
+
+
+    @Test
+    @DisplayName("Make Purchase without user token throws HTTP status Bad Request")
+    void whenPurchaseWithOutToken_thenThrowsStatus400() throws AccessNotAllowedException {
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .body(purchaseDTO)
+                .when()
+                .post("/purchase/new")
+                .then()
+                .statusCode(400);
+
+        verify(service, times(0)).newPurchase(purchaseDTO, userToken);
+    }
 
     @Test
     @DisplayName("Make Purchage")
     void whenValidPurchage_thenReturnOk(){
 
-
-        List<Long> productsId = Arrays.asList( Long.valueOf(6), Long.valueOf(7));
-
-        PurchaseDTO p = new PurchaseDTO(Long.valueOf(1), new Date(), Long.valueOf(5) , productsId);
-
-
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .body(p)
+                .header("authorization", userToken)
+                .body(purchaseDTO)
                 .when()
                 .post("/purchase/new")
                 .then()
                 .statusCode(200);
 
-        verify(service, times(1)).newPurchase(p);
+        verify(service, times(1)).newPurchase(purchaseDTO, userToken);
 
+
+    }
+
+    @Test
+    @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound")
+    void whenPurchaseWithInvalidData_thenthenThrowsStatus404(){
+
+        when(service.newPurchase(purchaseDTO, userToken)).thenThrow(ResourceNotFoundException.class);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .header("authorization", userToken)
+                .body(purchaseDTO)
+                .when()
+                .post("/purchase/new")
+                .then()
+                .statusCode(404);
+
+        verify(service, times(1)).newPurchase(purchaseDTO, userToken);
 
     }
 
@@ -120,34 +166,43 @@ class HumberPurchaseControllerMockMvcTest {
     */
 
 
+    @Test
+    @DisplayName("Error in communication with Delivery service throws UnreachableServiceExcption")
+    void whenErrorInCommunication_thenThrowsStatusUnreachableService() throws AccessNotAllowedException {
+        when(service.newPurchase(purchaseDTO, userToken)).thenThrow(UnreachableServiceException.class);
 
 
-//    @Test
-//    @DisplayName("User purchages list")
-//    void whenGetUserPurchages_thenReturnPurchages() throws ResourceNotFoundException {
-//
-//        Person p = new Person("Fernando", "12345678","fernando@ua.pt");
-//        List<Purchase> purchaseList = Arrays.asList(new Purchase(p, new Address(), ))
-//
-//        when(service.getUserPurchases(anyLong())).thenReturn();
-//
-//        RestAssuredMockMvc.given()
-//                .contentType("application/json")
-//                .when()
-//                .get("/shop/purchageList?userId=1")
-//                .then()
-//                .statusCode(200)
-//                .body("$.size()", Matchers.is(2))
-//                .body("[0].products.size()", Matchers.is(2))
-//                .body("[1].products.size()", Matchers.is(1))
-//                .body("[0].person.email", Matchers.equalTo(p.getEmail()))
-//                .body("[1].person.email", Matchers.equalTo(p.getEmail()));
-//
-//        verify(service, times(1)).getUserPurchases(1);
-//
-//    }
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .header("authorization",  userToken)
+                .body(purchaseDTO)
+                .when()
+                .post("/purchase/new")
+                .then()
+                .statusCode(500);
 
+        verify(service, times(1)).newPurchase(purchaseDTO, userToken);
 
+    }
 
+    /*
 
+    @Test
+    @DisplayName("Get Order Status")
+    void whenGetOrderStatus_thenReturnStatus() throws ResourceNotFoundException {
+
+        when(service.checkPurchaseStatus(anyLong())).thenReturn(PurchaseStatus.PENDENT);
+
+        RestAssuredMockMvc
+                .given()
+                .contentType(ContentType.TEXT)
+                .when()
+                .get("/purchase/status?orderId=0")
+                .then()
+                .statusCode(200)
+                .body(Matchers.equalTo(PurchaseStatus.PENDENT.getStatus()) );
+
+        verify(service, times(1)).checkPurchaseStatus(0);
+    }
+*/
 }

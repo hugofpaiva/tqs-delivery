@@ -1,8 +1,11 @@
 package ua.tqs.deliveryservice.services;
 
+import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.internal.verification.VerificationModeFactory;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
@@ -19,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
 import ua.tqs.deliveryservice.model.*;
+import ua.tqs.deliveryservice.repository.AddressRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
@@ -55,6 +59,9 @@ public class PurchaseServiceTest {
 
     @Mock
     private StoreRepository storeRepository;
+
+    @Mock
+    private AddressRepository addressRepository;
 
 
     /* ----------------------------- *
@@ -107,7 +114,7 @@ public class PurchaseServiceTest {
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
         Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
-        Purchase p1 = new Purchase(addr, r1, store, "Miguel");
+        Purchase p1 = new Purchase(addr, r1, store, "Miguel"); p1.setDate(new Date());
 
         Mockito
                 .when(jwtUserDetailsService.getEmailFromToken("tokenExample"))
@@ -129,6 +136,35 @@ public class PurchaseServiceTest {
         Mockito.verify(purchaseRepository, times(1)).findTopByRiderAndStatusIsNot(any(), any());
     }
 
+    @Test
+    public void testUpdateCurrentPurchaseOfRiderValid_whenStatusWasPICKED_UP_thenVerifyDeliveryTime() throws InvalidLoginException, ResourceNotFoundException {
+        // set up ...
+        Rider r1 = new Rider("example", "pwd", "email@email.com");
+        Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Purchase p1 = new Purchase(addr, r1, store, "Miguel"); p1.setDate(new Date()); p1.setStatus(Status.PICKED_UP);
+
+        Mockito
+                .when(jwtUserDetailsService.getEmailFromToken("tokenExample"))
+                .thenReturn(rider.getEmail());
+        Mockito
+                .when(riderRepository.findByEmail(any()))
+                .thenReturn(Optional.of(rider));
+        Mockito
+                .when(purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED))
+                .thenReturn(Optional.of(p1));
+
+        // test ...
+        Purchase current = purchaseService.updatePurchaseStatus("tokenExample");
+        assertThat(current).isEqualTo(p1);
+        assertThat(current.getStatus()).isEqualTo(Status.DELIVERED);
+        assertThat(current.getRider()).isEqualTo(r1);
+        assertThat(current.getDeliveryTime()).isCloseTo(15L, Percentage.withPercentage(200));
+        Mockito.verify(jwtUserDetailsService, times(1)).getEmailFromToken(any());
+        Mockito.verify(riderRepository, times(1)).findByEmail(any());
+        Mockito.verify(purchaseRepository, times(1)).findTopByRiderAndStatusIsNot(any(), any());
+    }
 
     /* ----------------------------- *
      * GET CURRENT PURCHASE TESTS    *
@@ -525,4 +561,130 @@ public class PurchaseServiceTest {
         assertThat(found.get("totalPages")).isEqualTo(1);
     }
 
+
+    /* ----------------------------- *
+     * CLIENT MAKES NEW ORDER TESTS  *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testPostNewOrder_whenInvalidStoreToken_thenThrow() {
+        Mockito.when(jwtUserDetailsService.getStoreFromToken("invalid-token")).thenReturn(null);
+
+        assertThrows(InvalidLoginException.class, () -> {
+            purchaseService.receiveNewOrder("invalid-token", any());
+        }, "There is no Store associated with this token");
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getStoreFromToken("invalid-token");
+    }
+
+    @Test
+    public void testPostNewOrder_whenOneFieldIsMissing_thenThrow() throws InvalidValueException, InvalidLoginException {
+        Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+
+        Mockito.when(jwtUserDetailsService.getStoreFromToken("token")).thenReturn(store);
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("personName", "mmm");
+        input.put("date", 33333);
+
+        assertThrows(InvalidValueException.class, () -> {
+            purchaseService.receiveNewOrder("token", input);
+        }, "invalid data");
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getStoreFromToken("token");
+
+    }
+
+    @Test
+    public void testPostNewOrder_whenOneFieldIsBad_thenThrow() throws InvalidValueException, InvalidLoginException {
+        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+
+        Mockito.when(jwtUserDetailsService.getStoreFromToken("token")).thenReturn(store);
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("personName", "mmm");
+        input.put("date", 33333L);
+        input.put("address", null);
+
+        assertThrows(InvalidValueException.class, () -> {
+            purchaseService.receiveNewOrder("token", input);
+        }, "invalid data");
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getStoreFromToken("token");
+    }
+
+    @Test
+    public void testPostNewOrder_whenEverythingGood_thenReturnPurchase() throws InvalidValueException, InvalidLoginException {
+        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+
+        Mockito.when(jwtUserDetailsService.getStoreFromToken("token")).thenReturn(store);
+        Mockito.when(addressRepository.save(address)).thenReturn(address);
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("personName", "mmm");
+        input.put("date", 333333L);
+
+        input.put("address", address.getMap());
+
+        Purchase purchase = purchaseService.receiveNewOrder("token", input);
+
+        assertThat(purchase.getAddress().getAddress()).isEqualTo(address.getAddress());
+        assertThat(purchase.getClientName()).isEqualTo("mmm");
+        assertThat(purchase.getDate()).isEqualTo(new Date(333333L));
+
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getStoreFromToken("token");
+        Mockito.verify(addressRepository, times(1))
+                .save(address);
+    }
+
+
+  
+      /* ----------------------------- *
+       * GET AVG DELIVERY TIME TESTS   *
+       * ----------------------------- *   
+       */
+
+    @Test
+    public void testWhenGetAvgDeliveryButNoPurchasesHaveBeenDelivered_thenReturn() {
+        List<Long[]> data = new LinkedList<>();
+        data.add(new Long[]{null, 0L});
+
+        Mockito.when(purchaseRepository.getAverageReview()).thenReturn(data);
+        Map<String, Object> found = purchaseService.getAvgDeliveryTime();
+
+        Mockito.verify(purchaseRepository, times(1)).getAverageReview();
+        assertThat(found.size()).isEqualTo(1);
+        assertThat(found.get("average")).isEqualTo(null);
+    }
+
+    @Test
+    public void testWhenGetAvgDelivery_thenReturn() {
+        Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+
+        Purchase p1 = new Purchase(addr, this.rider, store, "Miguel");
+        Purchase p2 = new Purchase(addr, this.rider, store, "Mariana");
+        Purchase p3 = new Purchase(addr, this.rider, store, "Carolina");
+
+        p1.setStatus(Status.DELIVERED); p2.setStatus(Status.DELIVERED); p3.setStatus(Status.DELIVERED);
+        p1.setDeliveryTime(264L); p2.setDeliveryTime(199L); p3.setDeliveryTime(230L);
+        Long expected = (p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime()) / 3;
+
+        List<Long[]> data = new LinkedList<>();
+        data.add(new Long[]{p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime(), 3L});
+
+        Mockito.when(purchaseRepository.getAverageReview()).thenReturn(data);
+        Map<String, Object> found = purchaseService.getAvgDeliveryTime();
+
+        Mockito.verify(purchaseRepository, times(1)).getAverageReview();
+        assertThat(found.size()).isEqualTo(1);
+        assertThat(found.get("average")).isEqualTo(expected);
+    }
 }

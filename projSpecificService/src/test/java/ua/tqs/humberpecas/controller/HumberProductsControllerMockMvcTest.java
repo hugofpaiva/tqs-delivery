@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
 

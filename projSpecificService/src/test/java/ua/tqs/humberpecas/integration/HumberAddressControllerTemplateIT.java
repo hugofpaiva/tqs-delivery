@@ -1,7 +1,5 @@
 package ua.tqs.humberpecas.integration;
 
-import org.assertj.core.api.Assertions;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,10 +25,8 @@ import ua.tqs.humberpecas.repository.AddressRepository;
 import ua.tqs.humberpecas.repository.PersonRepository;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -210,7 +206,6 @@ public class HumberAddressControllerTemplateIT {
                 }
         );
 
-        System.out.println(addresses);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         assertThat(addresses.get(0).getPostalCode() , equalTo(address.getPostalCode()));
         assertThat(addresses.get(0).getAddress() , equalTo(address.getAddress()));

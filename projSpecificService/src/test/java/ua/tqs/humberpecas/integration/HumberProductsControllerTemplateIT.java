@@ -74,13 +74,16 @@ class HumberProductsControllerTemplateIT {
     @BeforeEach
     public void setUp() {
         this.person = new Person("Maria Joana", bcryptEncoder.encode("aRightPassword"), "maria2000@gmail.com");
-        this.personAddr = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        personRepository.saveAndFlush(this.person);
+
+        this.personAddr = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal", person);
+        addressRepository.saveAndFlush(this.personAddr);
+
         this.person.setAddresses(Set.of(this.personAddr));
 
         this.prod1 = new Product("Prego Grande", 0.35, Category.NAILS, "10/10 recomendo", "randomFakeImageNail.png");
         this.prod2 = new Product("Alicate para Dentes", 4.21, Category.PLIERS, "Funciona", "nonExistent.jpeg");
 
-        addressRepository.saveAndFlush(this.personAddr);
         personRepository.saveAndFlush(this.person);
         productRepository.saveAllAndFlush(Arrays.asList(this.prod1, this.prod2));
 
@@ -179,7 +182,8 @@ class HumberProductsControllerTemplateIT {
         Map<String, Object> found = response.getBody();
 
         List<Product> products = mapper.convertValue(
-            found.get("products"), new TypeReference<List<Product>>() { }
+                found.get("products"), new TypeReference<List<Product>>() {
+                }
         );
 
         Assertions.assertThat(products).contains(prod1);
@@ -207,7 +211,8 @@ class HumberProductsControllerTemplateIT {
         Map<String, Object> found = response.getBody();
 
         List<Product> products = mapper.convertValue(
-                found.get("products"), new TypeReference<List<Product>>() { }
+                found.get("products"), new TypeReference<List<Product>>() {
+                }
         );
 
         Assertions.assertThat(products).contains(prod2);
@@ -234,7 +239,8 @@ class HumberProductsControllerTemplateIT {
         Map<String, Object> found = response.getBody();
 
         List<Product> products = mapper.convertValue(
-                found.get("products"), new TypeReference<List<Product>>() { }
+                found.get("products"), new TypeReference<List<Product>>() {
+                }
         );
 
         Assertions.assertThat(products).contains(prod2);
@@ -250,14 +256,15 @@ class HumberProductsControllerTemplateIT {
 
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "getAll" , HttpMethod.GET, new HttpEntity<Object>(headers), Map.class);
+                getBaseUrl() + "getAll", HttpMethod.GET, new HttpEntity<Object>(headers), Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
 
         Map<String, Object> found = response.getBody();
 
         List<Product> products = mapper.convertValue(
-                found.get("products"), new TypeReference<List<Product>>() { }
+                found.get("products"), new TypeReference<List<Product>>() {
+                }
         );
 
         Assertions.assertThat(products).contains(prod1);
@@ -274,14 +281,15 @@ class HumberProductsControllerTemplateIT {
 
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "getAll?orderBy=price"  , HttpMethod.GET, new HttpEntity<Object>(headers), Map.class);
+                getBaseUrl() + "getAll?orderBy=price", HttpMethod.GET, new HttpEntity<Object>(headers), Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
 
         Map<String, Object> found = response.getBody();
 
         List<Product> products = mapper.convertValue(
-                found.get("products"), new TypeReference<List<Product>>() { }
+                found.get("products"), new TypeReference<List<Product>>() {
+                }
         );
 
         Assertions.assertThat(products).element(0).isEqualTo(prod1);

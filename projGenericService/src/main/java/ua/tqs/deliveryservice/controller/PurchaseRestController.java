@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
+import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.services.PurchaseService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.TreeMap;
 
 @RestController
 @RequestMapping("/store")
@@ -28,5 +31,14 @@ public class PurchaseRestController {
         purchaseService.reviewRiderFromSpecificOrder(token, order_id, review.intValue());
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/order")
+    public ResponseEntity<Object> receivePurchase(HttpServletRequest request, @RequestBody Map<String,  Object> data) throws InvalidValueException, InvalidLoginException {
+        String token = request.getHeader("Authorization");
+        Purchase newPurchase = purchaseService.receiveNewOrder(token, data);
+        Map<String, Object> resp = new TreeMap<>();
+        resp.put("orderId", newPurchase.getId());
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 }

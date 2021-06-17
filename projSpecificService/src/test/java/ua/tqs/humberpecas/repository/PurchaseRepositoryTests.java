@@ -63,9 +63,15 @@ public class PurchaseRepositoryTests {
     /* -- helper -- */
     private Purchase createAndSavePurchase(int i) {
         Person p = new Person("personName"+i, "pwdpwdpwd"+i, "email"+i+"@email.com");
-        Address address = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal");
+
+        entityManager.persist(p);
+
+        Address address = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal", p);
+
+        entityManager.persist(address);
 
         List<Product> products = new ArrayList<>();
+
         products.add(new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", "image_url"));
         products.add(new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", "image_url"));
 
@@ -74,8 +80,7 @@ public class PurchaseRepositoryTests {
         for (Product prod : products) {
             entityManager.persist(prod);
         }
-        entityManager.persist(p);
-        entityManager.persist(address);
+
         entityManager.persistAndFlush(purch);
         return purch;
     }

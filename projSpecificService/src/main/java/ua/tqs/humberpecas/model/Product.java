@@ -2,9 +2,12 @@ package ua.tqs.humberpecas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -26,7 +29,9 @@ public class Product {
 
     private String image_url;
 
+    @EqualsAndHashCode.Exclude
     @JsonIgnore
+    @ToString.Exclude
     @ManyToMany(mappedBy = "products")
     private Set<Purchase> purchase;
 
@@ -36,7 +41,7 @@ public class Product {
         this.category = category;
         this.description = description;
         this.image_url = image_url;
+        this.purchase = new HashSet<>();
     }
-
 
 }

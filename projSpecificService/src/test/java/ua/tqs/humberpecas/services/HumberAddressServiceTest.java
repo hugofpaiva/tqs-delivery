@@ -1,6 +1,5 @@
 package ua.tqs.humberpecas.services;
 
-import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +15,6 @@ import ua.tqs.humberpecas.model.Person;
 import ua.tqs.humberpecas.repository.AddressRepository;
 import ua.tqs.humberpecas.repository.PersonRepository;
 
-
-import java.io.IOException;
 import java.util.*;
 
 import ua.tqs.humberpecas.service.HumberAddressService;
@@ -49,7 +46,7 @@ class HumberAddressServiceTest {
     private Person person;
 
     @BeforeEach
-    void setUp() throws IOException {
+    void setUp() {
         person = new Person("Fernando", "12345678","fernando@ua.pt");
         address = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
         addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal");
