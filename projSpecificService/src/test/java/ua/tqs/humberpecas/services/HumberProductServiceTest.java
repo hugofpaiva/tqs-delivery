@@ -42,8 +42,8 @@ class HumberProductServiceTest {
     public void setUp() {
 
         catalog = Arrays.asList(
-                new Product(0.50, "Parafuso", "xpto", 1000, false, Category.SCREWS ),
-                new Product(5.00, "Chave inglesa", "xpto", 500, false, Category.SCREWDRIVER)
+                new Product(0.50, "Parafuso", "xpto", Category.SCREWS),
+                new Product(5.00, "Chave inglesa", "xpto" , Category.SCREWDRIVER)
         );
     }
 

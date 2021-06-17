@@ -95,8 +95,8 @@ public class HumberReviewControllerIT {
         Address address = addressRepository.saveAndFlush(new Address("Aveiro", "3730-123","Aveiro","Portugal", person));
 
         this.productList = productRepository.saveAllAndFlush(Arrays.asList(
-                new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", 3),
-                new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", 4)));
+                new Product(10.50, "hammer","the best hammer", Category.SCREWDRIVER ),
+                new Product(20.50, "hammer v2", "the best hammer 2.0", Category.SCREWDRIVER )));
 
         this.purchase = purchaseRepository.saveAndFlush(new Purchase(person, address, productList));
 

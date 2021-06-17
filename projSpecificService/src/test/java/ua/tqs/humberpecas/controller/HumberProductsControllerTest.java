@@ -46,9 +46,8 @@ class HumberProductsControllerTest {
         RestAssuredMockMvc.mockMvc(mvc);
 
         catalog = Arrays.asList(
-                new Product(0.50, "Parafuso", "xpto", 1000, false, Category.SCREWS ),
-                new Product(5.00, "Chave inglesa", "xpto", 500, false, Category.SCREWDRIVER)
-        );
+                new Product(10.50, "Parafuso","the best hammer", Category.SCREWDRIVER ),
+                new Product(20.50, "Chave inglesa", "the best hammer 2.0", Category.SCREWDRIVER ));
 
     }
 

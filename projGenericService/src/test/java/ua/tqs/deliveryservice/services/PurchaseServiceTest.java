@@ -650,9 +650,10 @@ public class PurchaseServiceTest {
        * ----------------------------- *   
        */
 
+    @Test
     public void testWhenGetAvgDeliveryButNoPurchasesHaveBeenDelivered_thenReturn() {
-        List<Object[]> data = new LinkedList<>();
-        data.add(new Object[]{null, 0L});
+        List<Long[]> data = new LinkedList<>();
+        data.add(new Long[]{null, 0L});
 
         Mockito.when(purchaseRepository.getAverageReview()).thenReturn(data);
         Map<String, Object> found = purchaseService.getAvgDeliveryTime();
@@ -676,8 +677,8 @@ public class PurchaseServiceTest {
         p1.setDeliveryTime(264L); p2.setDeliveryTime(199L); p3.setDeliveryTime(230L);
         Long expected = (p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime()) / 3;
 
-        List<Object[]> data = new LinkedList<>();
-        data.add(new Object[]{p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime(), 3L});
+        List<Long[]> data = new LinkedList<>();
+        data.add(new Long[]{p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime(), 3L});
 
         Mockito.when(purchaseRepository.getAverageReview()).thenReturn(data);
         Map<String, Object> found = purchaseService.getAvgDeliveryTime();

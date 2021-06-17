@@ -1,14 +1,12 @@
 package ua.tqs.humberpecas.services;
 
-
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.exception.AccessNotAllowedException;
@@ -23,12 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class HumberReviewServiceTest {
+class HumberReviewServiceTest {
 
     @Mock
     private IDeliveryService deliveryService;
@@ -55,9 +54,8 @@ public class HumberReviewServiceTest {
         Address address  = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
 
         List<Product> products = new ArrayList<>();
-        products.add(new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", 3));
-        products.add(new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", 4));
-
+        products.add(new Product(10.50, "hammer","the best hammer", Category.SCREWDRIVER ));
+        products.add(new Product(20.50, "hammer v2", "the best hammer 2.0", Category.SCREWDRIVER ));
         purchase = new Purchase(person, address, products);
         purchase.setId(1);
 
@@ -74,13 +72,18 @@ public class HumberReviewServiceTest {
 
         when(purchaseRepository.findByServiceOrderId(anyLong())).thenReturn(Optional.of(purchase));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
+        when(purchaseRepository.saveAndFlush(any())).thenReturn(purchase);
 
-        service.addReview(review, userToken);
+        Purchase p = service.addReview(review, userToken);
+
+        assertThat(p.getReview(), Matchers.equalTo(4));
+        assertThat(p.getPerson(), Matchers.equalTo(person));
+        assertThat(p.getId(), Matchers.equalTo(purchase.getId()));
 
         verify(deliveryService, times(1)).reviewRider(review);
         verify(purchaseRepository, times(1)).findByServiceOrderId(review.getOrderId());
         verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
-
+        verify(purchaseRepository, times(1)).saveAndFlush(purchase);
     }
 
 

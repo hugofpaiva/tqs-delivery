@@ -55,7 +55,7 @@ class JwtUserDetailsServiceTest {
 
     @Test
     public void testGivenNoStore_whenGetUserByStore_thenThrow() {
-        assertThrows(UsernameNotFoundException.class, () -> {
+        assertThrows(BadCredentialsException.class, () -> {
             jwtUserDetailsService.loadUserByStore(null);
         }, "Store cannot be null to create User");
     }

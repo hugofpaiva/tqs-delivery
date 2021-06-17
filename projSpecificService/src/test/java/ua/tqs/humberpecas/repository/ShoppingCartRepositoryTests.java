@@ -66,8 +66,8 @@ public class ShoppingCartRepositoryTests {
     /* -- helper -- */
     private ShoppingCart createAndSaveShoppingCart(int i) {
         List<Product> products = new ArrayList<>();
-        products.add(new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", 3));
-        products.add(new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", 4));
+        products.add(new Product(10.50, "hammer","the best hammer", Category.SCREWDRIVER ));
+        products.add(new Product(20.50, "hammer v2", "the best hammer 2.0", Category.SCREWDRIVER ));
 
         ShoppingCart sc = new ShoppingCart(products);
 

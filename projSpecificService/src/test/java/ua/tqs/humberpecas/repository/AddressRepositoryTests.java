@@ -1,5 +1,6 @@
 package ua.tqs.humberpecas.repository;
 
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -11,6 +12,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.humberpecas.model.Address;
+import ua.tqs.humberpecas.model.Person;
 
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +43,9 @@ public class AddressRepositoryTests {
     @Autowired
     private TestEntityManager entityManager;
 
+    @Autowired
+    private PersonRepository personRepository;
+
     @Test
     public void testWhenCreateAddressAndFindById_thenReturnSameAddress() {
         Address a = createAndSaveAddress(1);
@@ -59,7 +64,10 @@ public class AddressRepositoryTests {
 
     /* -- helper -- */
     private Address createAndSaveAddress(int i) {
-        Address a = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal");
+
+        Person p = new Person("Fernando", "12345678","fernando@ua.pt");
+        personRepository.saveAndFlush(p);
+        Address a = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal", p);
         entityManager.persistAndFlush(a);
         return a;
     }

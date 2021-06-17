@@ -1,11 +1,13 @@
 package ua.tqs.humberpecas.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -16,8 +18,6 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-
-
     private Double price;
 
     private String name;
@@ -27,33 +27,22 @@ public class Product {
 
     private String description;
 
-    private long stock;
-
-    private boolean deleted;
-
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToMany(mappedBy = "products")
     private Set<Purchase> purchase;
 
 
 
-    public Product(double price, String name, String description, long stock, boolean deleted, Category category){
+    public Product(double price, String name, String description, Category category){
         this.price = price;
         this.name = name;
         this.description =  description;
-        this.stock = stock;
-        this.deleted = deleted;
         this.category = category;
+        this.purchase = new HashSet<>();
     }
 
 
-    public Product(String name, double price, Category category, String description, long stock) {
-        this.name = name;
-        this.price = price;
-        this.category = category;
-        this.description = description;
-        this.stock = stock;
-        deleted = false;
-    }
 
 
 }
