@@ -144,8 +144,8 @@ public class HumberPurchaseControllerIT {
 
 
     @Test
-    @DisplayName("Make Purchase without being logged throws HTTP Unauthorized")
-    void whenPurchaseWithOutToken_thenThrowsStatus401() throws AccessNotAllowedException {
+    @DisplayName("Make Purchase with invalid token throws HTTP Unauthorized")
+    void whenPurchaseWithInvalidToken_thenThrowsStatus401() throws AccessNotAllowedException {
 
         RestAssured.given()
                 .contentType("application/json")
@@ -163,8 +163,11 @@ public class HumberPurchaseControllerIT {
     @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound ")
     void whenPurchaseWithInvalidData_thenthenThrowsStatus404(){
 
+        this.purchaseDTO.setAddressId(0);
+
         RestAssured.given()
                 .contentType("application/json")
+                .header("authorization", "Bearer " + this.token)
                 .body(purchaseDTO)
                 .when()
                 .post(getBaseUrl() + "/new")

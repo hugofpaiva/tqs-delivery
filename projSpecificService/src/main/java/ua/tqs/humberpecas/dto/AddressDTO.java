@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class AddressDTO {
 
-    @JsonIgnore
+
     private Long addressId;
 
     @NonNull
