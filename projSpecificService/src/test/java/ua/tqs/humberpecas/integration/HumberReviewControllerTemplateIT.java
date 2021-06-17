@@ -39,7 +39,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class HumberReviewControllerIT {
+public class HumberReviewControllerTemplateIT {
 
     @LocalServerPort
     int randomServerPort;

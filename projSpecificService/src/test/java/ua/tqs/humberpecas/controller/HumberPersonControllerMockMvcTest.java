@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 // TODO: Refactor
 @WebMvcTest(value = HumberPersonController.class, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfig.class)})
 @AutoConfigureMockMvc(addFilters = false)
-class HumberPersonControllerTest {
+class HumberPersonControllerMockMvcTest {
 
     @Autowired
     private MockMvc mvc;

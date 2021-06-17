@@ -3,6 +3,7 @@ package ua.tqs.humberpecas.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,32 +26,27 @@ public class HumberAddressController {
 
     @GetMapping("/getAll")
     public ResponseEntity<List<Address>> getUserAddresses(@RequestHeader("authorization") String token) throws InvalidLoginException {
-
         log.debug("Get User addresses");
         List<Address> userAddresses = service.getUserAddress(token);
 
-
         log.info("Return User addresses  with success");
         return ResponseEntity.ok().body(userAddresses);
-
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Address> addNewAddress(@RequestHeader("authorization") String token, @Valid @RequestBody AddressDTO address) throws ResourceNotFoundException {
-
+    public ResponseEntity<Address> addNewAddress(@RequestHeader("authorization") String token, @Valid @RequestBody AddressDTO address) throws InvalidLoginException {
         log.debug("Add new User addresses");
         Address response = service.addNewAddress(token, address);
-
 
         log.info("Add new address with success");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/del")
-    public ResponseEntity<HttpStatus> delAddress(@RequestHeader("authorization") String token, @Valid @RequestBody AddressDTO address) throws ResourceNotFoundException {
 
+    @DeleteMapping("/del")
+    public ResponseEntity<HttpStatus> delAddress(@RequestHeader("authorization") String token, @RequestParam long addressId) throws InvalidLoginException {
         log.debug("Delete address");
-        service.delAddress(token, address);
+        service.delAddress(token, addressId);
 
         log.info("Address deleted with success");
         return new ResponseEntity<>(HttpStatus.OK);

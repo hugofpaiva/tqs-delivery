@@ -27,11 +27,11 @@ public class HumberAddressService {
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
-    public Address addNewAddress(String token, AddressDTO addressDTO) throws ResourceNotFoundException {
+    public Address addNewAddress(String token, AddressDTO addressDTO) throws InvalidLoginException {
         Person p = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(token))
                 .orElseThrow(() -> {
                     log.error("Invalid User");
-                    return new ResourceNotFoundException("Invalid User"); });
+                    return new InvalidLoginException("Invalid User"); });
 
         var newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry());
         newAddress.setPerson(p);
@@ -39,16 +39,13 @@ public class HumberAddressService {
         return addressRepository.save(newAddress);
     }
 
-
-    public void delAddress(String token, AddressDTO addressDTO) throws ResourceNotFoundException {
+    public void delAddress(String token, long addressId) throws InvalidLoginException {
         Person p = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(token))
                 .orElseThrow(() -> {
                     log.error("Invalid User");
-                    return new ResourceNotFoundException("Invalid User"); });
+                    return new InvalidLoginException("Invalid User"); });
 
-
-
-        var address = addressRepository.findById(addressDTO.getAddressId())
+        var address = addressRepository.findById(addressId)
                 .orElseThrow(() ->  {
                             log.error("Invalid Address");
                             return new ResourceNotFoundException("Invalid Address"); });
