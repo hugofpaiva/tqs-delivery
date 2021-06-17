@@ -168,16 +168,39 @@ public class PurchaseService {
         return purchase;
 
     }
+
     public Map<String, Object> getAvgDeliveryTime() {
         Map<String, Object> response = new HashMap<>();
 
-        List<Long[]> data2 = purchaseRepository.getAverageReview();
+        List<Long[]> data2 = purchaseRepository.getSumDeliveryTimeAndCountPurchases();
         Long totalTime = data2.get(0)[0];
         Long numPurch = data2.get(0)[1];
 
         // if there are delivered purchases
         response.put("average", totalTime != null ? totalTime / numPurch : null);
 
+        return response;
+    }
+
+    public Map<String, Object> getRidersStatistics() {
+        Map<String, Object> response = new HashMap<>();
+
+        List<Long[]> avgTime = purchaseRepository.getSumDeliveryTimeAndCountPurchases();
+        Long totalTime = avgTime.get(0)[0];
+        Long numPurch = avgTime.get(0)[1];
+
+        Long[] avgReviews = riderRepository.getSumReviewsAndQuantity().get(0);
+        Long reviewsSum = avgReviews[0];
+        Long totalNoReviews = avgReviews[1];
+
+        Long process = purchaseRepository.countPurchaseByStatusIsNot(Status.DELIVERED);
+
+        // if there are delivered purchases
+        response.put("avgTimes", totalTime != null && numPurch != 0 ? (double) totalTime / numPurch : null);
+        response.put("avgReviews", reviewsSum != null && totalNoReviews != null && totalNoReviews > 0 ? (double) reviewsSum / totalNoReviews : null);
+        response.put("inProcess", process);
+
+        System.out.println(response);
         return response;
     }
 }

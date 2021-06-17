@@ -4,8 +4,6 @@ import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.internal.verification.VerificationModeFactory;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
@@ -649,16 +647,18 @@ public class PurchaseServiceTest {
        * GET AVG DELIVERY TIME TESTS   *
        * ----------------------------- *   
        */
+    /*
 
+// todo: remove
     @Test
     public void testWhenGetAvgDeliveryButNoPurchasesHaveBeenDelivered_thenReturn() {
         List<Long[]> data = new LinkedList<>();
         data.add(new Long[]{null, 0L});
 
-        Mockito.when(purchaseRepository.getAverageReview()).thenReturn(data);
+        Mockito.when(purchaseRepository.getSumDeliveryTimeAndCountPurchases()).thenReturn(data);
         Map<String, Object> found = purchaseService.getAvgDeliveryTime();
 
-        Mockito.verify(purchaseRepository, times(1)).getAverageReview();
+        Mockito.verify(purchaseRepository, times(1)).getSumDeliveryTimeAndCountPurchases();
         assertThat(found.size()).isEqualTo(1);
         assertThat(found.get("average")).isEqualTo(null);
     }
@@ -680,11 +680,81 @@ public class PurchaseServiceTest {
         List<Long[]> data = new LinkedList<>();
         data.add(new Long[]{p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime(), 3L});
 
-        Mockito.when(purchaseRepository.getAverageReview()).thenReturn(data);
+        Mockito.when(purchaseRepository.getSumDeliveryTimeAndCountPurchases()).thenReturn(data);
         Map<String, Object> found = purchaseService.getAvgDeliveryTime();
 
-        Mockito.verify(purchaseRepository, times(1)).getAverageReview();
+        Mockito.verify(purchaseRepository, times(1)).getSumDeliveryTimeAndCountPurchases();
         assertThat(found.size()).isEqualTo(1);
         assertThat(found.get("average")).isEqualTo(expected);
+    }
+*/
+
+
+    /* ----------------------------- *
+     * GET ALL RIDERS STATS TESTS    *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testWhenGetRidersStatisticsButNoPurchasesHaveBeenDelivered_thenReturn() {
+        List<Long[]> time = new LinkedList<>();
+        time.add(new Long[]{null, 0L});
+
+        List<Long[]> reviews = new LinkedList<>();
+        reviews.add(new Long[]{null, null});
+
+        Mockito.when(purchaseRepository.getSumDeliveryTimeAndCountPurchases()).thenReturn( time );
+        Mockito.when(riderRepository.getSumReviewsAndQuantity()).thenReturn(reviews);
+        Mockito.when(purchaseRepository.countPurchaseByStatusIsNot(Status.DELIVERED)).thenReturn(0L);
+
+        Map<String, Object> found = purchaseService.getRidersStatistics();
+
+        assertThat(found.get("avgReviews")).isEqualTo(null);
+        assertThat(found.get("avgTimes")).isEqualTo(null);
+        assertThat(found.get("inProcess")).isEqualTo(0L);
+
+        Mockito.verify(purchaseRepository, times(1)).getSumDeliveryTimeAndCountPurchases();
+        Mockito.verify(purchaseRepository, times(1)).countPurchaseByStatusIsNot(any());
+        Mockito.verify(riderRepository, times(1)).getSumReviewsAndQuantity();
+
+    }
+
+    @Test
+    public void testWhenGetRidersStatistics_thenReturn() {
+        Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+
+        Purchase p1 = new Purchase(addr, this.rider, store, "Miguel");
+        Purchase p2 = new Purchase(addr, this.rider, store, "Mariana");
+        Purchase p3 = new Purchase(addr, this.rider, store, "Carolina");
+
+        p1.setStatus(Status.DELIVERED); p2.setStatus(Status.DELIVERED); p3.setStatus(Status.DELIVERED);
+        p1.setDeliveryTime(264L); p2.setDeliveryTime(199L); p3.setDeliveryTime(230L);
+        p1.getRider().setTotalNumReviews(2); p1.getRider().setReviewsSum(7);
+        p2.getRider().setTotalNumReviews(1); p2.getRider().setReviewsSum(1);
+
+        double exp_time = (double) (p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime()) / 3;
+        double exp_rev = (double) (7+1) / (2+1);
+
+        List<Long[]> time = new LinkedList<>();
+        time.add(new Long[]{p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime(), 3L});
+
+        List<Long[]> reviews = new LinkedList<>();
+        reviews.add(new Long[]{8L, 3L});
+
+        Mockito.when(purchaseRepository.getSumDeliveryTimeAndCountPurchases()).thenReturn(time);
+        Mockito.when(riderRepository.getSumReviewsAndQuantity()).thenReturn(reviews);
+        Mockito.when(purchaseRepository.countPurchaseByStatusIsNot(Status.DELIVERED)).thenReturn(3L);
+
+        Map<String, Object> found = purchaseService.getRidersStatistics();
+
+        Mockito.verify(purchaseRepository, times(1)).getSumDeliveryTimeAndCountPurchases();
+        Mockito.verify(purchaseRepository, times(1)).countPurchaseByStatusIsNot(any());
+        Mockito.verify(riderRepository, times(1)).getSumReviewsAndQuantity();
+
+        assertThat(found.get("avgTimes")).isEqualTo(exp_time);
+        assertThat(found.get("avgReviews")).isEqualTo(exp_rev);
+        assertThat(found.get("inProcess")).isEqualTo(3L);
     }
 }

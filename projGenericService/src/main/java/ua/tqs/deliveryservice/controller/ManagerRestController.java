@@ -62,7 +62,7 @@ public class ManagerRestController {
 
     @GetMapping("riders/stats")
     public ResponseEntity<Map<String, Object>> getRidersStats() {
-        Map<String, Object> response = purchaseService.getAvgDeliveryTime();
+        Map<String, Object> response = purchaseService.getRidersStatistics();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
