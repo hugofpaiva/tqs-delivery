@@ -13,4 +13,8 @@ export class RiderService {
   getRiders(pageNo = 0): Observable<any> {
     return this.http.get<any>(environment.baseURL + '/manager/riders/all?pageSize=7&pageNo=' + pageNo, environment.httpOptions);
   }
+
+  getRiderStats(): Observable<any> {
+    return this.http.get<any>(environment.baseURL + '/rider/reviews/stats', environment.httpOptions);
+  }
 }

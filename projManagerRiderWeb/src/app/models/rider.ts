@@ -1,5 +1,5 @@
 export class Rider {
-  average: number;
+  average: Number;
   name: String;
   numberOrders: Number;
 }

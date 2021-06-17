@@ -4,6 +4,7 @@ import {AccountService} from '../../services/account/account.service';
 import {Router} from '@angular/router';
 import {Purchase} from '../../models/purchase';
 import {PurchaseService} from '../../services/purchase/purchase.service';
+import {RiderService} from '../../services/rider/rider.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -16,8 +17,11 @@ export class UserProfileComponent implements OnInit {
   totalItems = 0;
   totalPages = 0;
   currentPage = 1;
+  totalNumReviews = 0;
+  avgReviews: Number = null;
 
-  constructor(private accountService: AccountService, private router: Router, private purchaseService: PurchaseService) {
+  constructor(private accountService: AccountService, private router: Router, private purchaseService: PurchaseService,
+              private riderService: RiderService) {
   }
 
   ngOnInit() {
@@ -38,8 +42,19 @@ export class UserProfileComponent implements OnInit {
         });
   }
 
+
+  getRiderStats() {
+    this.riderService.getRiderStats()
+      .subscribe(
+        data => {
+          this.totalNumReviews = data['totalNumReviews'];
+          this.avgReviews = data['avgReviews'];
+        });
+  }
+
   getPage(event) {
     this.getPurchases();
+    this.getRiderStats();
   }
 
 }

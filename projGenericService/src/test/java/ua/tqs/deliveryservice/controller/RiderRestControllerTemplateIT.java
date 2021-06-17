@@ -466,7 +466,7 @@ class RiderRestControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "reviews", HttpMethod.GET, new HttpEntity<Object>(headers),
+                getBaseUrl() + "reviews/stats", HttpMethod.GET, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
@@ -485,7 +485,7 @@ class RiderRestControllerTemplateIT {
         personRepository.saveAndFlush(this.rider);
 
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "reviews", HttpMethod.GET, new HttpEntity<Object>(headers),
+                getBaseUrl() + "reviews/stats", HttpMethod.GET, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {faStar, faStarHalfAlt} from '@fortawesome/free-solid-svg-icons';
 import {RiderService} from '../../services/rider/rider.service';
-import {Store} from '../../models/store';
 import {Rider} from '../../models/rider';
 
 @Component({

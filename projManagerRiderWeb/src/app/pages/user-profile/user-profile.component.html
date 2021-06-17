@@ -29,11 +29,11 @@
                   <span class="description">Deliveries</span>
                 </div>
                 <div>
-                  <span class="heading">10</span>
+                  <span class="heading">{{totalNumReviews}}</span>
                   <span class="description">Reviews</span>
                 </div>
                 <div>
-                  <span class="heading">4.3</span>
+                  <span class="heading">{{(avgReviews === null ? '-' : avgReviews | number:'1.1-1')}}</span>
                   <span class="description">Average Rating</span>
                 </div>
               </div>
