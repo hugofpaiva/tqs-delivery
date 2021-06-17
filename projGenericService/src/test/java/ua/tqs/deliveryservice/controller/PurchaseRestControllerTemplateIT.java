@@ -68,23 +68,17 @@ class PurchaseRestControllerTemplateIT {
 
     @AfterEach
     public void destroyAll() {
-        purchaseRepository.deleteById(this.purchase.getId());
+        purchaseRepository.deleteAll();
         purchaseRepository.flush();
 
-        storeRepository.deleteById(this.store.getId());
+        storeRepository.deleteAll();
         storeRepository.flush();
 
-        addressRepository.deleteById(this.address.getId());
+        addressRepository.deleteAll();
         addressRepository.flush();
 
-        personRepository.deleteById(this.rider.getId());
+        personRepository.deleteAll();
         personRepository.flush();
-
-
-        this.rider = new Rider();
-        this.address = new Address();
-        this.store = new Store();
-        this.purchase = new Purchase();
     }
 
     @BeforeEach
