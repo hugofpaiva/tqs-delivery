@@ -24,7 +24,6 @@ public class HumberProductService {
     private ProductRepository repository;
 
     public List<Product> getCatalog() {
-
         return repository.findAll();
 
     }
@@ -37,7 +36,6 @@ public class HumberProductService {
 
     public Map<String, Object> getProductsFiltered(int pageNo, int pageSize, String name, Double maxPrice, Double minPrice, String orderBy, Category category) {
         var sort = Sort.by("id").descending();
-
         if (orderBy != null && orderBy.equals("price")) {
             sort = Sort.by("price").ascending();
         }
@@ -48,7 +46,6 @@ public class HumberProductService {
 
         if (name != null && category != null) {
             pagedResult = repository.findAllByCategoryAndNameContainingAndPriceGreaterThanEqualAndPriceLessThanEqual(category, name, minPrice, maxPrice, paging);
-
         } else if (name != null) {
             pagedResult = repository.findAllByNameContainingIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(name, minPrice, maxPrice, paging);
         } else if (category != null){

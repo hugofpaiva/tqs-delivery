@@ -47,9 +47,10 @@ class HumberProductsControllerMockMvcTest {
         RestAssuredMockMvc.mockMvc(mvc);
     }
 
-    // -------------------------------
-    // --      GET ALL PRODUCTS     --
-    // -------------------------------
+    // -------------------------------------
+    // --   GET FILTERED PRODUCTS TESTS   --
+    // -------------------------------------
+
 
     @Test
     @DisplayName("Get list of All Products: invalid pageNo then BAD_REQUEST")

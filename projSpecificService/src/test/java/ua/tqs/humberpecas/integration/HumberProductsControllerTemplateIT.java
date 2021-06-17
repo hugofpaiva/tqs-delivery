@@ -101,6 +101,11 @@ class HumberProductsControllerTemplateIT {
         addressRepository.flush();
     }
 
+    // -------------------------------------
+    // --   GET FILTERED PRODUCTS TESTS   --
+    // -------------------------------------
+
+
     @Test
     public void testGetProductsWhenInvalidPageNo_thenBadRequest() {
         HttpHeaders headers = new HttpHeaders();
