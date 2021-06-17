@@ -50,18 +50,14 @@ class DBLoader implements CommandLineRunner {
 		Person person = new Person("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
 		personRepository.saveAndFlush(person);
 
-		Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-		addressRepository.saveAndFlush(address);
-
-		Address address1 = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-		address1.setPerson(person);
+		Address address1 = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal", person);
 		addressRepository.saveAndFlush(address1);
 
 		Product product = new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "image_url");
 		productRepository.saveAndFlush(product);
 
 
-		Purchase purchase = new Purchase(person, address, List.of(product));
+		Purchase purchase = new Purchase(person, address1, List.of(product));
 		purchase.setStatus(PurchaseStatus.DELIVERED);
 		purchaseRepository.saveAndFlush(purchase);
 

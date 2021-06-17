@@ -33,7 +33,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr *ngFor="let product of cartService.productsValue">
+                            <tr *ngFor="let product of getCartService().productsValue">
                                 <td>
                                     <figure class="itemside">
                                         <div class="aside"><img src="{{product.image_url}}" style="height: 100px" class="img-sm"></div>
@@ -43,7 +43,7 @@
                                     </figure>
                                 </td>
                                 <td>
-                                    <select (change)="cartService.changeQuantityProduct(product, $event.target.value)" [selectedIndex]="product.quantity-1" class="form-control">
+                                    <select (change)="getCartService().changeQuantityProduct(product, $event.target.value)" [selectedIndex]="product.quantity-1" class="form-control">
                                         <option>1</option>
                                         <option>2</option>
                                         <option>3</option>
@@ -64,20 +64,20 @@
                                     </div>
                                 </td>
                                 <td class="text-right">
-                                    <a (click)="cartService.removeProduct(product)"  class="btn btn-light"> Remove</a>
+                                    <a (click)="getCartService().removeProduct(product)"  class="btn btn-light"> Remove</a>
                                 </td>
                             </tr>
 
                             </tbody>
                         </table>
 
-                        <div *ngIf="cartService.totalProducts > 0" class="card-body border-top">
+                        <div *ngIf="getCartService().totalProducts > 0" class="card-body border-top">
                             <a [routerLink]="['/shop']" class="btn btn-primary float-md-right"> Make Purchase <i
                                     class="fa fa-chevron-right"></i> </a>
                             <a [routerLink]="['/shop']" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Continue shopping </a>
                         </div>
 
-                        <h5  *ngIf="cartService.totalProducts === 0" style="text-align: center">The cart is empty!</h5>
+                        <h5  *ngIf="getCartService().totalProducts === 0" style="text-align: center">The cart is empty!</h5>
                     </div>
                 </main>
                 <aside class="col-md-3">
@@ -85,7 +85,7 @@
                         <div class="card-body">
                             <dl class="dlist-align">
                                 <dt>Total:</dt>
-                                <dd class="text-right  h5"><strong>{{cartService.totalPrice}}€</strong></dd>
+                                <dd class="text-right  h5"><strong>{{getCartService().totalPrice}}€</strong></dd>
                             </dl>
                             <hr>
                         </div>

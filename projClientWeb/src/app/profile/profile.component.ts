@@ -389,6 +389,10 @@ export class ProfileComponent implements OnInit {
         return total;
     }
 
+    getAccountService(): AccountService {
+        return this.accountService;
+    }
+
     getPurchases() {
         this.purchaseService.getPurchases(this.currentPage - 1)
             .subscribe(
