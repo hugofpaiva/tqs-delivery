@@ -68,7 +68,6 @@ class HumberPurchaseServiceTest {
 
     @BeforeEach
     public void setUp() {
-        date = new Date();
         person = new Person("Fernando", "12345678", "fernando@ua.pt");
         address = new Address("Aveiro", "3730-123", "Aveiro", "Portugal", person);
 
@@ -80,7 +79,7 @@ class HumberPurchaseServiceTest {
 
 
         productsIds = Arrays.asList(3L, 4L);
-        purchaseDTO = new PurchaseDTO(date, 2L, productsIds);
+        purchaseDTO = new PurchaseDTO(2L, productsIds);
 
         this.purchaseDeliveryDTO = new PurchaseDeliveryDTO(
                 person.getName(),
@@ -92,6 +91,32 @@ class HumberPurchaseServiceTest {
     @Test
     @DisplayName("Cant communicate with delivery service throws UnreachableServiceExcption")
     void whenErrorInCommunication_thenThrowsStatusUnreachableService() {
+
+        when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
+        when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
+        when(productRepository.findAllById(anyList())).thenReturn(productList);
+
+        when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
+        doThrow(UnreachableServiceException.class).when(deliveryService).newOrder(purchaseDeliveryDTO);
+
+        assertThrows(UnreachableServiceException.class, () -> {
+            purchaseService.newPurchase(purchaseDTO, userToken);
+        });
+
+
+        verify(deliveryService, times(1)).newOrder(purchaseDeliveryDTO);
+        verify(purchaseRepository, times(0)).saveAndFlush(any());
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
+        verify(addressRepository, times(1)).findById(2L);
+        verify(productRepository, times(1)).findAllById(productsIds);
+
+    }
+
+    @Test
+    @DisplayName("Make Purchase when Generic Server not available throws UnreachableServiceException")
+    void whenPurchaseWhenGenericNotAvailable_thenThrowsUnreachableServiceException() {
+
+        Person person1 = new Person("Antonio", "12345678", "to@ua.pt");
 
         when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
         when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));

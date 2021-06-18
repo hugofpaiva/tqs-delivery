@@ -36,14 +36,16 @@
                             <tr *ngFor="let product of getCartService().productsValue">
                                 <td>
                                     <figure class="itemside">
-                                        <div class="aside"><img src="{{product.image_url}}" style="height: 100px" class="img-sm"></div>
-                                        <figcaption class="info">
+                                        <div class="aside"><img src="{{product.image_url}}" style="height: 100px"
+                                                                class="img-sm"></div>
+                                        <figcaption class="info" style="text-align: left">
                                             <a class="title text-dark">{{product.name}}</a>
                                         </figcaption>
                                     </figure>
                                 </td>
                                 <td>
-                                    <select (change)="getCartService().changeQuantityProduct(product, $event.target.value)" [selectedIndex]="product.quantity-1" class="form-control">
+                                    <select (change)="getCartService().changeQuantityProduct(product, $event.target.value)"
+                                            [selectedIndex]="product.quantity-1" class="form-control">
                                         <option>1</option>
                                         <option>2</option>
                                         <option>3</option>
@@ -64,20 +66,24 @@
                                     </div>
                                 </td>
                                 <td class="text-right">
-                                    <a (click)="getCartService().removeProduct(product)"  class="btn btn-light"> Remove</a>
+                                    <a (click)="getCartService().removeProduct(product)" style="color: white"
+                                       class="btn btn-light"> Remove</a>
                                 </td>
                             </tr>
 
                             </tbody>
                         </table>
 
-                        <div *ngIf="getCartService().totalProducts > 0" class="card-body border-top">
-                            <a [routerLink]="['/shop']" class="btn btn-primary float-md-right"> Make Purchase <i
+                        <div *ngIf="getCartService().totalProducts > 0" class="card-body border-top"
+                             style="color: white">
+                            <a (click)="openBuy()" class="btn btn-primary float-md-right"> Make Purchase <i
                                     class="fa fa-chevron-right"></i> </a>
-                            <a [routerLink]="['/shop']" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Continue shopping </a>
+                            <a [routerLink]="['/shop']" class="btn btn-light"> <i class="fa fa-chevron-left"></i>
+                                Continue shopping </a>
                         </div>
 
-                        <h5  *ngIf="getCartService().totalProducts === 0" style="text-align: center">The cart is empty!</h5>
+                        <h5 *ngIf="getCartService().totalProducts === 0" style="text-align: center">The cart is
+                            empty!</h5>
                     </div>
                 </main>
                 <aside class="col-md-3">

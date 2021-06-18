@@ -43,6 +43,11 @@ public class RestTemplateErrorHandler implements ResponseErrorHandler {
                 throw new ResourceNotFoundException("Invalid Id");
             }
 
+            if (httpResponse.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                log.error("RestTemplateErrorHandler: Unreachable Service");
+                throw new UnreachableServiceException("UnreachableServiceException");
+            }
+
 
         }
     }

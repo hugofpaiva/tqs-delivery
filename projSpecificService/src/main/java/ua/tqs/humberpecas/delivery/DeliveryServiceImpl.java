@@ -42,15 +42,14 @@ public class DeliveryServiceImpl implements IDeliveryService {
         StringBuilder url = new StringBuilder().append(HOST)
                 .append("/order");
 
-        try {
-
         ResponseEntity<ServerPurchaseDTO> response = restTemplate.exchange(
                 url.toString(), HttpMethod.POST, new HttpEntity<>(purchase, headers),
                 ServerPurchaseDTO.class);
-
+        
+        try {
             return Objects.requireNonNull(response.getBody()).getOrderId();
 
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
 
             log.error("DeliveryServiceImpl: Null serverOrderID ");
             throw new ResourceNotFoundException("Null serverOrderID");
@@ -67,9 +66,9 @@ public class DeliveryServiceImpl implements IDeliveryService {
     @Override
     public void reviewRider(Review review) throws ResourceNotFoundException {
 
-        StringBuilder url  = new StringBuilder().append(HOST)
+        StringBuilder url = new StringBuilder().append(HOST)
                 .append("/order/")
-                .append( review.getOrderId())
+                .append(review.getOrderId())
                 .append("/review");
 
 

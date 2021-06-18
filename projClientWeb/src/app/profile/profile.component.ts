@@ -56,7 +56,8 @@ export class NgbModalRiderReview {
         }, error => {
             this.alertService.error('There was an error. Review was not added!');
         });
-
+        this.reviewService.emitConfig(true);
+        this.activeModal.close();
     }
 }
 
@@ -300,7 +301,6 @@ export class NgbModalManageAddresses implements OnInit {
                 data => {
                     this.addresses = data;
                 });
-
     }
 
     newAddress() {
@@ -312,7 +312,6 @@ export class NgbModalManageAddresses implements OnInit {
     }
 
     submitAddress() {
-        console.log(this.newAddressObject);
         this.addressService.createAddress(this.newAddressObject).subscribe(data => {
             this.alertService.success('Address created!');
             this.getAddresses();
@@ -355,7 +354,11 @@ export class ProfileComponent implements OnInit {
     totalPages = 0;
     currentPage = 1;
 
-    constructor(private modalService: NgbModal, private accountService: AccountService, private purchaseService: PurchaseService) {
+    constructor(private modalService: NgbModal, private accountService: AccountService, private purchaseService: PurchaseService,
+                private reviewService: ReviewService) {
+        this.reviewService.configObservable.subscribe(value => {
+            this.getPurchases();
+        });
     }
 
     openRiderReview(purchase: Purchase) {

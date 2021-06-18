@@ -23,6 +23,16 @@ export class CartService {
         return this.productsSubject.value;
     }
 
+    public get productsIds(): Number[] {
+        const prod_ids: Number[] = [];
+        this.productsSubject.value.forEach((p) => {
+            for (let i = 0; i < p.quantity; i++) {
+                prod_ids.push(p.id);
+            }
+        });
+        return prod_ids;
+    }
+
     public get totalProducts(): number {
         let n = 0;
         this.productsSubject.value.forEach((p) => {
@@ -42,7 +52,7 @@ export class CartService {
     addProduct(product: Product) {
         const plist = this.productsSubject.value;
 
-        const index = plist.indexOf(product);
+        const index = plist.findIndex(element => element.id === product.id);
         if (index !== -1) {
             if (plist[index].quantity < 10) {
                 plist[index].quantity = plist[index].quantity + 1;
@@ -62,7 +72,7 @@ export class CartService {
     removeProduct(product: Product) {
         const plist = this.productsSubject.value;
 
-        const index = plist.indexOf(product);
+        const index = plist.findIndex(element => element.id === product.id)
         if (index !== -1) {
             if (plist[index].quantity > 1) {
                 plist[index].quantity = plist[index].quantity - 1;
@@ -77,7 +87,7 @@ export class CartService {
     changeQuantityProduct(product: Product, quantity: number) {
         const plist = this.productsSubject.value;
 
-        const index = plist.indexOf(product);
+        const index = plist.findIndex(element => element.id === product.id)
         if (index !== -1) {
             plist[index].quantity = quantity;
         }

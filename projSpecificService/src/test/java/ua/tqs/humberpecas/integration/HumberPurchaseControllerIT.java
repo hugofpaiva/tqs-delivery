@@ -112,7 +112,7 @@ public class HumberPurchaseControllerIT {
                 new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", "image_url")));
 
         this.productList = Arrays.asList(this.catalog.get(0).getId());
-        this.purchaseDTO = new PurchaseDTO(new Date() ,this.address.getId(), productList);
+        this.purchaseDTO = new PurchaseDTO(this.address.getId(), productList);
 
     }
 

@@ -21,7 +21,6 @@ import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.service.HumberPurchaseService;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -49,7 +48,7 @@ class HumberPurchaseControllerMockMvcTest {
         userToken = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
         List<Long> productsId = Arrays.asList(Long.valueOf(6), Long.valueOf(7));
 
-        purchaseDTO = new PurchaseDTO(new Date(), Long.valueOf(5) , productsId);
+        purchaseDTO = new PurchaseDTO(Long.valueOf(5), productsId);
 
     }
 
@@ -76,7 +75,7 @@ class HumberPurchaseControllerMockMvcTest {
 
     @Test
     @DisplayName("Make Purchase with invalid user throws HTTP status Bad Request ")
-    void whenPuchageInvalidUser_thenThrowsStatus401(){
+    void whenPuchageInvalidUser_thenThrowsStatus401() {
         when(service.newPurchase(purchaseDTO, userToken)).thenThrow(InvalidLoginException.class);
 
 
@@ -111,7 +110,7 @@ class HumberPurchaseControllerMockMvcTest {
 
     @Test
     @DisplayName("Make Purchage")
-    void whenValidPurchage_thenReturnOk(){
+    void whenValidPurchage_thenReturnOk() {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -129,7 +128,7 @@ class HumberPurchaseControllerMockMvcTest {
 
     @Test
     @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound")
-    void whenPurchaseWithInvalidData_thenthenThrowsStatus404(){
+    void whenPurchaseWithInvalidData_thenthenThrowsStatus404() {
 
         when(service.newPurchase(purchaseDTO, userToken)).thenThrow(ResourceNotFoundException.class);
 
@@ -174,7 +173,7 @@ class HumberPurchaseControllerMockMvcTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization",  userToken)
+                .header("authorization", userToken)
                 .body(purchaseDTO)
                 .when()
                 .post("/purchase/new")

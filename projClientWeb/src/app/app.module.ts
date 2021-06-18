@@ -14,7 +14,7 @@ import {FooterComponent} from './shared/footer/footer.component';
 import {LoginComponent} from './login/login.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import { ShopComponent } from './shop/shop.component';
-import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
+import {NgbModalBuy, ShoppingCartComponent} from './shopping-cart/shopping-cart.component';
 import { AlertComponent } from './shared/alert/alert.component';
 import {AccountService} from './services/account/account.service';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
@@ -32,6 +32,7 @@ import {NgxPaginationModule} from 'ngx-pagination';
         LoginComponent,
         NgbModalRiderReview,
         NgbModalOrderDetails,
+        NgbModalBuy,
         NgbModalManageAddresses,
         ShopComponent,
         ShoppingCartComponent,

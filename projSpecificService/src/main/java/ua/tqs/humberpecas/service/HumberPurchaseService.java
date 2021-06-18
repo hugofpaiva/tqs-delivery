@@ -22,10 +22,7 @@ import ua.tqs.humberpecas.repository.AddressRepository;
 import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -73,7 +70,7 @@ public class HumberPurchaseService {
 
         List<Product> productList = productRepository.findAllById(purchaseDTO.getProductsId());
 
-        if (productList.size() < purchaseDTO.getProductsId().size()){
+        if (productList.size() < new HashSet<>(productList).size()){
 
             List<Long> differences = productList.stream().map(Product::getId).collect(Collectors.toList());
             purchaseDTO.getProductsId().forEach(differences::remove);
