@@ -650,6 +650,7 @@ public class PurchaseServiceTest {
     /*
 
 // todo: remove
+
     @Test
     public void testWhenGetAvgDeliveryButNoPurchasesHaveBeenDelivered_thenReturn() {
         List<Long[]> data = new LinkedList<>();

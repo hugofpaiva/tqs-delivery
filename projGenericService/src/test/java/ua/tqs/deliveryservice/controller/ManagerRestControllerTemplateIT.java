@@ -410,9 +410,8 @@ public class ManagerRestControllerTemplateIT {
     }
 
     @Test
-    public void testGetRiderStatsWhenNoDeliveredPurchases_thenOKbutEmpty() {
+    public void testGetRiderStatsWhenNoDeliveredPurchases_thenOK() {
         HttpHeaders headers = new HttpHeaders();
-
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "riders/stats", HttpMethod.GET, new HttpEntity<Object>(headers),
@@ -421,8 +420,10 @@ public class ManagerRestControllerTemplateIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
 
         Map<String, Object> found = response.getBody();
-        Assertions.assertThat(found.size()).isEqualTo(1);
-        Assertions.assertThat(found.get("average")).isEqualTo(null);
+        Assertions.assertThat(found.size()).isEqualTo(3);
+        Assertions.assertThat(found.get("avgTimes")).isNull();
+        Assertions.assertThat(found.get("avgReviews")).isEqualTo(4.0);
+        Assertions.assertThat(found.get("inProcess")).isEqualTo(1);
     }
 
     @Test
@@ -442,12 +443,17 @@ public class ManagerRestControllerTemplateIT {
         p1.setStatus(Status.DELIVERED); p2.setStatus(Status.DELIVERED); p3.setStatus(Status.DELIVERED);
         p1.setDeliveryTime(264L); p2.setDeliveryTime(199L); p3.setDeliveryTime(230L);
 
+        rider.setTotalNumReviews(2); rider.setReviewsSum(7);
+        this.rider.setTotalNumReviews(1); this.rider.setReviewsSum(1);
+
+
         riderRepository.saveAndFlush(rider);
         addressRepository.saveAndFlush(addr1); addressRepository.saveAndFlush(addr2); addressRepository.saveAndFlush(addr3); addressRepository.saveAndFlush(addr_store);
         storeRepository.saveAndFlush(store);
         purchaseRepository.saveAndFlush(p1); purchaseRepository.saveAndFlush(p2); purchaseRepository.saveAndFlush(p3);
 
-        Long expected = (p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime()) / 3L;
+        double exp_time = (double) (p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime()) / 3;
+        double exp_rev = (double) 11 / 3;
 
         // test
         HttpHeaders headers = new HttpHeaders();
@@ -461,7 +467,8 @@ public class ManagerRestControllerTemplateIT {
 
         Map<String, Object> found = response.getBody();
 
-        Assertions.assertThat(found.size()).isEqualTo(1);
-        Assertions.assertThat(found.get("average")).isEqualTo(expected.intValue());
+        Assertions.assertThat(found.get("avgTimes")).isEqualTo(exp_time);
+        Assertions.assertThat(found.get("avgReviews")).isEqualTo(exp_rev);
+        Assertions.assertThat(found.get("inProcess")).isEqualTo(1);
     }
 }
