@@ -37,7 +37,7 @@ public class HumberAddressService {
         return addressRepository.save(newAddress);
     }
 
-    public void delAddress(String token, long addressId) throws InvalidLoginException {
+    public Address delAddress(String token, long addressId) throws InvalidLoginException {
         Person p = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(token))
                 .orElseThrow(() -> {
                     log.error("Invalid User");
@@ -48,9 +48,12 @@ public class HumberAddressService {
                             log.error("Invalid Address");
                             return new ResourceNotFoundException("Invalid Address"); });
 
-        if (!p.getAddresses().contains(address)) throw new ResourceNotFoundException("Address to be deleted does not belong to this user.");
+        if (!p.getAddresses().contains(address)) {
+            throw new ResourceNotFoundException("Address to be deleted does not belong to this user.");
+        }
 
-        addressRepository.delete(address);
+        address.setDeleted(true);
+        return addressRepository.saveAndFlush(address);
     }
 
     public List<Address> getUserAddress(String userToken) throws InvalidLoginException {
@@ -61,9 +64,7 @@ public class HumberAddressService {
                     return new InvalidLoginException("Invalid user token");
                 });
 
-        List<Address> addresses = addressRepository.findAllByPerson(person);
-
-        return addresses;
+        return addressRepository.findAllByPersonAndDeletedIsFalse(person);
     }
 
 

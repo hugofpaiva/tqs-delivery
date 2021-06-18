@@ -11,5 +11,5 @@ import java.util.List;
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
     //TODO: testar este metodo
-    List<Address> findAllByPerson(Person person);
+    List<Address> findAllByPersonAndDeletedIsFalse(Person person);
 }

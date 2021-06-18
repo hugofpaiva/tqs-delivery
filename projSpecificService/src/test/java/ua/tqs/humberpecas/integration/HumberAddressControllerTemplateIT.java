@@ -1,5 +1,6 @@
 package ua.tqs.humberpecas.integration;
 
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,8 +28,10 @@ import ua.tqs.humberpecas.repository.PersonRepository;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 @Testcontainers
@@ -76,12 +79,14 @@ public class HumberAddressControllerTemplateIT {
     @BeforeEach
     public void setUp(){
         this.person = personRepository.saveAndFlush(new Person("Fernando", bcryptEncoder.encode("12345678"),"fernando@ua.pt"));
-
         JwtRequest request = new JwtRequest(this.person.getEmail(), "12345678");
         ResponseEntity<Map> response = testRestTemplate.postForEntity("http://localhost:" + randomServerPort + "/login", request, Map.class);
         this.token = response.getBody().get("token").toString();
 
         this.address = addressRepository.saveAndFlush(new Address("Aveiro", "3730-123","Aveiro","Portugal", person));
+
+        this.person.setAddresses(Set.of(this.address));
+        personRepository.saveAndFlush(this.person);
 
         addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal");
     }
@@ -105,7 +110,7 @@ public class HumberAddressControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + "bad_token");
         ResponseEntity<String> response = testRestTemplate.exchange(
-                getBaseUrl() + "/del&addressId=" + address.getId(), HttpMethod.DELETE, new HttpEntity<Object>(headers),
+                getBaseUrl() + "/del?addressId=" + address.getId(), HttpMethod.DELETE, new HttpEntity<Object>(headers),
                 String.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
@@ -117,7 +122,7 @@ public class HumberAddressControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<String> response = testRestTemplate.exchange(
-                getBaseUrl() + "/del&addressId=" + -1L, HttpMethod.DELETE, new HttpEntity<Object>(headers),
+                getBaseUrl() + "/del?addressId=" + -1L, HttpMethod.DELETE, new HttpEntity<Object>(headers),
                 String.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
@@ -132,10 +137,29 @@ public class HumberAddressControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<String> response = testRestTemplate.exchange(
-                getBaseUrl() + "/del&addressId=" + other_address.getId(), HttpMethod.DELETE, new HttpEntity<Object>(headers),
+                getBaseUrl() + "/del?addressId=" + other_address.getId(), HttpMethod.DELETE, new HttpEntity<Object>(headers),
                 String.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+    }
+
+    @Test
+    @DisplayName("Delete Address: everything OK then return address")
+    public void testDeleteAddress_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        System.out.println(person.getAddresses());
+        System.out.println(address);
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Address> response = testRestTemplate.exchange(
+                getBaseUrl() + "/del?addressId=" + address.getId(), HttpMethod.DELETE, new HttpEntity<Object>(headers),
+                Address.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(response.getBody().getPostalCode() , equalTo(address.getPostalCode()));
+        assertThat(response.getBody().getAddress() , equalTo(address.getAddress()));
+        assertThat(response.getBody().getCountry() , equalTo(address.getCountry()));
+        assertThat(response.getBody().getCity() , equalTo(address.getCity()));
+        assertThat(response.getBody().isDeleted() , equalTo(true));
     }
 
     // -------------------------------------
@@ -171,6 +195,8 @@ public class HumberAddressControllerTemplateIT {
         assertThat(response.getBody().getCity(), equalTo(addressDTO.getCity()));
         assertThat(response.getBody().getCountry(), equalTo(addressDTO.getCountry()));
         assertThat(response.getBody().getPostalCode(), equalTo(addressDTO.getPostalCode()));
+        assertThat(response.getBody().isDeleted(), equalTo(false));
+
     }
 
     // -------------------------------------
@@ -211,6 +237,8 @@ public class HumberAddressControllerTemplateIT {
         assertThat(addresses.get(0).getAddress() , equalTo(address.getAddress()));
         assertThat(addresses.get(0).getCountry() , equalTo(address.getCountry()));
         assertThat(addresses.get(0).getCity() , equalTo(address.getCity()));
+        assertThat(addresses.get(0).isDeleted() , equalTo(false));
+
     }
 
     public String getBaseUrl() {
