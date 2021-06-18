@@ -1,5 +1,6 @@
-package ua.tqs.deliveryservice.controller;
+package ua.tqs.deliveryservice.integration;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import ua.tqs.deliveryservice.model.JwtRequest;
 import ua.tqs.deliveryservice.model.Manager;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.PersonRepository;
+import ua.tqs.deliveryservice.repository.RiderRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +54,20 @@ class AuthControllerTemplateIT  {
     private PersonRepository personRepository;
 
     @Autowired
+    private RiderRepository riderRepository;
+
+    @Autowired
     private PasswordEncoder bcryptEncoder;
+
+    // ----------------------------------
+    // --         LOGIN TESTS          --
+    // ----------------------------------
+
+    @AfterEach
+    public void cleanUp() {
+        riderRepository.deleteAll();
+        riderRepository.flush();
+    }
 
     @Test
     public void testLoginWhenInvalidEmail_thenUnauthorized() {
@@ -135,6 +150,9 @@ class AuthControllerTemplateIT  {
         personRepository.flush();
     }
 
+    // ----------------------------------
+    // --     REGISTER RIDER TESTS     --
+    // ----------------------------------
 
     @Test
     public void testInvalidEmail_thenBadRequest() {
@@ -200,6 +218,25 @@ class AuthControllerTemplateIT  {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
         assertThat(response.getBody().getEmail(), equalTo(data.get("email")));
         assertThat(response.getBody().getName(), equalTo(data.get("name")));
+    }
+
+    @Test
+    public void testRegister_whenEmailAlreadyInUse_thenCONFLICT() {
+        Map<String, String> data = new HashMap<>();
+        data.put("email", "example@tqs.ua");
+        data.put("name", "A very nice name");
+        data.put("pwd", "strongggg");
+
+        Rider existingRider = new Rider(data.get("name"), data.get("pwd"), data.get("email"));
+        riderRepository.saveAndFlush(existingRider);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(data, headers);
+
+        ResponseEntity<Rider> response = testRestTemplate.postForEntity(getBaseUrl() + "/register", entity, Rider.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.CONFLICT));
     }
 
     public String getBaseUrl() {

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import ua.tqs.deliveryservice.exception.DuplicatedObjectException;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.RiderRepository;
@@ -24,10 +25,16 @@ public class RiderService {
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
-    public Rider save(Rider rider) {
-        rider.setPwd(bcryptEncoder.encode(rider.getPwd()));
-        riderRepository.saveAndFlush(rider);
-        return rider;
+    public Rider save(Rider rider) throws DuplicatedObjectException {
+        if (riderRepository.findByEmail(rider.getEmail()).isEmpty()) {
+            rider.setPwd(bcryptEncoder.encode(rider.getPwd()));
+            riderRepository.saveAndFlush(rider);
+
+            return rider;
+        }
+
+        throw new DuplicatedObjectException("Rider with this email already exists.");
+
     }
 
     public Map<String, Object> getRatingStatistics(String riderToken) throws InvalidLoginException {
