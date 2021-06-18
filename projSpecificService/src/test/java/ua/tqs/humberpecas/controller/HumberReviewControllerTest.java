@@ -48,7 +48,7 @@ class HumberReviewControllerTest {
     @BeforeEach
     void setUp() throws IOException {
         RestAssuredMockMvc.mockMvc(mvc);
-        this.userToken = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTYyMzYyMDQzMiwiaWF0IjoxNjIzNjIwNDMyfQ.Gib-gCJyL8-__G3zN4E-9VV1q75eYHZ8X6sS1WUNZB8";
+        this.userToken = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTYyMzYyMDQzMiwiaWF0IjoxNjIzNjIwNDMyfQ.Gib-gCJyL8-__G3zN4E-9VV1q75eYHZ8X6sS1WUNZB8";
 
     }
 
@@ -62,7 +62,7 @@ class HumberReviewControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization", userToken)
                 .body(r)
                 .when()
                 .post("/review/add")
@@ -79,7 +79,7 @@ class HumberReviewControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization", userToken)
                 .body(review)
                 .when()
                 .post("/review/add")
@@ -117,7 +117,7 @@ class HumberReviewControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization",  userToken)
                 .body(review)
                 .when()
                 .post("/review/add")
@@ -138,7 +138,7 @@ class HumberReviewControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization", userToken)
                 .body(review)
                 .when()
                 .post("/review/add")
@@ -159,7 +159,7 @@ class HumberReviewControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .header("authorization", "Bearer " + userToken)
+                .header("authorization", userToken)
                 .body(review)
                 .when()
                 .post("/review/add")
