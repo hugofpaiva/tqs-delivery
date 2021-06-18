@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import ua.tqs.deliveryservice.exception.InvalidLoginException;
-import ua.tqs.deliveryservice.model.Manager;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
+import ua.tqs.deliveryservice.model.Status;
 import ua.tqs.deliveryservice.repository.ManagerRepository;
+import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
 import java.util.ArrayList;
@@ -28,6 +28,9 @@ public class ManagerService {
 
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
+
+    @Autowired
+    private PurchaseRepository purchaseRepository;
 
     // int countPurchaseByStatus(Status s);
     // double getAverageReview();
@@ -59,6 +62,26 @@ public class ManagerService {
         response.put("totalItems", result.getTotalElements());
         response.put("totalPages", result.getTotalPages());
 
+        return response;
+    }
+
+
+    public Map<String, Object> getRidersStatistics() {
+        Map<String, Object> response = new HashMap<>();
+
+        List<Long[]> avgTime = purchaseRepository.getSumDeliveryTimeAndCountPurchases();
+        Long totalTime = avgTime.get(0)[0];
+        Long numPurch = avgTime.get(0)[1];
+
+        Double avgReviews = riderRepository.getAverageRiderRating(); //.get(0);
+        Long process = purchaseRepository.countPurchaseByStatusIsNot(Status.DELIVERED);
+
+        // if there are delivered purchases
+        response.put("avgTimes", totalTime != null && numPurch != 0 ? (double) totalTime / numPurch : null);
+        response.put("avgReviews", avgReviews);
+        response.put("inProcess", process);
+
+        System.out.println(response);
         return response;
     }
 

@@ -29,5 +29,4 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     @Query("SELECT SUM(p.deliveryTime), COUNT(p) FROM Purchase p WHERE p.status = 'DELIVERED'")
     List<Long[]> getSumDeliveryTimeAndCountPurchases();
 
-
 }
