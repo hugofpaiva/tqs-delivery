@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ua.tqs.deliveryservice.exception.DuplicatedObjectException;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.model.JwtRequest;
 import ua.tqs.deliveryservice.model.JwtResponse;
@@ -25,7 +26,7 @@ public class AuthController {
     private RiderService riderService;
 
     @PostMapping("/register")
-    public ResponseEntity<Rider> registerARider(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Rider> registerARider(@RequestBody Map<String, String> payload) throws DuplicatedObjectException {
         String email = payload.get("email");
         String pwd = payload.get("pwd");
         String name = payload.get("name");

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.exception.DuplicatedObjectException;
+import ua.tqs.humberpecas.model.Person;
 import ua.tqs.humberpecas.service.HumberPersonService;
 
 import javax.validation.Valid;
@@ -19,13 +20,12 @@ import javax.validation.Valid;
 public class HumberPersonController {
 
     @Autowired
-    private HumberPersonService service;
+    private HumberPersonService personService;
 
     @PostMapping("/register")
-    public ResponseEntity<HttpStatus> register(@Valid @RequestBody PersonDTO person ) throws DuplicatedObjectException {
-        service.register(person);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-
+    public ResponseEntity<Person> register(@Valid @RequestBody PersonDTO person ) throws DuplicatedObjectException {
+        Person newUser = personService.register(person);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
 

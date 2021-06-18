@@ -1,4 +1,4 @@
-package ua.tqs.deliveryservice.controller;
+package ua.tqs.deliveryservice.integration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
