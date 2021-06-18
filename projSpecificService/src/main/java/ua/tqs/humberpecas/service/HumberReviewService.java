@@ -27,18 +27,24 @@ public class HumberReviewService {
 
     public Purchase addReview( Review review, String userToken) throws ResourceNotFoundException, UnreachableServiceException, AccessNotAllowedException {
 
+        System.out.println(review.getOrderId());
+
         var purchase = purchaseRepository.findByServiceOrderId(review.getOrderId())
                 .orElseThrow(() -> {
                     log.error("ReviewService: Invalid Purchase");
                     throw new ResourceNotFoundException("Invalid Purchase");
                 });
 
-        String personEmail = purchase.getPerson().getEmail();
 
+
+        String personEmail = purchase.getPerson().getEmail();
         if (!personEmail.equals(jwtUserDetailsService.getEmailFromToken(userToken))){
             log.error("ReviewService: Invalid Purchase Access");
             throw new AccessNotAllowedException("Not Allowed");
         }
+
+        System.out.println(personEmail);
+
 
         deliveryService.reviewRider(review);
 

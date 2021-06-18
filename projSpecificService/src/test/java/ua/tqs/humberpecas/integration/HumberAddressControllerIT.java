@@ -17,6 +17,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.humberpecas.dto.AddressDTO;
+import ua.tqs.humberpecas.exception.AccessNotAllowedException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Address;
 import ua.tqs.humberpecas.model.JwtRequest;
@@ -115,6 +116,21 @@ public class HumberAddressControllerIT {
         assertThat(addresses).hasSize(1).extracting(Address::getAddress).containsOnly("Coimbra");
 
     }
+
+    @Test
+    @DisplayName("Update address with invalid token throws HTTP Unauthorized")
+    void whenUpdateAddressInvalidToken_thenThrowsStatus401() throws AccessNotAllowedException {
+
+        RestAssured.given()
+                .contentType("application/json")
+                .body(addressDTO)
+                .when()
+                .put(getBaseUrl() + "/update")
+                .then()
+                .statusCode(401);
+
+    }
+
 
 
     @Test
