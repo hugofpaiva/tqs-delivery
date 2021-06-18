@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
 
@@ -41,7 +40,7 @@ class HumberAddressControllerMockMvcTest {
     @MockBean
     private JwtRequestFilter jwtRequestFilter;
 
-    private Address  address;
+    private Address address;
     private AddressDTO addressDTO;
     private Person person;
 
@@ -69,7 +68,11 @@ class HumberAddressControllerMockMvcTest {
                 .when()
                 .post("/address/add")
                 .then()
-                .body(is(equalTo("{\"id\":0,\"address\":\"Aveiro\",\"postalCode\":\"3730-123\",\"city\":\"Aveiro\",\"country\":\"Portugal\"}")))
+                .body("address", equalTo(address.getAddress()))
+                .body("postalCode", equalTo(address.getPostalCode()))
+                .body("city", equalTo(address.getCity()))
+                .body("country", equalTo(address.getCountry()))
+                .body("deleted", equalTo(false))
                 .statusCode(200);
 
         verify(service, times(1)).addNewAddress("Bearer token", addressDTO);
@@ -112,8 +115,10 @@ class HumberAddressControllerMockMvcTest {
                 .then()
                 .statusCode(200)
                 .body("$.size()", equalTo(2))
-                .body("[0].address", equalTo("Aveiro"))
-                .body("[1].address", equalTo("Coimbra"));
+                .body("[0].address", equalTo(address.getAddress()))
+                .body("[0].deleted", equalTo(false))
+                .body("[1].address", equalTo(address2.getAddress()))
+                .body("[1].deleted", equalTo(false));
 
         verify(service, times(1)).getUserAddress(anyString());
     }
@@ -142,7 +147,8 @@ class HumberAddressControllerMockMvcTest {
     @Test
     @DisplayName("Delete User Address")
     void whenDeleteValidAddress_thenReturnStatusOk() throws ResourceNotFoundException, InvalidLoginException {
-        doNothing().when(service).delAddress("Bearer token", address.getId());
+        address.setDeleted(true);
+        when(service.delAddress("Bearer token", address.getId())).thenReturn(address);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -152,10 +158,11 @@ class HumberAddressControllerMockMvcTest {
                 .when()
                 .delete("/address/del")
                 .then()
+                .body("address", equalTo(address.getAddress()))
+                .body("deleted", equalTo(true))
                 .statusCode(200);
 
         verify(service, times(1)).delAddress("Bearer token", address.getId());
-
 
     }
 

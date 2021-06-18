@@ -44,11 +44,11 @@ public class HumberAddressController {
 
 
     @DeleteMapping("/del")
-    public ResponseEntity<HttpStatus> delAddress(@RequestHeader("authorization") String token, @RequestParam long addressId) throws InvalidLoginException {
+    public ResponseEntity<Address> delAddress(@RequestHeader("authorization") String token, @RequestParam long addressId) throws InvalidLoginException {
         log.debug("Delete address");
-        service.delAddress(token, addressId);
+        Address response = service.delAddress(token, addressId);
 
         log.info("Address deleted with success");
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

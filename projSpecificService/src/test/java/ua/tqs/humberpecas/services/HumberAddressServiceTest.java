@@ -102,7 +102,7 @@ class HumberAddressServiceTest {
     void whenGetValidUser_thenReturnAddress() throws InvalidLoginException {
         when(jwtUserDetailsService.getEmailFromToken("token")).thenReturn(person.getEmail());
         when(personRepository.findByEmail(person.getEmail())).thenReturn(Optional.of(person));
-        when(addressRepository.findAllByPerson(person)).thenReturn(new ArrayList<>(person.getAddresses()));
+        when(addressRepository.findAllByPersonAndDeletedIsFalse(person)).thenReturn(new ArrayList<>(person.getAddresses()));
 
         List<Address> userAddresses = service.getUserAddress("token");
 
@@ -110,7 +110,7 @@ class HumberAddressServiceTest {
         assertThat(userAddresses, hasItem(address));
 
         verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
-        verify(addressRepository, times(1)).findAllByPerson(person);
+        verify(addressRepository, times(1)).findAllByPersonAndDeletedIsFalse(person);
         verify(personRepository, times(1)).findByEmail(person.getEmail());
     }
 
@@ -140,14 +140,15 @@ class HumberAddressServiceTest {
         when(personRepository.findByEmail(person.getEmail())).thenReturn(Optional.of(person));
         when(addressRepository.findById(1L)).thenReturn(Optional.of(address));
 
-        doNothing().when(addressRepository).delete(address);
+        address.setDeleted(true);
+        when(addressRepository.saveAndFlush(address)).thenReturn(address);
 
         service.delAddress("token", 1L);
 
         verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
         verify(personRepository, times(1)).findByEmail(anyString());
         verify(addressRepository, times(1)).findById(1L);
-        verify(addressRepository, times(1)).delete(address);
+        verify(addressRepository, times(1)).saveAndFlush(address);
     }
 
     @Test
@@ -163,7 +164,7 @@ class HumberAddressServiceTest {
         verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
         verify(personRepository, times(1)).findByEmail(anyString());
         verify(addressRepository, times(1)).findById(-1L);
-        verify(addressRepository, times(0)).delete(address);
+        verify(addressRepository, times(0)).saveAndFlush(address);
     }
 
     @Test
@@ -178,7 +179,7 @@ class HumberAddressServiceTest {
         verify(jwtUserDetailsService, times(1)).getEmailFromToken("wrong_token");
         verify(personRepository, times(1)).findByEmail("Invalidemail@email.com");
         verify(addressRepository, times(0)).findById(anyLong());
-        verify(addressRepository, times(0)).delete(address);
+        verify(addressRepository, times(0)).saveAndFlush(address);
     }
 
     @Test
@@ -200,7 +201,7 @@ class HumberAddressServiceTest {
         verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
         verify(personRepository, times(1)).findByEmail(anyString());
         verify(addressRepository, times(1)).findById(address.getId());
-        verify(addressRepository, times(0)).delete(address);
+        verify(addressRepository, times(0)).saveAndFlush(address);
     }
 
 }

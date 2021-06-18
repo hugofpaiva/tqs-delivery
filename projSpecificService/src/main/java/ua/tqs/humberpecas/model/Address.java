@@ -28,6 +28,8 @@ public class Address {
     @NonNull
     private String country;
 
+    private boolean deleted = false;
+
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "person_id", nullable=false)
