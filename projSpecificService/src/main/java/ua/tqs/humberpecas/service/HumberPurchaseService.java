@@ -70,7 +70,7 @@ public class HumberPurchaseService {
 
         List<Product> productList = productRepository.findAllById(purchaseDTO.getProductsId());
 
-        if (productList.size() < new HashSet<>(productList).size()){
+        if (productList.size() < new HashSet<>(purchaseDTO.getProductsId()).size()){
 
             List<Long> differences = productList.stream().map(Product::getId).collect(Collectors.toList());
             purchaseDTO.getProductsId().forEach(differences::remove);

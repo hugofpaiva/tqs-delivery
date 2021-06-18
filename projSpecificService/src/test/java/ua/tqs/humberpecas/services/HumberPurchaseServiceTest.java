@@ -186,7 +186,7 @@ class HumberPurchaseServiceTest {
         when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
-        when(productRepository.findAllById(productsIds)).thenReturn(productList.subList(0, 0));
+        when(productRepository.findAllById(productsIds)).thenReturn(new ArrayList<>());
 
         assertThrows(ResourceNotFoundException.class, () -> {
             purchaseService.newPurchase(purchaseDTO, userToken);
