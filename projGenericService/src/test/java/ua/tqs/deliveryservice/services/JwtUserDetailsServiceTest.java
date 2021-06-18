@@ -144,7 +144,7 @@ class JwtUserDetailsServiceTest {
     }
 
     @Test
-    public void testGivenOnlyHeaderAuthorization_whenGetStoreFromToken_thenReturnStore() {
+    public void testGivenOnlyHeaderAuthorization_whenGetStoreFromToken_thenReturnNull() {
         String token = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODk1OX0.dgYxgi4nRUUpyL_hcNvkjei2_TX9AAPoUFJo99U_SlTrpE5zH7bTTxubl8-_slIvYSlyvgc_IVHvqTxZTskSsA";
         Mockito.when(storeRepository.findByToken(anyString())).thenReturn(Optional.empty());
 
