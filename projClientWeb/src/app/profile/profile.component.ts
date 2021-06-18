@@ -162,15 +162,15 @@ export class NgbModalOrderDetails {
         <div class="modal-body" style="min-width: 500px;">
 
             <div *ngIf="creatingAddress" style="min-height: 200px; margin-top: 5%">
-                <form [formGroup]="newAddressForm">
+                <form [formGroup]="newAddressForm" (ngSubmit)="submitAddress()" *ngIf="newAddressObject">
                     <div class="modal-body"
                          style="display: flex; justify-content: space-around; align-items: center">
 
                         <div class="form-group">
                             <label>Address</label>
                             <input #address type="text"
-                                   [(ngModel)]="address.address"
                                    formControlName="address" class="form-control"
+                                   [(ngModel)]="newAddressObject.address"
                                    [ngClass]="{ 'is-invalid': f.address.errors }"/>
                             <div *ngIf=" !requested && f.address.errors"
                                  class="invalid-feedback">
@@ -180,8 +180,8 @@ export class NgbModalOrderDetails {
                         <div class="form-group">
                             <label>Postal Code</label>
                             <input #postalcode type="text"
-                                   [(ngModel)]="address.postalcode"
                                    formControlName="postalcode" class="form-control"
+                                   [(ngModel)]="newAddressObject.postalCode"
                                    [ngClass]="{ 'is-invalid': f.postalcode.errors}"/>
                             <div *ngIf=" !requested && f.postalcode.errors"
                                  class="invalid-feedback">
@@ -191,8 +191,8 @@ export class NgbModalOrderDetails {
                         <div class="form-group">
                             <label>City</label>
                             <input #city type="text"
-                                   [(ngModel)]="address.city"
                                    formControlName="city" class="form-control"
+                                   [(ngModel)]="newAddressObject.city"
                                    [ngClass]="{ 'is-invalid': f.city.errors}"/>
                             <div *ngIf=" !requested && f.city.errors"
                                  class="invalid-feedback">
@@ -202,8 +202,8 @@ export class NgbModalOrderDetails {
                         <div class="form-group">
                             <label>Country</label>
                             <input #country type="text"
-                                   [(ngModel)]="address.country"
                                    formControlName="country" class="form-control"
+                                   [(ngModel)]="newAddressObject.country"
                                    [ngClass]="{ 'is-invalid': f.country.errors }"/>
                             <div *ngIf=" !requested && f.country.errors"
                                  class="invalid-feedback">
@@ -278,7 +278,7 @@ export class NgbModalManageAddresses implements OnInit {
     deleteIcon = faTimesCircle;
     private newAddressForm: FormGroup;
     requested = false;
-    @Input() address: Address = new Address();
+    @Input() newAddressObject: Address = new Address();
 
     constructor(private formBuilder: FormBuilder, public activeModal: NgbActiveModal, private addressService: AddressService,
                 private alertService: AlertService) {
@@ -307,18 +307,22 @@ export class NgbModalManageAddresses implements OnInit {
         if (!this.creatingAddress) {
             this.creatingAddress = true;
         } else {
-            this.addressService.createAddress(this.address).subscribe(data => {
-                this.alertService.success('Address created!');
-                this.getAddresses();
-                this.requested = false;
-                this.creatingAddress = false;
-                this.address = new Address();
-            }, error => {
-                this.requested = false;
-                this.alertService.error('There was an error. Address was not created!');
-            });
+            this.newAddressObject = new Address();
         }
+    }
 
+    submitAddress() {
+        console.log(this.newAddressObject);
+        this.addressService.createAddress(this.newAddressObject).subscribe(data => {
+            this.alertService.success('Address created!');
+            this.getAddresses();
+            this.requested = false;
+            this.creatingAddress = false;
+            this.newAddressObject = new Address();
+        }, error => {
+            this.requested = false;
+            this.alertService.error('There was an error. Address was not created!');
+        });
     }
 
     deleteAddress(add: Address) {

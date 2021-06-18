@@ -28,40 +28,63 @@
                     <div class="card">
                         <article class="filter-group">
                             <header class="card-header">
-                                <a href="#" data-toggle="collapse" data-target="#collapse_2" aria-expanded="true"
+                                <a data-toggle="collapse" data-target="#collapse_2" aria-expanded="true"
                                    class="">
                                     <h6 class="title">Category </h6>
                                 </a>
                             </header>
                             <div class="filter-content collapse show" id="collapse_2" style="">
                                 <div class="card-body">
-                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'LATHES' }" (click)="getCategory($event.target.innerText)" type="button">Lathes</button>
-                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'PRESSES' }" (click)="getCategory($event.target.innerText)" type="button">Presses</button>
-                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'SCREWDRIVER' }" (click)="getCategory($event.target.innerText)" type="button">Screwdriver</button>
-                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'PLIERS' }" (click)="getCategory($event.target.innerText)" type="button">Pliers</button>
-                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'SCREWS' }" (click)="getCategory($event.target.innerText)" type="button">Screws</button>
-                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'NAILS' }" (click)="getCategory($event.target.innerText)" type="button">Nails</button>
-                                    <button class="btn btn-sm btn-primary" [ngClass]="{ 'active': category === 'WASHER' }" (click)="getCategory($event.target.innerText)" type="button">Washer</button>
+                                    <button class="btn btn-sm btn-primary"
+                                            [ngClass]="{ 'active': category === 'LATHES' }"
+                                            (click)="getCategory($event.target.innerText)" type="button">Lathes
+                                    </button>
+                                    <button class="btn btn-sm btn-primary"
+                                            [ngClass]="{ 'active': category === 'PRESSES' }"
+                                            (click)="getCategory($event.target.innerText)" type="button">Presses
+                                    </button>
+                                    <button class="btn btn-sm btn-primary"
+                                            [ngClass]="{ 'active': category === 'SCREWDRIVER' }"
+                                            (click)="getCategory($event.target.innerText)" type="button">Screwdriver
+                                    </button>
+                                    <button class="btn btn-sm btn-primary"
+                                            [ngClass]="{ 'active': category === 'PLIERS' }"
+                                            (click)="getCategory($event.target.innerText)" type="button">Pliers
+                                    </button>
+                                    <button class="btn btn-sm btn-primary"
+                                            [ngClass]="{ 'active': category === 'SCREWS' }"
+                                            (click)="getCategory($event.target.innerText)" type="button">Screws
+                                    </button>
+                                    <button class="btn btn-sm btn-primary"
+                                            [ngClass]="{ 'active': category === 'NAILS' }"
+                                            (click)="getCategory($event.target.innerText)" type="button">Nails
+                                    </button>
+                                    <button class="btn btn-sm btn-primary"
+                                            [ngClass]="{ 'active': category === 'WASHER' }"
+                                            (click)="getCategory($event.target.innerText)" type="button">Washer
+                                    </button>
                                 </div>
                             </div>
                         </article>
                         <article class="filter-group">
                             <header class="card-header">
-                                <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true"
+                                <a data-toggle="collapse" data-target="#collapse_3" aria-expanded="true"
                                    class="">
                                     <h6 class="title">Price range </h6>
                                 </a>
                             </header>
                             <div class="filter-content collapse show" id="collapse_3" style="">
                                 <form ngForm (ngSubmit)="getProducts()" class="card-body">
-                                    <div class="form-row" >
+                                    <div class="form-row">
                                         <div class="form-group col-md-6">
                                             <label>Min</label>
-                                            <input class="form-control" (change)="getMinPrice($event.target.value)" placeholder="0€" type="number">
+                                            <input class="form-control" (change)="getMinPrice($event.target.value)"
+                                                   placeholder="0€" type="number">
                                         </div>
                                         <div class="form-group text-right col-md-6">
                                             <label>Max</label>
-                                            <input class="form-control" (change)="getMaxPrice($event.target.value)" placeholder="1000€" type="number">
+                                            <input class="form-control" (change)="getMaxPrice($event.target.value)"
+                                                   placeholder="1000€" type="number">
                                         </div>
                                     </div> <!-- form-row.// -->
                                     <button type="submit" class="btn btn-block btn-primary">Apply</button>
@@ -78,7 +101,8 @@
                         <span>{{totalItems}} Item{{totalItems !== 1 ? 's' : ''}} found </span>
                         <form ngForm (ngSubmit)="getProducts()" class="search col-md-6 col-sm-12" style="margin: 0">
                             <div class="input-group w-100">
-                                <input type="text" class="form-control" (change)="getName($event.target.value)" placeholder="Search">
+                                <input type="text" class="form-control" (change)="getName($event.target.value)"
+                                       placeholder="Search">
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="fa fa-search"></i>
@@ -86,7 +110,8 @@
                                 </div>
                             </div>
                         </form>
-                        <select (change)="getOrderBy($event.target.value)" class="mr-2 form-control col-md-3" style="margin: 0">
+                        <select (change)="getOrderBy($event.target.value)" class="mr-2 form-control col-md-3"
+                                style="margin: 0">
                             <option>Latest items</option>
                             <option>Cheapest</option>
                         </select>
@@ -108,7 +133,11 @@
                                             <span class="price">{{product.price}}€</span>
                                         </div> <!-- price-wrap.// -->
                                     </div>
-                                    <a style="color: white" (click)="addToCart(product)" class="btn btn-block btn-primary">Add to cart </a>
+                                    <div class="hide card">
+                                        <div class="card-body">{{product.description}}</div>
+                                    </div>
+                                    <a style="color: white" (click)="addToCart(product)"
+                                       class="btn btn-block btn-primary">Add to cart </a>
                                 </figcaption>
                             </figure>
                         </div> <!-- col.// -->

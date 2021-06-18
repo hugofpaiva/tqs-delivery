@@ -14,7 +14,6 @@ import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
 import java.util.List;
-import java.util.Set;
 
 @SpringBootApplication
 public class HumberPecasApplication {
@@ -53,7 +52,7 @@ class DBLoader implements CommandLineRunner {
 		Address address1 = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal", person);
 		addressRepository.saveAndFlush(address1);
 
-		Product product = new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "image_url");
+		Product product = new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
 		productRepository.saveAndFlush(product);
 
 
