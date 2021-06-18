@@ -32,9 +32,6 @@ public class ManagerService {
     @Autowired
     private PurchaseRepository purchaseRepository;
 
-    // int countPurchaseByStatus(Status s);
-    // double getAverageReview();
-
     public Map<String, Object> getRidersInformation(Integer pageNo, Integer pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
         Page<Rider> result = riderRepository.findAll(paging);
@@ -73,7 +70,7 @@ public class ManagerService {
         Long totalTime = avgTime.get(0)[0];
         Long numPurch = avgTime.get(0)[1];
 
-        Double avgReviews = riderRepository.getAverageRiderRating(); //.get(0);
+        Double avgReviews = riderRepository.getAverageRiderRating();
         Long process = purchaseRepository.countPurchaseByStatusIsNot(Status.DELIVERED);
 
         // if there are delivered purchases
@@ -81,7 +78,6 @@ public class ManagerService {
         response.put("avgReviews", avgReviews);
         response.put("inProcess", process);
 
-        System.out.println(response);
         return response;
     }
 
