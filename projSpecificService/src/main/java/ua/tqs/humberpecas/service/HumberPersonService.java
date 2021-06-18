@@ -12,22 +12,20 @@ import ua.tqs.humberpecas.repository.PersonRepository;
 public class HumberPersonService {
 
     @Autowired
-    private PersonRepository repository;
+    private PersonRepository personRepository;
 
     @Autowired
     private PasswordEncoder bcryptEncoder;
 
-    // TODO: terminar
-    public void register(PersonDTO user) throws DuplicatedObjectException {
+    public Person register(PersonDTO user) throws DuplicatedObjectException {
 
-        Person p  = new Person(user.getName(), bcryptEncoder.encode(user.getPwd()), user.getEmail());
-        repository.saveAndFlush(p);
+        if (personRepository.findByEmail(user.getEmail()).isEmpty()) {
+            Person p = new Person(user.getName(), bcryptEncoder.encode(user.getPwd()), user.getEmail());
+            personRepository.saveAndFlush(p);
+            return p;
+        }
 
-        // validar os dados (verificar se email ja existe na bd)
-
-        // se tudo bem guardar na bd
-
-        // se não lançar excetion
+        throw new DuplicatedObjectException("User email is already in use.");
     }
 
 }
