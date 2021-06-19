@@ -1,8 +1,8 @@
 package ua.tqs.deliveryservice.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 @Service
+@Log4j2
 public class PurchaseService {
     @Autowired
     private StoreRepository storeRepository;
@@ -42,33 +43,52 @@ public class PurchaseService {
     public Purchase reviewRiderFromSpecificOrder(String storeToken, Long order_id, int review)
             throws InvalidLoginException, ResourceNotFoundException, InvalidValueException {
         // The store token that was passed did not match any in the db. UNAUTHORIZED
-        Store store = storeRepository.findByToken(storeToken).orElseThrow(() -> new InvalidLoginException("Unauthorized store."));
+        Store store = storeRepository.findByToken(storeToken).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Unauthorized store, when reviewing rider");
+            return new InvalidLoginException("Unauthorized store.");
+        });
 
         // The order_id that was passed did not match any in the db. NOT_FOUND
-        Purchase purchase = purchaseRepository.findById(order_id).orElseThrow(() -> new ResourceNotFoundException("Order not found."));
+        Purchase purchase = purchaseRepository.findById(order_id).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Order not found, when reviewing rider");
+            return new ResourceNotFoundException("Order not found.");
+        });
 
         // A review cannot be added to a purchase that was already reviewed. BAD_REQUEST
-        if (purchase.getRiderReview() != null)
-            throw new InvalidValueException("Invalid, purchased already had review.");
+        if (purchase.getRiderReview() != null) {
+            log.error("PURCHASE SERVICE: Purchase already had review, when reviewing rider");
+            throw new InvalidValueException("Invalid, purchase already had review.");
+        }
 
         long store_id_of_where_purchase_was_supposedly_made = purchase.getStore().getId();
         long store_id_associated_to_token_passed = store.getId();
 
         // The token passed belonged to a store where this purchase had not been made,
         // because this purchase_id was not associated with the store in possession of the passed token. BAD_REQUEST
-        if (store_id_of_where_purchase_was_supposedly_made != store_id_associated_to_token_passed)
+        if (store_id_of_where_purchase_was_supposedly_made != store_id_associated_to_token_passed) {
+            log.error("PURCHASE SERVICE: Invalid token for purchase ID, when reviewing rider");
             throw new InvalidValueException("Token passed belonged to a store where this purchase had not been made.");
+        }
 
         purchase.setRiderReview(review);
         purchaseRepository.saveAndFlush(purchase);
 
+        log.info("PURCHASE SERVICE: Review for rider saved successfully");
         return purchase;
     }
 
     public Purchase updatePurchaseStatus(String token) throws InvalidLoginException, ResourceNotFoundException {
         String email = jwtUserDetailsService.getEmailFromToken(token);
-        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
-        Purchase unfinished = purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).orElseThrow(() -> new ResourceNotFoundException("This rider hasn't accepted an order yet"));
+
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Invalid rider token, when updating purchase status");
+            return new InvalidLoginException("There is no Rider associated with this token");
+        });
+
+        Purchase unfinished = purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: This rider hasn't accepted an order yet, when updating purchase status");
+            return new ResourceNotFoundException("This rider hasn't accepted an order yet");
+        });
 
         unfinished.setStatus(Status.getNext(unfinished.getStatus()));
 
@@ -78,42 +98,63 @@ public class PurchaseService {
         }
 
         purchaseRepository.save(unfinished);
+        log.info("PURCHASE SERVICE: Purchase status updated successfully");
         return unfinished;
     }
 
     public Purchase getNewPurchase(String token) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
         String email = jwtUserDetailsService.getEmailFromToken(token);
-        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Invalid rider token, when getting rider's new order");
+            return new InvalidLoginException("There is no Rider associated with this token");
+        });
 
         // verify if Rider has any purchase to deliver
         if (purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).isPresent()) {
+            log.error("PURCHASE SERVICE: Rider still has an order to deliver, when getting rider's new order");
             throw new ForbiddenRequestException("This rider still has an order to deliver");
         }
 
         // get available order for rider
-        Purchase purch = purchaseRepository.findTopByRiderIsNullOrderByDate().orElseThrow(() -> new ResourceNotFoundException("There are no more orders available"));
+        Purchase purch = purchaseRepository.findTopByRiderIsNullOrderByDate().orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: No available orders, when getting rider's new order");
+            return new ResourceNotFoundException("There are no more orders available");
+        });
 
         // accept order
         purch.setRider(rider);
         purch.setStatus(Status.ACCEPTED);
         purchaseRepository.save(purch);
 
+        log.info("PURCHASE SERVICE: Rider successfully accepted a new order to deliver");
         return purch;
     }
 
     public Purchase getCurrentPurchase(String token) throws InvalidLoginException, ResourceNotFoundException {
         String email = jwtUserDetailsService.getEmailFromToken(token);
-        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
-        return purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).orElseThrow(() -> new ResourceNotFoundException("This rider hasn't accepted an order yet"));
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Invalid rider token, when getting rider's current purchase");
+            return new InvalidLoginException("There is no Rider associated with this token");
+        });
+
+        Purchase response = purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Rider has no orders, when getting rider's current purchase");
+            return new ResourceNotFoundException("This rider hasn't accepted an order yet");
+        });
+
+        log.info("PURCHASE SERVICE: Successfully retrieved rider's current order");
+        return response;
     }
 
     public Map<String, Object> getLastOrderForRider(Integer pageNo, Integer pageSize, String riderToken) throws InvalidLoginException {
         String email = jwtUserDetailsService.getEmailFromToken(riderToken);
 
-        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Invalid rider token, when getting last order for rider");
+            return new InvalidLoginException("There is no Rider associated with this token");
+        });
 
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("date").descending());
-
         Page<Purchase> pagedResult = purchaseRepository.findAllByRider(rider, paging);
 
         List<Purchase> responseList = new ArrayList<>();
@@ -128,45 +169,60 @@ public class PurchaseService {
         response.put("totalItems", pagedResult.getTotalElements());
         response.put("totalPages", pagedResult.getTotalPages());
 
+        log.info("PURCHASE SERVICE: Successfully retrieved rider's last order");
         return response;
     }
 
 
     public Purchase receiveNewOrder(String storeToken, Map<String, Object> data) throws InvalidValueException, InvalidLoginException {
         Store store = jwtUserDetailsService.getStoreFromToken(storeToken);
-        if (store == null) throw new InvalidLoginException("There is no Store associated with this token");
+        if (store == null) {
+            log.error("PURCHASE SERVICE: Invalid store token, when store tried to get new order");
+            throw new InvalidLoginException("There is no Store associated with this token");
+        }
 
         String error = "invalid data";
 
-        Object personName = Optional.ofNullable(data.get("personName"))
-                .orElseThrow(() -> new InvalidValueException(error));
+        Object personName = Optional.ofNullable(data.get("personName")) .orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Invalid data, personName, when store tried to get new order");
+            return new InvalidValueException(error);
+        });
 
-        if (!(personName instanceof String)) throw new InvalidValueException(error);
+        if (!(personName instanceof String)) {
+            log.error("PURCHASE SERVICE: Invalid data when store tried to get new order -> person name is not of type String");
+            throw new InvalidValueException(error);
+        }
 
-        Object date_obj = Optional.ofNullable(data.get("date"))
-                .orElseThrow(() -> new InvalidValueException(error));
+        Object date_obj = Optional.ofNullable(data.get("date")).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Invalid data, date, when store tried to get new order");
+            return new InvalidValueException(error);
+        });
 
         Date date = null;
         if (date_obj instanceof Long) date = new Date((long) date_obj);
         if (date_obj instanceof Integer) date = new Date((int) date_obj);
         if (date == null) throw new InvalidValueException(error);
 
-        Object address = Optional.ofNullable(data.get("address"))
-                .orElseThrow(() -> new InvalidValueException(error));
+        Object address = Optional.ofNullable(data.get("address")).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Invalid data, address, when store tried to get new order");
+            return new InvalidValueException(error);
+        });
 
         ObjectMapper objectMapper = new ObjectMapper();
         Address addr;
         try {
             addr = objectMapper.convertValue(address, Address.class);
         } catch (Exception ex) {
+            log.error("PURCHASE SERVICE: Invalid data, address, when store tried to get new order");
             throw new InvalidValueException(error);
         }
 
         addressRepository.save(addr);
         Purchase purchase = new Purchase(addr, date, store, (String) personName);
         purchaseRepository.save(purchase);
-        return purchase;
 
+        log.info("PURCHASE SERVICE: Store successfully retrieved newest order");
+        return purchase;
     }
 
     public Map<String, Object> getTop5Cities() {
@@ -179,6 +235,7 @@ public class PurchaseService {
             }
         }
 
+        log.info("PURCHASE SERVICE: Manager successfully retrieved top 5 cities where orders were made");
         return response ;
     }
 
