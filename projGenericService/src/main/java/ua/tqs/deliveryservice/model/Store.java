@@ -2,6 +2,10 @@ package ua.tqs.deliveryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Map;
 import java.util.Set;
@@ -28,11 +32,15 @@ public class Store {
     @OneToMany(mappedBy = "store")
     private Set<Purchase> purchases;
 
-    public Store(String name, String description, String token, Address address) {
+    @Column(unique = true)
+    private String storeUrl;
+
+    public Store(String name, String description, String token, Address address, String storeUrl) {
         this.name = name;
         this.token = token;
         this.description = description;
         this.address = address;
+        this.storeUrl = storeUrl;
     }
 
     public Store() {}

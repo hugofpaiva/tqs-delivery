@@ -241,7 +241,7 @@ public class PurchaseRepositoryTests {
     @Test
     public void testCountPurchaseByStore_givenStoreWithoutPurchases_return0() {
         Address addr_store = new Address("Street One, n. 342", "0000-002", "Aveiro", "Portugal");
-        Store s = new Store("storeeee", "the best store .", "hard-pwddfsdf", addr_store);
+        Store s = new Store("storeeee", "the best store .", "hard-pwddfsdf", addr_store, "http://localhost:8081/delivery/");
         entityManager.persist(addr_store);
         entityManager.persist(s);
 
@@ -339,7 +339,7 @@ public class PurchaseRepositoryTests {
     /* -- helper -- */
     private Purchase createAndSavePurchase(int i, boolean rider) {
         Address addr_store = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal");
-        Store s = new Store("store"+i, "the best store #"+i, "hard-pwd"+i, addr_store);
+        Store s = new Store("store"+i, "the best store #"+i, "hard-pwd"+i, addr_store, "http://localhost:808"+i+"/delivery/");
         Address addr_purchase = new Address("Street Twooo, n. "+ i, "1100-00"+i, "Aveiro", "Portugal");
         Purchase p = new Purchase(addr_purchase, s, "João");
 

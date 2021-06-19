@@ -118,7 +118,7 @@ public class StoreRepositoryTests {
     /* -- helper -- */
     private Store createAndSaveStore(int i) {
         Address addr_store = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal");
-        Store s = new Store("store"+i, "the best store #"+i, "hard-pwd"+i, addr_store);
+        Store s = new Store("store"+i, "the best store #"+i, "hard-pwd"+i, addr_store, "http://localhost:808"+i+"/delivery/");
         entityManager.persist(addr_store);
         entityManager.persistAndFlush(s);
         return s;

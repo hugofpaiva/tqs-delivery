@@ -84,7 +84,7 @@ class RiderRestControllerTemplateIT {
         Address purchAddres = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
         addressRepository.saveAndFlush(purchAddres);
 
-        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address);
+        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address, "http://localhost:8081/delivery/");
         this.purchase = new Purchase(purchAddres, this.rider, this.store, "Joana");
 
 

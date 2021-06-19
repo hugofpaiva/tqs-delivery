@@ -3,6 +3,7 @@ package ua.tqs.deliveryservice.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
@@ -23,6 +24,10 @@ import org.springframework.data.domain.Sort;
 
 @Service
 public class PurchaseService {
+
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Autowired
     private StoreRepository storeRepository;
 
@@ -77,6 +82,11 @@ public class PurchaseService {
         }
 
         purchaseRepository.save(unfinished);
+
+        Store store = unfinished.getStore();
+
+
+
         return unfinished;
     }
 

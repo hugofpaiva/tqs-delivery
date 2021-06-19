@@ -139,7 +139,7 @@ public class PurchaseRestControllerMockMvcTest {
     public void testEverythingOK_thenIsOk() throws Exception {
         Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address, "http://localhost:8080/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
 
         JSONObject json = new JSONObject();

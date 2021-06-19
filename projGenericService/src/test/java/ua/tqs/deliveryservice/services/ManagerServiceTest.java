@@ -37,7 +37,7 @@ class ManagerServiceTest {
     private Manager manager = new Manager("joao", "aRightPassword", "TQS_delivery@example.com");
     private Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
     private Rider rider = new Rider("Raquel", "aRightPassword", "TQS_delivery@ua.com");
-    private Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address);
+    private Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address, "http://localhost:8081/delivery/");
     private Purchase purchase = new Purchase(this.address, this.rider, this.store, "Joana");
 
     // --------------------------------------------

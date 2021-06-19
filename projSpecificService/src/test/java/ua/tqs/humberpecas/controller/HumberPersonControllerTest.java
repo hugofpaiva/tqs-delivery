@@ -49,7 +49,7 @@ class HumberPersonControllerTest {
         RestAssuredMockMvc.mockMvc(mvc);
 
     }
-    // TODO:
+
     @Test
     @DisplayName("User registration")
     void whenValidRegister_thenReturnCrated() throws DuplicatedObjectException {

@@ -71,7 +71,9 @@ class DBLoader implements CommandLineRunner {
 		Address addr5 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
 		addressRep.saveAndFlush(addr5);
 
-		Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2);
+
+		String storeUrl = "http://localhost:8081/delivery/";
+		Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2, storeUrl);
 		storeRep.saveAndFlush(store1);
 
 		Purchase purchase1 = new Purchase(addr1, rider1, store1, "client1");

@@ -84,7 +84,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
         List<Purchase> purchases = new ArrayList<>();
         purchases.add(purchase);
@@ -148,7 +148,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
 
         Address address1 = new Address("Universidade de Lisboa", "3800-000", "Aveiro", "Portugal");
@@ -242,7 +242,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
 
         when(purchaseService.getCurrentPurchase("Bearer example_token")).thenReturn(purchase);
@@ -320,7 +320,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
 
         when(purchaseService.getNewPurchase("Bearer example_token")).thenReturn(purchase);
@@ -383,7 +383,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
         purchase.setStatus(Status.PICKED_UP);
 
@@ -410,7 +410,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
         purchase.setStatus(Status.PICKED_UP);
         purchase.setDeliveryTime(15L);

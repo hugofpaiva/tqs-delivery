@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.exception.AccessNotAllowedException;
+import ua.tqs.humberpecas.exception.InvalidOperationException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.model.*;
@@ -58,6 +59,7 @@ class HumberReviewServiceTest {
         products.add(new Product(20.50, "hammer v2", "the best hammer 2.0", Category.SCREWDRIVER ));
         purchase = new Purchase(person, address, products);
         purchase.setId(1);
+        purchase.setStatus(PurchaseStatus.DELIVERED);
 
 
         review = new Review(1, 4);
@@ -87,6 +89,26 @@ class HumberReviewServiceTest {
     }
 
 
+
+    @Test
+    @DisplayName("Review Rider When Review not deliverd throws InvalidOperationException")
+    void whenReviewNotDeliveredOrder_thenThrowsInvalidOperation(){
+
+        purchase.setStatus(PurchaseStatus.PENDENT);
+
+        when(purchaseRepository.findByServiceOrderId(anyLong())).thenReturn(Optional.of(purchase));
+
+        assertThrows( InvalidOperationException.class, () -> {
+            service.addReview(review, userToken);
+        } );
+
+        verify(deliveryService, times(0)).reviewRider(review);
+        verify(purchaseRepository, times(1)).findByServiceOrderId(review.getOrderId());
+        verify(jwtUserDetailsService, times(0)).getEmailFromToken(userToken);
+        verify(purchaseRepository, times(0)).saveAndFlush(purchase);
+
+
+    }
 
 
 

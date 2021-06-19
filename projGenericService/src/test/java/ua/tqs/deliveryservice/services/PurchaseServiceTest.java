@@ -42,7 +42,7 @@ import java.util.*;
 public class PurchaseServiceTest {
     private Rider rider = new Rider("example", "pwd", "email@email.com");
     private Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-    private Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", this.address);
+    private Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", this.address, "http://localhost:8081/delivery/");
     private Purchase purchase = new Purchase(this.address, this.rider, this.store, "Joana");
 
     @Mock
@@ -113,7 +113,7 @@ public class PurchaseServiceTest {
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
         Purchase p1 = new Purchase(addr, r1, store, "Miguel"); p1.setDate(new Date());
 
         Mockito
@@ -142,7 +142,7 @@ public class PurchaseServiceTest {
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
         Purchase p1 = new Purchase(addr, r1, store, "Miguel"); p1.setDate(new Date()); p1.setStatus(Status.PICKED_UP);
 
         Mockito
@@ -218,7 +218,7 @@ public class PurchaseServiceTest {
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
         Purchase p1 = new Purchase(addr, r1, store, "Miguel");
 
         Mockito
@@ -267,7 +267,7 @@ public class PurchaseServiceTest {
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
         Purchase p1 = new Purchase(addr, r1, store, "Miguel");
 
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
@@ -324,7 +324,7 @@ public class PurchaseServiceTest {
 
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
         Purchase p1 = new Purchase(addr, store, "Miguel");
 
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
@@ -534,7 +534,7 @@ public class PurchaseServiceTest {
 
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
         Purchase p1 = new Purchase(addr, this.rider, store, "Miguel");
         Purchase p2 = new Purchase(addr, this.rider, store, "Mariana");
         Purchase p3 = new Purchase(addr, this.rider, store, "Carolina");
@@ -582,7 +582,7 @@ public class PurchaseServiceTest {
     public void testPostNewOrder_whenOneFieldIsMissing_thenThrow() throws InvalidValueException, InvalidLoginException {
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
 
         Mockito.when(jwtUserDetailsService.getStoreFromToken("token")).thenReturn(store);
 
@@ -601,7 +601,7 @@ public class PurchaseServiceTest {
     @Test
     public void testPostNewOrder_whenOneFieldIsBad_thenThrow() throws InvalidValueException, InvalidLoginException {
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
 
         Mockito.when(jwtUserDetailsService.getStoreFromToken("token")).thenReturn(store);
 
@@ -620,7 +620,7 @@ public class PurchaseServiceTest {
     @Test
     public void testPostNewOrder_whenEverythingGood_thenReturnPurchase() throws InvalidValueException, InvalidLoginException {
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
 
         Mockito.when(jwtUserDetailsService.getStoreFromToken("token")).thenReturn(store);
         Mockito.when(addressRepository.save(address)).thenReturn(address);
@@ -667,7 +667,7 @@ public class PurchaseServiceTest {
     public void testWhenGetAvgDelivery_thenReturn() {
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
 
         Purchase p1 = new Purchase(addr, this.rider, store, "Miguel");
         Purchase p2 = new Purchase(addr, this.rider, store, "Mariana");
