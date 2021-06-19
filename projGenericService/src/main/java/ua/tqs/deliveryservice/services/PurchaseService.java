@@ -2,6 +2,7 @@ package ua.tqs.deliveryservice.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
@@ -142,7 +143,6 @@ public class PurchaseService {
 
         if (!(personName instanceof String)) throw new InvalidValueException(error);
 
-        System.out.println(data);
         Object date_obj = Optional.ofNullable(data.get("date"))
                 .orElseThrow(() -> new InvalidValueException(error));
 
@@ -169,5 +169,17 @@ public class PurchaseService {
 
     }
 
+    public Map<String, Object> getTop5Cities() {
+        Map<String, Object> response = new HashMap<>();
+        List<Object[]> repositoryResponse = purchaseRepository.getTopFiveCitiesOfPurchases();
+
+        for(Object[] p : repositoryResponse) {
+            if (p != null && response.size() < 5) {
+                response.put((String) p[0], p[1]);
+            }
+        }
+
+        return response ;
+    }
 
 }

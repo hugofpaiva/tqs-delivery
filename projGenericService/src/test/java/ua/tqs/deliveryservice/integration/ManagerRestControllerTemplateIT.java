@@ -122,6 +122,9 @@ public class ManagerRestControllerTemplateIT {
 
         personRepository.deleteAll();
         personRepository.flush();
+
+        riderRepository.deleteAll();
+        riderRepository.flush();
     }
 
     /* ----------------------------- *
@@ -493,5 +496,175 @@ public class ManagerRestControllerTemplateIT {
         Assertions.assertThat(found.get("avgTimes")).isEqualTo(exp_time);
         Assertions.assertThat(found.get("avgReviews")).isEqualTo(exp_rev);
         Assertions.assertThat(found.get("inProcess")).isEqualTo(1);
+    }
+
+    /* ----------------------------- *
+     * GET TOP DELIVERED CITIES      *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testGetTopDeliveredCities_thenReturn() {
+        /* delete purchase from beforeEach */
+        purchaseRepository.deleteAll();
+        purchaseRepository.flush();
+
+        /* set up ... */
+        Rider rider = new Rider("Novo Rider", "a_good_password", "email@exampleTQS.com");
+        Address addr1 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Address addr2 = new Address("Rua das Couves, n. 51", "1234-567", "Porto", "Portugal");
+        Address addr3 = new Address("Rua 31 de Dezembro, n. 12", "0000-645", "Coimbra", "Portugal");
+        Address addr4 = new Address("Avenida D. Luís, n. 33", "1472-374", "Lisboa", "Portugal");
+        Address addr5 = new Address("Rua São João, n. 6", "6831-353", "Guarda", "Portugal");
+        Address addr6 = new Address("Rua das Marias Felizbertas, n. 28", "5830-912", "Aveiro", "Portugal");
+        Address addr7 = new Address("Rua do Carmo, n. 20", "5830-912", "Porto", "Portugal");
+        Address addr8 = new Address("Rua 1 de Maio, n. 8", "5830-912", "Guarda", "Portugal");
+        Address addr9 = new Address("Rua peepeepoopoo, n. 1", "5830-912", "Guarda", "Portugal");
+        Address addr10 = new Address("Rua das Panelas, n. 57", "5830-912", "Guarda", "Portugal");
+        Address addr11 = new Address("Rua de Festa, n. 23", "5830-912", "Viseu", "Portugal");
+
+        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+
+        Purchase p1 = new Purchase(addr1, rider, store, "Miguel");
+        Purchase p2 = new Purchase(addr2, rider, store, "Mariana");
+        Purchase p3 = new Purchase(addr3, rider, store, "Carolina");
+        Purchase p4 = new Purchase(addr4, rider, store, "Ricardo");
+        Purchase p5 = new Purchase(addr5, rider, store, "Manel");
+        Purchase p6 = new Purchase(addr6, rider, store, "Gustavo");
+        Purchase p7 = new Purchase(addr7, rider, store, "Luana");
+        Purchase p8 = new Purchase(addr8, rider, store, "Duarte");
+        Purchase p9 = new Purchase(addr9, rider, store, "Hugo");
+        Purchase p10 = new Purchase(addr10, rider, store, "José");
+        Purchase p11 = new Purchase(addr11, rider, store, "Lucas");
+
+
+        riderRepository.save(rider);
+        addressRepository.saveAllAndFlush(Arrays.asList(addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8, addr9, addr10, addr11, addr_store));
+        storeRepository.saveAndFlush(store);
+        purchaseRepository.saveAllAndFlush(Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11));
+
+        /* test ... */
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "riders/top_delivered_cities", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found.get("Lisboa")).isEqualTo(1);
+        Assertions.assertThat(found.get("Viseu")).isEqualTo(1);
+        Assertions.assertThat(found.get("Porto")).isEqualTo(2);
+        Assertions.assertThat(found.get("Aveiro")).isEqualTo(2);
+        Assertions.assertThat(found.get("Guarda")).isEqualTo(4);
+        Assertions.assertThat(found.size()).isEqualTo(5);
+    }
+
+
+    @Test
+    public void testGetTopDeliveredCities_when5DifferentCitiesDONTEXIST_thenReturn() {
+        /* delete purchase from beforeEach */
+        purchaseRepository.deleteAll();
+        purchaseRepository.flush();
+
+        /* set up ... */
+        Rider rider = new Rider("Novo Rider", "a_good_password", "email@exampleTQS.com");
+        Address addr1 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Address addr2 = new Address("Rua das Couves, n. 51", "1234-567", "Aveiro", "Portugal");
+        Address addr3 = new Address("Rua 31 de Dezembro, n. 12", "0000-645", "Aveiro", "Portugal");
+        Address addr4 = new Address("Avenida D. Luís, n. 33", "1472-374", "Aveiro", "Portugal");
+        Address addr5 = new Address("Rua São João, n. 6", "6831-353", "Aveiro", "Portugal");
+        Address addr6 = new Address("Rua das Marias Felizbertas, n. 28", "5830-912", "Aveiro", "Portugal");
+        Address addr7 = new Address("Rua do Carmo, n. 20", "5830-912", "Aveiro", "Portugal");
+        Address addr8 = new Address("Rua 1 de Maio, n. 8", "5830-912", "Guarda", "Portugal");
+        Address addr9 = new Address("Rua peepeepoopoo, n. 1", "5830-912", "Guarda", "Portugal");
+        Address addr10 = new Address("Rua das Panelas, n. 57", "5830-912", "Guarda", "Portugal");
+        Address addr11 = new Address("Rua de Festa, n. 23", "5830-912", "Viseu", "Portugal");
+
+        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+
+        Purchase p1 = new Purchase(addr1, rider, store, "Miguel");
+        Purchase p2 = new Purchase(addr2, rider, store, "Mariana");
+        Purchase p3 = new Purchase(addr3, rider, store, "Carolina");
+        Purchase p4 = new Purchase(addr4, rider, store, "Ricardo");
+        Purchase p5 = new Purchase(addr5, rider, store, "Manel");
+        Purchase p6 = new Purchase(addr6, rider, store, "Gustavo");
+        Purchase p7 = new Purchase(addr7, rider, store, "Luana");
+        Purchase p8 = new Purchase(addr8, rider, store, "Duarte");
+        Purchase p9 = new Purchase(addr9, rider, store, "Hugo");
+        Purchase p10 = new Purchase(addr10, rider, store, "José");
+        Purchase p11 = new Purchase(addr11, rider, store, "Lucas");
+
+
+        riderRepository.save(rider);
+        addressRepository.saveAllAndFlush(Arrays.asList(addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8, addr9, addr10, addr11, addr_store));
+        storeRepository.saveAndFlush(store);
+        purchaseRepository.saveAllAndFlush(Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11));
+
+        /* test ... */
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "riders/top_delivered_cities", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found.get("Viseu")).isEqualTo(1);
+        Assertions.assertThat(found.get("Aveiro")).isEqualTo(7);
+        Assertions.assertThat(found.get("Guarda")).isEqualTo(3);
+        Assertions.assertThat(found.size()).isEqualTo(3);
+    }
+
+    @Test
+    public void testGetTopDeliveredCities_whenNoPurchases_thenReturn() {
+        /* delete purchase from beforeEach */
+        purchaseRepository.deleteAll();
+        purchaseRepository.flush();
+
+        /* set up ... */
+        Rider rider = new Rider("Novo Rider", "a_good_password", "email@exampleTQS.com");
+        Address addr1 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Address addr2 = new Address("Rua das Couves, n. 51", "1234-567", "Aveiro", "Portugal");
+        Address addr3 = new Address("Rua 31 de Dezembro, n. 12", "0000-645", "Aveiro", "Portugal");
+        Address addr4 = new Address("Avenida D. Luís, n. 33", "1472-374", "Aveiro", "Portugal");
+        Address addr5 = new Address("Rua São João, n. 6", "6831-353", "Aveiro", "Portugal");
+        Address addr6 = new Address("Rua das Marias Felizbertas, n. 28", "5830-912", "Aveiro", "Portugal");
+        Address addr7 = new Address("Rua do Carmo, n. 20", "5830-912", "Aveiro", "Portugal");
+        Address addr8 = new Address("Rua 1 de Maio, n. 8", "5830-912", "Guarda", "Portugal");
+        Address addr9 = new Address("Rua peepeepoopoo, n. 1", "5830-912", "Guarda", "Portugal");
+        Address addr10 = new Address("Rua das Panelas, n. 57", "5830-912", "Guarda", "Portugal");
+        Address addr11 = new Address("Rua de Festa, n. 23", "5830-912", "Viseu", "Portugal");
+
+        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Puerto", "Portugal");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+
+
+        riderRepository.save(rider);
+        addressRepository.saveAllAndFlush(Arrays.asList(addr1, addr2, addr3, addr4, addr5, addr6, addr7, addr8, addr9, addr10, addr11, addr_store));
+        storeRepository.saveAndFlush(store);
+
+        /* test ... */
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "riders/top_delivered_cities", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+
+        Map<String, Object> found = response.getBody();
+        Assertions.assertThat(found.size()).isEqualTo(0);
+
     }
 }
