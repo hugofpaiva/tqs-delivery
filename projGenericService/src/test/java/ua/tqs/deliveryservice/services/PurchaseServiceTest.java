@@ -641,4 +641,63 @@ public class PurchaseServiceTest {
                 .save(address);
     }
 
+    /* ----------------------------- *
+     * GET TOP DELIVERED CITIES      *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testPostNewOrder_thenReturnMap() {
+        List<Object[]> repositoryResponse = new ArrayList<>();
+        repositoryResponse.add(new Object[]{"Lisboa", 5});
+        repositoryResponse.add(new Object[]{"Faro", 9});
+        repositoryResponse.add(new Object[]{"Mirandela", 11});
+        repositoryResponse.add(new Object[]{"Figueira da Foz", 1});
+        repositoryResponse.add(new Object[]{"Minho", 2});
+
+        Mockito.when(purchaseRepository.getTopFiveCitiesOfPurchases()).thenReturn(repositoryResponse);
+
+        Map<String, Object> response = purchaseService.getTop5Cities();
+
+        assertThat(response.get("Lisboa")).isEqualTo(5);
+        assertThat(response.get("Faro")).isEqualTo(9);
+        assertThat(response.get("Mirandela")).isEqualTo(11);
+        assertThat(response.get("Figueira da Foz")).isEqualTo(1);
+        assertThat(response.get("Minho")).isEqualTo(2);
+        assertThat(response.size()).isEqualTo(5);
+
+
+        Mockito.verify(purchaseRepository, times(1)).getTopFiveCitiesOfPurchases();
+    }
+
+    @Test
+    public void testPostNewOrder_whenThereAreNot5DifferentCities_thenReturnMap() {
+        List<Object[]> repositoryResponse = new ArrayList<>();
+        repositoryResponse.add(new Object[]{"Guarda", 8});
+        repositoryResponse.add(new Object[]{"Castelo Branco", 3});
+
+        Mockito.when(purchaseRepository.getTopFiveCitiesOfPurchases()).thenReturn(repositoryResponse);
+
+        Map<String, Object> response = purchaseService.getTop5Cities();
+
+        assertThat(response.get("Guarda")).isEqualTo(8);
+        assertThat(response.get("Castelo Branco")).isEqualTo(3);
+        assertThat(response.size()).isEqualTo(2);
+
+        Mockito.verify(purchaseRepository, times(1)).getTopFiveCitiesOfPurchases();
+    }
+
+    @Test
+    public void testPostNewOrder_whenNoPurchases_thenReturnMap() {
+        List<Object[]> repositoryResponse = new ArrayList<>();
+
+        Mockito.when(purchaseRepository.getTopFiveCitiesOfPurchases()).thenReturn(repositoryResponse);
+
+        Map<String, Object> response = purchaseService.getTop5Cities();
+
+        assertThat(response.size()).isEqualTo(0);
+
+        Mockito.verify(purchaseRepository, times(1)).getTopFiveCitiesOfPurchases();
+    }
+
 }
