@@ -29,6 +29,7 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     @Query("SELECT SUM(p.deliveryTime), COUNT(p) FROM Purchase p WHERE p.status = 'DELIVERED'")
     List<Long[]> getSumDeliveryTimeAndCountPurchases();
 
+    /* TODO: test getTopFiveCitiesOfPurchases in repository tests */
     @Query(value = "SELECT a.city, COUNT(a.city) FROM Purchase p JOIN p.address a " +
             "GROUP BY p.address.city ORDER BY count(a.city) DESC")
     List<Object[]> getTopFiveCitiesOfPurchases();

@@ -397,4 +397,89 @@ public class ManagerRestControllerMockMvcTest {
         verify(managerService, times(1)).getRidersStatistics();
     }
 
+    /* ----------------------------- *
+     * GET TOP DELIVERED CITIES      *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void testGetTopDeliveredCities_thenReturn() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("Lisboa", 3);
+        response.put("Aveiro", 6);
+        response.put("Guarda", 4);
+        response.put("Porto", 11);
+        response.put("Coimbra", 2);
+
+        when(purchaseService.getTop5Cities()).thenReturn(response);
+
+        mvc.perform(get("/manager/riders/top_delivered_cities")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("Lisboa", is(3)))
+                .andExpect(jsonPath("Aveiro", is(6)))
+                .andExpect(jsonPath("Guarda", is(4)))
+                .andExpect(jsonPath("Porto", is(11)))
+                .andExpect(jsonPath("Coimbra", is(2)))
+                .andExpect(jsonPath("$.size()", is(5)))
+
+        ;
+
+        verify(purchaseService, times(1)).getTop5Cities();
+    }
+
+    @Test
+    public void testGetTopDeliveredCities_whenNoPurchases_thenReturn() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> response = new HashMap<>();
+
+        when(purchaseService.getTop5Cities()).thenReturn(response);
+
+        mvc.perform(get("/manager/riders/top_delivered_cities")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.size()", is(0)))
+        ;
+
+        verify(purchaseService, times(1)).getTop5Cities();
+    }
+
+    @Test
+    public void testGetTopDeliveredCities_whenThereAreLessThan5Cities_thenReturn() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Map<String, Object> response = new HashMap<>();
+
+        when(purchaseService.getTop5Cities()).thenReturn(response);
+        response.put("Manigoto", 1);
+        response.put("Vouzela", 4);
+        response.put("Ovar", 4);
+
+        mvc.perform(get("/manager/riders/top_delivered_cities")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.size()", is(3)))
+                .andExpect(jsonPath("Manigoto", is(1)))
+                .andExpect(jsonPath("Vouzela", is(4)))
+                .andExpect(jsonPath("Ovar", is(4)))
+        ;
+
+        verify(purchaseService, times(1)).getTop5Cities();
+    }
+
 }
