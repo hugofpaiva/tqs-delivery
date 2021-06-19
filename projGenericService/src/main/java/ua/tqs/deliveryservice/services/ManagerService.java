@@ -8,7 +8,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
+import ua.tqs.deliveryservice.model.Status;
 import ua.tqs.deliveryservice.repository.ManagerRepository;
+import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
 import java.util.ArrayList;
@@ -21,6 +23,12 @@ public class ManagerService {
 
     @Autowired
     private RiderRepository riderRepository;
+
+    @Autowired
+    private JwtUserDetailsService jwtUserDetailsService;
+
+    @Autowired
+    private PurchaseRepository purchaseRepository;
 
     public Map<String, Object> getRidersInformation(Integer pageNo, Integer pageSize) {
         Pageable paging = PageRequest.of(pageNo, pageSize);
@@ -48,6 +56,25 @@ public class ManagerService {
         response.put("currentPage", result.getNumber());
         response.put("totalItems", result.getTotalElements());
         response.put("totalPages", result.getTotalPages());
+
+        return response;
+    }
+
+
+    public Map<String, Object> getRidersStatistics() {
+        Map<String, Object> response = new HashMap<>();
+
+        List<Long[]> avgTime = purchaseRepository.getSumDeliveryTimeAndCountPurchases();
+        Long totalTime = avgTime.get(0)[0];
+        Long numPurch = avgTime.get(0)[1];
+
+        Double avgReviews = riderRepository.getAverageRiderRating();
+        Long process = purchaseRepository.countPurchaseByStatusIsNot(Status.DELIVERED);
+
+        // if there are delivered purchases
+        response.put("avgTimes", totalTime != null && numPurch != 0 ? (double) totalTime / numPurch : null);
+        response.put("avgReviews", avgReviews);
+        response.put("inProcess", process);
 
         return response;
     }

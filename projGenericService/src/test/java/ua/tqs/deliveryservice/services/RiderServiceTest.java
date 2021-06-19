@@ -5,12 +5,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.internal.verification.VerificationModeFactory;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ua.tqs.deliveryservice.exception.DuplicatedObjectException;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 
 import org.mockito.InjectMocks;
@@ -38,8 +40,14 @@ class RiderServiceTest {
     @Mock
     private JwtUserDetailsService jwtUserDetailsService;
 
+    /* ----------------------------- *
+     * GET RIDER SAVE                *
+     * ----------------------------- *
+     */
+
     @Test
-    public void testWhenRiderIsSent_thenReturnIt() {
+    public void testRiderSave_WhenRiderValid_thenReturnIt() throws DuplicatedObjectException {
+        Mockito.when(riderRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         Mockito.when(riderRepository.saveAndFlush(rider)).thenReturn(rider);
         Mockito.when(bcryptEncoder.encode(rider.getPwd())).thenReturn(rider.getPwd());
 
@@ -50,6 +58,16 @@ class RiderServiceTest {
         Mockito.verify(riderRepository, VerificationModeFactory.times(1)).saveAndFlush(rider);
     }
 
+    @Test
+    public void testRiderSave_WhenEmailAlreadyExists_thenThrow() throws DuplicatedObjectException {
+        Mockito.when(riderRepository.findByEmail(anyString())).thenReturn(Optional.of(rider));
+
+        assertThrows(DuplicatedObjectException.class, () -> {
+            riderService.save(rider);
+        }, "Rider with this email already exists.");
+
+        Mockito.verify(riderRepository, VerificationModeFactory.times(0)).saveAndFlush(rider);
+    }
 
 
     /* ----------------------------- *

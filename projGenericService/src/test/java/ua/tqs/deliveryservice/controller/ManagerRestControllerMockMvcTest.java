@@ -353,17 +353,23 @@ public class ManagerRestControllerMockMvcTest {
         headers.set("authorization", "Bearer " + "example_token");
 
         Map<String, Object> response = new HashMap<>();
-        response.put("average", null);
-        when(purchaseService.getAvgDeliveryTime()).thenReturn(response);
+        response.put("avgTimes", null);
+        response.put("avgReviews", null);
+        response.put("inProcess", 0);
+
+        when(managerService.getRidersStatistics()).thenReturn(response);
 
         mvc.perform(get("/manager/riders/stats")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("average").doesNotExist());
+                .andExpect(jsonPath("avgTimes").doesNotExist())
+                .andExpect(jsonPath("avgReviews").doesNotExist())
+                .andExpect(jsonPath("inProcess", is(0)))
+        ;
 
-        verify(purchaseService, times(1)).getAvgDeliveryTime();
+        verify(managerService, times(1)).getRidersStatistics();
     }
 
     @Test
@@ -373,17 +379,22 @@ public class ManagerRestControllerMockMvcTest {
         headers.set("authorization", "Bearer " + "example_token");
 
         Map<String, Object> response = new HashMap<>();
-        response.put("average", 231);
-        when(purchaseService.getAvgDeliveryTime()).thenReturn(response);
+        response.put("avgTimes", 300.2);
+        response.put("avgReviews", 2.3);
+        response.put("inProcess", 4);
+        when(managerService.getRidersStatistics()).thenReturn(response);
 
         mvc.perform(get("/manager/riders/stats")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("average", is(response.get("average"))));
+                .andExpect(jsonPath("avgTimes", is(300.2)))
+                .andExpect(jsonPath("avgReviews", is(2.3)))
+                .andExpect(jsonPath("inProcess", is(4)))
+        ;
 
-        verify(purchaseService, times(1)).getAvgDeliveryTime();
+        verify(managerService, times(1)).getRidersStatistics();
     }
 
 }

@@ -44,7 +44,6 @@ public class Person {
 
 
     public Person(String name, String pwd, String email){
-
         this.name = name;
         this.pwd = pwd;
         this.email = email;

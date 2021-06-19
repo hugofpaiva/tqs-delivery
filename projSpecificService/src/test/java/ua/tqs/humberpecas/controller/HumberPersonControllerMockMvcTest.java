@@ -27,10 +27,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
-// TODO: Refactor
 @WebMvcTest(value = HumberPersonController.class, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfig.class)})
 @AutoConfigureMockMvc(addFilters = false)
 class HumberPersonControllerMockMvcTest {
@@ -39,7 +39,7 @@ class HumberPersonControllerMockMvcTest {
     private MockMvc mvc;
 
     @MockBean
-    private HumberPersonService service;
+    private HumberPersonService personService;
 
     @MockBean
     private JwtRequestFilter jwtRequestFilter;
@@ -49,14 +49,14 @@ class HumberPersonControllerMockMvcTest {
         RestAssuredMockMvc.mockMvc(mvc);
 
     }
-    // TODO:
+
     @Test
     @DisplayName("User registration")
     void whenValidRegister_thenReturnCrated() throws DuplicatedObjectException {
-
         List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal"));
 
         PersonDTO p = new PersonDTO("Fernando", "12345678","fernando@ua.pt", addresses);
+        when(personService.register(p)).thenReturn(new Person(p.getName(), p.getPwd(), p.getEmail()));
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -64,9 +64,11 @@ class HumberPersonControllerMockMvcTest {
                 .when()
                 .post("/person/register")
                 .then()
+                .body("name", equalTo(p.getName()))
+                .body("email", equalTo(p.getEmail()))
                 .statusCode(201);
 
-        verify(service, times(1)).register(p);
+        verify(personService, times(1)).register(p);
 
     }
 
@@ -88,7 +90,7 @@ class HumberPersonControllerMockMvcTest {
                 .then()
                 .statusCode(400);
 
-        verify(service, times(0)).register(p);
+        verify(personService, times(0)).register(p);
 
 
     }
@@ -100,7 +102,7 @@ class HumberPersonControllerMockMvcTest {
         List<AddressDTO> addresses = Arrays.asList(new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal"));
 
         PersonDTO p = new PersonDTO("Fernando", "12345678","fernando@ua.pt", addresses);
-        doThrow(new DuplicatedObjectException("User alerady exists!")).when(service).register(p);
+        doThrow(new DuplicatedObjectException("User alerady exists!")).when(personService).register(p);
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .body(p)
@@ -109,7 +111,7 @@ class HumberPersonControllerMockMvcTest {
                 .then()
                 .statusCode(409);
 
-        verify(service, times(1)).register(p);
+        verify(personService, times(1)).register(p);
 
     }
 
