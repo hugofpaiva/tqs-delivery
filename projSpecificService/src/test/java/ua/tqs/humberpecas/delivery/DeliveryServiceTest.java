@@ -64,7 +64,7 @@ public class DeliveryServiceTest {
 
         this.server
                 .expect(ExpectedCount.once(), requestTo("http://localhost:8081/store/order/12/review"))
-                .andExpect(method(HttpMethod.PATCH))
+                .andExpect(method(HttpMethod.PUT))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
         assertThrows( ResourceNotFoundException.class, () -> {
@@ -81,7 +81,7 @@ public class DeliveryServiceTest {
 
         this.server
                 .expect(ExpectedCount.once(), requestTo("http://localhost:8081/store/order/12/review"))
-                .andExpect(method(HttpMethod.PATCH))
+                .andExpect(method(HttpMethod.PUT))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
         assertThrows( UnreachableServiceException.class, () -> {

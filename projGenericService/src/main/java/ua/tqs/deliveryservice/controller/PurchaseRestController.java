@@ -20,15 +20,13 @@ public class PurchaseRestController {
     @Autowired
     private PurchaseService purchaseService;
 
-    @PatchMapping("/order/{order_id}/review")
+    @PutMapping("/order/{order_id}/review")
     // <?> explanation: https://www.baeldung.com/http-put-patch-difference-spring, https://www.ti-enxame.com/pt/java/metodo-spring-mvc-patch-atualizacoes-parciais/1041054404/
     public ResponseEntity<?> addReviewToRider(@PathVariable Long order_id, @RequestBody Map<String, Long> payload, @RequestHeader Map<String, String> headers)
             throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
         String token = headers.get("authorization").substring(7);
         Long review = payload.get("review");
         if (order_id == null || review == null || review > 5 || review < 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        System.out.println(review);
 
         purchaseService.reviewRiderFromSpecificOrder(token, order_id, review.intValue());
 
@@ -38,6 +36,7 @@ public class PurchaseRestController {
     @PostMapping("/order")
     public ResponseEntity<Object> receivePurchase(HttpServletRequest request, @RequestBody Map<String,  Object> data) throws InvalidValueException, InvalidLoginException {
         String token = request.getHeader("Authorization");
+        System.out.println(data);
         Purchase newPurchase = purchaseService.receiveNewOrder(token, data);
         Map<String, Object> resp = new TreeMap<>();
         resp.put("orderId", newPurchase.getId());
