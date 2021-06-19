@@ -286,4 +286,33 @@ public class ShopTest {
         assertThat(shopPage.getTotalProducts(), is(1));
     }
 
+    @Test
+    void testNextAndPreviousPageProductsInDb() {
+        ShopPage shopPage = new ShopPage(this.driver, this.webApplicationBaseUrl);
+
+        // The products come in order of -id to the website
+        List<Product> reverseView = Lists.reverse(this.productList);
+        List<Product> websiteProducts = shopPage.getAllProducts();
+
+        for (int i = 0; i < reverseView.size() - 1; i++) {
+            assertThat(websiteProducts.get(i).getName(), is(reverseView.get(i).getName()));
+            assertThat(websiteProducts.get(i).getPrice(), is(reverseView.get(i).getPrice()));
+        }
+
+        shopPage.nextPage();
+
+        websiteProducts = shopPage.getAllProducts();
+        assertThat(websiteProducts.get(0).getName(), is(this.productList.get(0).getName()));
+        assertThat(websiteProducts.get(0).getPrice(), is(this.productList.get(0).getPrice()));
+
+        shopPage.previousPage();
+        websiteProducts = shopPage.getAllProducts();
+        for (int i = 0; i < reverseView.size() - 1; i++) {
+            assertThat(websiteProducts.get(i).getName(), is(reverseView.get(i).getName()));
+            assertThat(websiteProducts.get(i).getPrice(), is(reverseView.get(i).getPrice()));
+        }
+
+        assertThat(shopPage.getTotalProducts(), is(this.productList.size()));
+    }
+
 }

@@ -16,6 +16,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ShopPage {
+
     private WebDriver driver;
 
     public ShopPage(WebDriver driver, String baseUrl) {
@@ -27,6 +28,10 @@ public class ShopPage {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-shop/main/section[2]/div/div/main/header/span")));
         }
+    }
+
+    public void goToProfile() {
+        this.driver.findElement(By.xpath("//*[@id=\"navbar_global\"]/ul/li[1]/a")).click();
     }
 
     public void logoutClient() {
@@ -67,11 +72,7 @@ public class ShopPage {
 
         WebElement span = this.driver.findElement(By.xpath("/html/body/app-root/app-shop/main/section[2]/div/div/main/header/span"));
 
-        String number = span.getText().substring(0, 2);
-
-        if (number.substring(1, 2).equals(" ")){
-            number = number.substring(0,1);
-        }
+        String number = span.getText().trim();
 
         return Integer.parseInt(number);
 

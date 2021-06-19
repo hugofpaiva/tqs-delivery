@@ -25,7 +25,6 @@ import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class HumberPurchaseControllerIT {
+public class HumberPurchaseControllerTemplateIT {
 
     @LocalServerPort
     int randomServerPort;
@@ -156,7 +155,7 @@ public class HumberPurchaseControllerIT {
 
     @Test
     @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound ")
-    void whenPurchaseWithInvalidData_thenthenThrowsStatus404(){
+    void whenPurchaseWithInvalidData_thenThrowsStatus404(){
 
         this.purchaseDTO.setAddressId(0);
 
