@@ -26,7 +26,7 @@ import java.util.Date;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,7 +57,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization",  "Bearer " + token);
 
-        mvc.perform( patch("/store/order/" + null + "/review")
+        mvc.perform( put("/store/order/" + null + "/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -77,7 +77,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization",  "Bearer " + token);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform( put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -97,7 +97,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization", "Bearer " + token);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform( put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -118,7 +118,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization", "Bearer " + token);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform( put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -145,7 +145,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         when(purchaseService.reviewRiderFromSpecificOrder(token, purchase.getId(), 3)).thenThrow(InvalidValueException.class);
 
-        mvc.perform(patch("/store/order/"+purchase.getId()+"/review")
+        mvc.perform(put("/store/order/"+purchase.getId()+"/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -174,7 +174,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         when(purchaseService.reviewRiderFromSpecificOrder(token, purchase.getId(), 3)).thenReturn(purchase);
 
-        mvc.perform(patch("/store/order/"+purchase.getId()+"/review")
+        mvc.perform(put("/store/order/"+purchase.getId()+"/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -196,7 +196,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         when(purchaseService.reviewRiderFromSpecificOrder(token, -1L, 3)).thenThrow(ResourceNotFoundException.class);
 
-        mvc.perform( patch("/store/order/-1/review")
+        mvc.perform( put("/store/order/-1/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -218,7 +218,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         when(purchaseService.reviewRiderFromSpecificOrder( "rer " + token, 3L, 3)).thenThrow(InvalidLoginException.class);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform( put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -242,7 +242,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         when(purchaseService.reviewRiderFromSpecificOrder(token, 3L, 3)).thenThrow(InvalidValueException.class);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform( put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
