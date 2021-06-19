@@ -168,16 +168,6 @@ public class PurchaseService {
         return purchase;
 
     }
-    public Map<String, Object> getAvgDeliveryTime() {
-        Map<String, Object> response = new HashMap<>();
 
-        List<Long[]> data2 = purchaseRepository.getAverageReview();
-        Long totalTime = data2.get(0)[0];
-        Long numPurch = data2.get(0)[1];
 
-        // if there are delivered purchases
-        response.put("average", totalTime != null ? totalTime / numPurch : null);
-
-        return response;
-    }
 }
