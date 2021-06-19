@@ -21,7 +21,6 @@ import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.model.Review;
 import ua.tqs.humberpecas.service.HumberReviewService;
-import ua.tqs.humberpecas.service.JwtUserDetailsService;
 
 import java.io.IOException;
 
@@ -39,9 +38,6 @@ public class HumberReviewControllerMockMvcTest {
 
     @MockBean
     private JwtRequestFilter jwtRequestFilter;
-
-    @MockBean
-    private JwtUserDetailsService jwtUserDetailsService;
 
     private String userToken;
 

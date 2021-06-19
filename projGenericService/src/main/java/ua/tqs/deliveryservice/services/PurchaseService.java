@@ -64,7 +64,6 @@ public class PurchaseService {
 
         purchase.setRiderReview(review);
         purchaseRepository.saveAndFlush(purchase);
-
         return purchase;
     }
 

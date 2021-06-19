@@ -121,8 +121,6 @@ public class ShopPage {
 
         List<WebElement> productDivs = row.findElements(By.xpath("./child::*"));
 
-        List<Product> products = new ArrayList<>();
-
         for (WebElement product : productDivs) {
             String name = product.findElement(By.xpath(".//figure/figcaption/div[1]/a")).getText();
             String priceStr = product.findElement(By.xpath(".//figure/figcaption/div[1]/div/span")).getText();

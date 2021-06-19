@@ -156,8 +156,8 @@ export class NgbModalOrderDetails {
     template: `
         <div class="modal-header">
             <h5 class="modal-title text-center">Manage Addresses</h5>
-            <button class="btn btn-link  ml-auto">
-                <fa-icon size="lg" (click)="newAddress()" [icon]="plusIcon"></fa-icon>
+            <button (click)="newAddress()"  class="btn btn-link  ml-auto">
+                <fa-icon size="lg" [icon]="plusIcon"></fa-icon>
             </button>
         </div>
         <div class="modal-body" style="min-width: 500px;">

@@ -48,9 +48,6 @@ public class Purchase {
 
     private String riderName;
 
-    private int review;
-
-
     @Enumerated(value = EnumType.STRING)
     private PurchaseStatus status;
 

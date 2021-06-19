@@ -28,6 +28,8 @@ public class PurchaseRestController {
         Long review = payload.get("review");
         if (order_id == null || review == null || review > 5 || review < 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+        System.out.println(review);
+
         purchaseService.reviewRiderFromSpecificOrder(token, order_id, review.intValue());
 
         return new ResponseEntity<>(HttpStatus.OK);

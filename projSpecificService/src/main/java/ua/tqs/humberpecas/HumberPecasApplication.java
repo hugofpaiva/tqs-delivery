@@ -67,6 +67,7 @@ class DBLoader implements CommandLineRunner {
 
 		Purchase purchase = new Purchase(person, address1, List.of(product));
 		purchase.setStatus(PurchaseStatus.DELIVERED);
+		purchase.setServiceOrderId(14L);
 		purchaseRepository.saveAndFlush(purchase);
 
 	}

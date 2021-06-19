@@ -59,11 +59,6 @@ public class DeliveryServiceImpl implements IDeliveryService {
     }
 
     @Override
-    public Category checkOrderStatus(int orderId) {
-        return null;
-    }
-
-    @Override
     public void reviewRider(Review review) throws ResourceNotFoundException {
 
         StringBuilder url = new StringBuilder().append(HOST)
@@ -71,10 +66,11 @@ public class DeliveryServiceImpl implements IDeliveryService {
                 .append(review.getOrderId())
                 .append("/review");
 
-
         ResponseEntity<ServerReviewDTO> response = restTemplate.exchange(
                 url.toString(), HttpMethod.PATCH, new HttpEntity<>(review, headers),
                 ServerReviewDTO.class);
+
+        log.info("Generic responded with the status code: " + response.getStatusCode());
 
     }
 
