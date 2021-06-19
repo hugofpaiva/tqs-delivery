@@ -316,7 +316,7 @@ public class PurchaseRestControllerMockMvcTest {
         headers.set("authorization", "Bearer " + token);
 
         String exampleBody = "{\"personName\":\"nomeee\",\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
-        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Date(1623709488744L), new Store(), "nomeee");
+        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Store(), "nomeee");
         when(purchaseService.receiveNewOrder(any(), any())).thenReturn(purchase);
 
         mvc.perform(post("/store/order")

@@ -5,6 +5,7 @@ import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddressService} from '../services/address/address.service';
 import {AlertService} from '../services/alert/alert.service';
 import {PurchaseService} from '../services/purchase/purchase.service';
+import {Router} from '@angular/router';
 
 @Component({
     selector: 'app-modal-manage-addresses',
@@ -71,7 +72,8 @@ export class NgbModalBuy implements OnInit {
     requested = false;
 
     constructor(public activeModal: NgbActiveModal, private addressService: AddressService,
-                private alertService: AlertService, private cartService: CartService, private purchaseService: PurchaseService) {
+                private alertService: AlertService, private cartService: CartService, private purchaseService: PurchaseService,
+                private router: Router) {
     }
 
     changeSelected(address: Address) {
@@ -92,6 +94,8 @@ export class NgbModalBuy implements OnInit {
         } {
             this.purchaseService.makePurchase(this.selected.id, this.cartService.productsIds).subscribe(data => {
                 this.alertService.success('Order made!');
+                this.cartService.empty();
+                this.activeModal.close();
             }, error => {
                 this.alertService.error('There was an error. Order was not made!');
             });

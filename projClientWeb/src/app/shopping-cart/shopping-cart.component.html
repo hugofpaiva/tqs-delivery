@@ -60,9 +60,9 @@
                                 </td>
                                 <td>
                                     <div class="price-wrap">
-                                        <var class="price">{{product.price * product.quantity}}€</var>
+                                        <var class="price">{{(product.price * product.quantity) | number:'1.0-2'}}€</var>
                                         <br>
-                                        <small class="text-muted"> {{product.price}}€ each </small>
+                                        <small class="text-muted"> {{product.price | number:'1.0-2'}}€ each </small>
                                     </div>
                                 </td>
                                 <td class="text-right">
@@ -91,7 +91,7 @@
                         <div class="card-body">
                             <dl class="dlist-align">
                                 <dt>Total:</dt>
-                                <dd class="text-right  h5"><strong>{{getCartService().totalPrice}}€</strong></dd>
+                                <dd class="text-right  h5"><strong>{{getCartService().totalPrice | number:'1.0-2'}}€</strong></dd>
                             </dl>
                             <hr>
                         </div>

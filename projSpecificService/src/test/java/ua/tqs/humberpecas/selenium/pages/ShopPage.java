@@ -34,6 +34,10 @@ public class ShopPage {
         this.driver.findElement(By.xpath("//*[@id=\"navbar_global\"]/ul/li[1]/a")).click();
     }
 
+    public void goToShoppingCart() {
+        this.driver.findElement(By.xpath("//*[@id=\"navbar_global\"]/ul/li[2]/a")).click();
+    }
+
     public void logoutClient() {
         this.driver.findElement(By.cssSelector("#navbar_global > ul > li.nav-item.d-none.d-lg-block.ml-lg-4 > a")).click();
         {
@@ -125,7 +129,7 @@ public class ShopPage {
             String name = product.findElement(By.xpath(".//figure/figcaption/div[1]/a")).getText();
             String priceStr = product.findElement(By.xpath(".//figure/figcaption/div[1]/div/span")).getText();
             Double price = Double.parseDouble(priceStr.substring(0, priceStr.length() - 1));
-            if (name.equals(productToAdd.getName()) && price == (productToAdd.getPrice())) {
+            if (name.contains(productToAdd.getName()) && price.equals(productToAdd.getPrice())) {
                 product.findElement(By.xpath(".//figure/figcaption/a")).click();
             }
 

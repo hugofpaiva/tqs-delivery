@@ -57,7 +57,7 @@ public class HumberPurchaseService {
 
         var address = addressRepository.findById(purchaseDTO.getAddressId())
                 .orElseThrow(()-> {
-                    log.error("HumberPurchaseService: invalid user addrees" );
+                    log.error("HumberPurchaseService: invalid user addrses" );
                     throw new ResourceNotFoundException("Invalid Address");
                 });
 

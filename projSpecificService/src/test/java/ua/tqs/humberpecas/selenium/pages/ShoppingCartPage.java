@@ -11,6 +11,7 @@ import ua.tqs.humberpecas.model.Product;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -18,7 +19,7 @@ public class ShoppingCartPage {
 
     private WebDriver driver;
 
-    public ShoppingCartPage(WebDriver driver, String clientName) {
+    public ShoppingCartPage(WebDriver driver) {
         this.driver = driver;
 
         {
@@ -32,10 +33,10 @@ public class ShoppingCartPage {
     public Integer getCartTotalProducts() {
         {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id=\"navbar_global\"]/ul/li[2]/a/text()")));
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id=\"navbar_global\"]/ul/li[2]/a")));
         }
 
-        String number = this.driver.findElement(By.xpath("//*[@id=\"navbar_global\"]/ul/li[2]/a/text()")).getText().substring(0, 2).trim();
+        String number = this.driver.findElement(By.xpath("//*[@id=\"navbar_global\"]/ul/li[2]/a")).getText().trim();
 
         return Integer.parseInt(number);
 
@@ -69,11 +70,11 @@ public class ShoppingCartPage {
 
         for (WebElement product : productsTrs) {
 
-            String name = product.findElement(By.xpath(".//tr[1]/td[1]/figure/figcaption/a")).getText();
-            String priceStr = product.findElement(By.xpath(".//tr[1]/td[3]/div/small")).getText().trim();
-            Double price = Double.parseDouble(priceStr.substring(0, priceStr.length() - 5));
+            String name = product.findElement(By.xpath(".//td[1]/figure/figcaption/a")).getText();
+            String priceStr = product.findElement(By.xpath(".//td[3]/div/small")).getText().trim();
+            Double price = Double.parseDouble(priceStr.substring(0, priceStr.length() - 6));
 
-            Integer units = Integer.valueOf(new Select(product.findElement(By.xpath(".///tr/td[2]/select"))).getFirstSelectedOption().getText().trim());
+            Integer units = Integer.valueOf(new Select(product.findElement(By.xpath(".//td[2]/select"))).getFirstSelectedOption().getText().trim());
 
             for (int i = 0; i < units; i++) {
                 Product product1 = new Product();
@@ -107,6 +108,8 @@ public class ShoppingCartPage {
 
         this.driver.findElement(By.xpath("/html/body/app-root/app-shopping-cart/main/section[2]/div/div/main/div/div/a[1]")).click();
 
+        this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS) ;
+
         {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[2]/div/table/tbody")));
@@ -115,7 +118,7 @@ public class ShoppingCartPage {
 
         List<WebElement> addressesTrs = table.findElements(By.xpath("./child::*"));
 
-        addressesTrs.get(0).findElement(By.xpath(".//tr/td[5]/input")).click();
+        addressesTrs.get(0).findElement(By.xpath(".//td[5]/input")).click();
 
         this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[3]/button[1]")).click();
 
