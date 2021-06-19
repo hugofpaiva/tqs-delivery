@@ -385,6 +385,7 @@ export class ProfileComponent implements OnInit {
     }
 
     getPage(event) {
+        this.currentPage = event;
         this.getPurchases();
     }
 

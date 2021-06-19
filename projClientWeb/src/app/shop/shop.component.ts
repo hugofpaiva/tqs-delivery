@@ -41,6 +41,7 @@ export class ShopComponent implements OnInit {
     }
 
     getPage(event) {
+        this.currentPage = event;
         this.getProducts();
     }
 

@@ -1,13 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {CartService} from '../services/cart/cart.service';
-import {AccountService} from '../services/account/account.service';
 import {Address} from '../models/address';
-import {faPlusCircle, faTimesCircle} from '@fortawesome/free-solid-svg-icons';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NgbActiveModal, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {AddressService} from '../services/address/address.service';
 import {AlertService} from '../services/alert/alert.service';
-import {NgbModalRiderReview} from '../profile/profile.component';
 import {PurchaseService} from '../services/purchase/purchase.service';
 
 @Component({

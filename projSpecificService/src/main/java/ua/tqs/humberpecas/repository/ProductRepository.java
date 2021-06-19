@@ -9,9 +9,11 @@ import ua.tqs.humberpecas.model.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    Page<Product> findAllByCategoryAndNameContainingAndPriceGreaterThanEqualAndPriceLessThanEqual(Category category, String name, Double priceMax, Double priceMin, Pageable pageable);
-    Page<Product> findAllByNameContainingIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(String name, Double priceMax, Double priceMin, Pageable pageable);
-    Page<Product> findAllByCategoryAndPriceGreaterThanEqualAndPriceLessThanEqual(Category category, Double priceMax, Double priceMin, Pageable pageable);
+    Page<Product> findAllByCategoryAndNameContainingIgnoreCaseAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual(Category category, String name, Double priceMin, Double priceMax, Pageable pageable);
+    Page<Product> findAllByNameContainingIgnoreCaseAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual(String name, Double priceMin, Double priceMax, Pageable pageable);
+    Page<Product> findAllByCategoryAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual(Category category, Double priceMin, Double priceMax, Pageable pageable);
+    Page<Product> findAllByPriceIsGreaterThanEqualAndPriceIsLessThanEqual(Double priceMin, Double priceMax, Pageable pageable);
+
 
 
 }

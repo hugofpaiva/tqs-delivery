@@ -44,13 +44,13 @@ public class HumberProductService {
         Page<Product> pagedResult;
 
         if (name != null && category != null) {
-            pagedResult = repository.findAllByCategoryAndNameContainingAndPriceGreaterThanEqualAndPriceLessThanEqual(category, name, minPrice, maxPrice, paging);
+            pagedResult = repository.findAllByCategoryAndNameContainingIgnoreCaseAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual(category, name, minPrice, maxPrice, paging);
         } else if (name != null) {
-            pagedResult = repository.findAllByNameContainingIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual(name, minPrice, maxPrice, paging);
+            pagedResult = repository.findAllByNameContainingIgnoreCaseAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual(name, minPrice, maxPrice, paging);
         } else if (category != null){
-            pagedResult = repository.findAllByCategoryAndPriceGreaterThanEqualAndPriceLessThanEqual(category, minPrice, maxPrice, paging);
+            pagedResult = repository.findAllByCategoryAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual(category, minPrice, maxPrice, paging);
         } else {
-            pagedResult = repository.findAll(paging);
+            pagedResult = repository.findAllByPriceIsGreaterThanEqualAndPriceIsLessThanEqual(minPrice, maxPrice, paging);
         }
 
         List<Product> responseList = new ArrayList<>();

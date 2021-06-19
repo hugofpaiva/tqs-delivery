@@ -55,6 +55,15 @@ class DBLoader implements CommandLineRunner {
 		Product product = new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
 		productRepository.saveAndFlush(product);
 
+		Product product1 = new Product("Hammer", 5.00, Category.LATHES, "xpto",  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
+		productRepository.saveAndFlush(product1);
+
+		Product product2 = new Product("Hammer", 5.00, Category.LATHES, "xpto",  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
+		productRepository.saveAndFlush(product2);
+
+		Product product3 = new Product("Hammer", 5.00, Category.LATHES, "xpto",  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
+		productRepository.saveAndFlush(product3);
+
 
 		Purchase purchase = new Purchase(person, address1, List.of(product));
 		purchase.setStatus(PurchaseStatus.DELIVERED);

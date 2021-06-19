@@ -28,8 +28,8 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class HumberProductServiceTest {
-    Product parafuso = new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "image_url");
-    Product chave = new Product("Chave inglesa", 5.00, Category.SCREWDRIVER, "xpto",  "image_url");
+    Product parafuso = new Product("Parafuso", 0.50, Category.SCREWS, "xpto", "image_url");
+    Product chave = new Product("Chave inglesa", 5.00, Category.SCREWDRIVER, "xpto", "image_url");
 
     @Mock
     private ProductRepository productRepository;
@@ -41,7 +41,7 @@ class HumberProductServiceTest {
 
     @BeforeEach
     public void setUp() {
-        catalog = Arrays.asList( parafuso, chave );
+        catalog = Arrays.asList(parafuso, chave);
     }
 
     // -------------------------------------
@@ -50,88 +50,88 @@ class HumberProductServiceTest {
 
     @Test
     @DisplayName("Get Filtered Products: filter by name and category then return")
-    void whenGetFilteredProducts_whenFilterByNameAndCategory_thenReturnProducts(){
+    void whenGetFilteredProducts_whenFilterByNameAndCategory_thenReturnProducts() {
         Pageable paging = PageRequest.of(0, 9, Sort.by("id").descending());
         Page<Product> result = new PageImpl<>(Arrays.asList(parafuso));
 
         Mockito.when(
-                productRepository.findAllByCategoryAndNameContainingAndPriceGreaterThanEqualAndPriceLessThanEqual
+                productRepository.findAllByCategoryAndNameContainingIgnoreCaseAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual
                         (parafuso.getCategory(), parafuso.getName(), 0.0, 10000.0, paging)
         ).thenReturn(result);
 
         Map<String, Object> productList = productService.
                 getProductsFiltered(0, 9, parafuso.getName(), 10000.0, 0.0, null, parafuso.getCategory());
 
-        assertThat((List<Product>)productList.get("products"), hasSize(1));
+        assertThat((List<Product>) productList.get("products"), hasSize(1));
         assertThat(productList.get("currentPage"), equalTo(0));
         assertThat(productList.get("totalItems"), equalTo(1L));
         assertThat(productList.get("totalPages"), equalTo(1));
 
-        assertThat((List<Product>)productList.get("products"), hasItem(hasProperty("name",
+        assertThat((List<Product>) productList.get("products"), hasItem(hasProperty("name",
                 Matchers.equalTo(parafuso.getName()))));
 
         verify(productRepository, times(1)).
-                findAllByCategoryAndNameContainingAndPriceGreaterThanEqualAndPriceLessThanEqual
+                findAllByCategoryAndNameContainingIgnoreCaseAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual
                         (parafuso.getCategory(), parafuso.getName(), 0.0, 10000.0, paging);
     }
 
     @Test
     @DisplayName("Get Filtered Products: filter by name then return")
-    void whenGetFilteredProducts_whenFilterByName_thenReturnProducts(){
+    void whenGetFilteredProducts_whenFilterByName_thenReturnProducts() {
         Pageable paging = PageRequest.of(0, 9, Sort.by("id").descending());
         Page<Product> result = new PageImpl<>(Arrays.asList(parafuso));
 
         Mockito.when(
-                productRepository.findAllByNameContainingIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual
+                productRepository.findAllByNameContainingIgnoreCaseAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual
                         (parafuso.getName(), 0.0, 10000.0, paging)
         ).thenReturn(result);
 
         Map<String, Object> productList = productService.
                 getProductsFiltered(0, 9, parafuso.getName(), 10000.0, 0.0, null, null);
 
-        assertThat((List<Product>)productList.get("products"), hasSize(1));
+        assertThat((List<Product>) productList.get("products"), hasSize(1));
         assertThat(productList.get("currentPage"), equalTo(0));
         assertThat(productList.get("totalItems"), equalTo(1L));
         assertThat(productList.get("totalPages"), equalTo(1));
 
-        assertThat((List<Product>)productList.get("products"), hasItem(hasProperty("name",
+        assertThat((List<Product>) productList.get("products"), hasItem(hasProperty("name",
                 Matchers.equalTo(parafuso.getName()))));
 
         verify(productRepository, times(1)).
-                findAllByNameContainingIgnoreCaseAndPriceGreaterThanEqualAndPriceLessThanEqual
+                findAllByNameContainingIgnoreCaseAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual
                         (parafuso.getName(), 0.0, 10000.0, paging);
     }
 
     @Test
     @DisplayName("Get Filtered Products: filter by category then return")
-    void whenGetFilteredProducts_whenFilterByCategory_thenReturnProducts(){
+    void whenGetFilteredProducts_whenFilterByCategory_thenReturnProducts() {
         Pageable paging = PageRequest.of(0, 9, Sort.by("id").descending());
         Page<Product> result = new PageImpl<>(Arrays.asList(chave));
 
         Mockito.when(
-                productRepository.findAllByCategoryAndPriceGreaterThanEqualAndPriceLessThanEqual
+                productRepository.findAllByCategoryAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual
                         (chave.getCategory(), 0.0, 10000.0, paging)
         ).thenReturn(result);
 
         Map<String, Object> productList = productService.
                 getProductsFiltered(0, 9, null, 10000.0, 0.0, null, chave.getCategory());
 
-        assertThat((List<Product>)productList.get("products"), hasSize(1));
+        assertThat((List<Product>) productList.get("products"), hasSize(1));
         assertThat(productList.get("currentPage"), equalTo(0));
         assertThat(productList.get("totalItems"), equalTo(1L));
         assertThat(productList.get("totalPages"), equalTo(1));
 
-        assertThat((List<Product>)productList.get("products"), hasItem(hasProperty("name",
+        assertThat((List<Product>) productList.get("products"), hasItem(hasProperty("name",
                 Matchers.equalTo(chave.getName()))));
 
         verify(productRepository, times(1)).
-                findAllByCategoryAndPriceGreaterThanEqualAndPriceLessThanEqual
+                findAllByCategoryAndPriceIsGreaterThanEqualAndPriceIsLessThanEqual
                         (chave.getCategory(), 0.0, 10000.0, paging);
     }
 
     @Test
     @DisplayName("Get Filtered Products: no filters then return")
-    void whenGetFilteredProducts_whenNoFilters_thenReturnProducts(){
+    void whenGetFilteredProducts_whenNoFilters_thenReturnProducts() {
         Pageable paging = PageRequest.of(0, 9, Sort.by("id").descending());
         Page<Product> result = new PageImpl<>(Arrays.asList(chave, parafuso));
 
@@ -140,7 +140,7 @@ class HumberProductServiceTest {
         Map<String, Object> productList = productService.
                 getProductsFiltered(0, 9, null, 10000.0, 0.0, null, null);
 
-        assertThat((List<Product>)productList.get("products"), hasSize(2));
+        assertThat((List<Product>) productList.get("products"), hasSize(2));
         assertThat(productList.get("currentPage"), equalTo(0));
         assertThat(productList.get("totalItems"), equalTo(2L));
         assertThat(productList.get("totalPages"), equalTo(1));
@@ -160,7 +160,7 @@ class HumberProductServiceTest {
 
     @Test
     @DisplayName("Get All Products")
-    void whenGetAllProducts_thenReturnProducts(){
+    void whenGetAllProducts_thenReturnProducts() {
         Mockito.when(productRepository.findAll()).thenReturn(catalog);
 
         List<Product> productList = productService.getCatalog();
@@ -194,9 +194,9 @@ class HumberProductServiceTest {
     @DisplayName("Get Product with invalid Id throws ResourceNotFoundException")
     void whenGetInvalidProductId_thenThrowsResourceNotFound() throws ResourceNotFoundException {
 
-        assertThrows( ResourceNotFoundException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             productService.getProductById(1L);
-        } );
+        });
 
         verify(productRepository, times(1)).findById(1L);
 

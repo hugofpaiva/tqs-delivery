@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
+    @Min(0)
     private Double price;
 
     private String name;

@@ -80,8 +80,8 @@ public class AuthenticationTest {
         LoginPage loginPage = new LoginPage(driver, this.webApplicationBaseUrl);
         loginPage.login("joao@email.com", "difficult-pass");
 
-        ShopPage shopPage = new ShopPage(driver);
-        shopPage.logoutRider();
+        ShopPage shopPage = new ShopPage(driver, this.webApplicationBaseUrl);
+        shopPage.logoutClient();
     }
 
     @Test
@@ -94,7 +94,7 @@ public class AuthenticationTest {
         LoginPage loginPage = new LoginPage(driver, this.webApplicationBaseUrl);
         loginPage.login("TesteEmail@email.com", "teste123");
 
-        ShopPage shopPage = new ShopPage(driver);
-        shopPage.logoutRider();
+        ShopPage shopPage = new ShopPage(driver, this.webApplicationBaseUrl);
+        shopPage.logoutClient();
     }
 }
