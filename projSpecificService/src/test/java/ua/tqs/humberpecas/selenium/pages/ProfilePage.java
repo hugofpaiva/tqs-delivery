@@ -39,11 +39,7 @@ public class ProfilePage {
 
         WebElement span = this.driver.findElement(By.xpath("/html/body/app-root/app-profile/main/section[2]/div/div/div/div[1]/div[3]/div/div[1]/span[1]"));
 
-        String number = span.getText().substring(0, 2);
-
-        if (number.substring(1, 2).equals(" ")) {
-            number = number.substring(0, 1);
-        }
+        String number = span.getText().substring(0, 2).trim();
 
         return Integer.parseInt(number);
 
@@ -57,11 +53,7 @@ public class ProfilePage {
 
         WebElement span = this.driver.findElement(By.xpath("/html/body/app-root/app-profile/main/section[2]/div/div/div/div[1]/div[3]/div/div[2]/span[1]"));
 
-        String number = span.getText().substring(0, 2);
-
-        if (number.substring(1, 2).equals(" ")) {
-            number = number.substring(0, 1);
-        }
+        String number = span.getText().substring(0, 2).trim();
 
         return Integer.parseInt(number);
 

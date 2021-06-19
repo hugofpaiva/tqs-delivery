@@ -83,7 +83,7 @@ public class ShopPage {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-shop/main/section[2]/div/div/main/h5")));
         }
-        if (this.driver.findElement(By.xpath("/html/body/app-root/app-shop/main/section[2]/div/div/main/h5")).getText().equals("There are no products!")){
+        if (this.driver.findElement(By.xpath("/html/body/app-root/app-shop/main/section[2]/div/div/main/h5")).getText().equals("There are no products!")) {
             return true;
         } else {
             return false;
@@ -112,6 +112,29 @@ public class ShopPage {
         return products;
     }
 
+    public void addToCart(Product productToAdd) {
+        {
+            WebDriverWait wait = new WebDriverWait(this.driver, 10);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-shop/main/section[2]/div/div/main/div")));
+        }
+        WebElement row = this.driver.findElement(By.xpath("/html/body/app-root/app-shop/main/section[2]/div/div/main/div"));
+
+        List<WebElement> productDivs = row.findElements(By.xpath("./child::*"));
+
+        List<Product> products = new ArrayList<>();
+
+        for (WebElement product : productDivs) {
+            String name = product.findElement(By.xpath(".//figure/figcaption/div[1]/a")).getText();
+            String priceStr = product.findElement(By.xpath(".//figure/figcaption/div[1]/div/span")).getText();
+            Double price = Double.parseDouble(priceStr.substring(0, priceStr.length() - 1));
+            if (name.equals(productToAdd.getName()) && price == (productToAdd.getPrice())) {
+                product.findElement(By.xpath(".//figure/figcaption/a")).click();
+            }
+
+        }
+
+    }
+
 
     public void filterByCategory(Category category) {
         {
@@ -123,7 +146,7 @@ public class ShopPage {
         List<WebElement> filterButtons = row.findElements(By.xpath("./child::*"));
 
         for (WebElement button : filterButtons) {
-            if(button.getText().toLowerCase().contains(category.name().toLowerCase())){
+            if (button.getText().toLowerCase().contains(category.name().toLowerCase())) {
                 button.click();
             }
         }
