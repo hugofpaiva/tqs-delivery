@@ -279,7 +279,7 @@ public class PurchaseRestControllerMockMvcTest {
     public void testMakeNewOrderButFieldMissing_then400() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String exampleBody = "{\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        String exampleBody = "{\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
         when(purchaseService.receiveNewOrder(any(), any())).thenThrow(InvalidValueException.class);
         mvc.perform(post("/store/order")
                 .accept(MediaType.APPLICATION_JSON)
@@ -297,7 +297,7 @@ public class PurchaseRestControllerMockMvcTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + token);
 
-        String exampleBody = "{\"personName\":234,\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        String exampleBody = "{\"personName\":234,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
         when(purchaseService.receiveNewOrder(any(), any())).thenThrow(InvalidValueException.class);
         mvc.perform(post("/store/order")
                 .accept(MediaType.APPLICATION_JSON)
@@ -315,7 +315,7 @@ public class PurchaseRestControllerMockMvcTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + token);
 
-        String exampleBody = "{\"personName\":\"nomeee\",\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        String exampleBody = "{\"personName\":\"nomeee\",\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
         Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Store(), "nomeee");
         when(purchaseService.receiveNewOrder(any(), any())).thenReturn(purchase);
 
