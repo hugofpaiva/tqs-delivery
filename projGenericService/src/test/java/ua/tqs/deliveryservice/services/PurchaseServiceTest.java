@@ -433,8 +433,25 @@ public class PurchaseServiceTest {
     }
 
     @Test
+    public void whenReviewNotDelivered_thenBadRequest() throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
+        Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
+        Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
+
+        assertThrows(InvalidValueException.class, () -> {
+            purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), this.purchase.getId(), 4);
+        }, "Invalid, purchase must be delivered first.");
+
+        Mockito.verify(storeRepository, VerificationModeFactory.times(1)).findByToken(anyString());
+        Mockito.verify(purchaseRepository, VerificationModeFactory.times(1)).findById(anyLong());
+        Mockito.verify(purchaseRepository, VerificationModeFactory.times(0)).saveAndFlush(any());
+    }
+
+    @Test
     public void whenEverythingIsOk_thenReturnPurchase() throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
+
+        this.purchase.setStatus(Status.DELIVERED);
+
         Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
 
         Purchase returned = purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), this.purchase.getId(), 4);

@@ -50,6 +50,10 @@ public class PurchaseService {
         if (purchase.getRiderReview() != null)
             throw new InvalidValueException("Invalid, purchased already had review.");
 
+        // A review cannot be added to a purchase when it is not delivered. BAD_REQUEST
+        if (purchase.getStatus() != Status.DELIVERED)
+            throw new InvalidValueException("Invalid, purchase must be delivered first.");
+
         long store_id_of_where_purchase_was_supposedly_made = purchase.getStore().getId();
         long store_id_associated_to_token_passed = store.getId();
 
@@ -142,7 +146,6 @@ public class PurchaseService {
 
         if (!(personName instanceof String)) throw new InvalidValueException(error);
 
-        System.out.println(data);
         Object date_obj = Optional.ofNullable(data.get("date"))
                 .orElseThrow(() -> new InvalidValueException(error));
 

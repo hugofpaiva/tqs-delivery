@@ -18,10 +18,7 @@ import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
-import ua.tqs.deliveryservice.model.Address;
-import ua.tqs.deliveryservice.model.Purchase;
-import ua.tqs.deliveryservice.model.Rider;
-import ua.tqs.deliveryservice.model.Store;
+import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.services.PurchaseService;
 
 
@@ -131,9 +128,8 @@ public class PurchaseRestControllerMockMvcTest {
         Mockito.verify(purchaseService, VerificationModeFactory.times(0)).reviewRiderFromSpecificOrder(anyString(), anyLong(), anyInt());
     }
 
-    // 2. despoletar erros no service e ver se o controller ainda faz o que é suposto
     @Test
-    public void testEverythingOK_thenIsOk() throws Exception {
+    public void testNotDeliveredPurchaseReview_thenBadRequest() throws Exception {
         Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
         Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address);
@@ -147,9 +143,38 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization", "Bearer " + token);
 
-        when(purchaseService.reviewRiderFromSpecificOrder(token, store.getId(), 3)).thenReturn(purchase);
+        when(purchaseService.reviewRiderFromSpecificOrder(token, purchase.getId(), 3)).thenThrow(InvalidValueException.class);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform(patch("/store/order/"+purchase.getId()+"/review")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .content(String.valueOf(json)))
+                .andExpect(status().isBadRequest());
+
+        Mockito.verify(purchaseService, VerificationModeFactory.times(1)).reviewRiderFromSpecificOrder(anyString(), anyLong(), anyInt());
+    }
+
+    // 2. despoletar erros no service e ver se o controller ainda faz o que é suposto
+    @Test
+    public void testEverythingOK_thenIsOk() throws Exception {
+        Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
+        Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address);
+        Purchase purchase = new Purchase(address, rider, store, "Joana");
+        purchase.setStatus(Status.DELIVERED);
+
+        JSONObject json = new JSONObject();
+        json.put("review", 3);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        headers.set("authorization", "Bearer " + token);
+
+        when(purchaseService.reviewRiderFromSpecificOrder(token, purchase.getId(), 3)).thenReturn(purchase);
+
+        mvc.perform(patch("/store/order/"+purchase.getId()+"/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)

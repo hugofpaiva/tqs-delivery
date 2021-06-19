@@ -173,8 +173,29 @@ class PurchaseRestControllerTemplateIT {
     }
 
     @Test
+    public void testValidOrderIdValidReviewValueInvalidStatus_thenCodeBadRequest() {
+        Long review = 3L;
+
+        Map<String, Long> data = new HashMap<>();
+        data.put("review", review);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        headers.set("Authorization", "Bearer " + this.store.getToken());
+        HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
+
+        ResponseEntity<String> response = testRestTemplate.exchange( getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PATCH, entity, String.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+        // como isto é um patch, não tem de se enviar o objeto de volta.
+        // src: https://stackoverflow.com/questions/37718119/should-the-patch-method-return-all-fields-of-the-resource-in-the-response-body/37718786
+    }
+
+    @Test
     public void testValidOrderIdValidReviewValue_thenCodeOK() {
         Long review = 3L;
+        this.purchase.setStatus(Status.DELIVERED);
+        purchaseRepository.saveAndFlush(this.purchase);
 
         Map<String, Long> data = new HashMap<>();
         data.put("review", review);

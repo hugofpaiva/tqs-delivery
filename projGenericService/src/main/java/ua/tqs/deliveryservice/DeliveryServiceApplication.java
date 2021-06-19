@@ -18,9 +18,9 @@ public class DeliveryServiceApplication {
 	}
 }
 
-@Profile("!test")
+@Profile("!test && !CI")
 @Component
-class DBLoader implements CommandLineRunner {
+class DBLoaderProd implements CommandLineRunner {
 
 	@Autowired
 	private RiderRepository riderRep;
@@ -84,6 +84,79 @@ class DBLoader implements CommandLineRunner {
 		purchaseRep.saveAndFlush(purchase_no_rider2);
 		purchaseRep.saveAndFlush(purchase1);
 		//purchaseRep.saveAndFlush(purchase2);
+
+
+	}
+}
+
+@Profile("CI")
+@Component
+class DBLoaderCI implements CommandLineRunner {
+
+	@Autowired
+	private RiderRepository riderRep;
+
+	@Autowired
+	private ManagerRepository managerRep;
+
+	@Autowired
+	private AddressRepository addressRep;
+
+	@Autowired
+	private PurchaseRepository purchaseRep;
+
+	@Autowired
+	private PasswordEncoder bcryptEncoder;
+
+	@Autowired
+	private StoreRepository storeRep;
+
+	@Override
+	public void run(String... args) {
+		System.out.println("Populating database");
+
+		Rider rider1 = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
+		riderRep.saveAndFlush(rider1);
+
+		Rider new_rider = new Rider("Antonio", bcryptEncoder.encode("difficult-pass"), "antonio@email.com");
+		riderRep.saveAndFlush(new_rider);
+
+		Address addr1 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+		addressRep.saveAndFlush(addr1);
+
+		Address addr2 = new Address("Rua Loja Loja, n. 23", "3212-333", "Porto", "Portugal");
+		addressRep.saveAndFlush(addr2);
+
+		Address addr3 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+		addressRep.saveAndFlush(addr3);
+
+		Address addr4 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+		addressRep.saveAndFlush(addr4);
+
+		Address addr5 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+		addressRep.saveAndFlush(addr5);
+
+		Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2);
+		storeRep.saveAndFlush(store1);
+
+		Purchase purchase1 = new Purchase(addr1, rider1, store1, "client1");
+		Purchase purchase2 = new Purchase(addr3, rider1, store1, "client2");
+		purchaseRep.saveAndFlush(purchase1);
+		purchaseRep.saveAndFlush(purchase2);
+
+		Purchase purchase_no_rider = new Purchase(addr4, store1, "client22");
+		Purchase purchase_no_rider2 = new Purchase(addr5, store1, "client222");
+		purchaseRep.saveAndFlush(purchase_no_rider);
+		purchaseRep.saveAndFlush(purchase_no_rider2);
+
+
+		System.out.println(purchase1.getId());
+		System.out.println(purchase2.getId());
+
+		System.out.println(purchase_no_rider.getId());
+		System.out.println(purchase_no_rider2.getId());
+
+
 
 
 	}

@@ -17,10 +17,8 @@ import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ua.tqs.humberpecas.model.Category;
-import ua.tqs.humberpecas.model.Person;
-import ua.tqs.humberpecas.model.Product;
-import ua.tqs.humberpecas.model.Purchase;
+import ua.tqs.humberpecas.model.*;
+import ua.tqs.humberpecas.repository.AddressRepository;
 import ua.tqs.humberpecas.repository.PersonRepository;
 import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
@@ -77,6 +75,9 @@ public class ProfileTest {
     private PersonRepository personRepository;
 
     @Autowired
+    private AddressRepository addressRepository;
+
+    @Autowired
     private ProductRepository productRepository;
 
     @BeforeEach
@@ -114,24 +115,15 @@ public class ProfileTest {
         productRepository.saveAndFlush(product5);
         productList.add(product5);
 
-        Product product6 = new Product("Torx Driver", 4.20, Category.SCREWDRIVER, "Torx Driver Description", "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
-        productRepository.saveAndFlush(product6);
-        productList.add(product6);
-
-        Product product7 = new Product("Robertson Drivers", 10.11, Category.SCREWDRIVER, "Robertson Driver Description", "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
-        productRepository.saveAndFlush(product7);
-        productList.add(product7);
-
-        Product product8 = new Product("Grommet Plier", 25.00, Category.PLIERS, "Grommet Plier Description", "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
-        productRepository.saveAndFlush(product8);
-        productList.add(product8);
-
-        Product product9 = new Product("Locking Plier", 15.20, Category.SCREWDRIVER, "Locking Plier Description", "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
-        productRepository.saveAndFlush(product9);
-        productList.add(product9);
-
         this.client = new Person("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
         personRepository.saveAndFlush(this.client);
+
+        Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal", client);
+        addressRepository.saveAndFlush(address);
+
+        Purchase purchase = new Purchase(client, address, List.of(product, product, product3));
+        purchase.setStatus(PurchaseStatus.DELIVERED);
+        purchaseRepository.saveAndFlush(purchase);
 
 
         LoginPage loginPage = new LoginPage(this.driver, this.webApplicationBaseUrl);
