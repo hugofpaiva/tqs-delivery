@@ -135,7 +135,7 @@ class HumberProductServiceTest {
         Pageable paging = PageRequest.of(0, 9, Sort.by("id").descending());
         Page<Product> result = new PageImpl<>(Arrays.asList(chave, parafuso));
 
-        Mockito.when(productRepository.findAll(paging)).thenReturn(result);
+        Mockito.when(productRepository.findAllByPriceIsGreaterThanEqualAndPriceIsLessThanEqual(0.0,10000.0,paging)).thenReturn(result);
 
         Map<String, Object> productList = productService.
                 getProductsFiltered(0, 9, null, 10000.0, 0.0, null, null);
@@ -151,7 +151,7 @@ class HumberProductServiceTest {
         assertThat((List<Product>) productList.get("products"), hasItem(hasProperty("name",
                 Matchers.equalTo(parafuso.getName()))));
 
-        verify(productRepository, times(1)).findAll(paging);
+        verify(productRepository, times(1)).findAllByPriceIsGreaterThanEqualAndPriceIsLessThanEqual(0.0, 10000.0, paging);
     }
 
     // -------------------------------------
