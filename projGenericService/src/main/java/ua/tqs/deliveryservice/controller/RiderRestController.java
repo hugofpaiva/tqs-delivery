@@ -46,10 +46,16 @@ public class RiderRestController {
 
 
     @GetMapping("order/new")
-    public ResponseEntity<Map<String, Object>> getNewOrder(HttpServletRequest request) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
+    public ResponseEntity<Map<String, Object>> getNewOrder(HttpServletRequest request,
+                                                           @RequestParam(required = false, defaultValue = "") Double latitude,
+                                                           @RequestParam(required = false, defaultValue = "") Double longitude
+    ) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
         String requestTokenHeader = request.getHeader("Authorization");
 
-        Purchase purch = purchaseService.getNewPurchase(requestTokenHeader);
+        Purchase purch;
+        if (latitude == null || longitude == null) purch = purchaseService.getNewPurchase(requestTokenHeader);
+        else purch = purchaseService.getNewPurchaseLoc(requestTokenHeader, latitude, longitude);
+
         HashMap<String, Object> ret = new HashMap<>();
         ret.put("data", purch.getMap());
         return new ResponseEntity<>(ret, HttpStatus.OK);

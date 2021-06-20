@@ -170,4 +170,30 @@ public class PurchaseService {
     }
 
 
+    public Purchase getNewPurchaseLoc(String token, Double latitude, Double longitude) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
+
+        String email = jwtUserDetailsService.getEmailFromToken(token);
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
+
+        // verify if Rider has any purchase to deliver
+        if (purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).isPresent()) {
+            throw new ForbiddenRequestException("This rider still has an order to deliver");
+        }
+
+        // get available order for rider
+        Pageable paging = PageRequest.of(0, 15, Sort.by("date").ascending());
+        Page<Purchase> possible = purchaseRepository.findAllByRiderIsNullOrderByDate(paging);
+        Purchase purch = possible.stream().min(Comparator.comparingDouble(purchase -> distance(purchase.getStore(), latitude, longitude))).orElseThrow(() -> new ResourceNotFoundException("There are no more orders available"));
+
+        // accept order
+        purch.setRider(rider);
+        purch.setStatus(Status.ACCEPTED);
+        purchaseRepository.save(purch);
+
+        return purch;
+    }
+
+    public static double distance(Store store, double x2, double y2) {
+        return Math.sqrt((y2 - store.getLongitude()) * (y2 - store.getLongitude()) + (x2 - store.getLatitude()) * (x2 - store.getLatitude()));
+    }
 }
