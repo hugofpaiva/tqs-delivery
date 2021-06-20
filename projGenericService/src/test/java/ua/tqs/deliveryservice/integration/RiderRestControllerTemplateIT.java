@@ -503,9 +503,9 @@ class RiderRestControllerTemplateIT {
 
 
 
-    /* ----------------------------- *
-     * GET NEW PURCHASE FOR RIDER    * TODO
-     * ----------------------------- *
+    /* ------------------------------------- *
+     * GET NEW PURCHASE FOR RIDER WITH LOC   *
+     * ------------------------------------- *
      */
 
     @Test
