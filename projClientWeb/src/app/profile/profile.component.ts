@@ -53,10 +53,10 @@ export class NgbModalRiderReview {
     giveReview() {
         this.reviewService.giveReview(new Review(this.purchase.id, this.rate)).subscribe(data => {
             this.alertService.success('Review added!');
+            this.reviewService.emitConfig(true);
         }, error => {
             this.alertService.error('There was an error. Review was not added!');
         });
-        this.reviewService.emitConfig(true);
         this.activeModal.close();
     }
 }

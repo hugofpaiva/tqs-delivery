@@ -173,13 +173,14 @@ public class ProfilePage {
 
         Integer counter = 1;
         for (WebElement star : starsClick) {
-            if (star.getText().equals("☆") && counter == review) {
+            if (star.getText().equals("☆") && counter == review*2) {
                 star.click();
             }
             counter = counter + 1;
         }
 
         this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-rider-review/div[3]/button[1]")).click();
+
     }
 
     public List<Address> getAllAddresses() {

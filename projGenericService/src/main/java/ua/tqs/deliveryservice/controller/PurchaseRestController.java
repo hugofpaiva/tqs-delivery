@@ -36,7 +36,6 @@ public class PurchaseRestController {
     @PostMapping("/order")
     public ResponseEntity<Object> receivePurchase(HttpServletRequest request, @RequestBody Map<String,  Object> data) throws InvalidValueException, InvalidLoginException {
         String token = request.getHeader("Authorization");
-        System.out.println(data);
         Purchase newPurchase = purchaseService.receiveNewOrder(token, data);
         Map<String, Object> resp = new TreeMap<>();
         resp.put("orderId", newPurchase.getId());

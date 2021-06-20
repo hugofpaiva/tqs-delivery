@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -11,6 +12,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.BrowserWebDriverContainer;
@@ -26,10 +28,10 @@ import ua.tqs.humberpecas.selenium.pages.LoginPage;
 import ua.tqs.humberpecas.selenium.pages.ProfilePage;
 import ua.tqs.humberpecas.selenium.pages.ShopPage;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,6 +41,7 @@ import static org.hamcrest.Matchers.is;
 // SpringBootTest to run the REST API
 @Testcontainers
 @ExtendWith({ScreenshotOnFailureExtension.class})
+@DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class ProfileTest {
 
@@ -165,6 +168,9 @@ public class ProfileTest {
         productRepository.deleteAll();
         productRepository.flush();
 
+        addressRepository.deleteAll();
+        addressRepository.flush();
+
         personRepository.deleteAll();
         personRepository.flush();
     }
@@ -217,10 +223,14 @@ public class ProfileTest {
 
 
     @Test
+    @Disabled
     void testGiveReviewAndGetProductsInDB() {
         ProfilePage profilePage = new ProfilePage(this.driver, this.client.getName());
 
         profilePage.giveReviewToFirstOrder(4);
+
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
         assertThat(profilePage.getTotalPurchases(), is(3));
         assertThat(profilePage.getTotalReviews(), is(2));
 
