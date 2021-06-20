@@ -4,8 +4,6 @@ import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.internal.verification.VerificationModeFactory;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
@@ -643,47 +641,4 @@ public class PurchaseServiceTest {
                 .save(address);
     }
 
-
-  
-      /* ----------------------------- *
-       * GET AVG DELIVERY TIME TESTS   *
-       * ----------------------------- *   
-       */
-
-    public void testWhenGetAvgDeliveryButNoPurchasesHaveBeenDelivered_thenReturn() {
-        List<Object[]> data = new LinkedList<>();
-        data.add(new Object[]{null, 0L});
-
-        Mockito.when(purchaseRepository.getAverageReview()).thenReturn(data);
-        Map<String, Object> found = purchaseService.getAvgDeliveryTime();
-
-        Mockito.verify(purchaseRepository, times(1)).getAverageReview();
-        assertThat(found.size()).isEqualTo(1);
-        assertThat(found.get("average")).isEqualTo(null);
-    }
-
-    @Test
-    public void testWhenGetAvgDelivery_thenReturn() {
-        Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
-        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
-
-        Purchase p1 = new Purchase(addr, this.rider, store, "Miguel");
-        Purchase p2 = new Purchase(addr, this.rider, store, "Mariana");
-        Purchase p3 = new Purchase(addr, this.rider, store, "Carolina");
-
-        p1.setStatus(Status.DELIVERED); p2.setStatus(Status.DELIVERED); p3.setStatus(Status.DELIVERED);
-        p1.setDeliveryTime(264L); p2.setDeliveryTime(199L); p3.setDeliveryTime(230L);
-        Long expected = (p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime()) / 3;
-
-        List<Object[]> data = new LinkedList<>();
-        data.add(new Object[]{p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime(), 3L});
-
-        Mockito.when(purchaseRepository.getAverageReview()).thenReturn(data);
-        Map<String, Object> found = purchaseService.getAvgDeliveryTime();
-
-        Mockito.verify(purchaseRepository, times(1)).getAverageReview();
-        assertThat(found.size()).isEqualTo(1);
-        assertThat(found.get("average")).isEqualTo(expected);
-    }
 }

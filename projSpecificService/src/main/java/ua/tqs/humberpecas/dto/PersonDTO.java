@@ -35,5 +35,11 @@ public class PersonDTO {
         this.addresses = addresses;
     }
 
+    public PersonDTO(String name, String pwd, String email) {
+        this.name = name;
+        this.pwd = pwd;
+        this.email = email;
+    }
+
     public PersonDTO(){ }
 }

@@ -1,4 +1,4 @@
-package ua.tqs.deliveryservice.controller;
+package ua.tqs.deliveryservice.integration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +14,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -68,23 +68,17 @@ class PurchaseRestControllerTemplateIT {
 
     @AfterEach
     public void destroyAll() {
-        purchaseRepository.deleteById(this.purchase.getId());
+        purchaseRepository.deleteAll();
         purchaseRepository.flush();
 
-        storeRepository.deleteById(this.store.getId());
+        storeRepository.deleteAll();
         storeRepository.flush();
 
-        addressRepository.deleteById(this.address.getId());
+        addressRepository.deleteAll();
         addressRepository.flush();
 
-        personRepository.deleteById(this.rider.getId());
+        personRepository.deleteAll();
         personRepository.flush();
-
-
-        this.rider = new Rider();
-        this.address = new Address();
-        this.store = new Store();
-        this.purchase = new Purchase();
     }
 
     @BeforeEach
@@ -254,7 +248,7 @@ class PurchaseRestControllerTemplateIT {
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
-/*  // TODO :: FALHA NUMA CONSTRAINT QUALQUER
+
     @Test
     public void givenStore_whenPostNewOrderGood_then200() {
         HttpHeaders headers = new HttpHeaders();
@@ -271,17 +265,17 @@ class PurchaseRestControllerTemplateIT {
                 getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<>(input, headers),
                 Map.class);
 
+        Map<String, Object> found = response.getBody();
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-
+        assertThat(found, notNullValue());
+        assertThat(found.containsKey("orderId"), is(true));
     }
 
- */
-
-
-
-
-
-
-
 }
+
+
+
+
+
+

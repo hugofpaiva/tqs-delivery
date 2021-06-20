@@ -62,7 +62,7 @@ public class ProductRepositoryTests {
 
     /* -- helper -- */
     private Product createAndSaveProduct(int i) {
-        Product p = new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", 3);
+        Product p = new Product(10.50, "hammer","the best hammer", Category.SCREWDRIVER );
 
         entityManager.persistAndFlush(p);
         return p;

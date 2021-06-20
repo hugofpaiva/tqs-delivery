@@ -19,16 +19,14 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     Optional<Purchase> findTopByRiderAndStatusIsNot(Rider r, Status s);
     Page<Purchase> findAllByRider(Rider rider, Pageable pageable);
 
-    int countPurchaseByStatusIsNot(Status s);
-
     Optional<Purchase> findTopByOrderByDate();
 
     Long countPurchaseByStore(Store store);
+    Long countPurchaseByStatusIs(Status status);
+    Long countPurchaseByStatusIsNot(Status status); // todo: not tested
+
 
     @Query("SELECT SUM(p.deliveryTime), COUNT(p) FROM Purchase p WHERE p.status = 'DELIVERED'")
-    List<Object[]> getAverageReview();
-
-    @Query("SELECT COUNT(p) FROM Purchase p WHERE p.status = 'PENDENT'")
-    int getPendingOrders();
+    List<Long[]> getSumDeliveryTimeAndCountPurchases();
 
 }

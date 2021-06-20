@@ -11,7 +11,6 @@ import java.util.Optional;
 public interface RiderRepository extends JpaRepository<Rider, Long> {
     Optional<Rider> findByEmail(String email);
 
-    @Query("SELECT AVG(r.reviewsSum / r.totalNumReviews) FROM Rider r")
-    double getAverageReview();
-
+    @Query("SELECT AVG(r.reviewsSum/r.totalNumReviews) FROM  Rider r WHERE r.totalNumReviews <> 0")
+    Double getAverageRiderRating();
 }

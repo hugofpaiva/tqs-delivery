@@ -62,22 +62,22 @@ public class PurchaseRepositoryTests {
 
     /* -- helper -- */
     private Purchase createAndSavePurchase(int i) {
-        ShoppingCart sc = new ShoppingCart();
-        Person p = new Person("personName"+i, "pwdpwdpwd"+i, "email"+i+"@email.com", sc);
-        Address address = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal");
 
+        Person p = new Person("personName"+i, "pwdpwdpwd"+i, "email"+i+"@email.com");
+
+        Address address = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal", p);
+        p.getAddresses().add(address);
         List<Product> products = new ArrayList<>();
-        products.add(new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", 3));
-        products.add(new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", 4));
+        products.add(new Product(10.50, "hammer","the best hammer", Category.SCREWDRIVER ));
+        products.add(new Product(20.50, "hammer v2", "the best hammer 2.0", Category.SCREWDRIVER ));
 
         Purchase purch = new Purchase(p, address, products);
 
         for (Product prod : products) {
             entityManager.persist(prod);
         }
-        entityManager.persist(sc);
+
         entityManager.persist(p);
-        entityManager.persist(address);
         entityManager.persistAndFlush(purch);
         return purch;
     }
