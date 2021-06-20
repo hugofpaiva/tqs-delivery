@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.services.PurchaseService;
@@ -49,7 +50,7 @@ public class RiderRestController {
     public ResponseEntity<Map<String, Object>> getNewOrder(HttpServletRequest request,
                                                            @RequestParam(required = false, defaultValue = "") Double latitude,
                                                            @RequestParam(required = false, defaultValue = "") Double longitude
-    ) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
+    ) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
         String requestTokenHeader = request.getHeader("Authorization");
 
         Purchase purch;

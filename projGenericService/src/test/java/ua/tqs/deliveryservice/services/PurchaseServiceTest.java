@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.services;
 
+import com.github.dockerjava.api.exception.BadRequestException;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -706,7 +707,7 @@ public class PurchaseServiceTest {
         Page<Purchase> pageRequest = new PageImpl(new ArrayList<>(), PageRequest.of(0, 15), new ArrayList<>().size());
 
         Mockito
-                .when(purchaseRepository.findAllByRiderIsNullOrderByDate(PageRequest.of(0, 15)))
+                .when(purchaseRepository.findAllByRiderIsNullOrderByDate(PageRequest.of(0, 15, Sort.by("date").ascending())))
                 .thenReturn(pageRequest);
 
         assertThrows(ResourceNotFoundException.class, () -> {
@@ -724,7 +725,38 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testGetNewPurchaseWithLocForRiderValid() throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
+    public void testGetNewPurchaseWithLocForRider_whithInvalidLoc_thenThrow() throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
+        // set up ...
+        Rider r1 = new Rider("example", "pwd", "email@email.com");
+        Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far, 5.0, 5.0);
+
+        Address addr_far = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase p1_far = new Purchase(addr_far, store_far, "Miguel");
+
+        // the far one was created first; but the second one is the one that should be returned
+        List<Purchase> allPurchases = Arrays.asList(p1_far);
+        Page<Purchase> pageRequest = new PageImpl(allPurchases, PageRequest.of(0, 10, Sort.by("date").ascending()), 1);
+
+
+        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
+        Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(r1));
+
+
+        assertThrows(InvalidValueException.class, () -> {
+            purchaseService.getNewPurchaseLoc("exampleToken", 100.0, 0.0);
+        }, "Invalid values for coordinates");
+
+
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getEmailFromToken("exampleToken");
+        Mockito.verify(riderRepository, times(1))
+                .findByEmail("email@email.com");
+    }
+
+
+    @Test
+    public void testGetNewPurchaseWithLocForRiderValid() throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
@@ -754,7 +786,6 @@ public class PurchaseServiceTest {
                 .thenReturn(pageRequest);
 
         Mockito.when(purchaseRepository.save(p1_close)).thenReturn(p1_close);
-        // Mockito.when(purchaseRepository.save(p1_far)).thenReturn(p1_far);
 
         Purchase returned = purchaseService.getNewPurchaseLoc("exampleToken", 0.0, 0.0);
         assertThat(returned).isEqualTo(p1_close);

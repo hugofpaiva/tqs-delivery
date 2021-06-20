@@ -170,12 +170,13 @@ public class PurchaseService {
     }
 
 
-    public Purchase getNewPurchaseLoc(String token, Double latitude, Double longitude) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
-
+    public Purchase getNewPurchaseLoc(String token, Double latitude, Double longitude) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
         String email = jwtUserDetailsService.getEmailFromToken(token);
         Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
 
-        // verify if Rider has any purchase to deliver
+        if (latitude > 90 || latitude < -90 || longitude > 180 || longitude < -180) throw new InvalidValueException("Invalid values for coordinates");
+
+            // verify if Rider has any purchase to deliver
         if (purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).isPresent()) {
             throw new ForbiddenRequestException("This rider still has an order to deliver");
         }
