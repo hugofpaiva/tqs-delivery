@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -35,12 +37,27 @@ public class Store {
     @Column(unique = true)
     private String storeUrl;
 
+    private Double latitude;
+    private Double longitude;
+
     public Store(String name, String description, String token, Address address, String storeUrl) {
+
         this.name = name;
         this.token = token;
         this.description = description;
         this.address = address;
         this.storeUrl = storeUrl;
+        this.longitude = 0.0;
+        this.latitude = 0.0;
+    }
+
+    public Store(String name, String description, String token, Address address,  double latitude, double longitude) {
+        this.name = name;
+        this.token = token;
+        this.description = description;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public Store() {}
@@ -52,6 +69,8 @@ public class Store {
         map.put("name", name);
         map.put("description", description);
         map.put("address", address.getMap());
+        map.put("latitude", latitude);
+        map.put("longitude", longitude);
         return map;
     }
 }

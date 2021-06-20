@@ -10,15 +10,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ua.tqs.deliveryservice.model.Address;
-import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
-import ua.tqs.deliveryservice.model.Store;
-import ua.tqs.deliveryservice.repository.PurchaseRepository;
-import ua.tqs.deliveryservice.repository.RiderRepository;
 
-import javax.sound.midi.SysexMessage;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,28 +117,28 @@ public class RiderRepositoryTests {
 
     @Test
     public void testWhenGetSumReviewsAndQuantity_givenNoRiders_thenReturnNull() {
-        Long[] res = riderRepository.getSumReviewsAndQuantity().get(0);
-
-        assertThat(res).isNotNull();
-        assertThat(res.length).isEqualTo(2);
-        assertThat(res[0]).isNull();
-        assertThat(res[1]).isNull();
-
+        Double res = riderRepository.getAverageRiderRating();
+        assertThat(res).isNull();
     }
 
     @Test
-    public void testWhenGetSumReviewsAndQuantity_givenRidersWithoutReviews_thenReturn0s() {
+    public void testWhenGetSumReviewsAndQuantity_givenRidersWithoutReviews_thenReturnNull() {
         createAndSaveRider(1);
         createAndSaveRider(2);
-
-        Long[] res = riderRepository.getSumReviewsAndQuantity().get(0);
-
-        assertThat(res).isNotNull();
-        assertThat(res.length).isEqualTo(2);
-        assertThat(res[0]).isEqualTo(0);
-        assertThat(res[1]).isEqualTo(0);
+        Double res = riderRepository.getAverageRiderRating();
+        assertThat(res).isNull();
     }
 
+    @Test
+    public void testWhenGetSumReviewsAndQuantity_givenRidersWithReviewsWith0_thenReturnNull() {
+        createAndSaveRider(1);
+        Rider r = createAndSaveRider(2);
+        r.setTotalNumReviews(2);
+        r.setReviewsSum(0);
+        Double res = riderRepository.getAverageRiderRating();
+        assertThat(res).isNotNull();
+        assertThat(res).isEqualTo(0);
+    }
 
     @Test
     public void testWhenGetSumReviewsAndQuantity_givenReviews_thenReturnSums() {
@@ -157,14 +150,11 @@ public class RiderRepositoryTests {
         r2.setReviewsSum(1);
         r2.setTotalNumReviews(1);
 
-        Long[] res = riderRepository.getSumReviewsAndQuantity().get(0);
+        Double res = riderRepository.getAverageRiderRating();
 
         assertThat(res).isNotNull();
-        assertThat(res.length).isEqualTo(2);
-        assertThat(res[0]).isEqualTo(33);
-        assertThat(res[1]).isEqualTo(11);
+        assertThat(res).isEqualTo((double) (32/10 + 1)/2);
     }
-
 
 
     /* -- helper -- */

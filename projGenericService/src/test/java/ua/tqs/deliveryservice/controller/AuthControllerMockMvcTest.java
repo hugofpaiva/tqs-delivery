@@ -15,6 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.deliveryservice.configuration.JwtRequestFilter;
 import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
+import ua.tqs.deliveryservice.exception.DuplicatedObjectException;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.model.JwtResponse;
 import ua.tqs.deliveryservice.model.Rider;
@@ -132,11 +133,32 @@ class AuthControllerMockMvcTest {
         Mockito.verify(riderService, VerificationModeFactory.times(1)).save(rider);
     }
 
+    // erros no service
+
+    @Test
+    public void testRegister_whenEmailAlreadyInUse_then409() throws Exception {
+        Rider rider = new Rider("A very nice name", "strongggg", "example@tqs.ua");
+
+        JSONObject data = new JSONObject();
+        data.put("email", "example@tqs.ua");
+        data.put("name", "A very nice name");
+        data.put("pwd", "strongggg");
+
+        when(riderService.save(rider)).thenThrow(DuplicatedObjectException.class);
+
+        mvc.perform(post("/register")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(String.valueOf(data)))
+                .andExpect(status().isConflict());
+
+        Mockito.verify(riderService, VerificationModeFactory.times(1)).save(rider);
+    }
 
     // ----------------------------------------------
     // --                login tests               --
     // ----------------------------------------------
-
 
     @Test
     public void testLoginWhenInvalidCredentials_thenUnauthorized() throws Exception {

@@ -1,6 +1,5 @@
 package ua.tqs.deliveryservice.repository;
 
-import com.github.dockerjava.api.command.PullImageResultCallback;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,8 +15,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.deliveryservice.model.*;
-import ua.tqs.deliveryservice.repository.PersonRepository;
-import ua.tqs.deliveryservice.repository.PurchaseRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -293,7 +290,7 @@ public class PurchaseRepositoryTests {
 
     @Test
     public void testWhenGetAverageReview_givenNoPurchase_thenReturnNull() {
-        Long[] res = purchaseRepository.getAverageReview().get(0);
+        Long[] res = purchaseRepository.getSumDeliveryTimeAndCountPurchases().get(0);
 
         assertThat(res).isNotNull();
         assertThat(res.length).isEqualTo(2);
@@ -307,7 +304,7 @@ public class PurchaseRepositoryTests {
         createAndSavePurchase(1, true);
         createAndSavePurchase(2, true);
 
-        Long[] res = purchaseRepository.getAverageReview().get(0);
+        Long[] res = purchaseRepository.getSumDeliveryTimeAndCountPurchases().get(0);
 
         assertThat(res).isNotNull();
         assertThat(res.length).isEqualTo(2);
@@ -327,7 +324,7 @@ public class PurchaseRepositoryTests {
 
         createAndSavePurchase(3, false);
 
-        Long[] res = purchaseRepository.getAverageReview().get(0);
+        Long[] res = purchaseRepository.getSumDeliveryTimeAndCountPurchases().get(0);
 
         assertThat(res).isNotNull();
         assertThat(res.length).isEqualTo(2);

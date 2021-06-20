@@ -1,6 +1,7 @@
 package ua.tqs.deliveryservice.services;
 
 
+import com.github.dockerjava.api.exception.BadRequestException;
 import org.assertj.core.data.Percentage;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -820,47 +821,161 @@ public class PurchaseServiceTest {
     }
 
 
-  
-      /* ----------------------------- *
-       * GET AVG DELIVERY TIME TESTS   *
-       * ----------------------------- *   
-       */
+
+
+    /* ------------------------------- *
+     * GET NEW PURCHASE WITH LOC TESTS *
+     * ------------------------------- *
+     */
 
     @Test
-    public void testWhenGetAvgDeliveryButNoPurchasesHaveBeenDelivered_thenReturn() {
-        List<Long[]> data = new LinkedList<>();
-        data.add(new Long[]{null, 0L});
+    public void testGetNewPurchaseWithLocForRider_whenInvalidUser() {
+        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
+        Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
 
-        Mockito.when(purchaseRepository.getAverageReview()).thenReturn(data);
-        Map<String, Object> found = purchaseService.getAvgDeliveryTime();
+        assertThrows(InvalidLoginException.class, () -> {
+            purchaseService.getNewPurchaseLoc("exampleToken", 1.0, 2.0);
+        }, "There is no Rider associated with this token");
 
-        Mockito.verify(purchaseRepository, times(1)).getAverageReview();
-        assertThat(found.size()).isEqualTo(1);
-        assertThat(found.get("average")).isEqualTo(null);
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getEmailFromToken("exampleToken");
+        Mockito.verify(riderRepository, times(1))
+                .findByEmail("email@email.com");
     }
 
     @Test
-    public void testWhenGetAvgDelivery_thenReturn() {
+    public void testGetNewPurchaseForRiderLoc_whenRiderHasAnOrderAlreadyThrows() {
+        // set up ...
+        Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
         Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
+        Purchase p1 = new Purchase(addr, r1, store, "Miguel");
 
-        Purchase p1 = new Purchase(addr, this.rider, store, "Miguel");
-        Purchase p2 = new Purchase(addr, this.rider, store, "Mariana");
-        Purchase p3 = new Purchase(addr, this.rider, store, "Carolina");
+        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
+        Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(r1));
 
-        p1.setStatus(Status.DELIVERED); p2.setStatus(Status.DELIVERED); p3.setStatus(Status.DELIVERED);
-        p1.setDeliveryTime(264L); p2.setDeliveryTime(199L); p3.setDeliveryTime(230L);
-        Long expected = (p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime()) / 3;
+        Mockito
+                .when(purchaseRepository.findTopByRiderAndStatusIsNot(r1, Status.DELIVERED))
+                .thenReturn(Optional.of(p1));
 
-        List<Long[]> data = new LinkedList<>();
-        data.add(new Long[]{p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime(), 3L});
+        assertThrows(ForbiddenRequestException.class, () -> {
+            purchaseService.getNewPurchaseLoc("exampleToken", 1.0, 2.0);
+        }, "This rider still has an order to deliver");
 
-        Mockito.when(purchaseRepository.getAverageReview()).thenReturn(data);
-        Map<String, Object> found = purchaseService.getAvgDeliveryTime();
-
-        Mockito.verify(purchaseRepository, times(1)).getAverageReview();
-        assertThat(found.size()).isEqualTo(1);
-        assertThat(found.get("average")).isEqualTo(expected);
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getEmailFromToken("exampleToken");
+        Mockito.verify(riderRepository, times(1))
+                .findByEmail("email@email.com");
+        Mockito.verify(purchaseRepository, times(1))
+                .findTopByRiderAndStatusIsNot(any(), any());
     }
+
+    @Test
+    public void testGetNewPurchaseForRiderLoc_whenThereIsNoMorePurchases() {
+        // set up ...
+        Rider r1 = new Rider("example", "pwd", "email@email.com");
+
+        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
+        Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(r1));
+        Mockito
+                .when(purchaseRepository.findTopByRiderAndStatusIsNot(r1, Status.DELIVERED))
+                .thenReturn(Optional.empty());
+
+        Page<Purchase> pageRequest = new PageImpl(new ArrayList<>(), PageRequest.of(0, 15), new ArrayList<>().size());
+
+        Mockito
+                .when(purchaseRepository.findAllByRiderIsNullOrderByDate(PageRequest.of(0, 15, Sort.by("date").ascending())))
+                .thenReturn(pageRequest);
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            purchaseService.getNewPurchaseLoc("exampleToken", 1.0, 2.0);
+        }, "There are no more orders available");
+
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getEmailFromToken("exampleToken");
+        Mockito.verify(riderRepository, times(1))
+                .findByEmail("email@email.com");
+        Mockito.verify(purchaseRepository, times(1))
+                .findTopByRiderAndStatusIsNot(any(), any());
+        Mockito.verify(purchaseRepository, times(1))
+                .findAllByRiderIsNullOrderByDate(any());
+    }
+
+    @Test
+    public void testGetNewPurchaseWithLocForRider_whithInvalidLoc_thenThrow() throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
+        // set up ...
+        Rider r1 = new Rider("example", "pwd", "email@email.com");
+        Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far, 5.0, 5.0);
+
+        Address addr_far = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase p1_far = new Purchase(addr_far, store_far, "Miguel");
+
+        // the far one was created first; but the second one is the one that should be returned
+        List<Purchase> allPurchases = Arrays.asList(p1_far);
+        Page<Purchase> pageRequest = new PageImpl(allPurchases, PageRequest.of(0, 10, Sort.by("date").ascending()), 1);
+
+
+        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
+        Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(r1));
+
+
+        assertThrows(InvalidValueException.class, () -> {
+            purchaseService.getNewPurchaseLoc("exampleToken", 100.0, 0.0);
+        }, "Invalid values for coordinates");
+
+
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getEmailFromToken("exampleToken");
+        Mockito.verify(riderRepository, times(1))
+                .findByEmail("email@email.com");
+    }
+
+
+    @Test
+    public void testGetNewPurchaseWithLocForRiderValid() throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
+        // set up ...
+        Rider r1 = new Rider("example", "pwd", "email@email.com");
+        Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far, 5.0, 5.0);
+
+        Address addr_store_close = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_close, 1.0, 1.0);
+
+        Address addr_far = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase p1_far = new Purchase(addr_far, store_far, "Miguel");
+
+        Address addr_close = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase p1_close = new Purchase(addr_close, store_close, "Miguel");
+
+        // the far one was created first; but the second one is the one that should be returned
+        List<Purchase> allPurchases = Arrays.asList(p1_far, p1_close);
+        Page<Purchase> pageRequest = new PageImpl(allPurchases, PageRequest.of(0, 10, Sort.by("date").ascending()), 2);
+
+
+        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
+        Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(r1));
+        Mockito
+                .when(purchaseRepository.findTopByRiderAndStatusIsNot(r1, Status.DELIVERED))
+                .thenReturn(Optional.empty());
+        Mockito
+                .when(purchaseRepository.findAllByRiderIsNullOrderByDate(any()))
+                .thenReturn(pageRequest);
+
+        Mockito.when(purchaseRepository.save(p1_close)).thenReturn(p1_close);
+
+        Purchase returned = purchaseService.getNewPurchaseLoc("exampleToken", 0.0, 0.0);
+        assertThat(returned).isEqualTo(p1_close);
+        assertThat(returned.getStatus()).isEqualTo(Status.ACCEPTED);
+        assertThat(returned.getRider()).isEqualTo(r1);
+
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getEmailFromToken("exampleToken");
+        Mockito.verify(riderRepository, times(1))
+                .findByEmail("email@email.com");
+        Mockito.verify(purchaseRepository, times(1))
+                .findTopByRiderAndStatusIsNot(any(), any());
+    }
+
 }

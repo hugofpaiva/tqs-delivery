@@ -168,7 +168,6 @@ public class PurchaseService {
 
         if (!(personName instanceof String)) throw new InvalidValueException(error);
 
-        System.out.println(data);
         Object date_obj = Optional.ofNullable(data.get("date"))
                 .orElseThrow(() -> new InvalidValueException(error));
 
@@ -194,17 +193,34 @@ public class PurchaseService {
         return purchase;
 
     }
-    public Map<String, Object> getAvgDeliveryTime() {
-        Map<String, Object> response = new HashMap<>();
 
-        List<Long[]> data2 = purchaseRepository.getAverageReview();
-        Long totalTime = data2.get(0)[0];
-        Long numPurch = data2.get(0)[1];
 
-        // if there are delivered purchases
-        response.put("average", totalTime != null ? totalTime / numPurch : null);
+    public Purchase getNewPurchaseLoc(String token, Double latitude, Double longitude) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
+        String email = jwtUserDetailsService.getEmailFromToken(token);
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
 
-        return response;
+        if (latitude > 90 || latitude < -90 || longitude > 180 || longitude < -180) throw new InvalidValueException("Invalid values for coordinates");
+
+            // verify if Rider has any purchase to deliver
+        if (purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).isPresent()) {
+            throw new ForbiddenRequestException("This rider still has an order to deliver");
+        }
+
+        // get available order for rider
+        Pageable paging = PageRequest.of(0, 15, Sort.by("date").ascending());
+        Page<Purchase> possible = purchaseRepository.findAllByRiderIsNullOrderByDate(paging);
+        Purchase purch = possible.stream().min(Comparator.comparingDouble(purchase -> distance(purchase.getStore(), latitude, longitude))).orElseThrow(() -> new ResourceNotFoundException("There are no more orders available"));
+
+        // accept order
+        purch.setRider(rider);
+        purch.setStatus(Status.ACCEPTED);
+        purchaseRepository.save(purch);
+
+        return purch;
+    }
+
+    public static double distance(Store store, double x2, double y2) {
+        return Math.sqrt((y2 - store.getLongitude()) * (y2 - store.getLongitude()) + (x2 - store.getLatitude()) * (x2 - store.getLatitude()));
     }
 
 }

@@ -1,4 +1,4 @@
-package ua.tqs.deliveryservice.controller;
+package ua.tqs.deliveryservice.integration;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
@@ -529,4 +529,107 @@ class RiderRestControllerTemplateIT {
         assertThat(found.get("totalNumReviews"), equalTo(4));
         assertThat(found.get("avgReviews"), equalTo((double) 15/4));
     }
+
+
+
+    /* ------------------------------------- *
+     * GET NEW PURCHASE FOR RIDER WITH LOC   *
+     * ------------------------------------- *
+     */
+
+    @Test
+    public void givenRiderHasNoAuthorization_whenGetNewPurchaseWithLoc_thenUnauthorized() {
+        HttpHeaders headers = new HttpHeaders();
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/new?latitude=30.2312&longitude=50.234", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+    }
+    @Test
+    public void whenRiderHasCurrentOrder_whenGetNewOrderWithLoc_thenForbidden() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/new?latitude=30.2312&longitude=50.234", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.FORBIDDEN));
+    }
+
+    @Test
+    public void givenThereAreNoOrders_whenGetNewOrderWithLoc_thenNotFound() {
+        purchaseRepository.delete(this.purchase);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/new?latitude=30.2312&longitude=50.234", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+    }
+
+
+    @Test
+    public void givenThereAreOrders_whenGetNewOrderWithInvalidLoc_then400() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/new?latitude=2.2312&longitude=222.234", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    public void givenRiderHasNoOrder_whenGetNewOrderWithLoc_thenGetClosestOrder() {
+        purchaseRepository.delete(this.purchase);
+
+        Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far, 5.0, 5.0);
+
+        Address addr_store_close = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V71", addr_store_close, 1.0, 1.0);
+
+        Address addr_far = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase p1_far = new Purchase(addr_far, store_far, "Miguel");
+
+        Address addr_close = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase p1_close = new Purchase(addr_close, store_close, "Miguel");
+
+        addressRepository.save(addr_store_far); addressRepository.save(addr_store_close); addressRepository.save(addr_close); addressRepository.save(addr_far);
+        storeRepository.save(store_close); storeRepository.save(store_far);
+        purchaseRepository.save(p1_far); purchaseRepository.save(p1_close);
+
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/new?latitude=2.2312&longitude=0.234", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found).isNotNull();
+        Assertions.assertThat(found.containsKey("data")).isTrue();
+
+        Map<String, Object> info = mapper.convertValue(
+                found.get("data"),
+                new TypeReference<Map<String, Object>>() {
+                }
+        );
+        System.out.println(info);
+
+        Assertions.assertThat(info.containsKey("store")).isTrue();
+        Assertions.assertThat(((Map<String, Object>)info.get("store")).containsKey("latitude")).isTrue();
+        Assertions.assertThat(((Map<String, Object>)info.get("store")).get("latitude")).isEqualTo(store_close.getLatitude());
+        Assertions.assertThat(info.containsKey("clientAddress")).isTrue();
+        Assertions.assertThat(info.containsKey("orderId")).isTrue();
+        Assertions.assertThat(info.get("status")).isEqualTo("ACCEPTED");
+    }
+
 }
