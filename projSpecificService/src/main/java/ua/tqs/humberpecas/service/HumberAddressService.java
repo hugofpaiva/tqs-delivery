@@ -1,10 +1,10 @@
 package ua.tqs.humberpecas.service;
 
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.dto.AddressDTO;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Address;
 import ua.tqs.humberpecas.model.Person;
@@ -23,55 +23,48 @@ public class HumberAddressService {
     @Autowired
     private PersonRepository personRepository;
 
-    public Address addNewAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
+    @Autowired
+    private JwtUserDetailsService jwtUserDetailsService;
 
-        Person p = personRepository.findById(addressDTO.getPersonID())
+    public Address addNewAddress(String token, AddressDTO addressDTO) throws InvalidLoginException {
+        Person p = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(token))
                 .orElseThrow(() -> {
                             log.error("Invalid User");
-                            return new ResourceNotFoundException("Invalid User"); });
+                            return new InvalidLoginException("Invalid User"); });
 
         var newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry(), p);
 
         return addressRepository.save(newAddress);
     }
 
-    public Address updateAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
-
-        var address = addressRepository.findById(addressDTO.getAddressId())
+    public Address delAddress(String token, long addressId) throws InvalidLoginException {
+        Person p = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(token))
                 .orElseThrow(() -> {
-                                log.error("Invalid Address");
-                                return new ResourceNotFoundException("Invalid Address"); });
+                    log.error("Invalid User");
+                    return new InvalidLoginException("Invalid User"); });
 
-
-        address.setAddress(addressDTO.getAddress());
-        address.setCity(addressDTO.getCity());
-        address.setCountry(addressDTO.getCountry());
-        address.setPostalCode(addressDTO.getPostalCode());
-
-        return addressRepository.save(address);
-
-    }
-
-    public void delAddress(AddressDTO addressDTO) throws ResourceNotFoundException {
-
-        var address = addressRepository.findById(addressDTO.getAddressId())
+        var address = addressRepository.findById(addressId)
                 .orElseThrow(() ->  {
                             log.error("Invalid Address");
                             return new ResourceNotFoundException("Invalid Address"); });
 
-        addressRepository.delete(address);
+        if (!p.getAddresses().contains(address)) {
+            throw new ResourceNotFoundException("Address to be deleted does not belong to this user.");
+        }
 
+        address.setDeleted(true);
+        return addressRepository.saveAndFlush(address);
     }
 
-    public List<Address> getUserAddress(long userId) throws ResourceNotFoundException {
+    public List<Address> getUserAddress(String userToken) throws InvalidLoginException {
 
-        List<Address> addresses = addressRepository.findByPersonId(userId)
-                .orElseThrow(() ->{
-                        log.error("Invalid User");
-                        return new ResourceNotFoundException("Invalid User"); });
+        Person person = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(userToken))
+                .orElseThrow(()-> {
+                    log.error("HumberPurchaseService: invalid user token" );
+                    return new InvalidLoginException("Invalid user token");
+                });
 
-        return addresses;
-
+        return addressRepository.findAllByPersonAndDeletedIsFalse(person);
     }
 
 

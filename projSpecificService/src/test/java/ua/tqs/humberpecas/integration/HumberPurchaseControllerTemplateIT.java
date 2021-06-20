@@ -1,8 +1,6 @@
 package ua.tqs.humberpecas.integration;
 
 import io.restassured.RestAssured;
-import io.restassured.module.mockmvc.RestAssuredMockMvc;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,9 +17,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
-import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
 import ua.tqs.humberpecas.exception.AccessNotAllowedException;
-import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.AddressRepository;
 import ua.tqs.humberpecas.repository.PersonRepository;
@@ -29,16 +25,14 @@ import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class HumberPurchaseControllerIT {
+public class HumberPurchaseControllerTemplateIT {
 
     @LocalServerPort
     int randomServerPort;
@@ -113,17 +107,17 @@ public class HumberPurchaseControllerIT {
         this.address = addressRepository.saveAndFlush(new Address("Aveiro", "3730-123","Aveiro","Portugal", person));
 
         this.catalog = productRepository.saveAllAndFlush(Arrays.asList(
-                new Product(10.50, "hammer","the best hammer", Category.SCREWDRIVER ),
-                new Product(20.50, "hammer v2", "the best hammer 2.0", Category.SCREWDRIVER )));
+                new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", "image_url"),
+                new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", "image_url")));
 
         this.productList = Arrays.asList(this.catalog.get(0).getId());
-        this.purchaseDTO = new PurchaseDTO(new Date() ,this.address.getId(), productList);
+        this.purchaseDTO = new PurchaseDTO(this.address.getId(), productList);
 
     }
 
     @Test
-    @DisplayName("Make Purchage")
-    void whenValidPurchage_thenReturnOk(){
+    @DisplayName("Make Purchase")
+    void whenValidPurchase_thenReturnOk(){
 
         RestAssured.given()
                 .header("authorization", "Bearer " + this.token)
@@ -161,7 +155,7 @@ public class HumberPurchaseControllerIT {
 
     @Test
     @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound ")
-    void whenPurchaseWithInvalidData_thenthenThrowsStatus404(){
+    void whenPurchaseWithInvalidData_thenThrowsStatus404(){
 
         this.purchaseDTO.setAddressId(0);
 

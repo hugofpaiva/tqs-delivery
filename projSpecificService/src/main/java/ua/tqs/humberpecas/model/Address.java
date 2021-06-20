@@ -1,5 +1,6 @@
 package ua.tqs.humberpecas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,12 +28,14 @@ public class Address {
     @NonNull
     private String country;
 
+    private boolean deleted = false;
+
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "person_id", nullable=false)
-    @EqualsAndHashCode.Exclude
     private Person person;
 
-
+    @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "address")
     private List<Purchase> purchases;

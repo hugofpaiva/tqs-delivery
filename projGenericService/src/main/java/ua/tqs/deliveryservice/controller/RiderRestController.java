@@ -29,7 +29,7 @@ public class RiderRestController {
     private RiderService riderService;
 
     @PatchMapping("order/status")
-    public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(HttpServletRequest request) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
+    public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(HttpServletRequest request) throws InvalidLoginException, ResourceNotFoundException {
         String requestTokenHeader = request.getHeader("Authorization");
 
         Purchase purchase = purchaseService.updatePurchaseStatus(requestTokenHeader);

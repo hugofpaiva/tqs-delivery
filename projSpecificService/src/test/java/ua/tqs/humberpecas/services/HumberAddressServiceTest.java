@@ -8,18 +8,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.tqs.humberpecas.dto.AddressDTO;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.Address;
 import ua.tqs.humberpecas.model.Person;
 import ua.tqs.humberpecas.repository.AddressRepository;
 import ua.tqs.humberpecas.repository.PersonRepository;
 
+import java.util.*;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import ua.tqs.humberpecas.service.HumberAddressService;
+import ua.tqs.humberpecas.service.JwtUserDetailsService;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -36,6 +35,9 @@ class HumberAddressServiceTest {
     @Mock
     private PersonRepository personRepository;
 
+    @Mock
+    private JwtUserDetailsService jwtUserDetailsService;
+
     @InjectMocks
     private HumberAddressService service;
 
@@ -44,27 +46,26 @@ class HumberAddressServiceTest {
     private Person person;
 
     @BeforeEach
-    void setUp() throws IOException {
-
+    void setUp() {
         person = new Person("Fernando", "12345678","fernando@ua.pt");
-        address  = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
+        address = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
         addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal");
-
+        person.setAddresses(Set.of(address));
     }
 
 
+    // -------------------------------------
+    // --       ADD ADDRESS TESTS         --
+    // -------------------------------------
+
     @Test
     @DisplayName("Add new Address")
-    void whenUserAddAddress_thenSaveAddress() throws ResourceNotFoundException {
-
-
-        when(personRepository.findById(anyLong())).thenReturn(Optional.of(person));
+    void whenUserAddAddress_thenSaveAddress() throws InvalidLoginException {
+        when(jwtUserDetailsService.getEmailFromToken("token")).thenReturn(person.getEmail());
+        when(personRepository.findByEmail(person.getEmail())).thenReturn(Optional.of(person));
         when(addressRepository.save(address)).thenReturn(address);
 
-
-        addressDTO.setPersonID(1L);
-        Address newAddress = service.addNewAddress(addressDTO);
-
+        Address newAddress = service.addNewAddress("token", addressDTO);
 
         assertThat(newAddress.getAddress(), equalTo(address.getAddress()));
         assertThat(newAddress.getCity(), equalTo(address.getCity()));
@@ -72,129 +73,135 @@ class HumberAddressServiceTest {
         assertThat(newAddress.getPostalCode(), equalTo(address.getPostalCode()));
         assertThat(newAddress.getPerson(), equalTo(address.getPerson()));
 
-        verify(personRepository, times(1)).findById(1L);
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
+        verify(personRepository, times(1)).findByEmail(person.getEmail());
         verify(addressRepository, times(1)).save(address);
-
     }
 
     @Test
     @DisplayName("Add new Address of Invalid User throws ResourceNotFoundException")
-    void whenInvalidUserAddAddress_thenThrowsResourceNotFound() throws ResourceNotFoundException {
+    void whenInvalidUserAddress_thenThrowsResourceNotFound() throws InvalidLoginException {
+        when(jwtUserDetailsService.getEmailFromToken("token")).thenReturn("Invalidemail@email.com");
+        when(personRepository.findByEmail("Invalidemail@email.com")).thenReturn(Optional.empty());
 
-        addressDTO.setPersonID(1L);
-
-        assertThrows( ResourceNotFoundException.class, () -> {
-            service.addNewAddress(addressDTO);
+        assertThrows( InvalidLoginException.class, () -> {
+            service.addNewAddress("token", addressDTO);
         } );
 
-        verify(personRepository, times(1)).findById(1L);
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
+        verify(personRepository, times(1)).findByEmail("Invalidemail@email.com");
         verify(addressRepository, times(0)).save(address);
-
     }
 
-    @Test
-    @DisplayName("Update User Address")
-    void whenUserUpdateValidAddress_thenReturnAddress() throws ResourceNotFoundException {
-
-        addressDTO.setAddressId(1L);
-        Address old = new Address("Coimbra", "3730-125","Coimbra","Portugal", person);
-
-        when(addressRepository.findById(anyLong())).thenReturn(Optional.of(old));
-        when(addressRepository.save(address)).thenReturn(address);
-
-        Address newAddress = service.updateAddress(addressDTO);
-
-        assertThat(newAddress.getAddress(), equalTo(address.getAddress()));
-        assertThat(newAddress.getCity(), equalTo(address.getCity()));
-        assertThat(newAddress.getCountry(), equalTo(address.getCountry()));
-        assertThat(newAddress.getPostalCode(), equalTo(address.getPostalCode()));
-        assertThat(newAddress.getPerson(), equalTo(address.getPerson()));
-
-
-        verify(addressRepository, times(1)).findById(anyLong());
-        verify(addressRepository, times(1)).save(address);
-
-
-    }
-
-    @Test
-    @DisplayName("Update Invalid User Address throws ResourceNotFoundException")
-    void whenUserUpdateInvalidAddress_thenThrowsResourceNotFound() throws ResourceNotFoundException {
-        addressDTO.setAddressId(1L);
-
-        assertThrows( ResourceNotFoundException.class, () -> {
-            service.updateAddress(addressDTO);
-        } );
-
-        verify(addressRepository, times(1)).findById(1L);
-        verify(addressRepository, times(0)).save(address);
-
-    }
-
+    // -------------------------------------
+    // --       GET ADDRESS TESTS         --
+    // -------------------------------------
 
     @Test
     @DisplayName("Get User Addresses")
-    void whenGetValidUser_thenReturnAddress() throws ResourceNotFoundException {
+    void whenGetValidUser_thenReturnAddress() throws InvalidLoginException {
+        when(jwtUserDetailsService.getEmailFromToken("token")).thenReturn(person.getEmail());
+        when(personRepository.findByEmail(person.getEmail())).thenReturn(Optional.of(person));
+        when(addressRepository.findAllByPersonAndDeletedIsFalse(person)).thenReturn(new ArrayList<>(person.getAddresses()));
 
-        Address address2 = new Address("Coimbra", "3730-125","Coimbra","Portugal", person);
-        List<Address> addresses = Arrays.asList(address, address2);
+        List<Address> userAddresses = service.getUserAddress("token");
 
-        when(addressRepository.findByPersonId(anyLong())).thenReturn(Optional.of(addresses));
-
-        List<Address> userAddresses = service.getUserAddress(1L);
-
-        assertThat(userAddresses, hasSize(2));
+        assertThat(userAddresses, hasSize(1));
         assertThat(userAddresses, hasItem(address));
-        assertThat(userAddresses, hasItem(address2));
 
-        verify(addressRepository, times(1)).findByPersonId(1L);
-
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
+        verify(addressRepository, times(1)).findAllByPersonAndDeletedIsFalse(person);
+        verify(personRepository, times(1)).findByEmail(person.getEmail());
     }
 
     @Test
-    @DisplayName("Get Addresses of Invalid User throws ResourceNotFoundException")
-    void whenGetAddressesInvalidUser_thenThrowResourceNotFound() throws ResourceNotFoundException {
+    @DisplayName("Get Addresses of Invalid User throws InvalidLoginException")
+    void whenGetAddressesInvalidUser_thenThrowInvalidLoginException() throws InvalidLoginException {
+        when(jwtUserDetailsService.getEmailFromToken("token")).thenReturn("Invalidemail@email.com");
+        when(personRepository.findByEmail("Invalidemail@email.com")).thenReturn(Optional.empty());
 
-        assertThrows( ResourceNotFoundException.class, () -> {
-            service.getUserAddress(1L);
+        assertThrows(InvalidLoginException.class, () -> {
+            service.getUserAddress("token");
         } );
 
-        verify(addressRepository, times(1)).findByPersonId(1L);
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
+        verify(personRepository, times(1)).findByEmail("Invalidemail@email.com");
 
     }
 
+    // -------------------------------------
+    // --       DELETE ADDRESS TESTS      --
+    // -------------------------------------
+
     @Test
-    @DisplayName("Delete User Address")
-    void whenDeleteValidAddress_thenReturnNothing() throws ResourceNotFoundException {
+    @DisplayName("Delete User Address: valid parameters")
+    void whenDeleteEverythingIsOk_thenReturnNothing() throws InvalidLoginException {
+        when(jwtUserDetailsService.getEmailFromToken("token")).thenReturn(person.getEmail());
+        when(personRepository.findByEmail(person.getEmail())).thenReturn(Optional.of(person));
+        when(addressRepository.findById(1L)).thenReturn(Optional.of(address));
 
-        addressDTO.setAddressId(1L);
-        when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
-        doNothing().when(addressRepository).delete(address);
+        address.setDeleted(true);
+        when(addressRepository.saveAndFlush(address)).thenReturn(address);
 
-        service.delAddress(addressDTO);
+        service.delAddress("token", 1L);
 
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
+        verify(personRepository, times(1)).findByEmail(anyString());
         verify(addressRepository, times(1)).findById(1L);
-        verify(addressRepository, times(1)).delete(address);
-
-
+        verify(addressRepository, times(1)).saveAndFlush(address);
     }
 
     @Test
-    @DisplayName("Delete Invalid Address throws ResourceNotFoundException")
-    void whenDeleteInvalidAddress_thenThrowResourceNotFound() throws ResourceNotFoundException {
+    @DisplayName("Delete Address: Invalid AddressId throws ResourceNotFoundException")
+    void whenDeleteInvalidAddressId_thenThrowResourceNotFound() throws ResourceNotFoundException {
+        when(jwtUserDetailsService.getEmailFromToken("token")).thenReturn(person.getEmail());
+        when(personRepository.findByEmail(person.getEmail())).thenReturn(Optional.of(person));
+        when(addressRepository.findById(-1L)).thenThrow(ResourceNotFoundException.class);
 
-        addressDTO.setAddressId(1L);
+        assertThrows(ResourceNotFoundException.class, () -> {
+            service.delAddress("token", -1L);
+        });
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
+        verify(personRepository, times(1)).findByEmail(anyString());
+        verify(addressRepository, times(1)).findById(-1L);
+        verify(addressRepository, times(0)).saveAndFlush(address);
+    }
+
+    @Test
+    @DisplayName("Delete Address: Invalid Token throws ResourceNotFoundException")
+    void whenDeleteInvalidToken_thenThrowResourceNotFound() {
+        when(jwtUserDetailsService.getEmailFromToken("wrong_token")).thenReturn("Invalidemail@email.com");
+        when(personRepository.findByEmail("Invalidemail@email.com")).thenReturn(Optional.empty());
+
+        assertThrows( InvalidLoginException.class, () -> {
+            service.delAddress("wrong_token", 1L);
+        } );
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken("wrong_token");
+        verify(personRepository, times(1)).findByEmail("Invalidemail@email.com");
+        verify(addressRepository, times(0)).findById(anyLong());
+        verify(addressRepository, times(0)).saveAndFlush(address);
+    }
+
+    @Test
+    @DisplayName("Delete Address: address doesn't belong to person throws ResourceNotFoundException")
+    void whenDeleteButAddressDoesntBelongToPerson_thenThrowResourceNotFound() throws ResourceNotFoundException {
+        Person other_person = new Person("Duarte", "strong!password","duarte@ua.pt");
+        other_person.setAddresses( Set.of(
+            new Address("Aveiro", "3730-123","Aveiro","Portugal", other_person)
+        ));
+
+        when(jwtUserDetailsService.getEmailFromToken("token")).thenReturn(other_person.getEmail());
+        when(personRepository.findByEmail(other_person.getEmail())).thenReturn(Optional.of(other_person));
+        when(addressRepository.findById(address.getId())).thenReturn(Optional.of(address));
 
         assertThrows( ResourceNotFoundException.class, () -> {
-            service.delAddress(addressDTO);
-        } );
+            service.delAddress("token", address.getId());
+        });
 
-        verify(addressRepository, times(1)).findById(1L);
-        verify(addressRepository, times(0)).delete(address);
-
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
+        verify(personRepository, times(1)).findByEmail(anyString());
+        verify(addressRepository, times(1)).findById(address.getId());
+        verify(addressRepository, times(0)).saveAndFlush(address);
     }
-
-
-
 
 }

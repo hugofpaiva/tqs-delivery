@@ -434,8 +434,25 @@ public class PurchaseServiceTest {
     }
 
     @Test
+    public void whenReviewNotDelivered_thenBadRequest() throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
+        Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
+        Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
+
+        assertThrows(InvalidValueException.class, () -> {
+            purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), this.purchase.getId(), 4);
+        }, "Invalid, purchase must be delivered first.");
+
+        Mockito.verify(storeRepository, VerificationModeFactory.times(1)).findByToken(anyString());
+        Mockito.verify(purchaseRepository, VerificationModeFactory.times(1)).findById(anyLong());
+        Mockito.verify(purchaseRepository, VerificationModeFactory.times(0)).saveAndFlush(any());
+    }
+
+    @Test
     public void whenEverythingIsOk_thenReturnPurchase() throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
+
+        this.purchase.setStatus(Status.DELIVERED);
+
         Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
 
         Purchase returned = purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), this.purchase.getId(), 4);
@@ -578,45 +595,6 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testPostNewOrder_whenOneFieldIsMissing_thenThrow() throws InvalidValueException, InvalidLoginException {
-        Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
-        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
-
-        Mockito.when(jwtUserDetailsService.getStoreFromToken("token")).thenReturn(store);
-
-        Map<String, Object> input = new HashMap<>();
-        input.put("personName", "mmm");
-        input.put("date", 33333);
-
-        assertThrows(InvalidValueException.class, () -> {
-            purchaseService.receiveNewOrder("token", input);
-        }, "invalid data");
-        Mockito.verify(jwtUserDetailsService, times(1))
-                .getStoreFromToken("token");
-
-    }
-
-    @Test
-    public void testPostNewOrder_whenOneFieldIsBad_thenThrow() throws InvalidValueException, InvalidLoginException {
-        Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
-
-        Mockito.when(jwtUserDetailsService.getStoreFromToken("token")).thenReturn(store);
-
-        Map<String, Object> input = new HashMap<>();
-        input.put("personName", "mmm");
-        input.put("date", 33333L);
-        input.put("address", null);
-
-        assertThrows(InvalidValueException.class, () -> {
-            purchaseService.receiveNewOrder("token", input);
-        }, "invalid data");
-        Mockito.verify(jwtUserDetailsService, times(1))
-                .getStoreFromToken("token");
-    }
-
-    @Test
     public void testPostNewOrder_whenEverythingGood_thenReturnPurchase() throws InvalidValueException, InvalidLoginException {
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
         Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
@@ -626,7 +604,6 @@ public class PurchaseServiceTest {
 
         Map<String, Object> input = new HashMap<>();
         input.put("personName", "mmm");
-        input.put("date", 333333L);
 
         input.put("address", address.getMap());
 
@@ -634,7 +611,6 @@ public class PurchaseServiceTest {
 
         assertThat(purchase.getAddress().getAddress()).isEqualTo(address.getAddress());
         assertThat(purchase.getClientName()).isEqualTo("mmm");
-        assertThat(purchase.getDate()).isEqualTo(new Date(333333L));
 
         Mockito.verify(jwtUserDetailsService, times(1))
                 .getStoreFromToken("token");
