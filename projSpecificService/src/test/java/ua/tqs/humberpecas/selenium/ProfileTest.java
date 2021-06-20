@@ -286,6 +286,8 @@ public class ProfileTest {
         Address new_add = new Address("Rua 123", "3670-251", "Vouzela", "Portugal");
         profilePage.createNewAddress(new_add);
 
+        this.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+
         List<Address> addressesListWebsite = profilePage.getAllAddresses();
 
         Assertions.assertThat(addressesListWebsite).hasSize(2);

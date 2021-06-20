@@ -17,6 +17,7 @@ jobs:
             cd tqs-delivery
             git pull
             export API_URL=35.246.29.122
+            export PROFILE=prod
             docker container stop $(docker container ls -aq)
             docker container rm $(docker container ls -aq)
             docker run --rm \
