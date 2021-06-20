@@ -32,6 +32,7 @@ import ua.tqs.humberpecas.selenium.pages.ShoppingCartPage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -208,6 +209,8 @@ public class ShoppingCartTest {
                         , this.productList.get(7).getName()));
 
         shoppingCartPage.MakePurchaseWithFirstAddress();
+
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
         assertThat(shoppingCartPage.isEmpty(), is(true));
     }
