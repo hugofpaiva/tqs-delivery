@@ -270,6 +270,8 @@ public class ProfileTest {
         ProfilePage profilePage = new ProfilePage(this.driver, this.client.getName());
         profilePage.deleteFirstAddress();
 
+        this.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+
         assertThat(profilePage.addressesAreEmpty(), is(true));
     }
 

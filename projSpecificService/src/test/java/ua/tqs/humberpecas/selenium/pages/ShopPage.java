@@ -76,7 +76,7 @@ public class ShopPage {
 
         WebElement span = this.driver.findElement(By.xpath("/html/body/app-root/app-shop/main/section[2]/div/div/main/header/span"));
 
-        String number = span.getText().trim();
+        String number = span.getText().substring(0, 2).trim();
 
         return Integer.parseInt(number);
 
