@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.*;
 
+import java.util.Date;
+
 @SpringBootApplication
 public class DeliveryServiceApplication {
 
@@ -75,6 +77,10 @@ class DBLoader implements CommandLineRunner {
 		storeRep.saveAndFlush(store1);
 
 		Purchase purchase1 = new Purchase(addr1, rider1, store1, "client1");
+		purchase1.setStatus(Status.DELIVERED);
+		purchase1.setRiderReview(4);
+		rider1.setTotalNumReviews(1);
+		rider1.setReviewsSum(4);
 		// Purchase purchase2 = new Purchase(addr3, rider1, store1, "client2");
 
 		Purchase purchase_no_rider = new Purchase(addr4, store1, "client22");
@@ -83,6 +89,9 @@ class DBLoader implements CommandLineRunner {
 		purchaseRep.saveAndFlush(purchase_no_rider);
 		purchaseRep.saveAndFlush(purchase_no_rider2);
 		purchaseRep.saveAndFlush(purchase1);
+		purchase1.setDeliveryTime(new Date().getTime() - purchase1.getDate().getTime());
+		purchaseRep.saveAndFlush(purchase1);
+		riderRep.saveAndFlush(rider1);
 		//purchaseRep.saveAndFlush(purchase2);
 
 

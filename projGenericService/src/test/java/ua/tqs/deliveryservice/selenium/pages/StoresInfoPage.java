@@ -104,4 +104,16 @@ public class StoresInfoPage {
 
     }
 
+    public boolean isEmpty() {
+        {
+            WebDriverWait wait = new WebDriverWait(this.driver, 10);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-stores/div[2]/div/div/div/div[2]/h3")));
+        }
+        if (this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-stores/div[2]/div/div/div/div[2]/h3")).getText().equals("There are no Stores")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

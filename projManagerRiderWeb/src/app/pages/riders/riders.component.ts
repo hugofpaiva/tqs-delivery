@@ -17,9 +17,7 @@ export class RidersComponent implements OnInit {
   currentPage = 1;
   inProgress = 0;
   avgTime = null;
-  avgRating = null;
-  avgRatingInt = null;
-  avgRatingDecimal = null;
+  avgRating: Number = null;
   math = Math;
 
   constructor(private riderService: RiderService) { }
@@ -47,10 +45,13 @@ export class RidersComponent implements OnInit {
           this.inProgress = data['inProcess'];
           this.avgTime = data['avgTimes'];
           this.avgRating = data['avgReviews'];
-
-          this.avgRatingInt = Number(this.avgRating.toString()[0]);
-          this.avgRatingDecimal = Number(`0${this.avgRating.toString().substring(1, this.avgRating.toString().length - 1)}`);
         });
+  }
+
+  millisToMinutesAndSeconds(millis: number) {
+    const minutes = Math.floor(millis / 60000);
+    const seconds: number = Number(((millis % 60000) / 1000).toFixed(0));
+    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   }
 
   getPage(event) {

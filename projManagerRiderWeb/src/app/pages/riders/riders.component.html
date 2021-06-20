@@ -28,7 +28,7 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Average Time of Delivery</h5>
-                  <span class="h2 font-weight-bold mb-0">{{avgTime === null ? '-' : avgTime + 'min' }}</span>
+                  <span class="h2 font-weight-bold mb-0">{{avgTime === null ? '-' : millisToMinutesAndSeconds(avgTime) + ' min' }}</span>
                 </div>
                 <div class="col-auto">
                   <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
@@ -47,20 +47,7 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Average Rating of All Riders</h5>
-                  <span class="h2 font-weight-bold mb-0">
-                    <ng-container *ngIf="avgRating !== null">
-                                                            <ng-container
-                                                              *ngFor="let i of [].constructor(avgRatingInt)">
-                                                                <fa-icon [icon]="starIcon"></fa-icon>
-                                                            </ng-container>
-                      <ng-container
-                        *ngIf="avgRatingDecimal>=0.5">
-                                                                <fa-icon [icon]="starIcon"></fa-icon>
-                                                            </ng-container>
-                                                        </ng-container>
-                    <ng-container *ngIf="avgRating===null">-</ng-container>
-
-                  </span>
+                  <span class="h2 font-weight-bold mb-0">{{avgRating !== null ? avgRating.toFixed(1) : "-"}}</span>
                 </div>
                 <div class="col-auto">
                   <div class="icon icon-shape bg-warning text-white rounded-circle shadow">

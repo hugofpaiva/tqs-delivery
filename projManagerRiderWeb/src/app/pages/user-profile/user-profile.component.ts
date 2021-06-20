@@ -29,6 +29,7 @@ export class UserProfileComponent implements OnInit {
       this.router.navigateByUrl('/stores');
     } else {
       this.getPurchases();
+      this.getRiderStats();
     }
   }
 
@@ -47,6 +48,7 @@ export class UserProfileComponent implements OnInit {
     this.riderService.getRiderStats()
       .subscribe(
         data => {
+          console.log(data);
           this.totalNumReviews = data['totalNumReviews'];
           this.avgReviews = data['avgReviews'];
         });

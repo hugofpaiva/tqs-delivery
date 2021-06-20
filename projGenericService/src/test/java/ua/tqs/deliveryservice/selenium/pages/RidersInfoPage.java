@@ -73,4 +73,48 @@ public class RidersInfoPage {
 
     }
 
+    public Integer getAverageMinutesOfDelivery() {
+        {
+            WebDriverWait wait = new WebDriverWait(this.driver, 10);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[1]/div/div/div/div[2]/div/div/div/div[1]/span")));
+        }
+
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
+        String avgTimeStr = this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[1]/div/div/div/div[2]/div/div/div/div[1]/span")).getText();
+
+        if (avgTimeStr.contains("-")){
+            return null;
+        }
+
+        return Integer.parseInt(avgTimeStr.substring(0, avgTimeStr.length() - 7).trim());
+
+    }
+
+    public Double getAverageRatingRiders() {
+        {
+            WebDriverWait wait = new WebDriverWait(this.driver, 10);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[1]/div/div/div/div[3]/div/div/div/div[1]/span")));
+        }
+
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
+        String avgRatingStr = this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[1]/div/div/div/div[3]/div/div/div/div[1]/span")).getText();
+
+        return Double.parseDouble(avgRatingStr.trim());
+
+    }
+
+    public boolean isEmpty() {
+        {
+            WebDriverWait wait = new WebDriverWait(this.driver, 10);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[2]/div/div/div/div[2]/h3")));
+        }
+        if (this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[2]/div/div/div/div[2]/h3")).getText().equals("There are no Riders")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
