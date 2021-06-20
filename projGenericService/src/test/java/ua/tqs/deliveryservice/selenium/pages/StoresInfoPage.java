@@ -9,6 +9,7 @@ import ua.tqs.deliveryservice.model.Store;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -48,6 +49,8 @@ public class StoresInfoPage {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-stores/div[2]/div/div/div/div[2]/table/tbody")));
         }
 
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
         WebElement table = this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-stores/div[2]/div/div/div/div[2]/table/tbody"));
 
         List<WebElement> storesElements = table.findElements(By.xpath("./child::*"));
@@ -71,6 +74,8 @@ public class StoresInfoPage {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-stores/div[1]/div/div/div/div[1]/div/div/div/div[1]/span")));
         }
 
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
         return Integer.parseInt(this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-stores/div[1]/div/div/div/div[1]/div/div/div/div[1]/span")).getText());
 
     }
@@ -81,6 +86,8 @@ public class StoresInfoPage {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-stores/div[1]/div/div/div/div[2]/div/div/div/div[1]/span")));
         }
 
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
         return Integer.parseInt(this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-stores/div[1]/div/div/div/div[2]/div/div/div/div[1]/span")).getText());
 
     }
@@ -90,6 +97,8 @@ public class StoresInfoPage {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-stores/div[1]/div/div/div/div[3]/div/div/div/div[1]/span")));
         }
+
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
         return Integer.parseInt(this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-stores/div[1]/div/div/div/div[3]/div/div/div/div[1]/span")).getText());
 

@@ -9,6 +9,7 @@ import ua.tqs.deliveryservice.model.Rider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class RidersInfoPage {
 
@@ -23,6 +24,8 @@ public class RidersInfoPage {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[2]/div/div/div/div[2]/table/tbody")));
         }
+
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
         WebElement table = this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[2]/div/div/div/div[2]/table/tbody"));
 
@@ -52,6 +55,8 @@ public class RidersInfoPage {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[1]/div/div/div/div[1]/div/div/div/div[1]/span")));
         }
 
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
         return Integer.parseInt(this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[1]/div/div/div/div[1]/div/div/div/div[1]/span")).getText());
 
     }
@@ -61,6 +66,8 @@ public class RidersInfoPage {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[1]/div/div/div/div[4]/div/div/div/div[1]/span")));
         }
+
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
         return Integer.parseInt(this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[1]/div/div/div/div[4]/div/div/div/div[1]/span")).getText());
 
