@@ -646,7 +646,7 @@ public class PurchaseServiceTest {
 
 
     /* ------------------------------- *
-     * GET NEW PURCHASE WITH LOC TESTS * TODO
+     * GET NEW PURCHASE WITH LOC TESTS *
      * ------------------------------- *
      */
 

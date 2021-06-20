@@ -142,7 +142,6 @@ public class PurchaseService {
 
         if (!(personName instanceof String)) throw new InvalidValueException(error);
 
-        System.out.println(data);
         Object date_obj = Optional.ofNullable(data.get("date"))
                 .orElseThrow(() -> new InvalidValueException(error));
 
