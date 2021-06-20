@@ -107,12 +107,6 @@ public class UserInfoPage {
             p.setStore(s);
             p.setClientName(purchase.findElement(By.xpath(".//td[2]")).getText());
             p.setStatus(Status.valueOf(purchase.findElement(By.xpath(".//td[3]/span/text()")).getText()));
-
-            String review = purchase.findElement(By.xpath(".//td[4]")).getText();
-            if (!review.contains("-")) {
-
-                System.out.println("contains");
-            }
             purchases.add(p);
         }
 
