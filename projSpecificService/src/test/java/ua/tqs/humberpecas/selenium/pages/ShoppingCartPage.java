@@ -108,7 +108,7 @@ public class ShoppingCartPage {
 
         this.driver.findElement(By.xpath("/html/body/app-root/app-shopping-cart/main/section[2]/div/div/main/div/div/a[1]")).click();
 
-        this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
         {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);

@@ -199,6 +199,9 @@ public class ProfileTest {
     @Test
     void testNoPurchasesInDBEmpty() {
         purchaseRepository.deleteAll();
+
+        this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+
         ShopPage shopPage = new ShopPage(this.driver, this.webApplicationBaseUrl);
         shopPage.goToProfile();
         ProfilePage profilePage = new ProfilePage(this.driver, this.client.getName());
@@ -216,6 +219,8 @@ public class ProfileTest {
 
         purchaseRepository.deleteAll();
         addressRepository.deleteAll();
+
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
         assertThat(profilePage.addressesAreEmpty(), is(true));
 
