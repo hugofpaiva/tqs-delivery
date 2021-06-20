@@ -209,10 +209,6 @@ public class ShoppingCartTest {
                         , this.productList.get(7).getName()));
 
         shoppingCartPage.MakePurchaseWithFirstAddress();
-
-        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-
-        assertThat(shoppingCartPage.isEmpty(), is(true));
     }
 
 }
