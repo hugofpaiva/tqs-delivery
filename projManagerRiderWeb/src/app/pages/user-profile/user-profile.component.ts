@@ -53,6 +53,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   getPage(event) {
+    this.currentPage = event;
     this.getPurchases();
     this.getRiderStats();
   }

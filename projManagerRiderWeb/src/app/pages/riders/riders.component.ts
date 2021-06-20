@@ -15,12 +15,18 @@ export class RidersComponent implements OnInit {
   totalItems = 0;
   totalPages = 0;
   currentPage = 1;
+  inProgress = 0;
+  avgTime = null;
+  avgRating = null;
+  avgRatingInt = null;
+  avgRatingDecimal = null;
   math = Math;
 
   constructor(private riderService: RiderService) { }
 
   ngOnInit(): void {
     this.getRiders();
+    this.getRiderStats();
   }
 
 
@@ -34,8 +40,23 @@ export class RidersComponent implements OnInit {
         });
   }
 
+  getRiderStats() {
+    this.riderService.getRiderManagerStats()
+      .subscribe(
+        data => {
+          this.inProgress = data['inProcess'];
+          this.avgTime = data['avgTimes'];
+          this.avgRating = data['avgReviews'];
+
+          this.avgRatingInt = Number(this.avgRating.toString()[0]);
+          this.avgRatingDecimal = Number(`0${this.avgRating.toString().substring(1, this.avgRating.toString().length-1)}`);
+        });
+  }
+
   getPage(event) {
+    this.currentPage = event;
     this.getRiders();
+    this.getRiderStats();
   }
 
 }

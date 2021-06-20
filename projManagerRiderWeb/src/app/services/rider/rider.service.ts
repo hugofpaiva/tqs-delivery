@@ -17,4 +17,8 @@ export class RiderService {
   getRiderStats(): Observable<any> {
     return this.http.get<any>(environment.baseURL + '/rider/reviews/stats', environment.httpOptions);
   }
+
+  getRiderManagerStats(): Observable<any> {
+    return this.http.get<any>(environment.baseURL + '/manager/riders/stats', environment.httpOptions);
+  }
 }

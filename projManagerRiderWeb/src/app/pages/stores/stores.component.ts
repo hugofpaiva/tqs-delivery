@@ -42,6 +42,7 @@ export class StoresComponent implements OnInit {
   }
 
   getPage(event) {
+    this.currentPage = event;
     this.getStores();
     this.getStoresStats();
   }
