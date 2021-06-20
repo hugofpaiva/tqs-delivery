@@ -214,6 +214,8 @@ public class ProfilePage {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[2]/div/table/tbody")));
         }
+        this.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+
         WebElement table = this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[2]/div/table/tbody"));
 
         List<WebElement> addressesTrs = table.findElements(By.xpath("./child::*"));
