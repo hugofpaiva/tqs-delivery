@@ -187,8 +187,6 @@ class PurchaseRestControllerTemplateIT {
 
         ResponseEntity<String> response = testRestTemplate.exchange( getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PUT, entity, String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
-        // como isto é um patch, não tem de se enviar o objeto de volta.
-        // src: https://stackoverflow.com/questions/37718119/should-the-patch-method-return-all-fields-of-the-resource-in-the-response-body/37718786
     }
 
     @Test
@@ -208,8 +206,6 @@ class PurchaseRestControllerTemplateIT {
 
         ResponseEntity<String> response = testRestTemplate.exchange( getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PUT, entity, String.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-        // como isto é um patch, não tem de se enviar o objeto de volta.
-        // src: https://stackoverflow.com/questions/37718119/should-the-patch-method-return-all-fields-of-the-resource-in-the-response-body/37718786
     }
 
     public String getBaseUrl() { return "http://localhost:" + randomServerPort + "/store"; }

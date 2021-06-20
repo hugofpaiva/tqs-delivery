@@ -13,7 +13,6 @@ export class ProductService {
     }
 
     getProducts(pageNo = 0, name: String, maxPrice: Number, minPrice: Number, orderBy: String, category: String): Observable<any> {
-        console.log(minPrice);
         return this.http.get<any>(environment.baseURL + '/product/getAll?pageNo=' + pageNo +
             (name === null ? '' : '&name=' + name)
             + (maxPrice === null ? '' : '&maxPrice=' + maxPrice)

@@ -3,6 +3,7 @@ package ua.tqs.deliveryservice.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,11 +30,25 @@ public class Store {
     @OneToMany(mappedBy = "store")
     private Set<Purchase> purchases;
 
+    private Double latitude;
+    private Double longitude;
+
     public Store(String name, String description, String token, Address address) {
         this.name = name;
         this.token = token;
         this.description = description;
         this.address = address;
+        this.longitude = 0.0;
+        this.latitude = 0.0;
+    }
+
+    public Store(String name, String description, String token, Address address,  double latitude, double longitude) {
+        this.name = name;
+        this.token = token;
+        this.description = description;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public Store() {}
@@ -45,6 +60,8 @@ public class Store {
         map.put("name", name);
         map.put("description", description);
         map.put("address", address.getMap());
+        map.put("latitude", latitude);
+        map.put("longitude", longitude);
         return map;
     }
 }

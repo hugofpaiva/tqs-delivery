@@ -12,7 +12,6 @@ export class PurchaseService {
   }
 
   makePurchase(addressId: number, productsId: Number[]): Observable<any> {
-    console.log(productsId);
     return this.http.post(`${environment.baseURL}/purchase/new`, {'addressId': addressId, 'productsId': productsId},
         environment.httpOptions);
   }

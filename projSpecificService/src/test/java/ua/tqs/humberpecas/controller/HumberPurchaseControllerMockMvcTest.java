@@ -54,8 +54,8 @@ class HumberPurchaseControllerMockMvcTest {
 
     /*
     @Test
-    @DisplayName("User purchage list of invalid user returns HTTP status Not Found")
-    void whenGetInvalidUserPurchages_thenReturnStatus404() throws ResourceNotFoundException {
+    @DisplayName("User purchase list of invalid user returns HTTP status Not Found")
+    void whenGetInvalidUserPurchases_thenReturnStatus404() throws ResourceNotFoundException {
 
 
         when(service.getUserPurchases(this.userToken)).thenThrow(new ResourceNotFoundException("Invalid User!"));
@@ -75,7 +75,7 @@ class HumberPurchaseControllerMockMvcTest {
 
     @Test
     @DisplayName("Make Purchase with invalid user throws HTTP status Bad Request ")
-    void whenPuchageInvalidUser_thenThrowsStatus401() {
+    void whenPurchaseInvalidUser_thenThrowsStatus401() {
         when(service.newPurchase(purchaseDTO, userToken)).thenThrow(InvalidLoginException.class);
 
 
@@ -109,8 +109,8 @@ class HumberPurchaseControllerMockMvcTest {
     }
 
     @Test
-    @DisplayName("Make Purchage")
-    void whenValidPurchage_thenReturnOk() {
+    @DisplayName("Make Purchase")
+    void whenValidPurchase_thenReturnOk() {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
@@ -128,7 +128,7 @@ class HumberPurchaseControllerMockMvcTest {
 
     @Test
     @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound")
-    void whenPurchaseWithInvalidData_thenthenThrowsStatus404() {
+    void whenPurchaseWithInvalidData_thenThrowsStatus404() {
 
         when(service.newPurchase(purchaseDTO, userToken)).thenThrow(ResourceNotFoundException.class);
 
