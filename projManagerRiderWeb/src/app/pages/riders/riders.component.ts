@@ -49,7 +49,7 @@ export class RidersComponent implements OnInit {
           this.avgRating = data['avgReviews'];
 
           this.avgRatingInt = Number(this.avgRating.toString()[0]);
-          this.avgRatingDecimal = Number(`0${this.avgRating.toString().substring(1, this.avgRating.toString().length-1)}`);
+          this.avgRatingDecimal = Number(`0${this.avgRating.toString().substring(1, this.avgRating.toString().length - 1)}`);
         });
   }
 
