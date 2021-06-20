@@ -19,10 +19,8 @@ import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
-import ua.tqs.deliveryservice.model.Address;
-import ua.tqs.deliveryservice.model.Purchase;
-import ua.tqs.deliveryservice.model.Rider;
-import ua.tqs.deliveryservice.model.Store;
+import ua.tqs.deliveryservice.exception.UnreachableServiceException;
+import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.services.PurchaseService;
 
 
@@ -31,9 +29,8 @@ import java.util.regex.Matcher;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -306,6 +303,51 @@ public class PurchaseRestControllerMockMvcTest {
                 .andExpect(jsonPath("orderId").exists())
         ;
         verify(purchaseService, times(1)).receiveNewOrder(any(), any());
+    }
+
+
+    @Test
+    public void testMakeNewOrderNoConnection_thenThrowStatus500() throws Exception {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + token);
+
+        String exampleBody = "{\"personName\":\"nomeee\",\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Date(1623709488744L), new Store(), "nomeee");
+        when(purchaseService.receiveNewOrder(any(), any())).thenThrow(new UnreachableServiceException("no connection"));
+
+        mvc.perform(post("/store/order")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .content(exampleBody)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
+        verify(purchaseService, times(1)).receiveNewOrder(any(), any());
+
+
+    }
+
+    @Test
+    public void testMakeNewOrderInvalidServerData_thenThrowBadRequest() throws Exception {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + token);
+
+        String exampleBody = "{\"personName\":\"nomeee\",\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Date(1623709488744L), new Store(), "nomeee");
+        when(purchaseService.receiveNewOrder(any(), any())).thenThrow(new InvalidValueException("invalid data"));
+
+        mvc.perform(post("/store/order")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .content(exampleBody)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+        verify(purchaseService, times(1)).receiveNewOrder(any(), any());
+
+
     }
 
 }

@@ -42,6 +42,7 @@ public class HumberReviewService {
         }
 
         String personEmail = purchase.getPerson().getEmail();
+
         if (!personEmail.equals(jwtUserDetailsService.getEmailFromToken(userToken))){
             log.error("ReviewService: Invalid Purchase Access");
             throw new AccessNotAllowedException("Not Allowed");

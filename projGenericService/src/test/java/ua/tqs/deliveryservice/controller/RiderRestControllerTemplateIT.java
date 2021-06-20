@@ -1,10 +1,13 @@
 package ua.tqs.deliveryservice.controller;
 
 import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -12,23 +15,38 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.client.ExpectedCount;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.type.TypeReference;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
+import ua.tqs.deliveryservice.exception.UnreachableServiceException;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.AddressRepository;
 import ua.tqs.deliveryservice.repository.PersonRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
+import ua.tqs.deliveryservice.services.RiderService;
+import ua.tqs.deliveryservice.specific.ISpecificService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -38,6 +56,7 @@ class RiderRestControllerTemplateIT {
     private Store store;
     private Purchase purchase;
     private String token;
+
 
     @Container
     public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
@@ -73,8 +92,10 @@ class RiderRestControllerTemplateIT {
     @Autowired
     private AddressRepository addressRepository;
 
+
     @BeforeEach
     public void beforeEachSetUp() {
+
         this.rider = new Rider("Joao", bcryptEncoder.encode("aRightPassword"), "TQS_delivery@example.com");
         personRepository.saveAndFlush(this.rider);
 
@@ -84,9 +105,9 @@ class RiderRestControllerTemplateIT {
         Address purchAddres = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
         addressRepository.saveAndFlush(purchAddres);
 
-        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address, "http://localhost:8081/delivery/");
-        this.purchase = new Purchase(purchAddres, this.rider, this.store, "Joana");
+        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address, "http://localhost:8080/delivery/");
 
+        this.purchase = new Purchase(purchAddres, this.rider, this.store, "Joana");
 
 
         JwtRequest request = new JwtRequest(this.rider.getEmail(), "aRightPassword");
@@ -314,6 +335,7 @@ class RiderRestControllerTemplateIT {
      * ----------------------------- *
      */
 
+
     @Test
     public void givenRiderHasNoAuthorization_whenGetNewPurchase_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
@@ -351,7 +373,11 @@ class RiderRestControllerTemplateIT {
     @Test
     public void givenRiderHasNoOrder_whenGetNewOrder_thenGetNewOrder() {
         purchaseRepository.delete(this.purchase);
-        this.purchase = purchaseRepository.saveAndFlush(new Purchase(address, store, "Joana"));
+
+        Purchase p = new Purchase(address, store, "Joana");
+        this.purchase = purchaseRepository.saveAndFlush(p);
+
+        System.out.println(this.purchase.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
@@ -388,7 +414,7 @@ class RiderRestControllerTemplateIT {
     public void givenRiderHasNoAuthorization_whenUpdatePurchase_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "order/status", HttpMethod.PATCH, new HttpEntity<Object>(headers),
+                getBaseUrl() + "order/status", HttpMethod.PUT, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
@@ -403,7 +429,7 @@ class RiderRestControllerTemplateIT {
         purchaseRepository.delete(this.purchase);
 
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "order/status", HttpMethod.PATCH, new HttpEntity<Object>(headers),
+                getBaseUrl() + "order/status", HttpMethod.PUT, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
@@ -411,10 +437,13 @@ class RiderRestControllerTemplateIT {
 
     @Test
     public void givenRiderHasCurrentOrder_whenUpdatePurchaseStatus_thenSuccess() {
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
+
+
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "order/status", HttpMethod.PATCH, new HttpEntity<Object>(headers),
+                getBaseUrl() + "order/status", HttpMethod.PUT, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
@@ -437,7 +466,7 @@ class RiderRestControllerTemplateIT {
         purchaseRepository.saveAndFlush(this.purchase);
 
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "order/status", HttpMethod.PATCH, new HttpEntity<Object>(headers),
+                getBaseUrl() + "order/status", HttpMethod.PUT, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));

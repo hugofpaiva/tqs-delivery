@@ -18,7 +18,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.humberpecas.dto.AddressDTO;
+import ua.tqs.humberpecas.dto.ServerRiderDTO;
 import ua.tqs.humberpecas.dto.ServerStatusDTO;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
+import ua.tqs.humberpecas.exception.InvalidOperationException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.*;
@@ -30,7 +33,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -63,6 +66,7 @@ public class HumberGenericControllerIT {
     private Long serverOrderId;
     private Generic generic;
     private Purchase purchase;
+    private ServerRiderDTO serverRiderDTO;
 
 
 
@@ -102,7 +106,10 @@ public class HumberGenericControllerIT {
 
         this.purchase = purchaseRepository.saveAndFlush(p);
 
+        this.serverOrderId = purchase.getServiceOrderId();
+
         this.statusDTO = new ServerStatusDTO(PurchaseStatus.ACCEPTED);
+        this.serverRiderDTO = new ServerRiderDTO("tone");
     }
 
     @AfterEach
@@ -112,6 +119,12 @@ public class HumberGenericControllerIT {
 
         genericRepository.deleteAll();
         genericRepository.flush();
+
+        addressRepository.deleteAll();
+        addressRepository.flush();
+
+        personRepository.deleteAll();
+        personRepository.flush();
     }
 
 
@@ -124,7 +137,7 @@ public class HumberGenericControllerIT {
                 .header("authorization", "Bearer " +this.token)
                 .body(statusDTO)
                 .when()
-                .patch(getBaseUrl() + "/updateStatus?serverOrderId=5")
+                .put(getBaseUrl() + "/updateStatus?serverOrderId=5")
                 .then()
                 .statusCode(200);
 
@@ -145,7 +158,7 @@ public class HumberGenericControllerIT {
                 .header("authorization", "Bearer " +this.token.replace("e", "i"))
                 .body(statusDTO)
                 .when()
-                .patch(getBaseUrl() + "/updateStatus?serverOrderId=5")
+                .put(getBaseUrl() + "/updateStatus?serverOrderId=5")
                 .then()
                 .statusCode(401);
 
@@ -161,7 +174,7 @@ public class HumberGenericControllerIT {
                 .header("authorization", "Bearer " +this.token)
                 .body(statusDTO)
                 .when()
-                .patch(getBaseUrl() + "/updateStatus?serverOrderId=1")
+                .put(getBaseUrl() + "/updateStatus?serverOrderId=1")
                 .then()
                 .statusCode(404);
 
@@ -179,11 +192,117 @@ public class HumberGenericControllerIT {
                 .header("authorization", "Bearer " +this.token)
                 .body(orderStatus)
                 .when()
-                .patch(getBaseUrl() + "/updateStatus?serverOrderId=5")
+                .put(getBaseUrl() + "/updateStatus?serverOrderId=5")
                 .then()
                 .statusCode(400);
 
     }
+
+    @Test
+    @DisplayName("Set Rider")
+    void whenSetRider_thenReturnStatusOk(){
+
+        RestAssured.given()
+                .contentType("application/json")
+                .header("authorization", "Bearer " + this.token)
+                .body(serverRiderDTO)
+                .when()
+                .put(getBaseUrl() + "/setRider?serverOrderId=" + serverOrderId)
+                .then()
+                .statusCode(200);
+
+        List<Purchase> purchaseList = purchaseRepository.findAll();
+
+        assertThat(purchaseList).hasSize(1).extracting(Purchase::getRiderName).containsOnly(serverRiderDTO.getRider());
+
+    }
+
+
+    @Test
+    @DisplayName("Set Rider of invalid order throws BadRequest")
+    void whenSetRiderAssignedOrder_thenThrowsStatusBadRequest(){
+
+        Map<String, String> request = new HashMap<>();
+        request.put("x", "y");
+
+        RestAssured.given()
+                .contentType("application/json")
+                .header("authorization", "Bearer " + this.token)
+                .body(request)
+                .when()
+                .put(getBaseUrl() + "/setRider?serverOrderId=" + serverOrderId)
+                .then()
+                .statusCode(400);
+
+
+    }
+
+
+    @Test
+    @DisplayName("Set Rider of invalid genric token throws Unauthorized")
+    void whenSetRiderInvalidToken_thenThrowsStatusUnauthorized(){
+
+
+        RestAssured.given()
+                .contentType("application/json")
+                .header("authorization", "Bearer " + this.token.replace("e", "i"))
+                .body(serverRiderDTO)
+                .when()
+                .put(getBaseUrl() + "/setRider?serverOrderId=" + serverOrderId)
+                .then()
+                .statusCode(401);
+
+    }
+
+
+    @Test
+    @DisplayName("Set Rider of invalid order throws ResourseNotFound")
+    void whenSetRiderWithInvalidOrder_thenThrowsStatusResourseNotFound(){
+
+        RestAssured.given()
+                .contentType("application/json")
+                .header("authorization", "Bearer " + this.token)
+                .body(serverRiderDTO)
+                .when()
+                .put(getBaseUrl() + "/setRider?serverOrderId=0")
+                .then()
+                .statusCode(404);
+
+    }
+
+    @Test
+    @DisplayName("Set Rider with invalid input token throws BadRequest")
+    void whenSetRiderInvalidInput_thenThrowsStatusBadRequest(){
+
+        Map<String, String> request = new HashMap<>();
+        request.put("x", "y");
+
+        RestAssured.given()
+                .contentType("application/json")
+                .header("authorization", "Bearer " + this.token)
+                .body(request)
+                .when()
+                .put(getBaseUrl() + "/setRider?serverOrderId=" + serverOrderId)
+                .then()
+                .statusCode(400);
+
+    }
+
+    @Test
+    @DisplayName("Set Rider wtihout generic token throws BadRequest")
+    void whenSetRiderWithoutToken_thenThrowsStatusBadRequest(){
+
+        RestAssured.given()
+                .contentType("application/json")
+                .body(serverRiderDTO)
+                .when()
+                .put(getBaseUrl() + "/setRider?serverOrderId=" + serverOrderId)
+                .then()
+                .statusCode(400);
+
+
+    }
+
 
 
     public String getBaseUrl() {

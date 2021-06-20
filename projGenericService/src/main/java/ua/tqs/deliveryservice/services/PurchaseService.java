@@ -3,7 +3,6 @@ package ua.tqs.deliveryservice.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
@@ -21,18 +20,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import ua.tqs.deliveryservice.specific.ISpecificService;
 
 @Service
 public class PurchaseService {
 
     @Autowired
-    private RestTemplate restTemplate;
+    private PurchaseRepository purchaseRepository;
+
+    @Autowired
+    private ISpecificService specificService;
 
     @Autowired
     private StoreRepository storeRepository;
-
-    @Autowired
-    private PurchaseRepository purchaseRepository;
 
     @Autowired
     private RiderRepository riderRepository;
@@ -42,6 +42,7 @@ public class PurchaseService {
 
     @Autowired
     private AddressRepository addressRepository;
+
 
     public Purchase reviewRiderFromSpecificOrder(String storeToken, Long order_id, int review)
             throws InvalidLoginException, ResourceNotFoundException, InvalidValueException {
@@ -63,6 +64,7 @@ public class PurchaseService {
         if (store_id_of_where_purchase_was_supposedly_made != store_id_associated_to_token_passed)
             throw new InvalidValueException("Token passed belonged to a store where this purchase had not been made.");
 
+
         purchase.setRiderReview(review);
         purchaseRepository.saveAndFlush(purchase);
 
@@ -81,11 +83,16 @@ public class PurchaseService {
             unfinished.setDeliveryTime(now.getTime() - unfinished.getDate().getTime());
         }
 
-        purchaseRepository.save(unfinished);
-
         Store store = unfinished.getStore();
 
+        StringBuilder url  = new StringBuilder().append(store.getStoreUrl())
+                .append("updateStatus?serverOrderId=")
+                .append( unfinished.getId());
 
+
+        specificService.updateOrderStatus(unfinished.getStatus(), url.toString());
+
+        purchaseRepository.save(unfinished);
 
         return unfinished;
     }
@@ -105,6 +112,15 @@ public class PurchaseService {
         // accept order
         purch.setRider(rider);
         purch.setStatus(Status.ACCEPTED);
+
+        Store store = purch.getStore();
+
+        StringBuilder url  = new StringBuilder().append(store.getStoreUrl())
+                .append("setRider?serverOrderId=")
+                .append( purch.getId());
+
+        specificService.setRiderName(rider.getName(), url.toString());
+
         purchaseRepository.save(purch);
 
         return purch;
@@ -190,4 +206,6 @@ public class PurchaseService {
 
         return response;
     }
+
 }
+

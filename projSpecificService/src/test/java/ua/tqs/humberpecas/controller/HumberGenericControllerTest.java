@@ -22,6 +22,9 @@ import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.model.PurchaseStatus;
 import ua.tqs.humberpecas.service.HumberGenericServer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -63,7 +66,7 @@ public class HumberGenericControllerTest {
                 .header("authorization", genericToken)
                 .body(serverStatusDTO)
                 .when()
-                .patch("/delivery/updateStatus?serverOrderId=1")
+                .put("/delivery/updateStatus?serverOrderId=1")
                 .then()
                 .statusCode(200);
 
@@ -78,7 +81,7 @@ public class HumberGenericControllerTest {
                 .contentType("application/json")
                 .body(serverStatusDTO)
                 .when()
-                .patch("/delivery/updateStatus?serverOrderId=1")
+                .put("/delivery/updateStatus?serverOrderId=1")
                 .then()
                 .statusCode(400);
 
@@ -96,7 +99,7 @@ public class HumberGenericControllerTest {
                 .header("authorization", genericToken)
                 .body(serverStatusDTO)
                 .when()
-                .patch("/delivery/updateStatus?serverOrderId=1")
+                .put("/delivery/updateStatus?serverOrderId=1")
                 .then()
                 .statusCode(401);
 
@@ -116,7 +119,7 @@ public class HumberGenericControllerTest {
                 .header("authorization", genericToken)
                 .body(serverStatusDTO)
                 .when()
-                .patch("/delivery/updateStatus?serverOrderId=1")
+                .put("/delivery/updateStatus?serverOrderId=1")
                 .then()
                 .statusCode(404);
 
@@ -131,9 +134,9 @@ public class HumberGenericControllerTest {
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
-                .body(serverStatusDTO)
+                .body(serverRiderDTO)
                 .when()
-                .patch("/delivery/setRider?serverOrderId=1")
+                .put("/delivery/setRider?serverOrderId=1")
                 .then()
                 .statusCode(400);
 
@@ -152,7 +155,7 @@ public class HumberGenericControllerTest {
                 .header("authorization", genericToken)
                 .body(serverRiderDTO)
                 .when()
-                .patch("/delivery/setRider?serverOrderId=1")
+                .put("/delivery/setRider?serverOrderId=1")
                 .then()
                 .statusCode(404);
 
@@ -172,7 +175,7 @@ public class HumberGenericControllerTest {
                 .header("authorization", genericToken)
                 .body(serverRiderDTO)
                 .when()
-                .patch("/delivery/setRider?serverOrderId=1")
+                .put("/delivery/setRider?serverOrderId=1")
                 .then()
                 .statusCode(400);
 
@@ -191,7 +194,7 @@ public class HumberGenericControllerTest {
                 .header("authorization", genericToken)
                 .body(serverRiderDTO)
                 .when()
-                .patch("/delivery/setRider?serverOrderId=1")
+                .put("/delivery/setRider?serverOrderId=1")
                 .then()
                 .statusCode(401);
 
@@ -208,7 +211,7 @@ public class HumberGenericControllerTest {
                 .header("authorization", genericToken)
                 .body(serverRiderDTO)
                 .when()
-                .patch("/delivery/setRider?serverOrderId=1")
+                .put("/delivery/setRider?serverOrderId=1")
                 .then()
                 .statusCode(200);
 
@@ -217,21 +220,22 @@ public class HumberGenericControllerTest {
     }
 
     @Test
-    @DisplayName("Set Rider with invalid input token throws UNAUTHORIZED")
-    void whenSetRiderInvalidToken_thenThrowsStatusUNAUTHORIZED(){
+    @DisplayName("Set Rider with invalid input token throws BadRequest")
+    void whenSetRiderInvalidInput_thenThrowsStatusBadRequest(){
 
-        doThrow(new InvalidLoginException("Invalid token")).when(genericServer).setRider(anyLong(), anyString(), any());
+        Map<String, String> request = new HashMap<>();
+        request.put("x", "y");
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
                 .header("authorization", genericToken)
-                .body(serverRiderDTO)
+                .body(request)
                 .when()
-                .patch("/delivery/setRider?serverOrderId=1")
+                .put("/delivery/setRider?serverOrderId=1")
                 .then()
-                .statusCode(401);
+                .statusCode(400);
 
-        verify(genericServer, times(1)).setRider(anyLong(), anyString(), anyString());
+        verify(genericServer, times(0)).setRider(anyLong(), anyString(), anyString());
 
     }
 }

@@ -1,10 +1,15 @@
 package ua.tqs.deliveryservice.services;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.internal.verification.VerificationModeFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.repository.RiderRepository;
@@ -22,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 
+
 @ExtendWith(MockitoExtension.class)
 class RiderServiceTest {
     private Rider rider = new Rider("Nice Rider", "chunky_password", "email@TQS.ua");
@@ -34,6 +40,7 @@ class RiderServiceTest {
 
     @InjectMocks
     private RiderService riderService;
+
 
     @Mock
     private JwtUserDetailsService jwtUserDetailsService;
