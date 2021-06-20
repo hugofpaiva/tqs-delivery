@@ -108,7 +108,7 @@ public class ShoppingCartPage {
 
         this.driver.findElement(By.xpath("/html/body/app-root/app-shopping-cart/main/section[2]/div/div/main/div/div/a[1]")).click();
 
-        this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS) ;
+        this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
 
         {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
@@ -119,6 +119,8 @@ public class ShoppingCartPage {
         List<WebElement> addressesTrs = table.findElements(By.xpath("./child::*"));
 
         addressesTrs.get(0).findElement(By.xpath(".//td[5]/input")).click();
+
+        this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
 
         this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[3]/button[1]")).click();
 
