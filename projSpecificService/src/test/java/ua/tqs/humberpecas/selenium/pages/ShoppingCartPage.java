@@ -120,7 +120,7 @@ public class ShoppingCartPage {
 
         addressesTrs.get(0).findElement(By.xpath(".//td[5]/input")).click();
 
-        this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
         this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[3]/button[1]")).click();
 
