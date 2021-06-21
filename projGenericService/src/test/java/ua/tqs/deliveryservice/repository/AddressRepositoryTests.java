@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class AddressRepositoryTests {
+class AddressRepositoryTests {
 
     @Container
-    public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
+    static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
             .withPassword("demopw")
             .withDatabaseName("delivery");
@@ -42,18 +42,17 @@ public class AddressRepositoryTests {
     private TestEntityManager entityManager;
 
     @Test
-    public void testWhenCreateAddressAndFindById_thenReturnSameAddress() {
+    void testWhenCreateAddressAndFindById_thenReturnSameAddress() {
         Address a = createAndSaveAddress(1);
 
         Optional<Address> res = addressRepository.findById(a.getId());
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(a);
+        assertThat(res).isPresent().contains(a);
     }
 
     @Test
-    public void testWhenFindByInvalidId_thenReturnNull() {
+    void testWhenFindByInvalidId_thenReturnNull() {
         Optional<Address> res = addressRepository.findById(-1L);
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     /* ------------------------------------------------- *
@@ -62,7 +61,7 @@ public class AddressRepositoryTests {
      */
 
     @Test
-    public void testGivenAddressesAndFindByAll_thenReturnSameAddresses() {
+    void testGivenAddressesAndFindByAll_thenReturnSameAddresses() {
         Address a1 = createAndSaveAddress(1);
         Address a2 = createAndSaveAddress(2);
 
@@ -76,10 +75,9 @@ public class AddressRepositoryTests {
     }
 
     @Test
-    public void testGivenNoAddresses_whenFindAll_thenReturnEmpty() {
+    void testGivenNoAddresses_whenFindAll_thenReturnEmpty() {
         List<Address> all = addressRepository.findAll();
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(0);
+        assertThat(all).isNotNull().isEmpty();
     }
 
 

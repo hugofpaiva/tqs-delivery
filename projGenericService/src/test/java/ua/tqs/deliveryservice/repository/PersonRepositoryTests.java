@@ -21,10 +21,10 @@ import java.util.Optional;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class PersonRepositoryTests {
+class PersonRepositoryTests {
 
     @Container
-    public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
+    static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
             .withPassword("demopw")
             .withDatabaseName("delivery");
@@ -51,18 +51,17 @@ public class PersonRepositoryTests {
      */
 
     @Test
-    public void testWhenCreatePersonAndFindById_thenReturnSamePerson() {
+    void testWhenCreatePersonAndFindById_thenReturnSamePerson() {
         Person person = createAndSavePerson(1);
         Optional<Person> res = personRepository.findById(person.getId());
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(person);
+        assertThat(res).isPresent().contains(person);
     }
 
     @Test
-    public void testWhenFindByInvalidId_thenReturnNull() {
+    void testWhenFindByInvalidId_thenReturnNull() {
         Person person = createAndSavePerson(1);
         Optional<Person> res = personRepository.findById(-1L);
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     /* ------------------------------------------------- *
@@ -71,24 +70,23 @@ public class PersonRepositoryTests {
      */
 
     @Test
-    public void testGivenPeopleAndFindByAll_thenReturnSamePeople() {
+    void testGivenPeopleAndFindByAll_thenReturnSamePeople() {
         Person p1 = createAndSavePerson(1);
         Person p2 = createAndSavePerson(2);
 
         List<Person> all = personRepository.findAll();
 
-        assertThat(all).isNotNull();
         assertThat(all)
+                .isNotNull()
                 .hasSize(2)
                 .extracting(Person::getId)
                 .contains(p1.getId(), p2.getId());
     }
 
     @Test
-    public void testGivenNoPeople_whenFindAll_thenReturnEmpty() {
+    void testGivenNoPeople_whenFindAll_thenReturnEmpty() {
         List<Person> all = personRepository.findAll();
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(0);
+        assertThat(all).isNotNull().isEmpty();
     }
 
 
@@ -98,16 +96,16 @@ public class PersonRepositoryTests {
      */
 
     @Test
-    public void testWhenFindByEmail_whenInvalidEmail_thenReturnEmptyOptional() {
+    void testWhenFindByEmail_whenInvalidEmail_thenReturnEmptyOptional() {
         Optional<Person> res = personRepository.findByEmail("invalid");
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     @Test
-    public void testWhenFindByEmail_whenValidEmail_thenReturnEmptyOptional() {
+    void testWhenFindByEmail_whenValidEmail_thenReturnEmptyOptional() {
         Person p = createAndSavePerson(1);
         Optional<Person> res = personRepository.findByEmail(p.getEmail());
-        assertThat(res.isPresent()).isTrue();
+        assertThat(res).isPresent();
         assertThat(res.get().getId()).isEqualTo(p.getId());
     }
 

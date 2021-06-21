@@ -14,4 +14,9 @@ export class PurchaseService {
   getPurchases(pageNo = 0): Observable<any> {
     return this.http.get<any>(environment.baseURL + '/rider/orders?pageSize=7&pageNo=' + pageNo, environment.httpOptions);
   }
+
+  getMostDeliveredCities(): Observable<any> {
+    return this.http.get<any>(environment.baseURL + '/manager/riders/top_delivered_cities', environment.httpOptions);
+  }
+
 }
