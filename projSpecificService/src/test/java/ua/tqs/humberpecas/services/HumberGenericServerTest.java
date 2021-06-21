@@ -52,8 +52,8 @@ public class HumberGenericServerTest {
         Address address  = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
 
         List<Product> productList = Arrays.asList(
-                new Product( 10.50 , "hammer", "the best hammer", Category.SCREWDRIVER),
-                new Product(20.50 , "hammer v2", "the best hammer 2.0",  Category.SCREWDRIVER));
+                new Product( "hammer", 10.50 ,Category.SCREWDRIVER,  "the best hammer", "img.png" ),
+                new Product( "hammer v2", 20.50  ,Category.SCREWDRIVER, "the best hammer 2.0", "img.png" ));
 
         purchase = new Purchase(person, address, productList);
         genericToken = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";

@@ -24,10 +24,15 @@ public class PurchaseRestController {
     // <?> explanation: https://www.baeldung.com/http-put-patch-difference-spring, https://www.ti-enxame.com/pt/java/metodo-spring-mvc-patch-atualizacoes-parciais/1041054404/
     public ResponseEntity<?> addReviewToRider(@PathVariable Long order_id, @RequestBody Map<String, Long> payload, @RequestHeader Map<String, String> headers)
             throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
+
         String token = headers.get("authorization").substring(7);
         Long review = payload.get("review");
+
+        System.out.println(review);
+
         if (order_id == null || review == null || review > 5 || review < 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+        System.out.println(token);
         purchaseService.reviewRiderFromSpecificOrder(token, order_id, review.intValue());
 
         return new ResponseEntity<>(HttpStatus.OK);

@@ -46,6 +46,7 @@ public class PurchaseService {
     public Purchase reviewRiderFromSpecificOrder(String storeToken, Long order_id, int review)
             throws InvalidLoginException, ResourceNotFoundException, InvalidValueException {
         // The store token that was passed did not match any in the db. UNAUTHORIZED
+
         Store store = storeRepository.findByToken(storeToken).orElseThrow(() -> new InvalidLoginException("Unauthorized store."));
 
         // The order_id that was passed did not match any in the db. NOT_FOUND

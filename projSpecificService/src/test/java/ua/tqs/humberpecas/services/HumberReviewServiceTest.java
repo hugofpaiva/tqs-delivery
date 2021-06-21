@@ -116,10 +116,7 @@ class HumberReviewServiceTest {
     @Test
     @DisplayName("Review Rider with invalid order in Delivery Service throws ResourceNotFoundException")
     void whenInvalidOrderService_thenThrowsStatusResourceNotFound(){
-<<<<<<< HEAD
 
-=======
->>>>>>> dev
         when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         doThrow(ResourceNotFoundException.class).when(deliveryService).reviewRider(review);

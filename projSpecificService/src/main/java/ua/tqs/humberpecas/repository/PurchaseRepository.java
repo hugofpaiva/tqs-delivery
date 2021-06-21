@@ -11,6 +11,8 @@ import java.util.Optional;
 
 @Repository
 public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
+    Optional<Purchase> findByServiceOrderId(Long serviceOrderId);
     Page<Purchase> findAllByPerson(Person person, Pageable pageable);
     int countPurchaseByPersonAndRiderReviewNotNull(Person person);
+
 }

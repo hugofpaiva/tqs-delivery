@@ -1,7 +1,10 @@
 package ua.tqs.humberpecas.integration;
 
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -91,10 +94,11 @@ public class HumberReviewControllerTemplateIT {
 
         Purchase p = new Purchase(person, address, productList);
         p.setServiceOrderId(12L);
+        p.setStatus(PurchaseStatus.DELIVERED);
 
         this.purchase = purchaseRepository.saveAndFlush(p);
 
-        review = new Review(12L, 5);
+        review = new Review( this.purchase.getId(), 5);
         System.out.println(review);
     }
 
@@ -129,7 +133,7 @@ public class HumberReviewControllerTemplateIT {
 
         List<Purchase> purchaseList = purchaseRepository.findAll();
 
-        assertThat(purchaseList).hasSize(1).extracting(Purchase::getReview).containsOnly(review.getReview());
+        assertThat(purchaseList).hasSize(1).extracting(Purchase::getRiderReview).containsOnly(review.getReview());
         assertThat(purchaseList).hasSize(1).extracting(Purchase::getId).containsOnly(purchase.getId());
     }
 

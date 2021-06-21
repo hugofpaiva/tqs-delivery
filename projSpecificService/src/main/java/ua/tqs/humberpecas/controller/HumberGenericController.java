@@ -23,6 +23,7 @@ public class HumberGenericController {
     @PutMapping("/updateStatus")
     public ResponseEntity<HttpStatus> register(@RequestParam Long serverOrderId, @RequestHeader("authorization") String token, @Valid @RequestBody ServerStatusDTO status) throws DuplicatedObjectException {
 
+        System.out.println(token);
         genericServer.updateOrderStatus(serverOrderId, token.substring(7), status.getOrderStatus());
         return new ResponseEntity<>(HttpStatus.OK);
 
@@ -30,7 +31,7 @@ public class HumberGenericController {
 
     @PutMapping("/setRider")
     public ResponseEntity<HttpStatus> setRider(@RequestHeader("authorization") String token, @RequestParam Long serverOrderId, @Valid @RequestBody ServerRiderDTO serverRiderDTO){
-
+        System.out.println(token);
         genericServer.setRider(serverOrderId, token.substring(7), serverRiderDTO.getRider());
         return new ResponseEntity<>(HttpStatus.OK);
 

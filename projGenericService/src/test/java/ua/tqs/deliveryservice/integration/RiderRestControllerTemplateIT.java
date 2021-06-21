@@ -2,9 +2,7 @@ package ua.tqs.deliveryservice.integration;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
@@ -50,6 +48,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RiderRestControllerTemplateIT {
 
     private Rider rider;
@@ -372,14 +371,17 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
+    @Order(1)
     public void givenRiderHasNoOrder_whenGetNewOrder_thenGetNewOrder() {
-        purchaseRepository.delete(this.purchase);
 
+        purchaseRepository.delete(purchase);
 
-        Purchase p = new Purchase(address, store, "Joana");
-        this.purchase = purchaseRepository.saveAndFlush(p);
-        System.out.println(p.getId());
-        System.out.println(this.purchase.getId());
+        System.out.println(purchase.getId());
+
+        Purchase p = new Purchase(address, store, "tone");
+        this.purchase = purchaseRepository.save(p);
+
+        System.out.println(purchase.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
@@ -438,10 +440,11 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
+    @Order(2)
     public void givenRiderHasCurrentOrder_whenUpdatePurchaseStatus_thenSuccess() {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + this.token);
+        headers.set("authorization", "Bearer " + this.token);
 
         System.out.println(purchase.getId());
 
@@ -461,30 +464,7 @@ class RiderRestControllerTemplateIT {
         Assertions.assertThat(found.get("status")).isEqualTo("PICKED_UP");
     }
 
-    @Test
-    public void givenRiderHasCurrentOrder_whenUpdatePurchaseStatusIsPickedUp_thenSuccess() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + this.token);
-        this.purchase.setStatus(Status.PICKED_UP);
-        purchaseRepository.saveAndFlush(this.purchase);
 
-        System.out.println(purchase.getId());
-
-        ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "order/status", HttpMethod.PUT, new HttpEntity<Object>(headers),
-                Map.class);
-
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
-
-        Map<String, Object> found = response.getBody();
-
-        Assertions.assertThat(found).isNotNull();
-        Assertions.assertThat(found.containsKey("order_id")).isTrue();
-        Assertions.assertThat(found.containsKey("status")).isTrue();
-        Assertions.assertThat(found.containsKey("delivery_time")).isTrue();
-
-        Assertions.assertThat(found.get("status")).isEqualTo("DELIVERED");
-    }
 
 
     /* ----------------------------- *
@@ -595,6 +575,7 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
+    @Order(3)
     public void givenRiderHasNoOrder_whenGetNewOrderWithLoc_thenGetClosestOrder() {
         purchaseRepository.delete(this.purchase);
 
@@ -614,9 +595,11 @@ class RiderRestControllerTemplateIT {
         storeRepository.save(store); storeRepository.save(store_far);
         purchaseRepository.save(p1_far); purchaseRepository.save(p1_close);
 
+        System.out.println(p1_close.getId());
+        System.out.println(p1_far.getId());
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + this.token);
+        headers.set("authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "order/new?latitude=1.04&longitude=0.234", HttpMethod.GET, new HttpEntity<Object>(headers),
                 Map.class);

@@ -457,7 +457,7 @@ public class ManagerRestControllerTemplateIT {
         Address addr3 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
 
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8081/delivery/");
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8082/delivery/");
 
         Purchase p1 = new Purchase(addr1, rider, store, "Miguel");
         Purchase p2 = new Purchase(addr2, rider, store, "Mariana");

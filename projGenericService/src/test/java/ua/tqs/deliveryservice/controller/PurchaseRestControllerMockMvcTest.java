@@ -134,7 +134,7 @@ public class PurchaseRestControllerMockMvcTest {
     public void testNotDeliveredPurchaseReview_thenBadRequest() throws Exception {
         Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address, "http://localhost:8080");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
 
         JSONObject json = new JSONObject();
@@ -341,7 +341,7 @@ public class PurchaseRestControllerMockMvcTest {
         headers.set("authorization", "Bearer " + token);
 
         String exampleBody = "{\"personName\":\"nomeee\",\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
-        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Date(1623709488744L), new Store(), "nomeee");
+        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Store(), "nomeee");
         when(purchaseService.receiveNewOrder(any(), any())).thenThrow(new UnreachableServiceException("no connection"));
 
         mvc.perform(post("/store/order")
@@ -363,7 +363,7 @@ public class PurchaseRestControllerMockMvcTest {
         headers.set("authorization", "Bearer " + token);
 
         String exampleBody = "{\"personName\":\"nomeee\",\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
-        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Date(1623709488744L), new Store(), "nomeee");
+        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Store(), "nomeee");
         when(purchaseService.receiveNewOrder(any(), any())).thenThrow(new InvalidValueException("invalid data"));
 
         mvc.perform(post("/store/order")

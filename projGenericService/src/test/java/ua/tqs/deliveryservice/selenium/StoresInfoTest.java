@@ -110,11 +110,11 @@ public class StoresInfoTest {
         Address addr4 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         addressRepository.saveAndFlush(addr4);
 
-        Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2);
+        Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2, "http://localhost:8080");
         storeRepository.saveAndFlush(store1);
         storeList.add(store1);
 
-        Store store2 = new Store("Loja da Manuela", "A melhor loja2.", "eyJhbGciOiJIUzUxMiJ9.eyJleFAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr4);
+        Store store2 = new Store("Loja da Manuela", "A melhor loja2.", "eyJhbGciOiJIUzUxMiJ9.eyJleFAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr4, "http://localhost:8081");
         storeRepository.saveAndFlush(store2);
         storeList.add(store2);
 

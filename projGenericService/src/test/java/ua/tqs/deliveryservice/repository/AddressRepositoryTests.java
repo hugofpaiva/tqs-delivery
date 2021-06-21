@@ -46,14 +46,14 @@ public class AddressRepositoryTests {
         Address a = createAndSaveAddress(1);
 
         Optional<Address> res = addressRepository.findById(a.getId());
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(a);
+        assertThat(res).isPresent();
+        assertThat(res).contains(a);
     }
 
     @Test
     public void testWhenFindByInvalidId_thenReturnNull() {
         Optional<Address> res = addressRepository.findById(-1L);
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isEmpty();
     }
 
     /* ------------------------------------------------- *
@@ -78,8 +78,7 @@ public class AddressRepositoryTests {
     @Test
     public void testGivenNoAddresses_whenFindAll_thenReturnEmpty() {
         List<Address> all = addressRepository.findAll();
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(0);
+        assertThat(all).isNotNull().isEmpty();
     }
 
 

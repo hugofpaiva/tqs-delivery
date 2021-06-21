@@ -97,8 +97,8 @@ public class HumberGenericControllerIT {
         addressRepository.saveAndFlush(address);
 
         List<Product> productList = Arrays.asList(
-                new Product( 10.50 , "hammer", "the best hammer", Category.SCREWDRIVER),
-                new Product(20.50 , "hammer v2", "the best hammer 2.0",  Category.SCREWDRIVER));
+                new Product( "hammer", 10.50 ,Category.SCREWDRIVER,  "the best hammer", "img.png" ),
+                new Product( "hammer v2", 20.50  ,Category.SCREWDRIVER, "the best hammer 2.0", "img.png" ));
         productRepository.saveAllAndFlush(productList);
 
         Purchase p = new Purchase(person, address, productList);
@@ -289,8 +289,8 @@ public class HumberGenericControllerIT {
     }
 
     @Test
-    @DisplayName("Set Rider wtihout generic token throws BadRequest")
-    void whenSetRiderWithoutToken_thenThrowsStatusBadRequest(){
+    @DisplayName("Set Rider wtihout generic token throws Unauthorized")
+    void whenSetRiderWithoutToken_thenThrowsStatusUnauthorized(){
 
         RestAssured.given()
                 .contentType("application/json")
@@ -298,7 +298,7 @@ public class HumberGenericControllerIT {
                 .when()
                 .put(getBaseUrl() + "/setRider?serverOrderId=" + serverOrderId)
                 .then()
-                .statusCode(400);
+                .statusCode(401);
 
 
     }

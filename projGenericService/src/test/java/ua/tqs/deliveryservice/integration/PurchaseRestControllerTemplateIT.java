@@ -10,7 +10,6 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
@@ -27,7 +26,7 @@ import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-@Transactional
+
 class PurchaseRestControllerTemplateIT {
     private Rider rider;
     private Address address;
@@ -90,10 +89,10 @@ class PurchaseRestControllerTemplateIT {
         this.store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", this.address, "http://localhost:8080/delivery/");
         this.purchase = new Purchase(this.address, this.rider, this.store, "Joana");
 
-        personRepository.saveAndFlush(this.rider);
-        addressRepository.saveAndFlush(this.address);
-        storeRepository.saveAndFlush(this.store);
-        purchaseRepository.saveAndFlush(this.purchase);
+        this.rider = personRepository.saveAndFlush(this.rider);
+        this.address = addressRepository.saveAndFlush(this.address);
+        this.store = storeRepository.saveAndFlush(this.store);
+        this.purchase = purchaseRepository.saveAndFlush(this.purchase);
     }
 
 
@@ -108,10 +107,10 @@ class PurchaseRestControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        headers.set("Authorization", "Bearer " + this.store.getToken());
-        HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
+        headers.set("authorization", "Bearer " + this.store.getToken());
 
-        ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + null + "/review", HttpMethod.PUT, entity, Object.class);
+
+        ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + null + "/review", HttpMethod.PUT, new HttpEntity<>(data, headers), Object.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
@@ -122,11 +121,10 @@ class PurchaseRestControllerTemplateIT {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        System.out.println(this.store.getToken());
+        headers.set("authorization", "Bearer " + this.store.getToken());
 
-        headers.set("Authorization", "Bearer " + this.store.getToken());
-        HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
-
-        ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PUT, entity, Object.class);
+        ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PUT, new HttpEntity<>(data, headers), Object.class);
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
@@ -138,7 +136,7 @@ class PurchaseRestControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        headers.set("Authorization", "Bearer " + this.store.getToken());
+        headers.set("authorization", "Bearer " + this.store.getToken());
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
         ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PUT, entity, Object.class);
@@ -152,7 +150,7 @@ class PurchaseRestControllerTemplateIT {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + this.store.getToken());
+        headers.set("authorization", "Bearer " + this.store.getToken());
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
         ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PUT, entity, Object.class);
@@ -167,7 +165,7 @@ class PurchaseRestControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        headers.set("Authorization", "Beareaaar " + this.store.getToken());
+        headers.set("authorization", "Beareaaar " + this.store.getToken());
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
         ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PUT, entity, Object.class);
@@ -184,7 +182,7 @@ class PurchaseRestControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        headers.set("Authorization", "Bearer " + this.store.getToken());
+        headers.set("authorization", "Bearer " + this.store.getToken());
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
         ResponseEntity<String> response = testRestTemplate.exchange( getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PUT, entity, String.class);
@@ -203,7 +201,7 @@ class PurchaseRestControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        headers.set("Authorization", "Bearer " + this.store.getToken());
+        headers.set("authorization", "Bearer " + this.store.getToken());
         HttpEntity<Map<String, Long>> entity = new HttpEntity<>(data, headers);
 
         ResponseEntity<String> response = testRestTemplate.exchange( getBaseUrl() + "/order/" + this.purchase.getId() + "/review", HttpMethod.PUT, entity, String.class);
@@ -232,7 +230,7 @@ class PurchaseRestControllerTemplateIT {
     @Test
     public void givenStore_whenPostNewOrderWithMissingField_then400() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
+        headers.set("authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
 
         Address addr = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
 
@@ -251,7 +249,7 @@ class PurchaseRestControllerTemplateIT {
     @Test
     public void givenStore_whenPostNewOrderGood_then200() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
+        headers.set("authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
 
         Address addr = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
 
