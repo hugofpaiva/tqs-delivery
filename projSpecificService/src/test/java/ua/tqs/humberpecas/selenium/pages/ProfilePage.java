@@ -229,14 +229,16 @@ public class ProfilePage {
 
         addressesTrs = table.findElements(By.xpath("./child::*"));
 
-        //scrolling
-        WebDriverWait wait = new WebDriverWait(driver, 5);
-        WebElement element = addressesTrs.get(0).findElement(By.xpath(".//td[5]/button"));
-        JavascriptExecutor js = ((JavascriptExecutor) driver);
-        js.executeScript("arguments[0].scrollIntoView(true);", element);
-        wait.until(ExpectedConditions.elementToBeClickable(element));
+        if (addressesTrs.size() > 0) {
+            //scrolling
+            WebDriverWait wait = new WebDriverWait(driver, 5);
+            WebElement element = addressesTrs.get(0).findElement(By.xpath(".//td[5]/button"));
+            JavascriptExecutor js = ((JavascriptExecutor) driver);
+            js.executeScript("arguments[0].scrollIntoView(true);", element);
+            wait.until(ExpectedConditions.elementToBeClickable(element));
+            element.click();
+        }
 
-        addressesTrs.get(0).findElement(By.xpath(".//td[5]/button")).click();
 
         this.driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
