@@ -41,15 +41,15 @@ class HumberAddressServiceTest {
     @InjectMocks
     private HumberAddressService service;
 
-    private Address  address;
+    private Address address;
     private AddressDTO addressDTO;
     private Person person;
 
     @BeforeEach
     void setUp() {
-        person = new Person("Fernando", "12345678","fernando@ua.pt");
-        address = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
-        addressDTO = new AddressDTO("Aveiro", "3730-123","Aveiro","Portugal");
+        person = new Person("Fernando", "12345678", "fernando@ua.pt");
+        address = new Address("Aveiro", "3730-123", "Aveiro", "Portugal", person);
+        addressDTO = new AddressDTO("Aveiro", "3730-123", "Aveiro", "Portugal");
         person.setAddresses(Set.of(address));
     }
 
@@ -84,9 +84,9 @@ class HumberAddressServiceTest {
         when(jwtUserDetailsService.getEmailFromToken("token")).thenReturn("Invalidemail@email.com");
         when(personRepository.findByEmail("Invalidemail@email.com")).thenReturn(Optional.empty());
 
-        assertThrows( InvalidLoginException.class, () -> {
+        assertThrows(InvalidLoginException.class, () -> {
             service.addNewAddress("token", addressDTO);
-        } );
+        });
 
         verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
         verify(personRepository, times(1)).findByEmail("Invalidemail@email.com");
@@ -122,7 +122,7 @@ class HumberAddressServiceTest {
 
         assertThrows(InvalidLoginException.class, () -> {
             service.getUserAddress("token");
-        } );
+        });
 
         verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");
         verify(personRepository, times(1)).findByEmail("Invalidemail@email.com");
@@ -173,9 +173,9 @@ class HumberAddressServiceTest {
         when(jwtUserDetailsService.getEmailFromToken("wrong_token")).thenReturn("Invalidemail@email.com");
         when(personRepository.findByEmail("Invalidemail@email.com")).thenReturn(Optional.empty());
 
-        assertThrows( InvalidLoginException.class, () -> {
+        assertThrows(InvalidLoginException.class, () -> {
             service.delAddress("wrong_token", 1L);
-        } );
+        });
         verify(jwtUserDetailsService, times(1)).getEmailFromToken("wrong_token");
         verify(personRepository, times(1)).findByEmail("Invalidemail@email.com");
         verify(addressRepository, times(0)).findById(anyLong());
@@ -185,17 +185,19 @@ class HumberAddressServiceTest {
     @Test
     @DisplayName("Delete Address: address doesn't belong to person throws ResourceNotFoundException")
     void whenDeleteButAddressDoesntBelongToPerson_thenThrowResourceNotFound() throws ResourceNotFoundException {
-        Person other_person = new Person("Duarte", "strong!password","duarte@ua.pt");
-        other_person.setAddresses( Set.of(
-            new Address("Aveiro", "3730-123","Aveiro","Portugal", other_person)
+        Person other_person = new Person("Duarte", "strong!password", "duarte@ua.pt");
+        other_person.setAddresses(Set.of(
+                new Address("Aveiro", "3730-123", "Aveiro", "Portugal", other_person)
         ));
 
         when(jwtUserDetailsService.getEmailFromToken("token")).thenReturn(other_person.getEmail());
         when(personRepository.findByEmail(other_person.getEmail())).thenReturn(Optional.of(other_person));
         when(addressRepository.findById(address.getId())).thenReturn(Optional.of(address));
 
-        assertThrows( ResourceNotFoundException.class, () -> {
-            service.delAddress("token", address.getId());
+        Long address_id = address.getId();
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            service.delAddress("token", address_id);
         });
 
         verify(jwtUserDetailsService, times(1)).getEmailFromToken("token");

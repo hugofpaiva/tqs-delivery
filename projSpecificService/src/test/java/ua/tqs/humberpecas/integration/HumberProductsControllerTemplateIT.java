@@ -114,7 +114,7 @@ class HumberProductsControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "getAll?pageNo=" + -1, HttpMethod.GET, new HttpEntity<Object>(headers),
+                getBaseUrl() + "getAll?pageNo=-1", HttpMethod.GET, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
@@ -125,7 +125,7 @@ class HumberProductsControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "getAll?pageSize=" + 0, HttpMethod.GET, new HttpEntity<Object>(headers),
+                getBaseUrl() + "getAll?pageSize=0", HttpMethod.GET, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
@@ -136,14 +136,14 @@ class HumberProductsControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "getAll?minPrice=" + -3, HttpMethod.GET, new HttpEntity<Object>(headers),
+                getBaseUrl() + "getAll?minPrice=-3", HttpMethod.GET, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
     }
 
     @Test
-    public void testWhenInvalidMaxPrice_thenBadRequest() {
+    public void testWhenInvalidMaxPriceParam_thenBadRequest() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(

@@ -1,5 +1,6 @@
 package ua.tqs.humberpecas.service;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Log4j2
 public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
@@ -34,16 +36,24 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Person user = personRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+        Person user = personRepository.findByEmail(username).orElseThrow(() -> {
+            log.error("HUMBER JWT USER DETAILS SERVICE: No person with that email was found, when" +
+                    "getting user by username");
+            return new UsernameNotFoundException("User not found with email: " + username);
+        });
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getClass().getSimpleName()));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPwd(),
-                authorities);
+
+        log.info("HUMBER JWT USER DETAILS SERVICE: Successfully retrieved user by username");
+        return new org.springframework.security.core.userdetails.
+                User(user.getEmail(), user.getPwd(), authorities);
     }
 
     public String getEmailFromToken(String headerAuthorization) {
         String jwtToken = headerAuthorization.substring(7);
+
+        log.info("HUMBER JWT USER DETAILS SERVICE: Successfully retrieved email from token");
         return jwtTokenUtil.getUsernameFromToken(jwtToken);
     }
 
@@ -52,15 +62,21 @@ public class JwtUserDetailsService implements UserDetailsService {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
                     authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
+            log.error("HUMBER JWT USER DETAILS SERVICE: Invalid credentials when getting new authentication token");
             throw new InvalidLoginException("INVALID CREDENTIALS");
         }
 
-        Person p = personRepository.findByEmail(authenticationRequest.getUsername()).orElseThrow(() -> new InvalidLoginException("Person not found for this email: " + authenticationRequest.getUsername()));
+        Person p = personRepository.findByEmail(authenticationRequest.getUsername()).orElseThrow(() -> {
+            log.error("HUMBER JWT USER DETAILS SERVICE: No person with that email was found, " +
+                    "when getting new authentication token");
+            return new InvalidLoginException("Person not found for this email: " + authenticationRequest.getUsername());
+        });
 
         final UserDetails userDetails = this.loadUserByUsername(authenticationRequest.getUsername());
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
+        log.info("HUMBER JWT USER DETAILS SERVICE: Successfully retrieved new authentication token");
         return new JwtResponse(token, userDetails.getAuthorities().iterator().next(), p.getName());
     }
 }

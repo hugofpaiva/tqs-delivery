@@ -256,8 +256,8 @@ export class NgbModalOrderDetails {
                             {{add.country}}
                         </td>
                         <td style="width: 25px">
-                            <button class="btn btn-link  ml-auto" style="padding: 0">
-                                <fa-icon size="lg" style="color: red" (click)="deleteAddress(add)" [icon]="deleteIcon"></fa-icon>
+                            <button (click)="deleteAddress(add)" class="btn btn-link  ml-auto" style="padding: 0">
+                                <fa-icon size="lg" style="color: red" [icon]="deleteIcon"></fa-icon>
                             </button>
                         </td>
                     </tr>

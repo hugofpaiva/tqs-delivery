@@ -46,7 +46,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-
                 if (username == null){
                     throw new IllegalArgumentException("Username not found for this Token.");
                 }
@@ -67,10 +66,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // Once we get the token validate it.
         if ((username != null || store != null) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = null;
+            UserDetails userDetails;
             if (username != null) {
                 userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-            } else if (store != null) {
+            } else {
                 userDetails = this.jwtUserDetailsService.loadUserByStore(store);
             }
 

@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.services;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Log4j2
 public class ManagerService {
 
     @Autowired
@@ -53,6 +55,7 @@ public class ManagerService {
         response.put("totalItems", result.getTotalElements());
         response.put("totalPages", result.getTotalPages());
 
+        log.info("MANAGER SERVICE: Retrieved rider's information with success");
         return response;
     }
 
@@ -72,6 +75,7 @@ public class ManagerService {
         response.put("avgReviews", avgReviews);
         response.put("inProcess", process);
 
+        log.info("MANAGER SERVICE: Retrieved rider's statistics with success");
         return response;
     }
 

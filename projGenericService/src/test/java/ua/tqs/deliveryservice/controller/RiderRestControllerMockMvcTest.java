@@ -58,7 +58,7 @@ class RiderRestControllerMockMvcTest {
      */
 
     @Test
-    public void testGetRiderOrderHistoryWhenInvalidPageNo_thenBadRequest() throws Exception {
+    void testGetRiderOrderHistoryWhenInvalidPageNo_thenBadRequest() throws Exception {
         mvc.perform(get("/rider/orders")
                 .param("pageNo", String.valueOf(-1))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -68,7 +68,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetRiderOrderHistoryWhenInvalidPageSize_thenBadRequest() throws Exception {
+    void testGetRiderOrderHistoryWhenInvalidPageSize_thenBadRequest() throws Exception {
         mvc.perform(get("/rider/orders")
                 .param("pageSize", String.valueOf(-1))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -78,7 +78,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetRiderOrderHistory_thenStatus200() throws Exception {
+    void testGetRiderOrderHistory_thenStatus200() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -113,7 +113,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetRiderOrderHistoryPageNoWithoutResults_thenNoResults() throws Exception {
+    void testGetRiderOrderHistoryPageNoWithoutResults_thenNoResults() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -142,7 +142,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetRiderOrderHistoryPageNoAndLimitedPageSize_thenLimitedResults() throws Exception {
+    void testGetRiderOrderHistoryPageNoAndLimitedPageSize_thenLimitedResults() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -184,7 +184,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetRiderOrderHistoryButNoAuthorization_thenUnauthorized() throws Exception {
+    void testGetRiderOrderHistoryButNoAuthorization_thenUnauthorized() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -205,7 +205,7 @@ class RiderRestControllerMockMvcTest {
      */
 
     @Test
-    public void testGetCurrentPurchaseButNoAuthorization_thenUnauthorized() throws Exception {
+    void testGetCurrentPurchaseButNoAuthorization_thenUnauthorized() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -221,7 +221,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenRiderWithoutPurchase_whenGetCurrentPurchase_then404() throws Exception {
+    void givenRiderWithoutPurchase_whenGetCurrentPurchase_then404() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -236,7 +236,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenRiderWithPurchase_whenGetCurrentPurchase_then200() throws Exception {
+    void givenRiderWithPurchase_whenGetCurrentPurchase_then200() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -267,7 +267,7 @@ class RiderRestControllerMockMvcTest {
      */
 
     @Test
-    public void testGetNewPurchaseButNoAuthorization_thenUnauthorized() throws Exception {
+    void testGetNewPurchaseButNoAuthorization_thenUnauthorized() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -283,7 +283,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenRiderWithPurchase_whenGetNewPurchase_thenForbidden() throws Exception {
+    void givenRiderWithPurchase_whenGetNewPurchase_thenForbidden() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -299,7 +299,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenNoMorePurchases_whenGetNewPurchase_then404() throws Exception {
+    void givenNoMorePurchases_whenGetNewPurchase_then404() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -314,7 +314,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenRiderWithoutPurchase_whenGetNewPurchase_thenGetPurchase() throws Exception {
+    void givenRiderWithoutPurchase_whenGetNewPurchase_thenGetPurchase() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -344,7 +344,7 @@ class RiderRestControllerMockMvcTest {
      */
 
     @Test
-    public void testUpdateStatusButNoAuthorization_thenUnauthorized() throws Exception {
+    void testUpdateStatusButNoAuthorization_thenUnauthorized() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -361,7 +361,7 @@ class RiderRestControllerMockMvcTest {
 
 
     @Test
-    public void givenRiderWithoutPurchase_whenUpdatePurchaseStatus_then404() throws Exception {
+    void givenRiderWithoutPurchase_whenUpdatePurchaseStatus_then404() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -377,7 +377,7 @@ class RiderRestControllerMockMvcTest {
 
 
     @Test
-    public void givenRiderWithPurchase_whenUpdateStatus_thenSuccess() throws Exception {
+    void givenRiderWithPurchase_whenUpdateStatus_thenSuccess() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -404,7 +404,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenRiderWithPurchase_whenUpdateStatusAndStatusWasPickedUp_thenSuccess() throws Exception {
+    void givenRiderWithPurchase_whenUpdateStatusAndStatusWasPickedUp_thenSuccess() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -437,13 +437,13 @@ class RiderRestControllerMockMvcTest {
      */
 
     @Test
-    public void testGetReviewStatisticsButNoAuthorization_thenUnauthorized() throws Exception {
+    void testGetReviewStatisticsButNoAuthorization_thenUnauthorized() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
 
         when(riderService.getRatingStatistics("Bearer example_token")).thenThrow(InvalidLoginException.class);
-        mvc.perform(get("/rider/reviews")
+        mvc.perform(get("/rider/reviews/stats")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
@@ -454,7 +454,7 @@ class RiderRestControllerMockMvcTest {
 
 
     @Test
-    public void givenRiderWithoutReviews_whenGetStatistics_thenSuccess() throws Exception {
+    void givenRiderWithoutReviews_whenGetStatistics_thenSuccess() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -466,7 +466,7 @@ class RiderRestControllerMockMvcTest {
         when(riderService.getRatingStatistics("Bearer example_token")).thenReturn(expected);
 
 
-        mvc.perform(get("/rider/reviews")
+        mvc.perform(get("/rider/reviews/stats")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -479,7 +479,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenRiderWithReviews_whenGetStatistics_thenSuccess() throws Exception {
+    void givenRiderWithReviews_whenGetStatistics_thenSuccess() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -491,7 +491,7 @@ class RiderRestControllerMockMvcTest {
         when(riderService.getRatingStatistics("Bearer example_token")).thenReturn(expected);
 
 
-        mvc.perform(get("/rider/reviews")
+        mvc.perform(get("/rider/reviews/stats")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -512,7 +512,7 @@ class RiderRestControllerMockMvcTest {
      */
 
     @Test
-    public void testGetNewPurchaseWithLocButNoAuthorization_thenUnauthorized() throws Exception {
+    void testGetNewPurchaseWithLocButNoAuthorization_thenUnauthorized() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -528,7 +528,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenRiderWithPurchase_whenGetNewPurchaseWithLoc_thenForbidden() throws Exception {
+    void givenRiderWithPurchase_whenGetNewPurchaseWithLoc_thenForbidden() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -544,7 +544,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenRiderWithPurchase_whenGetNewPurchaseWithInvalidLoc_thenBadRequest() throws Exception {
+    void givenRiderWithPurchase_whenGetNewPurchaseWithInvalidLoc_thenBadRequest() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -561,7 +561,7 @@ class RiderRestControllerMockMvcTest {
 
 
     @Test
-    public void givenNoMorePurchases_whenGetNewPurchaseWithLoc_then404() throws Exception {
+    void givenNoMorePurchases_whenGetNewPurchaseWithLoc_then404() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -576,7 +576,7 @@ class RiderRestControllerMockMvcTest {
     }
 
     @Test
-    public void givenRiderWithoutPurchase_whenGetNewPurchaseWithLoc_thenGetPurchase() throws Exception {
+    void givenRiderWithoutPurchase_whenGetNewPurchaseWithLoc_thenGetPurchase() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -589,7 +589,7 @@ class RiderRestControllerMockMvcTest {
         Address addr_close = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Purchase purchase = new Purchase(addr_close, rider, store_close, "Miguel");
 
-        when(purchaseService.getNewPurchaseLoc(eq("Bearer example_token"), eq(0.2312), eq(0.234))).thenReturn(purchase);
+        when(purchaseService.getNewPurchaseLoc("Bearer example_token", 0.2312, 0.234)).thenReturn(purchase);
 
         mvc.perform(get("/rider/order/new?latitude=0.2312&longitude=0.234")
                 .headers(headers)

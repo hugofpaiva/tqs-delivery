@@ -14,7 +14,11 @@ import ua.tqs.deliveryservice.repository.ManagerRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
-public class StoreServiceTest {
+class StoreServiceTest {
 
     @Mock
     private ManagerRepository managerRepository;
@@ -47,7 +51,7 @@ public class StoreServiceTest {
 
 
     @Test
-    public void testGetStoresWhenGetInvalidPageNo_thenThrow() {
+    void testGetStoresWhenGetInvalidPageNo_thenThrow() {
 
         assertThrows(IllegalArgumentException.class, () -> {
             storeService.getStores(-1, 10);
@@ -59,7 +63,7 @@ public class StoreServiceTest {
     }
 
     @Test
-    public void testGetStoresWhenGetInvalidPageSize_thenThrow() {
+    void testGetStoresWhenGetInvalidPageSize_thenThrow() {
 
         assertThrows(IllegalArgumentException.class, () -> {
             storeService.getStores(0, -1);
@@ -73,7 +77,7 @@ public class StoreServiceTest {
 
 
     @Test
-    public void givenNoStores_whenGetStores_thenReturn0Records() throws InvalidLoginException {
+    void givenNoStores_whenGetStores_thenReturn0Records() throws InvalidLoginException {
 
         Page<Store> pageRequest = new PageImpl(new ArrayList<>(), PageRequest.of(0, 10), new ArrayList<>().size());
         Mockito.when(storeRepository.findAll(PageRequest.of(0, 10))).thenReturn(pageRequest);
@@ -86,13 +90,11 @@ public class StoreServiceTest {
                 .countPurchaseByStore(any());
 
         assertThat(((List<Object>) found.get("stores"))).isEmpty();
-        assertThat(found.get("currentPage")).isEqualTo(0);
-        assertThat(found.get("totalItems")).isEqualTo(0L);
-        assertThat(found.get("totalPages")).isEqualTo(0);
+        assertThat(found).containsEntry("currentPage", 0).containsEntry("totalItems", 0L).containsEntry("totalPages", 0);
     }
 
     @Test
-    public void given3Stores_whenGetStores_thenReturn3Records() throws InvalidLoginException {
+    void given3Stores_whenGetStores_thenReturn3Records() throws InvalidLoginException {
         Address addr1 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr2 = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
         Address addr3 = new Address("Rua ABC, n. 944", "4444-555", "Aveiro", "Portugal");
@@ -120,9 +122,7 @@ public class StoreServiceTest {
         assertThat( ((List<Map<String, Object>>) found.get("stores")))
                 .extracting("totalOrders").contains(2L, 2L, 2L);
 
-        assertThat(found.get("currentPage")).isEqualTo(0);
-        assertThat(found.get("totalItems")).isEqualTo(3L);
-        assertThat(found.get("totalPages")).isEqualTo(1);
+        assertThat(found).containsEntry("currentPage", 0).containsEntry("totalItems", 3L).containsEntry("totalPages", 1);
     }
     /* ----------------------------- *
      * GET STORE STATISTICS          *
@@ -131,7 +131,7 @@ public class StoreServiceTest {
 
 
     @Test
-    public void givenNoPurchases_whenGetStatistics_thenReturnStatistics() {
+    void givenNoPurchases_whenGetStatistics_thenReturnStatistics() {
         purchaseRepository.deleteAll();
 
         Mockito.when(purchaseRepository.count()).thenReturn((long) 0);
@@ -145,13 +145,12 @@ public class StoreServiceTest {
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
                 .count();
 
-        assertThat(found.get("totalPurchases")).isEqualTo(0L);
-        assertThat(found.get("avgPurchasesPerWeek")).isNull();
-        assertThat(found.get("totalStores")).isEqualTo(0L);
+        assertThat(found).containsEntry("totalPurchases", 0L).containsEntry("avgPurchasesPerWeek", 0.0)
+                .containsEntry("totalStores", 0L);
     }
 
     @Test
-    public void givenPurchases_whenGetStatistics_thenReturnStatistics() throws InvalidLoginException {
+    void givenPurchases_whenGetStatistics_thenReturnStatistics() throws InvalidLoginException {
 
         Purchase p1 = new Purchase();
         p1.setDate(new Date());
@@ -168,9 +167,22 @@ public class StoreServiceTest {
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
                 .count();
 
-        assertThat(found.get("totalPurchases")).isEqualTo(2L);
+        assertThat(found).containsEntry("totalPurchases", 2L).containsEntry("totalStores", 1L);
         assertThat(found.get("avgPurchasesPerWeek")).isNotNull();
-        assertThat(found.get("totalStores")).isEqualTo(1L);
+    }
+
+    /* ----------------------------- *
+     * AUXILIARY METHODS TESTS       *
+     * ----------------------------- *
+     */
+
+    @Test
+    void givenDateTwoWeekAgo_whenGetNoWeeksUntilNow_thenReturn2() {
+        Instant instant = Instant.now();  // Current moment in UTC.
+        ZonedDateTime zdtNow = instant.atZone(ZoneId.of("Africa/Tunis"));
+        Date oneWeekAgo = Date.from(zdtNow.minusWeeks(2).toInstant());
+        Double timePassed = storeService.getNoWeeksUntilNow(oneWeekAgo);
+        assertThat(timePassed.intValue()).isEqualTo(2);
     }
 
 }
