@@ -18,3 +18,7 @@ This project aims to create a viable software product (functional specification,
 
 - Login: admin
 - Password: delivery
+
+### [**TQS Delivery REST API Docs**](http://35.246.29.122:8081/swagger-ui/index.html) 
+
+### [**Humber Peças REST API Docs**](http://35.246.29.122:8081/swagger-ui/index.html) 

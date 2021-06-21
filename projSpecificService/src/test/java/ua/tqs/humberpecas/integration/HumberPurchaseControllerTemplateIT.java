@@ -1,6 +1,5 @@
 package ua.tqs.humberpecas.integration;
 
-
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +16,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
+import ua.tqs.humberpecas.dto.PurchaseDTO;
 import ua.tqs.humberpecas.exception.AccessNotAllowedException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.AddressRepository;
@@ -31,19 +30,12 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class HumberReviewControllerIT {
+public class HumberPurchaseControllerTemplateIT {
 
     @LocalServerPort
     int randomServerPort;
-
-    @Autowired
-    private PurchaseRepository purchaseRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
 
     @Autowired
     private AddressRepository addressRepository;
@@ -57,11 +49,18 @@ public class HumberReviewControllerIT {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    private Person person;
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private PurchaseRepository purchaseRepository;
+
     private String token;
-    private List<Product> productList;
-    private Purchase purchase;
-    private Review review;
+    private Person person;
+    private Address address;
+    private List<Product> catalog;
+    private List<Long> productList;
+    private PurchaseDTO purchaseDTO;
 
 
     @Container
@@ -71,6 +70,7 @@ public class HumberReviewControllerIT {
             .withDatabaseName("specific");
 
 
+
     @DynamicPropertySource
     static void properties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", container::getJdbcUrl);
@@ -78,29 +78,6 @@ public class HumberReviewControllerIT {
         registry.add("spring.datasource.username", container::getUsername);
     }
 
-    @BeforeEach
-    public void setUp(){
-
-        this.person = personRepository.saveAndFlush(new Person("Fernando", bcryptEncoder.encode("12345678"),"fernando@ua.pt"));
-
-        JwtRequest request = new JwtRequest(this.person.getEmail(), "12345678");
-        ResponseEntity<Map> response = testRestTemplate.postForEntity("http://localhost:" + randomServerPort + "/login", request, Map.class);
-        this.token = response.getBody().get("token").toString();
-
-        Address address = addressRepository.saveAndFlush(new Address("Aveiro", "3730-123","Aveiro","Portugal", person));
-
-        this.productList = productRepository.saveAllAndFlush(Arrays.asList(
-                new Product(10.50, "hammer","the best hammer", Category.SCREWDRIVER ),
-                new Product(20.50, "hammer v2", "the best hammer 2.0", Category.SCREWDRIVER )));
-
-        Purchase p = new Purchase(person, address, productList);
-        p.setServiceOrderId(12L);
-
-        this.purchase = purchaseRepository.saveAndFlush(p);
-
-        review = new Review(12L, 5);
-        System.out.println(review);
-    }
 
     @AfterEach
     public void resetDb() {
@@ -118,61 +95,85 @@ public class HumberReviewControllerIT {
     }
 
 
+    @BeforeEach
+    public void setUp(){
+
+        this.person = personRepository.saveAndFlush(new Person("Fernando", bcryptEncoder.encode("12345678"),"fernando@ua.pt"));
+
+        JwtRequest request = new JwtRequest(this.person.getEmail(), "12345678");
+        ResponseEntity<Map> response = testRestTemplate.postForEntity("http://localhost:" + randomServerPort + "/login", request, Map.class);
+        this.token = response.getBody().get("token").toString();
+
+        this.address = addressRepository.saveAndFlush(new Address("Aveiro", "3730-123","Aveiro","Portugal", person));
+
+        this.catalog = productRepository.saveAllAndFlush(Arrays.asList(
+                new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", "image_url"),
+                new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", "image_url")));
+
+        this.productList = Arrays.asList(this.catalog.get(0).getId());
+        this.purchaseDTO = new PurchaseDTO(this.address.getId(), productList);
+
+    }
+
     @Test
-    @DisplayName("Add review to Rider")
-    void whenValidReview_sendToDeliveryApp() {
+    @DisplayName("Make Purchase")
+    void whenValidPurchase_thenReturnOk(){
 
         RestAssured.given()
-                .header("Authorization", "Bearer " + this.token)
+                .header("authorization", "Bearer " + this.token)
                 .contentType("application/json")
-                .body(review)
+                .body(purchaseDTO)
                 .when()
-                .post(getBaseUrl() + "/add")
+                .post(getBaseUrl() + "/new")
                 .then()
                 .statusCode(200);
 
-        List<Purchase> purchaseList = purchaseRepository.findAll();
+        List<Purchase> purchases = purchaseRepository.findAll();
 
-        assertThat(purchaseList).hasSize(1).extracting(Purchase::getReview).containsOnly(review.getReview());
-        assertThat(purchaseList).hasSize(1).extracting(Purchase::getId).containsOnly(purchase.getId());
+        assertThat(purchases).hasSize(1).extracting(Purchase::getServiceOrderId).isNotNull();
+        assertThat(purchases).extracting(Purchase::getPerson).containsOnly(person);
+
+
     }
 
 
     @Test
-    @DisplayName("Add review of invalid order throws ResourseNotFound")
-    void whenInvalidOrder_thenThrowsStatusResourseNotFound(){
-
-        review.setOrderId(0);
+    @DisplayName("Make Purchase with invalid token throws HTTP Unauthorized")
+    void whenPurchaseWithInvalidToken_thenThrowsStatus401() throws AccessNotAllowedException {
 
         RestAssured.given()
-                .header("Authorization", "Bearer " + this.token)
                 .contentType("application/json")
-                .body(review)
+                .body(purchaseDTO)
                 .when()
-                .post(getBaseUrl() + "/add")
+                .post(getBaseUrl() + "/new")
+                .then()
+                .statusCode(401);
+
+
+    }
+
+
+    @Test
+    @DisplayName("Make Purchase with Invalid Data throws HTTP status ResourseNotFound ")
+    void whenPurchaseWithInvalidData_thenThrowsStatus404(){
+
+        this.purchaseDTO.setAddressId(0);
+
+        RestAssured.given()
+                .contentType("application/json")
+                .header("authorization", "Bearer " + this.token)
+                .body(purchaseDTO)
+                .when()
+                .post(getBaseUrl() + "/new")
                 .then()
                 .statusCode(404);
 
     }
 
-    @Test
-    @DisplayName("Add review with invalid token throws HTTP Unauthorized")
-    void whenAddReviewInvalidToken_thenThrowsStatus401() throws AccessNotAllowedException {
-
-        RestAssured.given()
-                .contentType("application/json")
-                .body(review)
-                .when()
-                .post(getBaseUrl() + "/add")
-                .then()
-                .statusCode(401);
-
-    }
-
-
-
 
     public String getBaseUrl() {
-        return "http://localhost:" + randomServerPort + "/review";
+        return "http://localhost:" + randomServerPort + "/purchase";
     }
+
+
 }

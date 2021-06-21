@@ -1,6 +1,5 @@
 package ua.tqs.deliveryservice.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
@@ -56,6 +55,10 @@ public class PurchaseService {
         if (purchase.getRiderReview() != null)
             throw new InvalidValueException("Invalid, purchased already had review.");
 
+        // A review cannot be added to a purchase when it is not delivered. BAD_REQUEST
+        if (purchase.getStatus() != Status.DELIVERED)
+            throw new InvalidValueException("Invalid, purchase must be delivered first.");
+
         long store_id_of_where_purchase_was_supposedly_made = purchase.getStore().getId();
         long store_id_associated_to_token_passed = store.getId();
 
@@ -67,7 +70,6 @@ public class PurchaseService {
 
         purchase.setRiderReview(review);
         purchaseRepository.saveAndFlush(purchase);
-
         return purchase;
     }
 
@@ -168,27 +170,21 @@ public class PurchaseService {
 
         if (!(personName instanceof String)) throw new InvalidValueException(error);
 
-        Object date_obj = Optional.ofNullable(data.get("date"))
-                .orElseThrow(() -> new InvalidValueException(error));
-
-        Date date = null;
-        if (date_obj instanceof Long) date = new Date((long) date_obj);
-        if (date_obj instanceof Integer) date = new Date((int) date_obj);
-        if (date == null) throw new InvalidValueException(error);
-
         Object address = Optional.ofNullable(data.get("address"))
                 .orElseThrow(() -> new InvalidValueException(error));
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Address addr;
+        Address addr = new Address();
         try {
-            addr = objectMapper.convertValue(address, Address.class);
+            addr.setAddress(((Map<String, String>) address).get("address"));
+            addr.setCity(((Map<String, String>) address).get("city"));
+            addr.setCountry(((Map<String, String>) address).get("country"));
+            addr.setPostalCode(((Map<String, String>) address).get("postalCode"));
         } catch (Exception ex) {
             throw new InvalidValueException(error);
         }
 
         addressRepository.save(addr);
-        Purchase purchase = new Purchase(addr, date, store, (String) personName);
+        Purchase purchase = new Purchase(addr, store, (String) personName);
         purchaseRepository.save(purchase);
         return purchase;
 

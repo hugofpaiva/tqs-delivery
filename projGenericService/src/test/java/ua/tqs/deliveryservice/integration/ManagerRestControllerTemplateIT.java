@@ -253,7 +253,7 @@ public class ManagerRestControllerTemplateIT {
         Map<String, Object> found = response.getBody();
 
         Assertions.assertThat(found.get("totalPurchases")).isEqualTo(0);
-        Assertions.assertThat(found.get("avgPurchasesPerWeek")).isNull();
+        Assertions.assertThat(found.get("avgPurchasesPerWeek")).isEqualTo(0.0);
         Assertions.assertThat(found.get("totalStores")).isEqualTo(0);
     }
 
@@ -272,7 +272,7 @@ public class ManagerRestControllerTemplateIT {
         Map<String, Object> found = response.getBody();
 
         Assertions.assertThat(found.get("totalPurchases")).isEqualTo(0);
-        Assertions.assertThat(found.get("avgPurchasesPerWeek")).isNull();
+        Assertions.assertThat(found.get("avgPurchasesPerWeek")).isEqualTo(0.0);
         Assertions.assertThat(found.get("totalStores")).isEqualTo(1);
     }
 

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.services.PurchaseService;
 import ua.tqs.deliveryservice.services.ManagerService;
 import ua.tqs.deliveryservice.services.StoreService;
@@ -26,14 +25,11 @@ public class ManagerRestController {
     @Autowired
     private StoreService storeService;
 
-    @Autowired
-    private PurchaseService purchaseService;
-
 
     @GetMapping("riders/all")
     public ResponseEntity<Map<String, Object>> getAllRidersInfo(
         @RequestParam(defaultValue = "0") int pageNo,
-        @RequestParam(defaultValue = "10") int pageSize) throws InvalidLoginException {
+        @RequestParam(defaultValue = "10") int pageSize) {
 
         if (pageNo < 0 || pageSize <= 0){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -44,8 +40,7 @@ public class ManagerRestController {
     }
 
     @GetMapping("/stores")
-    public ResponseEntity<Map<String, Object>> getRiderOrders(HttpServletRequest request,
-                                                              @RequestParam(defaultValue = "0") int pageNo,
+    public ResponseEntity<Map<String, Object>> getRiderOrders(@RequestParam(defaultValue = "0") int pageNo,
                                                               @RequestParam(defaultValue = "10") int pageSize) {
         if (pageNo < 0 || pageSize <= 0){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

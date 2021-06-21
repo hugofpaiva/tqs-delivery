@@ -50,13 +50,13 @@ class HumberReviewServiceTest {
     @BeforeEach
     public void setUp(){
 
-        ShoppingCart sc = new ShoppingCart();
         person = new Person("Fernando", "12345678","fernando@ua.pt");
         Address address  = new Address("Aveiro", "3730-123","Aveiro","Portugal", person);
 
         List<Product> products = new ArrayList<>();
-        products.add(new Product(10.50, "hammer","the best hammer", Category.SCREWDRIVER ));
-        products.add(new Product(20.50, "hammer v2", "the best hammer 2.0", Category.SCREWDRIVER ));
+        products.add(new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", "url"));
+        products.add(new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", "url"));
+
         purchase = new Purchase(person, address, products);
         purchase.setId(1);
         purchase.setStatus(PurchaseStatus.DELIVERED);
@@ -79,7 +79,7 @@ class HumberReviewServiceTest {
 
         Purchase p = service.addReview(review, userToken);
 
-        assertThat(p.getReview(), Matchers.equalTo(4));
+        assertThat(p.getRiderReview(), Matchers.equalTo(4));
         assertThat(p.getPerson(), Matchers.equalTo(person));
         assertThat(p.getId(), Matchers.equalTo(purchase.getId()));
 
@@ -116,7 +116,10 @@ class HumberReviewServiceTest {
     @Test
     @DisplayName("Review Rider with invalid order in Delivery Service throws ResourceNotFoundException")
     void whenInvalidOrderService_thenThrowsStatusResourceNotFound(){
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
         when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         doThrow(ResourceNotFoundException.class).when(deliveryService).reviewRider(review);
@@ -134,7 +137,6 @@ class HumberReviewServiceTest {
     @Test
     @DisplayName("Review Rider with invalid order throws ResourceNotFoundException")
     void whenInvalidOrder_thenThrowsStatusResourceNotFound(){
-
 
         assertThrows( ResourceNotFoundException.class, () -> {
             service.addReview(review, userToken);

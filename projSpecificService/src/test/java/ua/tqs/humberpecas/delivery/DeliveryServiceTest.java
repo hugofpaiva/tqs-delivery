@@ -1,7 +1,5 @@
 package ua.tqs.humberpecas.delivery;
 
-
-
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +15,6 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
-import ua.tqs.humberpecas.dto.ServerPurchaseDTO;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.model.Review;
@@ -67,7 +64,7 @@ public class DeliveryServiceTest {
 
         this.server
                 .expect(ExpectedCount.once(), requestTo("http://localhost:8081/store/order/12/review"))
-                .andExpect(method(HttpMethod.PATCH))
+                .andExpect(method(HttpMethod.PUT))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
         assertThrows( ResourceNotFoundException.class, () -> {
@@ -84,7 +81,7 @@ public class DeliveryServiceTest {
 
         this.server
                 .expect(ExpectedCount.once(), requestTo("http://localhost:8081/store/order/12/review"))
-                .andExpect(method(HttpMethod.PATCH))
+                .andExpect(method(HttpMethod.PUT))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
         assertThrows( UnreachableServiceException.class, () -> {
@@ -96,8 +93,6 @@ public class DeliveryServiceTest {
     @Test
     @DisplayName("Make purchase")
     void whenValidPuchase_thenReturnServerOrderId(){
-
-        //ServerPurchaseDTO response = new ServerPurchaseDTO(5L);
 
         String response = "{\n\"orderId\": 5\n}";
 

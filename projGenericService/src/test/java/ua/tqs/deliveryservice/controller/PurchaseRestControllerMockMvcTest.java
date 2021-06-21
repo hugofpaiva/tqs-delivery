@@ -1,6 +1,5 @@
 package ua.tqs.deliveryservice.controller;
 
-import org.hamcrest.Matchers;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,12 +24,12 @@ import ua.tqs.deliveryservice.services.PurchaseService;
 
 
 import java.util.Date;
-import java.util.regex.Matcher;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,7 +59,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization",  "Bearer " + token);
 
-        mvc.perform( patch("/store/order/" + null + "/review")
+        mvc.perform( put("/store/order/" + null + "/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -80,7 +79,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization",  "Bearer " + token);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform( put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -100,7 +99,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization", "Bearer " + token);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform( put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -121,7 +120,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization", "Bearer " + token);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform( put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -131,12 +130,11 @@ public class PurchaseRestControllerMockMvcTest {
         Mockito.verify(purchaseService, VerificationModeFactory.times(0)).reviewRiderFromSpecificOrder(anyString(), anyLong(), anyInt());
     }
 
-    // 2. despoletar erros no service e ver se o controller ainda faz o que é suposto
     @Test
-    public void testEverythingOK_thenIsOk() throws Exception {
+    public void testNotDeliveredPurchaseReview_thenBadRequest() throws Exception {
         Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address, "http://localhost:8080/delivery/");
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address);
         Purchase purchase = new Purchase(address, rider, store, "Joana");
 
         JSONObject json = new JSONObject();
@@ -147,9 +145,38 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization", "Bearer " + token);
 
-        when(purchaseService.reviewRiderFromSpecificOrder(token, store.getId(), 3)).thenReturn(purchase);
+        when(purchaseService.reviewRiderFromSpecificOrder(token, purchase.getId(), 3)).thenThrow(InvalidValueException.class);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform(put("/store/order/"+purchase.getId()+"/review")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .content(String.valueOf(json)))
+                .andExpect(status().isBadRequest());
+
+        Mockito.verify(purchaseService, VerificationModeFactory.times(1)).reviewRiderFromSpecificOrder(anyString(), anyLong(), anyInt());
+    }
+
+    // 2. despoletar erros no service e ver se o controller ainda faz o que é suposto
+    @Test
+    public void testEverythingOK_thenIsOk() throws Exception {
+        Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
+        Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address, "http://localhost:8080/delivery/");
+        Purchase purchase = new Purchase(address, rider, store, "Joana");
+        purchase.setStatus(Status.DELIVERED);
+
+        JSONObject json = new JSONObject();
+        json.put("review", 3);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        headers.set("authorization", "Bearer " + token);
+
+        when(purchaseService.reviewRiderFromSpecificOrder(token, purchase.getId(), 3)).thenReturn(purchase);
+
+        mvc.perform(put("/store/order/"+purchase.getId()+"/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -171,7 +198,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         when(purchaseService.reviewRiderFromSpecificOrder(token, -1L, 3)).thenThrow(ResourceNotFoundException.class);
 
-        mvc.perform( patch("/store/order/-1/review")
+        mvc.perform( put("/store/order/-1/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -193,7 +220,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         when(purchaseService.reviewRiderFromSpecificOrder( "rer " + token, 3L, 3)).thenThrow(InvalidLoginException.class);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform( put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -217,7 +244,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         when(purchaseService.reviewRiderFromSpecificOrder(token, 3L, 3)).thenThrow(InvalidValueException.class);
 
-        mvc.perform( patch("/store/order/3/review")
+        mvc.perform( put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -254,7 +281,7 @@ public class PurchaseRestControllerMockMvcTest {
     public void testMakeNewOrderButFieldMissing_then400() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String exampleBody = "{\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        String exampleBody = "{\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
         when(purchaseService.receiveNewOrder(any(), any())).thenThrow(InvalidValueException.class);
         mvc.perform(post("/store/order")
                 .accept(MediaType.APPLICATION_JSON)
@@ -272,7 +299,7 @@ public class PurchaseRestControllerMockMvcTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + token);
 
-        String exampleBody = "{\"personName\":234,\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        String exampleBody = "{\"personName\":234,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
         when(purchaseService.receiveNewOrder(any(), any())).thenThrow(InvalidValueException.class);
         mvc.perform(post("/store/order")
                 .accept(MediaType.APPLICATION_JSON)
@@ -290,8 +317,8 @@ public class PurchaseRestControllerMockMvcTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + token);
 
-        String exampleBody = "{\"personName\":\"nomeee\",\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
-        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Date(1623709488744L), new Store(), "nomeee");
+        String exampleBody = "{\"personName\":\"nomeee\",\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Store(), "nomeee");
         when(purchaseService.receiveNewOrder(any(), any())).thenReturn(purchase);
 
         mvc.perform(post("/store/order")

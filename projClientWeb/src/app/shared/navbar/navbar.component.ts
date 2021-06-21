@@ -4,6 +4,7 @@ import {faShoppingCart, faUser} from '@fortawesome/free-solid-svg-icons';
 import {Location, PopStateEvent} from '@angular/common';
 import {first} from 'rxjs/operators';
 import {AccountService} from '../../services/account/account.service';
+import {CartService} from '../../services/cart/cart.service';
 
 @Component({
     selector: 'app-navbar',
@@ -18,7 +19,7 @@ export class NavbarComponent implements OnInit {
     userIcon = faUser;
 
     constructor(public location: Location, private router: Router,
-                public accountService: AccountService) {
+                public accountService: AccountService, private cartService: CartService) {
     }
 
     ngOnInit() {

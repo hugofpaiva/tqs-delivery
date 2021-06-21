@@ -9,6 +9,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.*;
+import ua.tqs.humberpecas.repository.AddressRepository;
+import ua.tqs.humberpecas.repository.PersonRepository;
+import ua.tqs.humberpecas.repository.ProductRepository;
+import ua.tqs.humberpecas.repository.PurchaseRepository;
 
 import java.util.List;
 
@@ -52,33 +56,23 @@ class DBLoader implements CommandLineRunner {
 		Address address1 = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal", person);
 		addressRepository.saveAndFlush(address1);
 
-		Product product = new Product( 0.50,"Parafuso" , "xpto", Category.SCREWS);
+		Product product = new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
 		productRepository.saveAndFlush(product);
 
-		Product product1 = new Product(5.00, "Hammer", "xpto",  Category.LATHES);
+		Product product1 = new Product("Hammer", 5.00, Category.LATHES, "xpto",  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
 		productRepository.saveAndFlush(product1);
 
-		Product product2 = new Product(5.00, "Hammer", "xpto", Category.LATHES);
+		Product product2 = new Product("Hammer", 5.00, Category.LATHES, "xpto",  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
 		productRepository.saveAndFlush(product2);
 
-		Product product3 = new Product( 5.00, "Hammer", "xpto", Category.LATHES);
+		Product product3 = new Product("Hammer", 5.00, Category.LATHES, "xpto",  "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
 		productRepository.saveAndFlush(product3);
-
-		String genericToken = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
-		Generic generic = new Generic("generic", genericToken);
-		genericRepository.save(generic);
 
 
 		Purchase purchase = new Purchase(person, address1, List.of(product));
-		purchase.setServiceOrderId(6L);
+		purchase.setStatus(PurchaseStatus.DELIVERED);
+		purchase.setServiceOrderId(14L);
 		purchaseRepository.saveAndFlush(purchase);
-
-		Purchase purchase2 = new Purchase(person, address1, List.of(product));
-		purchase2.setServiceOrderId(5L);
-		purchase2.setRiderName("Joao");
-		purchase2.setStatus(PurchaseStatus.ACCEPTED);
-		purchaseRepository.saveAndFlush(purchase2);
-
 
 	}
 }

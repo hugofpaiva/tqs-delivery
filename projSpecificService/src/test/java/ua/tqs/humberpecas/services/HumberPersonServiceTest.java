@@ -1,4 +1,4 @@
-package ua.tqs.humberpecas.service;
+package ua.tqs.humberpecas.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +13,7 @@ import ua.tqs.humberpecas.dto.PersonDTO;
 import ua.tqs.humberpecas.exception.DuplicatedObjectException;
 import ua.tqs.humberpecas.model.Person;
 import ua.tqs.humberpecas.repository.PersonRepository;
+import ua.tqs.humberpecas.service.HumberPersonService;
 
 import java.io.IOException;
 import java.util.ArrayList;

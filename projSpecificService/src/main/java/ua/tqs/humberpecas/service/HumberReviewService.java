@@ -1,6 +1,5 @@
 package ua.tqs.humberpecas.service;
 
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ public class HumberReviewService {
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
-    public Purchase addReview( Review review, String userToken) throws ResourceNotFoundException, UnreachableServiceException, AccessNotAllowedException {
+    public Purchase addReview(Review review, String userToken) throws ResourceNotFoundException, UnreachableServiceException, AccessNotAllowedException {
 
 
         var purchase = purchaseRepository.findById(review.getOrderId())
@@ -43,27 +42,17 @@ public class HumberReviewService {
 
         String personEmail = purchase.getPerson().getEmail();
 
-        if (!personEmail.equals(jwtUserDetailsService.getEmailFromToken(userToken))){
+        if (!personEmail.equals(jwtUserDetailsService.getEmailFromToken(userToken))) {
             log.error("ReviewService: Invalid Purchase Access");
             throw new AccessNotAllowedException("Not Allowed");
         }
 
-        Long serviceOrderId = purchase.getServiceOrderId();
-
-        if (serviceOrderId == null){
-            log.error("ReviewService: Invalid server order id");
-            throw new InvalidOperationException("Invalid Operation");
-        }
-
-        review.setOrderId(serviceOrderId);
-
+        review.setOrderId(purchase.getServiceOrderId());
         deliveryService.reviewRider(review);
 
-        purchase.setReview(review.getReview());
+        purchase.setRiderReview(review.getReview());
 
         return purchaseRepository.saveAndFlush(purchase);
-
-
     }
 
 }

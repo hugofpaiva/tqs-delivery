@@ -12,35 +12,52 @@ import {
 import {NgbModal, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Address} from '../models/address';
+import {AccountService} from '../services/account/account.service';
+import {PurchaseService} from '../services/purchase/purchase.service';
+import {Product} from '../models/product';
+import {Purchase} from '../models/purchase';
+import {ReviewService} from '../services/review/review.service';
+import {Review} from '../models/review';
+import {AlertService} from '../services/alert/alert.service';
+import {AddressService} from '../services/address/address.service';
 
 @Component({
     selector: 'app-modal-rider-review',
     template: `
         <div class="modal-header">
-            <h5 class="modal-title text-center">{{name}}</h5>
+            <h5 class="modal-title text-center">Rider Review</h5>
         </div>
         <div class="modal-body">
-            <h6 class="mb-0">Order delivered by <b>{{riderName}}</b> at <b>{{orderDate}}</b></h6>
+            <h6 class="mb-0">Order delivered by <b>{{purchase.riderName}}</b> at <b>{{purchase.date | date:'medium'}}</b></h6>
 
             <div style="display: flex; justify-content: center; font-size: 2.5rem; margin-top: 10%">
                 <ngb-rating [(rate)]="rate" [max]="max"></ngb-rating>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Add Review</button>
+            <button type="button" [disabled]="requested" (click)="giveReview()" class="btn btn-primary">Add Review</button>
             <button type="button" class="btn btn-link  ml-auto" data-dismiss="modal" (click)="activeModal.dismiss('Close click')">Close
             </button>
         </div>
     `
 })
 export class NgbModalRiderReview {
-    @Input() name;
-    @Input() riderName;
-    @Input() orderDate;
+    @Input() purchase: Purchase;
+    requested = false;
     rate = 0;
     max: Number = 5;
 
-    constructor(public activeModal: NgbActiveModal) {
+    constructor(public activeModal: NgbActiveModal, private reviewService: ReviewService, private alertService: AlertService) {
+    }
+
+    giveReview() {
+        this.reviewService.giveReview(new Review(this.purchase.id, this.rate)).subscribe(data => {
+            this.alertService.success('Review added!');
+            this.reviewService.emitConfig(true);
+        }, error => {
+            this.alertService.error('There was an error. Review was not added!');
+        });
+        this.activeModal.close();
     }
 }
 
@@ -48,15 +65,16 @@ export class NgbModalRiderReview {
     selector: 'app-modal-order-details',
     template: `
         <div class="modal-header">
-            <h5 class="modal-title text-center">{{name}}</h5>
+            <h5 class="modal-title text-center">Order #{{purchase.id}}</h5>
         </div>
         <div class="modal-body">
             <h6 class="mb-0">
                 <fa-icon [icon]="infoIcon"></fa-icon>
-                <span style="margin-right: 8px; margin-left: 9px">Status:</span> <b>Delivered</b></h6>
+                <span style="margin-right: 8px; margin-left: 9px">Status:</span> <b>{{purchase.status}}</b></h6>
             <h6 class="mb-0">
                 <fa-icon [icon]="motorcycleIcon"></fa-icon>
-                <span style="margin-right: 15px; margin-left: 5px">Rider:</span> <b>{{riderName}} Gonçalves</b></h6>
+                <span style="margin-right: 15px; margin-left: 5px">Rider:</span>
+                <b>{{purchase.riderName !== null ? purchase.riderName : '-'}}</b></h6>
 
             <div class="table" style="min-height: 200px; margin-top: 5%">
                 <table class="table">
@@ -75,23 +93,23 @@ export class NgbModalRiderReview {
                     </th>
                     </thead>
                     <tbody>
-                    <tr>
+                    <tr *ngFor="let product of getEach(purchase)">
                         <td>
-                            Hammer
+                            {{product.name}}
                         </td>
                         <td>
-                            5
+                            {{product.quantity}}
                         </td>
                         <td>
-                            5€
+                            {{product.price}}
                         </td>
                         <td>
-                            25€
+                            {{product.price * product.quantity}}€
                         </td>
                     </tr>
                     </tbody>
                 </table>
-                <h6 class="mb-0" style="text-align: right;">Total: <b>25€</b></h6>
+                <h6 class="mb-0" style="text-align: right;">Total: {{getTotal(purchase)}}€<b></b></h6>
             </div>
         </div>
         <div class="modal-footer">
@@ -101,9 +119,7 @@ export class NgbModalRiderReview {
     `
 })
 export class NgbModalOrderDetails {
-    @Input() name;
-    @Input() riderName;
-    @Input() orderDate;
+    @Input() purchase: Purchase;
     motorcycleIcon = faMotorcycle;
     infoIcon = faInfoCircle;
     rate = 0;
@@ -111,29 +127,51 @@ export class NgbModalOrderDetails {
 
     constructor(public activeModal: NgbActiveModal) {
     }
+
+    getEach(purchase: Purchase): Product[] {
+        const products = [];
+        purchase.products.forEach((p) => {
+            const index = products.indexOf(p);
+            if (index !== -1) {
+                products[index].quantity = products[index].quantity + 1;
+            } else {
+                p.quantity = 1;
+                products.push(p);
+            }
+        });
+        return products;
+    }
+
+    getTotal(purchase: Purchase): Number {
+        let total = 0;
+        purchase.products.forEach((p) => {
+            total = total + Number(p.price);
+        });
+        return total;
+    }
 }
 
 @Component({
     selector: 'app-modal-manage-addresses',
     template: `
         <div class="modal-header">
-            <h5 class="modal-title text-center">{{name}}</h5>
-            <button class="btn btn-link  ml-auto">
-                <fa-icon size="lg" (click)="newAddress()" [icon]="plusIcon"></fa-icon>
+            <h5 class="modal-title text-center">Manage Addresses</h5>
+            <button (click)="newAddress()"  class="btn btn-link  ml-auto">
+                <fa-icon size="lg" [icon]="plusIcon"></fa-icon>
             </button>
         </div>
         <div class="modal-body" style="min-width: 500px;">
 
             <div *ngIf="creatingAddress" style="min-height: 200px; margin-top: 5%">
-                <form [formGroup]="newAddressForm">
+                <form [formGroup]="newAddressForm" (ngSubmit)="submitAddress()" *ngIf="newAddressObject">
                     <div class="modal-body"
                          style="display: flex; justify-content: space-around; align-items: center">
 
                         <div class="form-group">
                             <label>Address</label>
                             <input #address type="text"
-                                   [(ngModel)]="address.address"
                                    formControlName="address" class="form-control"
+                                   [(ngModel)]="newAddressObject.address"
                                    [ngClass]="{ 'is-invalid': f.address.errors }"/>
                             <div *ngIf=" !requested && f.address.errors"
                                  class="invalid-feedback">
@@ -143,8 +181,8 @@ export class NgbModalOrderDetails {
                         <div class="form-group">
                             <label>Postal Code</label>
                             <input #postalcode type="text"
-                                   [(ngModel)]="address.postalcode"
                                    formControlName="postalcode" class="form-control"
+                                   [(ngModel)]="newAddressObject.postalCode"
                                    [ngClass]="{ 'is-invalid': f.postalcode.errors}"/>
                             <div *ngIf=" !requested && f.postalcode.errors"
                                  class="invalid-feedback">
@@ -154,8 +192,8 @@ export class NgbModalOrderDetails {
                         <div class="form-group">
                             <label>City</label>
                             <input #city type="text"
-                                   [(ngModel)]="address.city"
                                    formControlName="city" class="form-control"
+                                   [(ngModel)]="newAddressObject.city"
                                    [ngClass]="{ 'is-invalid': f.city.errors}"/>
                             <div *ngIf=" !requested && f.city.errors"
                                  class="invalid-feedback">
@@ -165,8 +203,8 @@ export class NgbModalOrderDetails {
                         <div class="form-group">
                             <label>Country</label>
                             <input #country type="text"
-                                   [(ngModel)]="address.country"
                                    formControlName="country" class="form-control"
+                                   [(ngModel)]="newAddressObject.country"
                                    [ngClass]="{ 'is-invalid': f.country.errors }"/>
                             <div *ngIf=" !requested && f.country.errors"
                                  class="invalid-feedback">
@@ -177,7 +215,9 @@ export class NgbModalOrderDetails {
                         <button [disabled]="requested
       || f.city.errors || f.country.errors || f.address.errors || f.postalcode.errors"
                                 type="submit" rounded="true"
-                                class="btn btn-info"><fa-icon [icon]="plusIcon"></fa-icon></button>
+                                class="btn btn-info">
+                            <fa-icon [icon]="plusIcon"></fa-icon>
+                        </button>
 
                     </div>
                 </form>
@@ -202,27 +242,28 @@ export class NgbModalOrderDetails {
                     </th>
                     </thead>
                     <tbody>
-                    <tr>
+                    <tr *ngFor="let add of addresses">
                         <td>
-                            Rua Quim Jo
+                            {{add.address}}
                         </td>
                         <td>
-                            3657-123
+                            {{add.postalCode}}
                         </td>
                         <td>
-                            Aveiro
+                            {{add.city}}
                         </td>
                         <td>
-                            Portugal
+                            {{add.country}}
                         </td>
                         <td style="width: 25px">
                             <button class="btn btn-link  ml-auto" style="padding: 0">
-                                <fa-icon size="lg" style="color: red" (click)="deleteAddress()" [icon]="deleteIcon"></fa-icon>
+                                <fa-icon size="lg" style="color: red" (click)="deleteAddress(add)" [icon]="deleteIcon"></fa-icon>
                             </button>
                         </td>
                     </tr>
                     </tbody>
                 </table>
+                <h5 style="text-align: center" *ngIf="addresses.length === 0">There are no addresses</h5>
             </div>
         </div>
         <div class="modal-footer">
@@ -231,30 +272,17 @@ export class NgbModalOrderDetails {
         </div>
     `
 })
-export class NgbModalManageAddresses {
-    @Input() name;
+export class NgbModalManageAddresses implements OnInit {
+    @Input() addresses: Address[] = [];
     creatingAddress = false;
     plusIcon = faPlusCircle;
     deleteIcon = faTimesCircle;
     private newAddressForm: FormGroup;
     requested = false;
-    @Input() address: Address = new Address();
+    @Input() newAddressObject: Address = new Address();
 
-    newAddress() {
-        if (!this.creatingAddress) {
-            this.creatingAddress = true;
-        } else {
-            // Clear forms
-            console.log('Olha o novo endereço');
-        }
-
-    }
-
-    deleteAddress() {
-        console.log('Olha a eliminar o endereço');
-    }
-
-    constructor(private formBuilder: FormBuilder, public activeModal: NgbActiveModal) {
+    constructor(private formBuilder: FormBuilder, public activeModal: NgbActiveModal, private addressService: AddressService,
+                private alertService: AlertService) {
         this.newAddressForm = this.formBuilder.group({
             address: ['address', [Validators.required]],
             postalcode: ['postalcode', [Validators.required]],
@@ -263,8 +291,52 @@ export class NgbModalManageAddresses {
         });
     }
 
+    ngOnInit(): void {
+        this.getAddresses();
+    }
+
+    getAddresses() {
+        this.addressService.getAddresses()
+            .subscribe(
+                data => {
+                    this.addresses = data;
+                });
+    }
+
+    newAddress() {
+        if (!this.creatingAddress) {
+            this.creatingAddress = true;
+        } else {
+            this.newAddressObject = new Address();
+        }
+    }
+
+    submitAddress() {
+        this.addressService.createAddress(this.newAddressObject).subscribe(data => {
+            this.alertService.success('Address created!');
+            this.getAddresses();
+            this.requested = false;
+            this.creatingAddress = false;
+            this.newAddressObject = new Address();
+        }, error => {
+            this.requested = false;
+            this.alertService.error('There was an error. Address was not created!');
+        });
+    }
+
+    deleteAddress(add: Address) {
+        this.addressService.delAddress(add).subscribe(data => {
+            this.alertService.success('Address deleted!');
+            this.getAddresses();
+        }, error => {
+            this.alertService.error('There was an error. Address was not deleted!');
+        });
+    }
+
     // convenience getter for easy access to form fields
-    get f(): any { return this.newAddressForm.controls; }
+    get f(): any {
+        return this.newAddressForm.controls;
+    }
 }
 
 @Component({
@@ -276,24 +348,27 @@ export class NgbModalManageAddresses {
 export class ProfileComponent implements OnInit {
     arrowIcon = faArrowDown;
     starIcon = faStar;
-    arrowLeftIcon = faArrowLeft;
-    arrowRightIcon = faArrowRight;
+    purchases: Purchase[] = [];
+    totalItems = 0;
+    driversReviews = 0;
+    totalPages = 0;
+    currentPage = 1;
 
-    constructor(private modalService: NgbModal) {
+    constructor(private modalService: NgbModal, private accountService: AccountService, private purchaseService: PurchaseService,
+                private reviewService: ReviewService) {
+        this.reviewService.configObservable.subscribe(value => {
+            this.getPurchases();
+        });
     }
 
-    openRiderReview() {
+    openRiderReview(purchase: Purchase) {
         const modalRef = this.modalService.open(NgbModalRiderReview, {centered: true});
-        modalRef.componentInstance.name = 'Rider Review';
-        modalRef.componentInstance.riderName = 'João';
-        modalRef.componentInstance.orderDate = '30-05-2021 15:00PM';
+        modalRef.componentInstance.purchase = purchase;
     }
 
-    openOrderDetails() {
+    openOrderDetails(purchase: Purchase) {
         const modalRef = this.modalService.open(NgbModalOrderDetails, {centered: true, scrollable: true});
-        modalRef.componentInstance.name = 'Order Details';
-        modalRef.componentInstance.riderName = 'João';
-        modalRef.componentInstance.orderDate = '30-05-2021 15:00PM';
+        modalRef.componentInstance.purchase = purchase;
     }
 
     openManageAddresses() {
@@ -303,10 +378,38 @@ export class ProfileComponent implements OnInit {
             scrollable: true,
             windowClass: 'my-class'
         });
-        modalRef.componentInstance.name = 'Manage Addresses';
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
+        this.getPurchases();
+    }
+
+    getPage(event) {
+        this.currentPage = event;
+        this.getPurchases();
+    }
+
+    getTotal(purchase: Purchase): Number {
+        let total = 0;
+        purchase.products.forEach((p) => {
+            total = total + Number(p.price);
+        });
+        return total;
+    }
+
+    getAccountService(): AccountService {
+        return this.accountService;
+    }
+
+    getPurchases() {
+        this.purchaseService.getPurchases(this.currentPage - 1)
+            .subscribe(
+                data => {
+                    this.totalItems = data['totalItems'];
+                    this.totalPages = data['totalPages'];
+                    this.purchases = data['orders'];
+                    this.driversReviews = data['reviewsGiven'];
+                });
     }
 
 }

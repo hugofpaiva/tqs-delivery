@@ -14,6 +14,7 @@ import java.util.TreeMap;
 @Entity
 public class Address {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
