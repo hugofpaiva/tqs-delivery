@@ -48,13 +48,14 @@ public class StoreService {
     }
 
     public Map<String, Object> getStatistics() {
-        long allPurchases = purchaseRepository.count();
+        Long allPurchases = purchaseRepository.count();
         Purchase first = purchaseRepository.findTopByOrderByDate().orElse(null);
-        Double avgPerWeek = null;
+        Double avgPerWeek = 0.0;
         if (first != null) {
             Date f = first.getDate();
-            double weeksUntilNow = getNoWeeksUntilNow(f);
-            avgPerWeek = allPurchases / weeksUntilNow;
+            int weeksUntilNow = getNoWeeksUntilNow(f).intValue();
+            if (weeksUntilNow < 1){weeksUntilNow = 1;}
+            avgPerWeek = allPurchases.doubleValue() / weeksUntilNow;
         }
 
         Map<String, Object> response = new HashMap<>();
@@ -67,7 +68,7 @@ public class StoreService {
     }
 
     /* --- helper --- */
-    public double getNoWeeksUntilNow(Date from) {
+    public Double getNoWeeksUntilNow(Date from) {
         long diffInMillies = Math.abs(from.getTime() - new Date().getTime());
         return diffInMillies / (double) TimeUnit.DAYS.toMillis(1) / 7.0;
     }

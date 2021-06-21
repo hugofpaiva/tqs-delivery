@@ -222,7 +222,7 @@ public class ProfilePage {
 
         addressesTrs.get(0).findElement(By.xpath(".//td[5]/button")).click();
 
-        this.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+        this.driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
 
         table = this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[2]/div/table/tbody"));
 
@@ -231,6 +231,8 @@ public class ProfilePage {
         if (addressesTrs.size() > 0){
             addressesTrs.get(0).findElement(By.xpath(".//td[5]/button")).click();
         }
+
+        this.driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
 
         this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[3]/button")).click();
 

@@ -1,4 +1,4 @@
-<div style="margin: 0; z-index: 101" *ngFor="let alert of alerts" class="{{cssClass(alert)}}">
+<div style="position: sticky; top: 0; margin: 0; z-index: 101" *ngFor="let alert of alerts" class="{{cssClass(alert)}}">
   <a class="close" style="cursor: pointer" (click)="removeAlert(alert)">&times;</a>
   <span [innerHTML]="alert.message"></span>
 </div>

@@ -30,5 +30,5 @@ jobs:
     - name: Start Generic Service on Docker
       run: docker-compose up -d generic 
     - name: Verify and send code to SonarQube server and wait for quality gate for Specific Service
-      run: mvn -B clean verify sonar:sonar -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }} 
+      run: mvn -B clean verify sonar:sonar -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }} -Dsonar.qualitygate.wait=true
       working-directory: ./projSpecificService
