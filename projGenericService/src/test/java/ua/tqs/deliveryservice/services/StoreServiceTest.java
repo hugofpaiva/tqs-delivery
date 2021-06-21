@@ -14,7 +14,11 @@ import ua.tqs.deliveryservice.repository.ManagerRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -171,6 +175,20 @@ public class StoreServiceTest {
         assertThat(found.get("totalPurchases")).isEqualTo(2L);
         assertThat(found.get("avgPurchasesPerWeek")).isNotNull();
         assertThat(found.get("totalStores")).isEqualTo(1L);
+    }
+
+    /* ----------------------------- *
+     * AUXILIARY METHODS TESTS       *
+     * ----------------------------- *
+     */
+
+    @Test
+    public void givenDateTwoWeekAgo_whenGetNoWeeksUntilNow_thenReturn2() {
+        Instant instant = Instant.now();  // Current moment in UTC.
+        ZonedDateTime zdtNow = instant.atZone(ZoneId.of("Africa/Tunis"));
+        Date oneWeekAgo = Date.from(zdtNow.minusWeeks(2).toInstant());
+        Double timePassed = storeService.getNoWeeksUntilNow(oneWeekAgo);
+        assertThat(timePassed.intValue()).isEqualTo(2);
     }
 
 }
