@@ -443,7 +443,7 @@ class RiderRestControllerMockMvcTest {
         headers.set("authorization", "Bearer " + "example_token");
 
         when(riderService.getRatingStatistics("Bearer example_token")).thenThrow(InvalidLoginException.class);
-        mvc.perform(get("/rider/reviews")
+        mvc.perform(get("/rider/reviews/stats")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
@@ -466,7 +466,7 @@ class RiderRestControllerMockMvcTest {
         when(riderService.getRatingStatistics("Bearer example_token")).thenReturn(expected);
 
 
-        mvc.perform(get("/rider/reviews")
+        mvc.perform(get("/rider/reviews/stats")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -491,7 +491,7 @@ class RiderRestControllerMockMvcTest {
         when(riderService.getRatingStatistics("Bearer example_token")).thenReturn(expected);
 
 
-        mvc.perform(get("/rider/reviews")
+        mvc.perform(get("/rider/reviews/stats")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

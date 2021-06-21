@@ -7,6 +7,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.BrowserWebDriverContainer;
@@ -26,10 +27,15 @@ import static org.hamcrest.Matchers.is;
 // SpringBootTest to run the REST API
 @Testcontainers
 @ExtendWith({ScreenshotOnFailureExtension.class})
+@DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class AuthenticationTest {
 
     private String webApplicationBaseUrl = "172.17.0.1";
+
+    private Rider rider;
+
+    private Manager manager;
 
     @Container
     public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
@@ -60,10 +66,10 @@ public class AuthenticationTest {
             this.webApplicationBaseUrl = "host.docker.internal";
         }
 
-        Rider rider = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
+        rider = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
         personRepository.saveAndFlush(rider);
 
-        Manager manager = new Manager("Joana", bcryptEncoder.encode("difficult-pass"), "joana@email.com");
+        manager = new Manager("Joana", bcryptEncoder.encode("difficult-pass"), "joana@email.com");
         personRepository.saveAndFlush(manager);
     }
 
@@ -84,7 +90,7 @@ public class AuthenticationTest {
 
         // Check if loaded page is the Rider one
         assertThat(loginPage.login("joao@email.com", "difficult-pass"), is("User profile"));
-        UserInfoPage userInfoPage = new UserInfoPage(driver);
+        UserInfoPage userInfoPage = new UserInfoPage(driver, this.webApplicationBaseUrl, rider.getName());
         userInfoPage.logoutRider();
     }
 
@@ -95,7 +101,7 @@ public class AuthenticationTest {
 
         // Check if loaded page is the Manager one
         assertThat(loginPage.login("joana@email.com", "difficult-pass"), is("Stores Info"));
-        StoresInfoPage storesInfoPage = new StoresInfoPage(driver);
+        StoresInfoPage storesInfoPage = new StoresInfoPage(driver, this.webApplicationBaseUrl, this.manager.getName());
         storesInfoPage.logoutManager();
     }
 
@@ -108,7 +114,7 @@ public class AuthenticationTest {
 
         // Check if loaded page is the Rider one
         assertThat(loginPage.login("TesteEmail@email.com", "teste123"), is("User profile"));
-        UserInfoPage userInfoPage = new UserInfoPage(driver);
+        UserInfoPage userInfoPage = new UserInfoPage(driver, this.webApplicationBaseUrl, "TesteName");
         userInfoPage.logoutRider();
     }
 }
