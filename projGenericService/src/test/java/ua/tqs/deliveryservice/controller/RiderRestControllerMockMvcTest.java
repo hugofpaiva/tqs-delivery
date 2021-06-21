@@ -14,6 +14,7 @@ import ua.tqs.deliveryservice.configuration.JwtRequestFilter;
 import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
 import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
+import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.services.PurchaseService;
@@ -501,4 +502,105 @@ class RiderRestControllerMockMvcTest {
         verify(riderService, times(1)).getRatingStatistics(any());
 
     }
+
+
+
+
+    /* -------------------------------------- *
+     * GET NEW PURCHASE FOR RIDER WITH LOC    *
+     * -------------------------------------- *
+     */
+
+    @Test
+    public void testGetNewPurchaseWithLocButNoAuthorization_thenUnauthorized() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        when(purchaseService.getNewPurchaseLoc(eq("Bearer example_token"), any(), any())).thenThrow(InvalidLoginException.class);
+        mvc.perform(get("/rider/order/new?latitude=30.2312&longitude=50.234")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+        ;
+
+        verify(purchaseService, times(1)).getNewPurchaseLoc(any(), any(), any());
+    }
+
+    @Test
+    public void givenRiderWithPurchase_whenGetNewPurchaseWithLoc_thenForbidden() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        when(purchaseService.getNewPurchaseLoc(eq("Bearer example_token"), any(), any())).thenThrow(ForbiddenRequestException.class);
+        mvc.perform(get("/rider/order/new?latitude=30.2312&longitude=50.234")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+        ;
+
+        verify(purchaseService, times(1)).getNewPurchaseLoc(any(), any(), any());
+    }
+
+    @Test
+    public void givenRiderWithPurchase_whenGetNewPurchaseWithInvalidLoc_thenBadRequest() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        when(purchaseService.getNewPurchaseLoc(eq("Bearer example_token"), any(), any())).thenThrow(InvalidValueException.class);
+        mvc.perform(get("/rider/order/new?latitude=30.2312&longitude=50.234")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+        ;
+
+        verify(purchaseService, times(1)).getNewPurchaseLoc(any(), any(), any());
+    }
+
+
+    @Test
+    public void givenNoMorePurchases_whenGetNewPurchaseWithLoc_then404() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        when(purchaseService.getNewPurchaseLoc(eq("Bearer example_token"), any(), any())).thenThrow(ResourceNotFoundException.class);
+        mvc.perform(get("/rider/order/new?latitude=10.2312&longitude=50.234")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+        ;
+        verify(purchaseService, times(1)).getNewPurchaseLoc(any(), any(), any());
+    }
+
+    @Test
+    public void givenRiderWithoutPurchase_whenGetNewPurchaseWithLoc_thenGetPurchase() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
+
+        Address addr_store_close = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V71", addr_store_close, 1.0, 1.0);
+
+        Address addr_close = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase purchase = new Purchase(addr_close, rider, store_close, "Miguel");
+
+        when(purchaseService.getNewPurchaseLoc(eq("Bearer example_token"), eq(0.2312), eq(0.234))).thenReturn(purchase);
+
+        mvc.perform(get("/rider/order/new?latitude=0.2312&longitude=0.234")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("data.orderId", is(((Long) purchase.getId()).intValue())))
+                .andExpect(jsonPath("data.clientName", is(purchase.getClientName())))
+                .andExpect(jsonPath("data.status", is("ACCEPTED")))
+        ;
+
+        verify(purchaseService, times(1)).getNewPurchaseLoc(any(), eq(0.2312), eq(0.234));
+    }
+
 }

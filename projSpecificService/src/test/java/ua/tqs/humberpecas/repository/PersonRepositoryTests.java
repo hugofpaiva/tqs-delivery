@@ -12,8 +12,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.humberpecas.model.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,9 +58,7 @@ public class PersonRepositoryTests {
 
     /* -- helper -- */
     private Person createAndSavePerson(int i) {
-        ShoppingCart sc = new ShoppingCart();
-        Person p = new Person("name" + i, "pwd12345" + i, "email" + i + "@email.com", sc);
-        entityManager.persist(sc);
+        Person p = new Person("name" + i, "pwd12345" + i, "email" + i + "@email.com");
         entityManager.persistAndFlush(p);
         return p;
     }

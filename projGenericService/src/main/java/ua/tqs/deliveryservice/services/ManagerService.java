@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import ua.tqs.deliveryservice.model.Purchase;
 import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
-import ua.tqs.deliveryservice.repository.ManagerRepository;
 import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.RiderRepository;
 
@@ -23,9 +22,6 @@ public class ManagerService {
 
     @Autowired
     private RiderRepository riderRepository;
-
-    @Autowired
-    private JwtUserDetailsService jwtUserDetailsService;
 
     @Autowired
     private PurchaseRepository purchaseRepository;

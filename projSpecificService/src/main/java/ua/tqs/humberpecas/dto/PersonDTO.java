@@ -1,9 +1,6 @@
 package ua.tqs.humberpecas.dto;
 
-
-
 import lombok.Data;
-import ua.tqs.humberpecas.dto.AddressDTO;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;

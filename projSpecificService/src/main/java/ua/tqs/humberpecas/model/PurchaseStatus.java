@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum PurchaseStatus {
 
-    PENDENT("pendent"),
-    ACCEPTED("accepted"),
-    PICKED_UP("picked_up"),
-    DELIVERED("deliverd");
+    PENDENT("PENDENT"),
+    ACCEPTED("ACCEPTED"),
+    PICKED_UP("PICKED_UP"),
+    DELIVERED("DELIVERED");
 
     private String status;
 

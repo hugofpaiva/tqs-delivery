@@ -1,8 +1,8 @@
 package ua.tqs.humberpecas.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +13,6 @@ public class PurchaseDTO {
 
     private long personId;
 
-    @NotBlank(message = "Date is mandatory")
     private Date date;
 
     @NotNull(message = "Address is mandatory")
@@ -22,10 +21,8 @@ public class PurchaseDTO {
     @NotNull(message = "List of Products is mandatory")
     private List<Long> productsId;
 
-    public PurchaseDTO( Date date, Long addressId, List<Long> productsId) {
-
+    public PurchaseDTO(Long addressId, List<Long> productsId) {
         this.addressId = addressId;
-        this.date = date;
         this.productsId = productsId;
     }
 

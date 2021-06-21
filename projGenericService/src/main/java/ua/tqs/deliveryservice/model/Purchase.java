@@ -3,6 +3,7 @@ package ua.tqs.deliveryservice.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -17,6 +18,7 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
+    @CreationTimestamp
     private Date date;
 
     @OneToOne
@@ -45,14 +47,6 @@ public class Purchase {
         this.status = Status.PENDENT;
         this.clientName = clientName;
         this.date = new Date(); // just for testing
-    }
-
-    public Purchase(Address address, Date date, Store store, String clientName) {
-        this.address = address;
-        this.store = store;
-        this.status = Status.PENDENT;
-        this.clientName = clientName;
-        this.date = date;
     }
 
     public Purchase(Address address, Rider rider, Store store, String clientName) {

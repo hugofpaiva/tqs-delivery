@@ -28,6 +28,4 @@ public class HumberPersonController {
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
-
-
 }
