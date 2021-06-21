@@ -30,8 +30,6 @@ import java.util.List;
 @Log4j2
 public class JwtUserDetailsService implements UserDetailsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtUserDetailsService.class);
-
     @Autowired
     private AuthenticationManager authenticationManager;
 

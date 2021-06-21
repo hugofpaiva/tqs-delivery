@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 // Disables Security
 @WebMvcTest(value = ManagerRestController.class, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfig.class)})
 @AutoConfigureMockMvc(addFilters = false)
-public class ManagerRestControllerMockMvcTest {
+class ManagerRestControllerMockMvcTest {
     @Autowired
     private MockMvc mvc;
 
@@ -56,7 +56,7 @@ public class ManagerRestControllerMockMvcTest {
 
 
     @Test
-    public void testGetStoresWhenInvalidPageNo_thenBadRequest() throws Exception {
+    void testGetStoresWhenInvalidPageNo_thenBadRequest() throws Exception {
         mvc.perform(get("/manager/stores")
                 .param("pageNo", String.valueOf(-1))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -66,7 +66,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetStoresWhenInvalidPageSize_thenBadRequest() throws Exception {
+    void testGetStoresWhenInvalidPageSize_thenBadRequest() throws Exception {
         mvc.perform(get("/manager/stores")
                 .param("pageSize", String.valueOf(-1))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -76,7 +76,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetStores_thenStatus200() throws Exception {
+    void testGetStores_thenStatus200() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -119,7 +119,7 @@ public class ManagerRestControllerMockMvcTest {
 
 
     @Test
-    public void testGetStoresPageNoAndLimitedPageSize_thenLimitedResults() throws Exception {
+    void testGetStoresPageNoAndLimitedPageSize_thenLimitedResults() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -159,7 +159,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetStorePageNoWithoutResults_thenNoResults() throws Exception {
+    void testGetStorePageNoWithoutResults_thenNoResults() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -195,7 +195,7 @@ public class ManagerRestControllerMockMvcTest {
 
 
     @Test
-    public void testGetStatisticsWithoutAnyStore_thenNoResults() throws Exception {
+    void testGetStatisticsWithoutAnyStore_thenNoResults() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -220,7 +220,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetStatisticsWithStores_thenResults() throws Exception {
+    void testGetStatisticsWithStores_thenResults() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -249,7 +249,7 @@ public class ManagerRestControllerMockMvcTest {
     // --------------------------------------------
 
     @Test
-    public void testGetAllRidersInformationInvalidPageNo_thenBadRequest() throws Exception {
+    void testGetAllRidersInformationInvalidPageNo_thenBadRequest() throws Exception {
         mvc.perform(get("/manager/riders/all")
                 .header("Authorization", "Bearer " + "bad_token")
                 .param("pageNo", String.valueOf(-1))
@@ -260,7 +260,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetAllRidersInformationInvalidPageSize_thenBadRequest() throws Exception {
+    void testGetAllRidersInformationInvalidPageSize_thenBadRequest() throws Exception {
         mvc.perform(get("/manager/riders/all")
                 .header("Authorization", "Bearer " + "bad_token")
                 .param("pageSize", String.valueOf(-1))
@@ -271,7 +271,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetAllRidersInformationEverythingValid_thenOk() throws Exception {
+    void testGetAllRidersInformationEverythingValid_thenOk() throws Exception {
         Address addr1 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr2 = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
 
@@ -319,7 +319,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetAllRidersInformationPageWithoutResults_thenOk() throws Exception {
+    void testGetAllRidersInformationPageWithoutResults_thenOk() throws Exception {
         Map<String, Object> response = new HashMap<>();
         response.put("riders", new ArrayList<>());
         response.put("currentPage", 0);
@@ -347,7 +347,7 @@ public class ManagerRestControllerMockMvcTest {
      */
 
     @Test
-    public void getRidersStatsWhenNoDeliveredPurchases_thenNoResults() throws Exception {
+    void getRidersStatsWhenNoDeliveredPurchases_thenNoResults() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -373,7 +373,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void getRidersStatsWithDeliveredPurchases_thenResults() throws Exception {
+    void getRidersStatsWithDeliveredPurchases_thenResults() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -403,7 +403,7 @@ public class ManagerRestControllerMockMvcTest {
      */
 
     @Test
-    public void testGetTopDeliveredCities_thenReturn() throws Exception {
+    void testGetTopDeliveredCities_thenReturn() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -435,7 +435,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetTopDeliveredCities_whenNoPurchases_thenReturn() throws Exception {
+    void testGetTopDeliveredCities_whenNoPurchases_thenReturn() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");
@@ -456,7 +456,7 @@ public class ManagerRestControllerMockMvcTest {
     }
 
     @Test
-    public void testGetTopDeliveredCities_whenThereAreLessThan5Cities_thenReturn() throws Exception {
+    void testGetTopDeliveredCities_whenThereAreLessThan5Cities_thenReturn() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + "example_token");

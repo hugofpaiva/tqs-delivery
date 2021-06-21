@@ -39,7 +39,7 @@ public class PurchaseService {
     @Autowired
     private AddressRepository addressRepository;
 
-    public Purchase reviewRiderFromSpecificOrder(String storeToken, Long order_id, int review)
+    public Purchase reviewRiderFromSpecificOrder(String storeToken, Long orderId, int review)
             throws InvalidLoginException, ResourceNotFoundException, InvalidValueException {
         // The store token that was passed did not match any in the db. UNAUTHORIZED
         Store store = storeRepository.findByToken(storeToken).orElseThrow(() -> {
@@ -48,7 +48,7 @@ public class PurchaseService {
         });
 
         // The order_id that was passed did not match any in the db. NOT_FOUND
-        Purchase purchase = purchaseRepository.findById(order_id).orElseThrow(() -> {
+        Purchase purchase = purchaseRepository.findById(orderId).orElseThrow(() -> {
             log.error("PURCHASE SERVICE: Order not found, when reviewing rider");
             return new ResourceNotFoundException("Order not found.");
         });
@@ -63,12 +63,12 @@ public class PurchaseService {
         if (purchase.getStatus() != Status.DELIVERED)
             throw new InvalidValueException("Invalid, purchase must be delivered first.");
 
-        long store_id_of_where_purchase_was_supposedly_made = purchase.getStore().getId();
-        long store_id_associated_to_token_passed = store.getId();
+        long storeIdOfWherePurchaseWasSupposedlyMade = purchase.getStore().getId();
+        long storeIdAssociatedToTokenPassed = store.getId();
 
         // The token passed belonged to a store where this purchase had not been made,
         // because this purchase_id was not associated with the store in possession of the passed token. BAD_REQUEST
-        if (store_id_of_where_purchase_was_supposedly_made != store_id_associated_to_token_passed) {
+        if (storeIdOfWherePurchaseWasSupposedlyMade != storeIdAssociatedToTokenPassed) {
             log.error("PURCHASE SERVICE: Invalid token for purchase ID, when reviewing rider");
             throw new InvalidValueException("Token passed belonged to a store where this purchase had not been made.");
         }

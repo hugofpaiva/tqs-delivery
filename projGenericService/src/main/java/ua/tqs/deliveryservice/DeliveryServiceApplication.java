@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -10,8 +11,6 @@ import org.springframework.stereotype.Component;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.*;
 
-import java.util.Date;
-
 @SpringBootApplication
 public class DeliveryServiceApplication {
 
@@ -21,6 +20,7 @@ public class DeliveryServiceApplication {
 }
 
 @Profile("!test && !CI")
+@Log4j2
 @Component
 class DBLoaderProd implements CommandLineRunner {
 
@@ -44,7 +44,7 @@ class DBLoaderProd implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		System.out.println("Populating database");
+		log.info("Populating database");
 
 		Rider rider1 = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
 		riderRep.saveAndFlush(rider1);
@@ -99,6 +99,7 @@ class DBLoaderProd implements CommandLineRunner {
 }
 
 @Profile("CI")
+@Log4j2
 @Component
 class DBLoaderCI implements CommandLineRunner {
 
@@ -119,7 +120,7 @@ class DBLoaderCI implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		System.out.println("Populating database");
+		log.info("Populating database");
 
 		Rider rider1 = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
 		riderRep.saveAndFlush(rider1);
@@ -149,10 +150,10 @@ class DBLoaderCI implements CommandLineRunner {
 		storeRep.saveAndFlush(store1);
 
 
-		Purchase purchase_no_rider = new Purchase(addr4, store1, "client22");
-		Purchase purchase_no_rider2 = new Purchase(addr5, store1, "client222");
-		purchaseRep.saveAndFlush(purchase_no_rider);
-		purchaseRep.saveAndFlush(purchase_no_rider2);
+		Purchase purchaseNoRider = new Purchase(addr4, store1, "client22");
+		Purchase purchaseNoRider2 = new Purchase(addr5, store1, "client222");
+		purchaseRep.saveAndFlush(purchaseNoRider);
+		purchaseRep.saveAndFlush(purchaseNoRider2);
 
 		Purchase purchase1 = new Purchase(addr1, rider1, store1, "client1");
 		purchase1.setStatus(Status.DELIVERED);

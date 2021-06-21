@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class RiderRepositoryTests {
+class RiderRepositoryTests {
 
     @Container
-    public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
+    static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
             .withPassword("demopw")
             .withDatabaseName("delivery");
@@ -48,18 +48,17 @@ public class RiderRepositoryTests {
      */
 
     @Test
-    public void testWhenCreateRiderAndFindById_thenReturnSameRider() {
+    void testWhenCreateRiderAndFindById_thenReturnSameRider() {
         Rider r = createAndSaveRider(1);
 
         Optional<Rider> res = riderRepository.findById(r.getId());
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(r);
+        assertThat(res).isNotPresent().contains(r);
     }
 
     @Test
-    public void testWhenFindByInvalidId_thenReturnNull() {
+    void testWhenFindByInvalidId_thenReturnNull() {
         Optional<Rider> res = riderRepository.findById(-1L);
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
 
@@ -69,18 +68,17 @@ public class RiderRepositoryTests {
      */
 
     @Test
-    public void testWhenCreateRiderAndFindByEmail_thenReturnSameRider() {
+    void testWhenCreateRiderAndFindByEmail_thenReturnSameRider() {
         Rider r = createAndSaveRider(1);
 
         Optional<Rider> res = riderRepository.findByEmail(r.getEmail());
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(r);
+        assertThat(res).isNotPresent().contains(r);
     }
 
     @Test
-    public void testWhenFindByInvalidEmail_thenReturnEmpty() {
+    void testWhenFindByInvalidEmail_thenReturnEmpty() {
         Optional<Rider> res = riderRepository.findByEmail("invalid");
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     /* ------------------------------------------------- *
@@ -89,7 +87,7 @@ public class RiderRepositoryTests {
      */
 
     @Test
-    public void testWhenCreateRidersAndFindByAll_thenReturnSameRiders() {
+    void testWhenCreateRidersAndFindByAll_thenReturnSameRiders() {
         Rider r1 = createAndSaveRider(1);
         Rider r2 = createAndSaveRider(2);
 
@@ -103,10 +101,9 @@ public class RiderRepositoryTests {
     }
 
     @Test
-    public void testGivenNoRiders_whenFindAll_thenReturnEmpty() {
+    void testGivenNoRiders_whenFindAll_thenReturnEmpty() {
         List<Rider> all = riderRepository.findAll();
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(0);
+        assertThat(all).isNotNull().isEmpty();
     }
 
 
@@ -116,13 +113,13 @@ public class RiderRepositoryTests {
      */
 
     @Test
-    public void testWhenGetSumReviewsAndQuantity_givenNoRiders_thenReturnNull() {
+    void testWhenGetSumReviewsAndQuantity_givenNoRiders_thenReturnNull() {
         Double res = riderRepository.getAverageRiderRating();
         assertThat(res).isNull();
     }
 
     @Test
-    public void testWhenGetSumReviewsAndQuantity_givenRidersWithoutReviews_thenReturnNull() {
+    void testWhenGetSumReviewsAndQuantity_givenRidersWithoutReviews_thenReturnNull() {
         createAndSaveRider(1);
         createAndSaveRider(2);
         Double res = riderRepository.getAverageRiderRating();
@@ -130,18 +127,17 @@ public class RiderRepositoryTests {
     }
 
     @Test
-    public void testWhenGetSumReviewsAndQuantity_givenRidersWithReviewsWith0_thenReturnNull() {
+    void testWhenGetSumReviewsAndQuantity_givenRidersWithReviewsWith0_thenReturnNull() {
         createAndSaveRider(1);
         Rider r = createAndSaveRider(2);
         r.setTotalNumReviews(2);
         r.setReviewsSum(0);
         Double res = riderRepository.getAverageRiderRating();
-        assertThat(res).isNotNull();
-        assertThat(res).isEqualTo(0);
+        assertThat(res).isNotNull().isZero();
     }
 
     @Test
-    public void testWhenGetSumReviewsAndQuantity_givenReviews_thenReturnSums() {
+    void testWhenGetSumReviewsAndQuantity_givenReviews_thenReturnSums() {
         Rider r = createAndSaveRider(1);
         r.setReviewsSum(32);
         r.setTotalNumReviews(10);
@@ -152,8 +148,7 @@ public class RiderRepositoryTests {
 
         Double res = riderRepository.getAverageRiderRating();
 
-        assertThat(res).isNotNull();
-        assertThat(res).isEqualTo((double) (32/10 + 1)/2);
+        assertThat(res).isNotNull().isEqualTo((double) (32/10 + 1)/2);
     }
 
 

@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.is;
 @ExtendWith({ScreenshotOnFailureExtension.class})
 @DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class AuthenticationTest {
+class AuthenticationTest {
 
     private String webApplicationBaseUrl = "172.17.0.1";
 

@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class PurchaseRepositoryTests {
+ class PurchaseRepositoryTests {
 
     @Container
-    public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
+     static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
             .withPassword("demopw")
             .withDatabaseName("delivery");
@@ -53,18 +53,17 @@ public class PurchaseRepositoryTests {
 
 
     @Test
-    public void testWhenCreatePurchaseAndFindById_thenReturnSamePurchase() {
+     void testWhenCreatePurchaseAndFindById_thenReturnSamePurchase() {
         Purchase p = createAndSavePurchase(1, true);
 
         Optional<Purchase> res = purchaseRepository.findById(p.getId());
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(p);
+        assertThat(res).isPresent().contains(p);
     }
 
     @Test
-    public void testWhenFindByInvalidId_thenReturnNull() {
+     void testWhenFindByInvalidId_thenReturnNull() {
         Optional<Purchase> res = purchaseRepository.findById(-1L);
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     /* ------------------------------------------------- *
@@ -73,7 +72,7 @@ public class PurchaseRepositoryTests {
      */
 
     @Test
-    public void testGivenPurchasesAndFindByAll_thenReturnSameRiders() {
+     void testGivenPurchasesAndFindByAll_thenReturnSameRiders() {
         Purchase p1 = createAndSavePurchase(1, true);
         Purchase p2 = createAndSavePurchase(2, false);
 
@@ -87,10 +86,9 @@ public class PurchaseRepositoryTests {
     }
 
     @Test
-    public void testGivenNoPurchases_whenFindAll_thenReturnEmpty() {
+     void testGivenNoPurchases_whenFindAll_thenReturnEmpty() {
         List<Purchase> all = purchaseRepository.findAll();
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(0);
+        assertThat(all).isNotNull().isEmpty();
     }
 
 
@@ -101,29 +99,28 @@ public class PurchaseRepositoryTests {
      */
 
     @Test
-    public void testFindTopByRiderIsNullOrderByDate_whenAllGood() {
+     void testFindTopByRiderIsNullOrderByDate_whenAllGood() {
         createAndSavePurchase(1, true);
         Purchase p2 = createAndSavePurchase(2, false);
         createAndSavePurchase(3, true);
 
         Optional<Purchase> res = purchaseRepository.findTopByRiderIsNullOrderByDate();
 
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(p2);
+        assertThat(res).isNotPresent().contains(p2);
     }
 
     @Test
-    public void testFindTopByRiderIsNullOrderByDate_whenNoResults() {
+     void testFindTopByRiderIsNullOrderByDate_whenNoResults() {
         createAndSavePurchase(1, true);
         createAndSavePurchase(2, true);
         Optional<Purchase> res = purchaseRepository.findTopByRiderIsNullOrderByDate();
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     @Test
-    public void testFindTopByRiderIsNullOrderByDate_whenNoPurchases() {
+     void testFindTopByRiderIsNullOrderByDate_whenNoPurchases() {
         Optional<Purchase> res = purchaseRepository.findTopByRiderIsNullOrderByDate();
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     /* ------------------------------------------------- *
@@ -132,29 +129,28 @@ public class PurchaseRepositoryTests {
      */
 
     @Test
-    public void testFindTopByRiderAndStatusIsNot_whenRiderHasNoSuch_returnEmpty() {
+     void testFindTopByRiderAndStatusIsNot_whenRiderHasNoSuch_returnEmpty() {
         Purchase p1 = createAndSavePurchase(1, true);
 
         Optional<Purchase> res = purchaseRepository.findTopByRiderAndStatusIsNot(p1.getRider(), p1.getStatus());
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     @Test
-    public void testFindTopByRiderAndStatusIsNot_whenRiderHasNoPurchase_returnEmpty() {
+     void testFindTopByRiderAndStatusIsNot_whenRiderHasNoPurchase_returnEmpty() {
         createAndSavePurchase(1, true);
         Rider r = new Rider("new", "iahçdoihsaf", "new.rider@email.com");
         entityManager.persist(r);
         Optional<Purchase> res = purchaseRepository.findTopByRiderAndStatusIsNot(r, Status.PENDENT);
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     @Test
-    public void testFindTopByRiderAndStatusIsNot_whenRiderHasSuchPurchase_returnPurchase() {
+     void testFindTopByRiderAndStatusIsNot_whenRiderHasSuchPurchase_returnPurchase() {
         Purchase p1 = createAndSavePurchase(1, true);
 
         Optional<Purchase> res = purchaseRepository.findTopByRiderAndStatusIsNot(p1.getRider(), Status.PICKED_UP);
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(p1);
+        assertThat(res).isNotPresent().contains(p1);
     }
 
 
@@ -164,19 +160,19 @@ public class PurchaseRepositoryTests {
      */
 
     @Test
-    public void testFindAllByRiderWithPage_whenRiderHasNoPurchase_returnEmpty() {
+     void testFindAllByRiderWithPage_whenRiderHasNoPurchase_returnEmpty() {
         Rider r = new Rider("rider__", "gvhjbknutcfyvgkupwd", "riderrr@email.com");
         entityManager.persist(r);
 
         Pageable paging = PageRequest.of(0, 10, Sort.by("date").descending());
         Page<Purchase> res = purchaseRepository.findAllByRider(r, paging);
         assertThat(res).isNotNull();
-        assertThat(res.getTotalElements()).isEqualTo(0);
-        assertThat(res.getTotalPages()).isEqualTo(0);
+        assertThat(res.getTotalElements()).isZero();
+        assertThat(res.getTotalPages()).isZero();
     }
 
     @Test
-    public void testFindAllByRiderWithPage_whenRiderHasPurchases_returnPage() {
+     void testFindAllByRiderWithPage_whenRiderHasPurchases_returnPage() {
         Purchase p1 = createAndSavePurchase(1, true);
         Purchase p2 = createAndSavePurchase(2, false);
         Purchase p3 = createAndSavePurchase(3, false);
@@ -193,7 +189,7 @@ public class PurchaseRepositoryTests {
     }
 
     @Test
-    public void testFindAllByRiderWithEmptyPage_whenRiderHasPurchases_returnPage() {
+     void testFindAllByRiderWithEmptyPage_whenRiderHasPurchases_returnPage() {
         Purchase p1 = createAndSavePurchase(1, true);
         Purchase p2 = createAndSavePurchase(2, false);
         Purchase p3 = createAndSavePurchase(3, false);
@@ -205,7 +201,7 @@ public class PurchaseRepositoryTests {
         assertThat(res).isNotNull();
         assertThat(res.getTotalElements()).isEqualTo(3);
         assertThat(res.getTotalPages()).isEqualTo(2);
-        assertThat(res).hasSize(0);
+        assertThat(res).isEmpty();
     }
 
 
@@ -215,19 +211,18 @@ public class PurchaseRepositoryTests {
      */
 
     @Test
-    public void testFindTopByOrderByDate_whenNoPurchase_returnEmpty() {
+     void testFindTopByOrderByDate_whenNoPurchase_returnEmpty() {
         Optional<Purchase> res = purchaseRepository.findTopByOrderByDate();
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     @Test
-    public void testFindTopByOrderByDate_whenPurchases_returnFirst() {
+     void testFindTopByOrderByDate_whenPurchases_returnFirst() {
         Purchase p1 = createAndSavePurchase(1, true);
         createAndSavePurchase(2, true);
 
         Optional<Purchase> res = purchaseRepository.findTopByOrderByDate();
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(p1);
+        assertThat(res).isNotPresent().contains(p1);
     }
 
     /* ------------------------------------------------- *
@@ -236,18 +231,18 @@ public class PurchaseRepositoryTests {
      */
 
     @Test
-    public void testCountPurchaseByStore_givenStoreWithoutPurchases_return0() {
+     void testCountPurchaseByStore_givenStoreWithoutPurchases_return0() {
         Address addr_store = new Address("Street One, n. 342", "0000-002", "Aveiro", "Portugal");
         Store s = new Store("storeeee", "the best store .", "hard-pwddfsdf", addr_store);
         entityManager.persist(addr_store);
         entityManager.persist(s);
 
         Long count = purchaseRepository.countPurchaseByStore(s);
-        assertThat(count).isEqualTo(0);
+        assertThat(count).isZero();
     }
 
     @Test
-    public void testCountPurchaseByStore_givenStoreWithPurchases_returnNoOfPurchases() {
+     void testCountPurchaseByStore_givenStoreWithPurchases_returnNoOfPurchases() {
         Purchase p = createAndSavePurchase(1, true);
 
         Long count = purchaseRepository.countPurchaseByStore(p.getStore());
@@ -261,20 +256,20 @@ public class PurchaseRepositoryTests {
      */
 
     @Test
-    public void testCountPurchaseByStatus_givenNoPurchases_return0() {
+     void testCountPurchaseByStatus_givenNoPurchases_return0() {
         Long count = purchaseRepository.countPurchaseByStatusIs(Status.ACCEPTED);
-        assertThat(count).isEqualTo(0);
+        assertThat(count).isZero();
     }
 
     @Test
-    public void testCountPurchaseByStatus_givenStatusWithoutPurchases_return0() {
+     void testCountPurchaseByStatus_givenStatusWithoutPurchases_return0() {
         createAndSavePurchase(1, true);
         Long count = purchaseRepository.countPurchaseByStatusIs(Status.PICKED_UP);
-        assertThat(count).isEqualTo(0);
+        assertThat(count).isZero();
     }
 
     @Test
-    public void testCountPurchaseByStatus_givenStatusWithPurchases_returnNoOfPurchases() {
+     void testCountPurchaseByStatus_givenStatusWithPurchases_returnNoOfPurchases() {
         createAndSavePurchase(1, false);
         createAndSavePurchase(2, true);
         createAndSavePurchase(3, true);
@@ -289,31 +284,29 @@ public class PurchaseRepositoryTests {
      */
 
     @Test
-    public void testWhenGetAverageReview_givenNoPurchase_thenReturnNull() {
+     void testWhenGetAverageReview_givenNoPurchase_thenReturnNull() {
         Long[] res = purchaseRepository.getSumDeliveryTimeAndCountPurchases().get(0);
 
-        assertThat(res).isNotNull();
-        assertThat(res.length).isEqualTo(2);
+        assertThat(res).isNotNull().hasSize(2);
         assertThat(res[0]).isNull();
-        assertThat(res[1]).isEqualTo(0);
+        assertThat(res[1]).isZero();
 
     }
 
     @Test
-    public void testWhenGetAverageReview_givenPurchasesNotDelievered_thenReturnNull() {
+     void testWhenGetAverageReview_givenPurchasesNotDelievered_thenReturnNull() {
         createAndSavePurchase(1, true);
         createAndSavePurchase(2, true);
 
         Long[] res = purchaseRepository.getSumDeliveryTimeAndCountPurchases().get(0);
 
-        assertThat(res).isNotNull();
-        assertThat(res.length).isEqualTo(2);
+        assertThat(res).isNotNull().hasSize(2);
         assertThat(res[0]).isNull();
-        assertThat(res[1]).isEqualTo(0);
+        assertThat(res[1]).isZero();
     }
 
     @Test
-    public void testWhenGetSumReviewsAndQuantity_givenReviews_thenReturnSums() {
+     void testWhenGetSumReviewsAndQuantity_givenReviews_thenReturnSums() {
         Purchase p1 = createAndSavePurchase(1, true);
         p1.setStatus(Status.DELIVERED);
         p1.setDeliveryTime(30L);
@@ -326,8 +319,7 @@ public class PurchaseRepositoryTests {
 
         Long[] res = purchaseRepository.getSumDeliveryTimeAndCountPurchases().get(0);
 
-        assertThat(res).isNotNull();
-        assertThat(res.length).isEqualTo(2);
+        assertThat(res).isNotNull().hasSize(2);
         assertThat(res[0]).isEqualTo(45L);
         assertThat(res[1]).isEqualTo(2);
     }
@@ -338,15 +330,14 @@ public class PurchaseRepositoryTests {
      */
 
     @Test
-    public void testGetTop5Cities_whenNoPurchases_thenReturn() {
+     void testGetTop5Cities_whenNoPurchases_thenReturn() {
         List<Object[]> res = purchaseRepository.getTopFiveCitiesOfPurchases();
 
-        assertThat(res).isNotNull();
-        assertThat(res.size()).isEqualTo(0);
+        assertThat(res).isNotNull().isEmpty();
     }
 
     @Test
-    public void testGetTop5Cities_when5DifferentCitiesDontExistInPurchases_thenReturn() {
+     void testGetTop5Cities_when5DifferentCitiesDontExistInPurchases_thenReturn() {
         Purchase p1 = createAndSavePurchaseForTop5Cities(1, true);
         Purchase p2 = createAndSavePurchaseForTop5Cities(2, true);
 
@@ -362,7 +353,7 @@ public class PurchaseRepositoryTests {
     }
 
     @Test
-    public void testGetTop5Cities_when5DifferentCities_thenReturn() {
+     void testGetTop5Cities_when5DifferentCities_thenReturn() {
         Purchase p1 = createAndSavePurchaseForTop5Cities(1, true);
         Purchase p2 = createAndSavePurchaseForTop5Cities(2, true);
         Purchase p3 = createAndSavePurchaseForTop5Cities(3, true);
