@@ -2,6 +2,7 @@ import 'package:delivery_rider_app/models/address.dart';
 import 'package:delivery_rider_app/models/order.dart';
 import 'package:delivery_rider_app/models/store.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 import 'dart:convert';
 
 class GenericService {
