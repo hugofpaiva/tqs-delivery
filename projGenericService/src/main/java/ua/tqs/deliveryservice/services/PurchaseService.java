@@ -71,7 +71,7 @@ public class PurchaseService {
         if (store_id_of_where_purchase_was_supposedly_made != store_id_associated_to_token_passed)
             throw new InvalidValueException("Token passed belonged to a store where this purchase had not been made.");
 
-   
+
         purchase.setRiderReview(review);
         purchaseRepository.saveAndFlush(purchase);
         return purchase;
