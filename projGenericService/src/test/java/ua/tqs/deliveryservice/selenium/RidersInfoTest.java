@@ -18,12 +18,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.deliveryservice.model.*;
-import ua.tqs.deliveryservice.repository.AddressRepository;
-import ua.tqs.deliveryservice.repository.PersonRepository;
-import ua.tqs.deliveryservice.repository.PurchaseRepository;
-import ua.tqs.deliveryservice.repository.StoreRepository;
+import ua.tqs.deliveryservice.repository.*;
 import ua.tqs.deliveryservice.selenium.pages.LoginPage;
-import ua.tqs.deliveryservice.selenium.pages.UserInfoPage;
+import ua.tqs.deliveryservice.selenium.pages.RidersInfoPage;
+import ua.tqs.deliveryservice.selenium.pages.StoresInfoPage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +40,9 @@ public class RidersInfoTest {
 
     private RemoteWebDriver driver;
 
-    private List<Purchase> purchaseList;
+    private List<Rider> riderList;
+
+    private Manager manager;
 
     @Container
     public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
@@ -65,6 +65,9 @@ public class RidersInfoTest {
     private PasswordEncoder bcryptEncoder;
 
     @Autowired
+    private RiderRepository riderRepository;
+
+    @Autowired
     private PurchaseRepository purchaseRepository;
 
     @Autowired
@@ -82,16 +85,22 @@ public class RidersInfoTest {
             this.webApplicationBaseUrl = "host.docker.internal";
         }
 
-        this.purchaseList = new ArrayList<>();
+        this.riderList = new ArrayList<>();
+
+        this.driver = this.chromeContainer.getWebDriver();
 
         this.driver = this.chromeContainer.getWebDriver();
 
         Rider rider = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
         personRepository.saveAndFlush(rider);
+        this.riderList.add(rider);
 
-        LoginPage loginPage = new LoginPage(this.driver, this.webApplicationBaseUrl);
-        loginPage.login("joao@email.com", "difficult-pass");
+        Rider rider1 = new Rider("Joana", bcryptEncoder.encode("difficult-pass"), "joana@email.com");
+        personRepository.saveAndFlush(rider1);
+        this.riderList.add(rider1);
 
+        this.manager = new Manager("João", bcryptEncoder.encode("difficult-pass"), "joao1@email.com");
+        personRepository.saveAndFlush(this.manager);
 
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         addressRepository.saveAndFlush(addr);
@@ -105,24 +114,32 @@ public class RidersInfoTest {
         Address addr3 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         addressRepository.saveAndFlush(addr3);
 
+        Address addr4 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        addressRepository.saveAndFlush(addr4);
+
         Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2);
         storeRepository.saveAndFlush(store1);
+
+        Store store2 = new Store("Loja da Manuela", "A melhor loja2.", "eyJhbGciOiJIUzUxMiJ9.eyJleFAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr4);
+        storeRepository.saveAndFlush(store2);
 
         Purchase purchase1 = new Purchase(addr, rider, store1, "client1");
         purchase1.setStatus(Status.DELIVERED);
         purchase1.setRiderReview(4);
+        rider.setTotalNumReviews(1);
+        rider.setReviewsSum(4);
 
         Purchase purchase_no_rider = new Purchase(addr1, store1, "client22");
         Purchase purchase_no_rider2 = new Purchase(addr3, store1, "client222");
 
         purchaseRepository.saveAndFlush(purchase_no_rider);
-        purchaseList.add(purchase_no_rider);
         purchaseRepository.saveAndFlush(purchase_no_rider2);
-        purchaseList.add(purchase_no_rider2);
         purchase1.setDeliveryTime((purchase1.getDate().getTime() + 120000) - purchase1.getDate().getTime());
         purchaseRepository.saveAndFlush(purchase1);
-        purchaseList.add(purchase1);
+        personRepository.saveAndFlush(rider);
 
+        LoginPage loginPage = new LoginPage(this.driver, this.webApplicationBaseUrl);
+        loginPage.login("joao1@email.com", "difficult-pass");
     }
 
     @AfterEach
@@ -138,6 +155,48 @@ public class RidersInfoTest {
 
         personRepository.deleteAll();
         personRepository.flush();
+    }
+
+
+    @Test
+    void testSeeRidersInDb() {
+        StoresInfoPage storesInfoPage = new StoresInfoPage(this.driver, this.webApplicationBaseUrl, this.manager.getName());
+
+        storesInfoPage.goToRidersInfo();
+
+        RidersInfoPage ridersInfoPage = new RidersInfoPage(this.driver, this.webApplicationBaseUrl, this.manager.getName());
+
+        List<Rider> websiteRiders = ridersInfoPage.getRiders();
+
+        List<Rider> reverseView = Lists.reverse(this.riderList);
+
+        for (int i = 0; i < reverseView.size() - 1; i++) {
+            assertThat(reverseView.get(i).getName(), is(websiteRiders.get(i).getName()));
+        }
+
+        assertThat(ridersInfoPage.getOrdersInProgress(), is(2));
+        assertThat(ridersInfoPage.getAverageRatingRiders(), is(4.0));
+        assertThat(ridersInfoPage.getTotalRiders(), is(2));
+        assertThat(ridersInfoPage.getAverageMinutesOfDelivery(), is(2));
+    }
+
+    @Test
+    void testNoRidersInDb() {
+        purchaseRepository.deleteAll();
+        purchaseRepository.flush();
+
+        riderRepository.deleteAll();
+        riderRepository.flush();
+
+        StoresInfoPage storesInfoPage = new StoresInfoPage(this.driver, this.webApplicationBaseUrl, this.manager.getName());
+
+        storesInfoPage.goToRidersInfo();
+
+        RidersInfoPage ridersInfoPage = new RidersInfoPage(this.driver, this.webApplicationBaseUrl, this.manager.getName());
+
+        assertThat(ridersInfoPage.isEmpty(), is(true));
+        assertThat(ridersInfoPage.getTotalRiders(), is(0));
+        assertThat(ridersInfoPage.getOrdersInProgress(), is(0));
     }
 
 

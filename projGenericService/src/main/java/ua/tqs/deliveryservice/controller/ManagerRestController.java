@@ -25,9 +25,6 @@ public class ManagerRestController {
     @Autowired
     private StoreService storeService;
 
-    @Autowired
-    private PurchaseService purchaseService;
-
 
     @GetMapping("riders/all")
     public ResponseEntity<Map<String, Object>> getAllRidersInfo(

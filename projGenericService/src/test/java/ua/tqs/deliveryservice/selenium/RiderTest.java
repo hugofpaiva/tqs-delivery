@@ -1,6 +1,5 @@
 package ua.tqs.deliveryservice.selenium;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -143,7 +142,6 @@ public class RiderTest {
     void testSeeLastOrdersInDb() {
         UserInfoPage userInfoPage = new UserInfoPage(this.driver, this.webApplicationBaseUrl, this.rider.getName());
 
-        List<Purchase> reverseView = Lists.reverse(this.purchaseList);
         List<Purchase> websitePurchases = userInfoPage.getOrders();
 
         assertThat(websitePurchases.get(0).getStore().getName(), is(purchaseList.get(2).getStore().getName()));

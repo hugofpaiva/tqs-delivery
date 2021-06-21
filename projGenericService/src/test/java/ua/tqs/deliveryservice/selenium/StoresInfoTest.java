@@ -1,6 +1,5 @@
 package ua.tqs.deliveryservice.selenium;
 
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,6 @@ import ua.tqs.deliveryservice.repository.PurchaseRepository;
 import ua.tqs.deliveryservice.repository.StoreRepository;
 import ua.tqs.deliveryservice.selenium.pages.LoginPage;
 import ua.tqs.deliveryservice.selenium.pages.StoresInfoPage;
-import ua.tqs.deliveryservice.selenium.pages.UserInfoPage;
 
 import java.util.ArrayList;
 import java.util.List;

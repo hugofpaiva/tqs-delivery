@@ -21,7 +21,6 @@ public class RidersInfoPage {
 
     public RidersInfoPage(WebDriver driver, String baseUrl, String name) {
         this.driver = driver;
-        this.driver.get("http://" + baseUrl + ":4200/");
         this.driver.manage().window().setSize(new Dimension(1792, 1025));
         {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
@@ -47,13 +46,6 @@ public class RidersInfoPage {
         for (WebElement rider : ridersElements) {
             Rider r = new Rider();
             r.setName(rider.findElement(By.xpath(".//th/div/span")).getText());
-            // Using this for total orders & average rating
-            r.setTotalNumReviews(Integer.parseInt(rider.findElement(By.xpath(".//td[1]")).getText()));
-
-            String avg = rider.findElement(By.xpath(".//td[2]")).getText();
-            if (!avg.contains("-")) {
-                r.setReviewsSum(Long.parseLong(rider.findElement(By.xpath(".//td[2]")).getText()));
-            }
             riders.add(r);
         }
 
@@ -111,6 +103,10 @@ public class RidersInfoPage {
         this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
         String avgRatingStr = this.driver.findElement(By.xpath("/html/body/app-root/app-admin-layout/div/app-riders/div[1]/div/div/div/div[3]/div/div/div/div[1]/span")).getText();
+
+        if (avgRatingStr.contains("-")){
+            return null;
+        }
 
         return Double.parseDouble(avgRatingStr.trim());
 

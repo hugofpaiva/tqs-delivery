@@ -7,6 +7,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.BrowserWebDriverContainer;
@@ -26,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 // SpringBootTest to run the REST API
 @Testcontainers
 @ExtendWith({ScreenshotOnFailureExtension.class})
+@DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class AuthenticationTest {
 
@@ -112,7 +114,7 @@ public class AuthenticationTest {
 
         // Check if loaded page is the Rider one
         assertThat(loginPage.login("TesteEmail@email.com", "teste123"), is("User profile"));
-        UserInfoPage userInfoPage = new UserInfoPage(driver, this.webApplicationBaseUrl, rider.getName());
+        UserInfoPage userInfoPage = new UserInfoPage(driver, this.webApplicationBaseUrl, "TesteName");
         userInfoPage.logoutRider();
     }
 }
