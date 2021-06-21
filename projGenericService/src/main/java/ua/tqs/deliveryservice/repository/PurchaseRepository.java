@@ -25,6 +25,8 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     Long countPurchaseByStatusIs(Status status);
     Long countPurchaseByStatusIsNot(Status status); // todo: not tested
 
+    Page<Purchase> findAllByRiderIsNullOrderByDate(Pageable pageable); // todo: not tested
+
 
     @Query("SELECT SUM(p.deliveryTime), COUNT(p) FROM Purchase p WHERE p.status = 'DELIVERED'")
     List<Long[]> getSumDeliveryTimeAndCountPurchases();

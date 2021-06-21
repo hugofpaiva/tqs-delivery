@@ -45,11 +45,11 @@ public class DeliveryServiceImpl implements IDeliveryService {
         ResponseEntity<ServerPurchaseDTO> response = restTemplate.exchange(
                 url.toString(), HttpMethod.POST, new HttpEntity<>(purchase, headers),
                 ServerPurchaseDTO.class);
+        
         try {
-
             return Objects.requireNonNull(response.getBody()).getOrderId();
 
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
 
             log.error("DeliveryServiceImpl: Null serverOrderID ");
             throw new ResourceNotFoundException("Null serverOrderID");
@@ -59,22 +59,18 @@ public class DeliveryServiceImpl implements IDeliveryService {
     }
 
     @Override
-    public Category checkOrderStatus(int orderId) {
-        return null;
-    }
-
-    @Override
     public void reviewRider(Review review) throws ResourceNotFoundException {
 
-        StringBuilder url  = new StringBuilder().append(HOST)
+        StringBuilder url = new StringBuilder().append(HOST)
                 .append("/order/")
-                .append( review.getOrderId())
+                .append(review.getOrderId())
                 .append("/review");
 
-
         ResponseEntity<ServerReviewDTO> response = restTemplate.exchange(
-                url.toString(), HttpMethod.PATCH, new HttpEntity<>(review, headers),
+                url.toString(), HttpMethod.PUT, new HttpEntity<>(review, headers),
                 ServerReviewDTO.class);
+
+        log.info("Generic responded with the status code: " + response.getStatusCode());
 
     }
 

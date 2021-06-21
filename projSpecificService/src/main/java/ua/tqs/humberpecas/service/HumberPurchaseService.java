@@ -1,22 +1,28 @@
 package ua.tqs.humberpecas.service;
 
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
-import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
-import ua.tqs.humberpecas.exception.AccessNotAllowedException;
 import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
+import ua.tqs.humberpecas.model.Person;
+import ua.tqs.humberpecas.model.Purchase;
+import ua.tqs.humberpecas.repository.PersonRepository;
+import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
+import ua.tqs.humberpecas.exception.AccessNotAllowedException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.AddressRepository;
-import ua.tqs.humberpecas.repository.PersonRepository;
 import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -41,21 +47,6 @@ public class HumberPurchaseService {
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
-    public PurchaseStatus checkPurchaseStatus(long purchaseId) throws ResourceNotFoundException {
-
-        // verificar se id é valido
-        // se correto avnçar
-        // se não lançar exeception
-
-        // fazer um pedido a delivery service
-        // verifcar responsta:
-        // se devolver um valor retoronar
-        // se  não lnçar um exeception
-
-        return null;
-
-    }
-
     public Purchase newPurchase(PurchaseDTO purchaseDTO, String userToken){
 
         var person = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(userToken))
@@ -66,7 +57,7 @@ public class HumberPurchaseService {
 
         var address = addressRepository.findById(purchaseDTO.getAddressId())
                 .orElseThrow(()-> {
-                    log.error("HumberPurchaseService: invalid user addrees" );
+                    log.error("HumberPurchaseService: invalid user address" );
                     throw new ResourceNotFoundException("Invalid Address");
                 });
 
@@ -79,7 +70,7 @@ public class HumberPurchaseService {
 
         List<Product> productList = productRepository.findAllById(purchaseDTO.getProductsId());
 
-        if (productList.size() < purchaseDTO.getProductsId().size()){
+        if (productList.size() < new HashSet<>(purchaseDTO.getProductsId()).size()){
 
             List<Long> differences = productList.stream().map(Product::getId).collect(Collectors.toList());
             purchaseDTO.getProductsId().forEach(differences::remove);
@@ -98,14 +89,34 @@ public class HumberPurchaseService {
 
         var purchase = new Purchase(person, address, productList);
 
-
-
         purchase.setServiceOrderId(deliveryService.newOrder(purchaseDeliveryDTO));
 
         return purchaseRepository.save(purchase);
     }
 
 
-    public List<Purchase> getUserPurchases(String userToken) throws ResourceNotFoundException{ return null; }
+    public Map<String, Object> getUserPurchases(Integer pageNo, Integer pageSize, String userToken) throws InvalidLoginException {
+        String email = jwtUserDetailsService.getEmailFromToken(userToken);
 
+        Person person = personRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Person associated with this token"));
+
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("date").descending());
+
+        Page<Purchase> pagedResult = purchaseRepository.findAllByPerson(person, paging);
+
+        List<Purchase> responseList = new ArrayList<>();
+
+        if (pagedResult.hasContent()) {
+            responseList = pagedResult.getContent();
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("orders", responseList);
+        response.put("currentPage", pagedResult.getNumber());
+        response.put("totalItems", pagedResult.getTotalElements());
+        response.put("totalPages", pagedResult.getTotalPages());
+        response.put("reviewsGiven", purchaseRepository.countPurchaseByPersonAndRiderReviewNotNull(person));
+
+        return response;
+    }
 }

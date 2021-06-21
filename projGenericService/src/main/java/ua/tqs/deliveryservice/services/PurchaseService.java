@@ -60,6 +60,10 @@ public class PurchaseService {
             throw new InvalidValueException("Invalid, purchase already had review.");
         }
 
+        // A review cannot be added to a purchase when it is not delivered. BAD_REQUEST
+        if (purchase.getStatus() != Status.DELIVERED)
+            throw new InvalidValueException("Invalid, purchase must be delivered first.");
+
         long store_id_of_where_purchase_was_supposedly_made = purchase.getStore().getId();
         long store_id_associated_to_token_passed = store.getId();
 
@@ -208,17 +212,19 @@ public class PurchaseService {
             return new InvalidValueException(error);
         });
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Address addr;
+        Address addr = new Address();
         try {
-            addr = objectMapper.convertValue(address, Address.class);
+            addr.setAddress(((Map<String, String>) address).get("address"));
+            addr.setCity(((Map<String, String>) address).get("city"));
+            addr.setCountry(((Map<String, String>) address).get("country"));
+            addr.setPostalCode(((Map<String, String>) address).get("postalCode"));
         } catch (Exception ex) {
             log.error("PURCHASE SERVICE: Invalid data, address, when store tried to get new order");
             throw new InvalidValueException(error);
         }
 
         addressRepository.save(addr);
-        Purchase purchase = new Purchase(addr, date, store, (String) personName);
+        Purchase purchase = new Purchase(addr, store, (String) personName);
         purchaseRepository.save(purchase);
 
         log.info("PURCHASE SERVICE: Store successfully retrieved newest order");
@@ -239,4 +245,31 @@ public class PurchaseService {
         return response ;
     }
 
+    public Purchase getNewPurchaseLoc(String token, Double latitude, Double longitude) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
+        String email = jwtUserDetailsService.getEmailFromToken(token);
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
+
+        if (latitude > 90 || latitude < -90 || longitude > 180 || longitude < -180) throw new InvalidValueException("Invalid values for coordinates");
+
+            // verify if Rider has any purchase to deliver
+        if (purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).isPresent()) {
+            throw new ForbiddenRequestException("This rider still has an order to deliver");
+        }
+
+        // get available order for rider
+        Pageable paging = PageRequest.of(0, 15, Sort.by("date").ascending());
+        Page<Purchase> possible = purchaseRepository.findAllByRiderIsNullOrderByDate(paging);
+        Purchase purch = possible.stream().min(Comparator.comparingDouble(purchase -> distance(purchase.getStore(), latitude, longitude))).orElseThrow(() -> new ResourceNotFoundException("There are no more orders available"));
+
+        // accept order
+        purch.setRider(rider);
+        purch.setStatus(Status.ACCEPTED);
+        purchaseRepository.save(purch);
+
+        return purch;
+    }
+
+    public static double distance(Store store, double x2, double y2) {
+        return Math.sqrt((y2 - store.getLongitude()) * (y2 - store.getLongitude()) + (x2 - store.getLatitude()) * (x2 - store.getLatitude()));
+    }
 }

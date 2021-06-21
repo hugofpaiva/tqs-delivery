@@ -10,10 +10,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ua.tqs.deliveryservice.model.Address;
 import ua.tqs.deliveryservice.model.Manager;
-import ua.tqs.deliveryservice.model.Person;
-import ua.tqs.deliveryservice.model.Store;
 
 import java.util.List;
 import java.util.Optional;

@@ -12,8 +12,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.humberpecas.model.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,7 +60,7 @@ public class ProductRepositoryTests {
 
     /* -- helper -- */
     private Product createAndSaveProduct(int i) {
-        Product p = new Product(10.50, "hammer","the best hammer", Category.SCREWDRIVER );
+        Product p = new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", "image_url");
 
         entityManager.persistAndFlush(p);
         return p;

@@ -1,7 +1,5 @@
 package ua.tqs.humberpecas.model;
 
-
-
 import lombok.Data;
 
 import javax.validation.constraints.Max;
@@ -20,7 +18,7 @@ public class Review implements Serializable {
     @NotNull
     @Min(0)
     @Max(5)
-    private int review;
+    private Integer review;
 
 
     public Review(long orderId, int review){

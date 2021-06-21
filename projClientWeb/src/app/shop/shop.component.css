@@ -1,3 +1,23 @@
 .card-body button{
     margin: 5px;
 }
+
+.hide {
+    display: none;
+    position: absolute;
+    top: 65px;
+    bottom:45px;
+    left:0;
+    right: 0;
+}
+
+
+.fix-height:hover + .hide {
+    display: block;
+    z-index: 5;
+}
+
+.img-wrap:hover + .hide {
+    display: block;
+    z-index: 5;
+}
