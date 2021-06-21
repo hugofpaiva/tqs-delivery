@@ -841,6 +841,12 @@ public class PurchaseServiceTest {
                 .getEmailFromToken("exampleToken");
         Mockito.verify(riderRepository, times(1))
                 .findByEmail("email@email.com");
+        Mockito.verify(purchaseRepository, times(0))
+                .findTopByRiderAndStatusIsNot(any(), any());
+        Mockito.verify(purchaseRepository, times(0))
+                .findAllByRiderIsNullOrderByDate(any());
+        Mockito.verify(specificService, times(0)).setRiderName(any(),anyString());
+        Mockito.verify(purchaseRepository, times(0)).save(any());
     }
 
     @Test
@@ -869,6 +875,10 @@ public class PurchaseServiceTest {
                 .findByEmail("email@email.com");
         Mockito.verify(purchaseRepository, times(1))
                 .findTopByRiderAndStatusIsNot(any(), any());
+        Mockito.verify(purchaseRepository, times(0))
+                .findAllByRiderIsNullOrderByDate(any());
+        Mockito.verify(specificService, times(0)).setRiderName(any(),anyString());
+        Mockito.verify(purchaseRepository, times(0)).save(any());
     }
 
     @Test
@@ -900,6 +910,8 @@ public class PurchaseServiceTest {
                 .findTopByRiderAndStatusIsNot(any(), any());
         Mockito.verify(purchaseRepository, times(1))
                 .findAllByRiderIsNullOrderByDate(any());
+        Mockito.verify(specificService, times(0)).setRiderName(any(),anyString());
+        Mockito.verify(purchaseRepository, times(0)).save(any());
     }
 
     @Test
@@ -907,7 +919,7 @@ public class PurchaseServiceTest {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far, 5.0, 5.0);
+        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far,"http://localhost:8081/delivery/",  5.0, 5.0);
 
         Address addr_far = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Purchase p1_far = new Purchase(addr_far, store_far, "Miguel");
@@ -930,6 +942,8 @@ public class PurchaseServiceTest {
                 .getEmailFromToken("exampleToken");
         Mockito.verify(riderRepository, times(1))
                 .findByEmail("email@email.com");
+        Mockito.verify(specificService, times(0)).setRiderName(any(),anyString());
+        Mockito.verify(purchaseRepository, times(0)).save(any());
     }
 
 
@@ -938,10 +952,10 @@ public class PurchaseServiceTest {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far, 5.0, 5.0);
+        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far,"http://localhost:8081/delivery/", 5.0, 5.0);
 
         Address addr_store_close = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_close, 1.0, 1.0);
+        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_close,"http://localhost:8081/delivery/", 1.0, 1.0);
 
         Address addr_far = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Purchase p1_far = new Purchase(addr_far, store_far, "Miguel");
@@ -976,6 +990,107 @@ public class PurchaseServiceTest {
                 .findByEmail("email@email.com");
         Mockito.verify(purchaseRepository, times(1))
                 .findTopByRiderAndStatusIsNot(any(), any());
+        Mockito.verify(specificService, times(1)).setRiderName(any(),anyString());
+        Mockito.verify(purchaseRepository, times(1)).save(any());
     }
+
+    @Test
+    public void testGetNewOrderLocForRider_whenErrorConnection() throws InvalidLoginException, ResourceNotFoundException {
+        // set up ...
+        Rider r1 = new Rider("example", "pwd", "email@email.com");
+        Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far,"http://localhost:8081/delivery/", 5.0, 5.0);
+
+        Address addr_store_close = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_close,"http://localhost:8081/delivery/", 1.0, 1.0);
+
+        Address addr_far = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase p1_far = new Purchase(addr_far, store_far, "Miguel");
+
+        Address addr_close = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase p1_close = new Purchase(addr_close, store_close, "Miguel");
+
+        // the far one was created first; but the second one is the one that should be returned
+        List<Purchase> allPurchases = Arrays.asList(p1_far, p1_close);
+        Page<Purchase> pageRequest = new PageImpl(allPurchases, PageRequest.of(0, 10, Sort.by("date").ascending()), 2);
+
+
+        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
+        Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(r1));
+        Mockito
+                .when(purchaseRepository.findTopByRiderAndStatusIsNot(r1, Status.DELIVERED))
+                .thenReturn(Optional.empty());
+        Mockito
+                .when(purchaseRepository.findAllByRiderIsNullOrderByDate(any()))
+                .thenReturn(pageRequest);
+        doThrow(UnreachableServiceException.class).when(specificService).setRiderName(any(), anyString());
+
+        Assert.assertThrows( UnreachableServiceException.class, () -> {
+            purchaseService.getNewPurchaseLoc("exampleToken", 0.0, 0.0);
+        } );
+        // test ...
+
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getEmailFromToken("exampleToken");
+        Mockito.verify(riderRepository, times(1))
+                .findByEmail("email@email.com");
+        Mockito.verify(purchaseRepository, times(1))
+                .findTopByRiderAndStatusIsNot(any(), any());
+        Mockito.verify(purchaseRepository, times(1))
+                .findAllByRiderIsNullOrderByDate(any());
+        Mockito.verify(specificService, times(1)).setRiderName(any(),anyString());
+        Mockito.verify(purchaseRepository, times(0)).save(any());
+    }
+
+    @Test
+    public void testGetNewOrdeLocForRider_whenSendInvalidData() throws InvalidLoginException, ResourceNotFoundException {
+        // set up ...
+        Rider r1 = new Rider("example", "pwd", "email@email.com");
+        Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far,"http://localhost:8081/delivery/", 5.0, 5.0);
+
+        Address addr_store_close = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
+        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_close,"http://localhost:8081/delivery/", 1.0, 1.0);
+
+        Address addr_far = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase p1_far = new Purchase(addr_far, store_far, "Miguel");
+
+        Address addr_close = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+        Purchase p1_close = new Purchase(addr_close, store_close, "Miguel");
+
+        // the far one was created first; but the second one is the one that should be returned
+        List<Purchase> allPurchases = Arrays.asList(p1_far, p1_close);
+        Page<Purchase> pageRequest = new PageImpl(allPurchases, PageRequest.of(0, 10, Sort.by("date").ascending()), 2);
+
+
+        Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
+        Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(r1));
+        Mockito
+                .when(purchaseRepository.findTopByRiderAndStatusIsNot(r1, Status.DELIVERED))
+                .thenReturn(Optional.empty());
+        Mockito
+                .when(purchaseRepository.findAllByRiderIsNullOrderByDate(any()))
+                .thenReturn(pageRequest);
+
+
+        doThrow(InvalidValueException.class).when(specificService).setRiderName(any(), anyString());
+
+        Assert.assertThrows( InvalidValueException.class, () -> {
+            purchaseService.getNewPurchaseLoc("exampleToken", 0.0, 0.0);
+        } );
+        // test ...
+
+        Mockito.verify(jwtUserDetailsService, times(1))
+                .getEmailFromToken("exampleToken");
+        Mockito.verify(riderRepository, times(1))
+                .findByEmail("email@email.com");
+        Mockito.verify(purchaseRepository, times(1))
+                .findTopByRiderAndStatusIsNot(any(), any());
+        Mockito.verify(purchaseRepository, times(1))
+                .findAllByRiderIsNullOrderByDate(any());
+        Mockito.verify(specificService, times(1)).setRiderName(any(),anyString());
+        Mockito.verify(purchaseRepository, times(0)).save(any());
+    }
+
 
 }

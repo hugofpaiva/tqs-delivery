@@ -214,6 +214,18 @@ public class PurchaseService {
         // accept order
         purch.setRider(rider);
         purch.setStatus(Status.ACCEPTED);
+
+        Store store = purch.getStore();
+
+        System.out.println(store.getStoreUrl());
+
+        StringBuilder url  = new StringBuilder().append(store.getStoreUrl())
+                .append("setRider?serverOrderId=")
+                .append( purch.getId());
+
+        specificService.setRiderName(rider.getName(), url.toString());
+
+
         purchaseRepository.save(purch);
 
         return purch;

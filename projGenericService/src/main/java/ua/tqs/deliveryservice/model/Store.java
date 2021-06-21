@@ -51,13 +51,14 @@ public class Store {
         this.latitude = 0.0;
     }
 
-    public Store(String name, String description, String token, Address address,  double latitude, double longitude) {
+    public Store(String name, String description, String token, Address address, String storeUrl,  double latitude, double longitude) {
         this.name = name;
         this.token = token;
         this.description = description;
         this.address = address;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.storeUrl = storeUrl;
     }
 
     public Store() {}

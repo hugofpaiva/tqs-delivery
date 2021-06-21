@@ -641,7 +641,7 @@ class RiderRestControllerMockMvcTest {
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
 
         Address addr_store_close = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V71", addr_store_close, 1.0, 1.0);
+        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V71", addr_store_close,"http://localhost:8081/delivery/", 1.0, 1.0);
 
         Address addr_close = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Purchase purchase = new Purchase(addr_close, rider, store_close, "Miguel");

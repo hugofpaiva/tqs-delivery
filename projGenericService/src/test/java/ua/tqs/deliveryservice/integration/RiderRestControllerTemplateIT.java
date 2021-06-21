@@ -51,6 +51,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 class RiderRestControllerTemplateIT {
+
     private Rider rider;
     private Address address;
     private Store store;
@@ -105,7 +106,7 @@ class RiderRestControllerTemplateIT {
         Address purchAddres = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
         addressRepository.saveAndFlush(purchAddres);
 
-        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address, "http://localhost:8080/delivery/");
+        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address, "http://localhost:8080/delivery/", 1.0, 1.0);
 
         this.purchase = new Purchase(purchAddres, this.rider, this.store, "Joana");
 
@@ -374,9 +375,10 @@ class RiderRestControllerTemplateIT {
     public void givenRiderHasNoOrder_whenGetNewOrder_thenGetNewOrder() {
         purchaseRepository.delete(this.purchase);
 
+
         Purchase p = new Purchase(address, store, "Joana");
         this.purchase = purchaseRepository.saveAndFlush(p);
-
+        System.out.println(p.getId());
         System.out.println(this.purchase.getId());
 
         HttpHeaders headers = new HttpHeaders();
@@ -441,6 +443,7 @@ class RiderRestControllerTemplateIT {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
 
+        System.out.println(purchase.getId());
 
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "order/status", HttpMethod.PUT, new HttpEntity<Object>(headers),
@@ -465,6 +468,8 @@ class RiderRestControllerTemplateIT {
         this.purchase.setStatus(Status.PICKED_UP);
         purchaseRepository.saveAndFlush(this.purchase);
 
+        System.out.println(purchase.getId());
+
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "order/status", HttpMethod.PUT, new HttpEntity<Object>(headers),
                 Map.class);
@@ -487,6 +492,9 @@ class RiderRestControllerTemplateIT {
      * ----------------------------- *
      */
 
+
+
+
     @Test
     public void givenRiderHasNoAuthorization_whenGetReviewsStatistics_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
@@ -500,6 +508,8 @@ class RiderRestControllerTemplateIT {
     @Test
     public void givenRiderWithoutReviews_whenGetReviewsStatistics_thenReturnStatistics() {
         HttpHeaders headers = new HttpHeaders();
+
+        System.out.println(purchase.getId());
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "reviews", HttpMethod.GET, new HttpEntity<Object>(headers),
@@ -544,11 +554,13 @@ class RiderRestControllerTemplateIT {
                 getBaseUrl() + "order/new?latitude=30.2312&longitude=50.234", HttpMethod.GET, new HttpEntity<Object>(headers),
                 Map.class);
 
+        System.out.println(purchase.getId());
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
     }
     @Test
     public void whenRiderHasCurrentOrder_whenGetNewOrderWithLoc_thenForbidden() {
         HttpHeaders headers = new HttpHeaders();
+        System.out.println(purchase.getId());
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "order/new?latitude=30.2312&longitude=50.234", HttpMethod.GET, new HttpEntity<Object>(headers),
@@ -587,26 +599,26 @@ class RiderRestControllerTemplateIT {
         purchaseRepository.delete(this.purchase);
 
         Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far, 5.0, 5.0);
+        Store store_far = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store_far,"http://localhost:8079/delivery/", 5.0, 5.0);
 
         Address addr_store_close = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V71", addr_store_close, 1.0, 1.0);
+
 
         Address addr_far = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Purchase p1_far = new Purchase(addr_far, store_far, "Miguel");
 
         Address addr_close = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
-        Purchase p1_close = new Purchase(addr_close, store_close, "Miguel");
+        Purchase p1_close = new Purchase(addr_close, store, "Miguel");
 
         addressRepository.save(addr_store_far); addressRepository.save(addr_store_close); addressRepository.save(addr_close); addressRepository.save(addr_far);
-        storeRepository.save(store_close); storeRepository.save(store_far);
+        storeRepository.save(store); storeRepository.save(store_far);
         purchaseRepository.save(p1_far); purchaseRepository.save(p1_close);
 
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "order/new?latitude=2.2312&longitude=0.234", HttpMethod.GET, new HttpEntity<Object>(headers),
+                getBaseUrl() + "order/new?latitude=1.04&longitude=0.234", HttpMethod.GET, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
@@ -622,11 +634,10 @@ class RiderRestControllerTemplateIT {
                 new TypeReference<Map<String, Object>>() {
                 }
         );
-        System.out.println(info);
 
         Assertions.assertThat(info.containsKey("store")).isTrue();
         Assertions.assertThat(((Map<String, Object>)info.get("store")).containsKey("latitude")).isTrue();
-        Assertions.assertThat(((Map<String, Object>)info.get("store")).get("latitude")).isEqualTo(store_close.getLatitude());
+        Assertions.assertThat(((Map<String, Object>)info.get("store")).get("latitude")).isEqualTo(store.getLatitude());
         Assertions.assertThat(info.containsKey("clientAddress")).isTrue();
         Assertions.assertThat(info.containsKey("orderId")).isTrue();
         Assertions.assertThat(info.get("status")).isEqualTo("ACCEPTED");
