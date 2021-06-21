@@ -2,6 +2,7 @@ package ua.tqs.humberpecas.selenium.pages;
 
 import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -173,7 +174,7 @@ public class ProfilePage {
 
         Integer counter = 1;
         for (WebElement star : starsClick) {
-            if (star.getText().equals("☆") && counter == review*2) {
+            if (star.getText().equals("☆") && counter == review * 2) {
                 star.click();
             }
             counter = counter + 1;
@@ -214,7 +215,7 @@ public class ProfilePage {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[2]/div/table/tbody")));
         }
-        this.driver.manage().timeouts().implicitlyWait(2,TimeUnit.SECONDS);
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
         WebElement table = this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[2]/div/table/tbody"));
 
@@ -222,17 +223,22 @@ public class ProfilePage {
 
         addressesTrs.get(0).findElement(By.xpath(".//td[5]/button")).click();
 
-        this.driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
+        this.driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
         table = this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[2]/div/table/tbody"));
 
         addressesTrs = table.findElements(By.xpath("./child::*"));
 
-        if (addressesTrs.size() > 0){
-            addressesTrs.get(0).findElement(By.xpath(".//td[5]/button")).click();
-        }
+        //scrolling
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        WebElement element = addressesTrs.get(0).findElement(By.xpath(".//td[5]/button"));
+        JavascriptExecutor js = ((JavascriptExecutor) driver);
+        js.executeScript("arguments[0].scrollIntoView(true);", element);
+        wait.until(ExpectedConditions.elementToBeClickable(element));
 
-        this.driver.manage().timeouts().implicitlyWait(5,TimeUnit.SECONDS);
+        addressesTrs.get(0).findElement(By.xpath(".//td[5]/button")).click();
+
+        this.driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
         this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[3]/button")).click();
 

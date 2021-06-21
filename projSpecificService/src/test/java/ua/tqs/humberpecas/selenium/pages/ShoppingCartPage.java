@@ -123,11 +123,12 @@ public class ShoppingCartPage {
 
         this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 
-        JavascriptExecutor js = ((JavascriptExecutor) driver);
-
         //scrolling
+        WebDriverWait wait = new WebDriverWait(driver, 5);
         WebElement element = addressesTrs.get(0).findElement(By.xpath(".//td[5]/input"));
+        JavascriptExecutor js = ((JavascriptExecutor) driver);
         js.executeScript("arguments[0].scrollIntoView(true);", element);
+        wait.until(ExpectedConditions.elementToBeClickable(element));
 
         addressesTrs.get(0).findElement(By.xpath(".//td[5]/input")).click();
 
