@@ -51,19 +51,19 @@ public class HumberPurchaseService {
 
         var person = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(userToken))
                 .orElseThrow(()-> {
-                    log.error("HumberPurchaseService: invalid user token" );
+                    log.error("HUMBER PURCHASE SERVICE: invalid user token" );
                     throw new InvalidLoginException("Invalid user token");
                 });
 
         var address = addressRepository.findById(purchaseDTO.getAddressId())
                 .orElseThrow(()-> {
-                    log.error("HumberPurchaseService: invalid user address" );
+                    log.error("HUMBER PURCHASE SERVICE: invalid user address" );
                     throw new ResourceNotFoundException("Invalid Address");
                 });
 
         if (!address.getPerson().getEmail().equals(person.getEmail())){
 
-            log.error("HumberPurchaseService: Address don't belong to user " );
+            log.error("HUMBER PURCHASE SERVICE: Address don't belong to user " );
             throw new AccessNotAllowedException("Invalid Address");
         }
 
@@ -75,7 +75,7 @@ public class HumberPurchaseService {
             List<Long> differences = productList.stream().map(Product::getId).collect(Collectors.toList());
             purchaseDTO.getProductsId().forEach(differences::remove);
 
-            log.error("HumberPurchaseService: Invalid Product Id " + differences);
+            log.error("HUMBER PURCHASE SERVICE: Invalid Product Id " + differences);
             throw new ResourceNotFoundException("Invalid Product");
 
         }
@@ -91,6 +91,7 @@ public class HumberPurchaseService {
 
         purchase.setServiceOrderId(deliveryService.newOrder(purchaseDeliveryDTO));
 
+        log.info("HUMBER PURCHASE SERVICE: Successfully saved new purchase");
         return purchaseRepository.save(purchase);
     }
 
@@ -98,7 +99,10 @@ public class HumberPurchaseService {
     public Map<String, Object> getUserPurchases(Integer pageNo, Integer pageSize, String userToken) throws InvalidLoginException {
         String email = jwtUserDetailsService.getEmailFromToken(userToken);
 
-        Person person = personRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Person associated with this token"));
+        Person person = personRepository.findByEmail(email).orElseThrow(() -> {
+            log.error("HUMBER PURCHASE SERVICE: Invalid person token");
+            return new InvalidLoginException("There is no Person associated with this token");
+        });
 
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("date").descending());
 
@@ -117,6 +121,7 @@ public class HumberPurchaseService {
         response.put("totalPages", pagedResult.getTotalPages());
         response.put("reviewsGiven", purchaseRepository.countPurchaseByPersonAndRiderReviewNotNull(person));
 
+        log.info("HUMBER PURCHASE SERVICE: Successfully retrieved user purchases");
         return response;
     }
 }
