@@ -18,17 +18,25 @@ import ua.tqs.humberpecas.exception.AccessNotAllowedException;
 import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.exception.UnreachableServiceException;
+import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.service.HumberPurchaseService;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
 
 
 @WebMvcTest(value = HumberPurchaseController.class, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfig.class)})
 @AutoConfigureMockMvc(addFilters = false)
 class HumberPurchaseControllerMockMvcTest {
+    private Product parafuso = new Product("Parafuso", 0.50, Category.SCREWS, "xpto",  "image_url");
+    private Product chave = new Product("Chave inglesa", 5.00, Category.SCREWDRIVER, "xpto",  "image_url");
+
+    private Purchase purchase = new Purchase(new Person(), new Address(), Arrays.asList(parafuso, chave));
 
     @Autowired
     private MockMvc mvc;
@@ -52,27 +60,106 @@ class HumberPurchaseControllerMockMvcTest {
 
     }
 
-    /*
+    /* ******************************************
+     *               GET ALL PURCHASES          *
+     * ******************************************
+     */
+
     @Test
-    @DisplayName("User purchase list of invalid user returns HTTP status Not Found")
-    void whenGetInvalidUserPurchases_thenReturnStatus404() throws ResourceNotFoundException {
+    @DisplayName("User purchase list of invalid user returns HTTP UNAUTHORIZED")
+    void testGetAllUserPurchases_whenInvalidToken_thenReturnStatus401() throws ResourceNotFoundException {
 
 
-        when(service.getUserPurchases(this.userToken)).thenThrow(new ResourceNotFoundException("Invalid User!"));
+        when(service.getUserPurchases(0, 9, userToken)).thenThrow(InvalidLoginException.class);
 
         RestAssuredMockMvc.given()
                 .contentType("application/json")
+                .param("pageNo", 0)
+                .param("pageSize", 9)
                 .header("authorization",  userToken)
                 .when()
-                .get("/purchase/getAll?userId=1")
+                .get("/purchase/getAll")
                 .then()
-                .statusCode(404);
+                .statusCode(401);
 
-        verify(service, times(1)).getUserPurchases(userToken);
-
+        verify(service, times(1)).getUserPurchases(0, 9, userToken);
     }
-    */
 
+    @Test
+    @DisplayName("User purchase list everything ok then return 200")
+    void testGetAllUserPurchases_whenEverythingOK_thenReturnStatus200() throws ResourceNotFoundException {
+        Map<String, Object> response = new HashMap<>();
+        response.put("orders", purchase);
+        response.put("currentPage", 0);
+        response.put("totalItems", 1);
+        response.put("totalPages", 1);
+        response.put("reviewsGiven", 0);
+
+        when(service.getUserPurchases(0, 9, userToken)).thenReturn(response);
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .param("pageNo", 0)
+                .param("pageSize", 9)
+                .header("authorization",  userToken)
+                .when()
+                .get("/purchase/getAll")
+                .then()
+                .statusCode(200)
+                .body("orders.products.size()", equalTo(2))
+                .body("orders.products[0].name", equalTo(parafuso.getName()))
+                .body("orders.products[0].category", equalTo(parafuso.getCategory().toString()))
+                .body("orders.products[0].description", equalTo(parafuso.getDescription()))
+                .body("orders.products[0].image_url", equalTo(parafuso.getImage_url()))
+                .body("orders.products[1].name", equalTo(chave.getName()))
+                .body("orders.products[1].category", equalTo(chave.getCategory().toString()))
+                .body("orders.products[1].description", equalTo(chave.getDescription()))
+                .body("orders.products[1].image_url", equalTo(chave.getImage_url()))
+                .body("currentPage", equalTo(0))
+                .body("totalItems", equalTo(1))
+                .body("totalPages", equalTo(1));
+
+        verify(service, times(1)).getUserPurchases(0, 9, userToken);
+    }
+
+    @Test
+    @DisplayName("User purchase list with invalid pageNo returns HTTP BAD REQUEST")
+    void testGetAllUserPurchases_whenPageNo_thenReturnStatus400() {
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .param("pageNo", -1)
+                .param("pageSize", 9)
+                .header("authorization",  userToken)
+                .when()
+                .get("/purchase/getAll")
+                .then()
+                .statusCode(400);
+
+        verify(service, times(0)).getUserPurchases(0, 9, userToken);
+    }
+
+    @Test
+    @DisplayName("User purchase list with invalid pageSize returns HTTP BAD REQUEST")
+    void testGetAllUserPurchases_whenPageSize_thenReturnStatus400() {
+
+        RestAssuredMockMvc.given()
+                .contentType("application/json")
+                .param("pageNo", 0)
+                .param("pageSize", 0)
+                .header("authorization",  userToken)
+                .when()
+                .get("/purchase/getAll")
+                .then()
+                .statusCode(400);
+
+        verify(service, times(0)).getUserPurchases(0, 9, userToken);
+    }
+
+    /* *******************************************
+     *               MAKE NEW PURCHASE           *
+     * *******************************************
+     */
     @Test
     @DisplayName("Make Purchase with invalid user throws HTTP status Bad Request ")
     void whenPurchaseInvalidUser_thenThrowsStatus401() {
@@ -145,28 +232,8 @@ class HumberPurchaseControllerMockMvcTest {
 
     }
 
-    /*
     @Test
-    @DisplayName("Get Status of an invalid Order return HTTP status Not Found ")
-    void whenGetStatusInvalidOrder_thenReturnStatus404() throws ResourceNotFoundException {
-
-        when(service.checkPurchaseStatus(anyLong())).thenThrow(new ResourceNotFoundException("Invalid Order !"));
-
-        RestAssuredMockMvc
-                .given()
-                .contentType(ContentType.TEXT)
-                .when()
-                .get("/purchase/status?orderId=0")
-                .then()
-                .statusCode(404);
-
-        verify(service, times(1)).checkPurchaseStatus(0);
-    }
-    */
-
-
-    @Test
-    @DisplayName("Error in communication with Delivery service throws UnreachableServiceExcption")
+    @DisplayName("Error in communication with Delivery service throws UnreachableServiceException")
     void whenErrorInCommunication_thenThrowsStatusUnreachableService() throws AccessNotAllowedException {
         when(service.newPurchase(purchaseDTO, userToken)).thenThrow(UnreachableServiceException.class);
 
@@ -184,24 +251,4 @@ class HumberPurchaseControllerMockMvcTest {
 
     }
 
-    /*
-
-    @Test
-    @DisplayName("Get Order Status")
-    void whenGetOrderStatus_thenReturnStatus() throws ResourceNotFoundException {
-
-        when(service.checkPurchaseStatus(anyLong())).thenReturn(PurchaseStatus.PENDENT);
-
-        RestAssuredMockMvc
-                .given()
-                .contentType(ContentType.TEXT)
-                .when()
-                .get("/purchase/status?orderId=0")
-                .then()
-                .statusCode(200)
-                .body(Matchers.equalTo(PurchaseStatus.PENDENT.getStatus()) );
-
-        verify(service, times(1)).checkPurchaseStatus(0);
-    }
-*/
 }
