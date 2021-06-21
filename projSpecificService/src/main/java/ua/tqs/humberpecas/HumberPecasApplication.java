@@ -1,5 +1,7 @@
 package ua.tqs.humberpecas;
 
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,6 +27,7 @@ public class HumberPecasApplication {
 }
 
 @Profile("!test")
+@Log4j2
 @Component
 class DBLoader implements CommandLineRunner {
 	@Autowired
@@ -44,7 +47,7 @@ class DBLoader implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		System.out.println("Populating database");
+		log.info("Populating database");
 
 		Person person = new Person("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
 		personRepository.saveAndFlush(person);

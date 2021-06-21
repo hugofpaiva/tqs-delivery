@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.services;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,9 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Log4j2
 public class JwtUserDetailsService implements UserDetailsService {
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtUserDetailsService.class);
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -44,39 +44,52 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Person user = personRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+        Person user = personRepository.findByEmail(username).orElseThrow(() -> {
+            log.error("JWT USER DETAILS SERVICE: Invalid user email when loading user by username");
+            return new UsernameNotFoundException("User not found with email: " + username);
+        });
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getClass().getSimpleName()));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPwd(),
-                authorities);
+
+        log.info("JWT USER DETAILS SERVICE: Retrieved user by username successfully");
+        return new org.springframework.security.core.userdetails.
+                User(user.getEmail(), user.getPwd(), authorities);
     }
 
     public UserDetails loadUserByStore(Store store) throws BadCredentialsException {
         if (store == null) {
+            log.error("JWT USER DETAILS SERVICE: Store can not be null to create user, when loading user by store");
             throw new BadCredentialsException("Store cannot be null to create User");
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(store.getClass().getSimpleName()));
-        return new org.springframework.security.core.userdetails.User(store.getName(), store.getToken(),
-                authorities);
+
+        log.info("JWT USER DETAILS SERVICE: Retrieved user by store successfully");
+        return new org.springframework.security.core.userdetails.
+                User(store.getName(), store.getToken(), authorities);
     }
 
     public Store getStoreFromToken(String headerAuthorization) {
         String jwtToken = headerAuthorization.substring(7);
         Store store = null;
         try {
-            store = storeRepository.findByToken(jwtToken).orElseThrow(() -> new ResourceNotFoundException("Store not found for this Token"));
+            store = storeRepository.findByToken(jwtToken).orElseThrow(() ->
+                new ResourceNotFoundException("Store not found for this Token")
+            );
         } catch (ResourceNotFoundException e1) {
-            logger.info("Unable to get Store from JWT Token");
+            log.error("JWT USER DETAILS SERVICE: Unable to get Store from JWT Token");
         }
 
+        log.info("JWT USER DETAILS SERVICE: Successfully retrieved store from token");
         return store;
     }
 
     public String getEmailFromToken(String headerAuthorization) {
         String jwtToken = headerAuthorization.substring(7);
+
+        log.info("JWT USER DETAILS SERVICE: Successfully retrieved email from token");
         return jwtTokenUtil.getUsernameFromToken(jwtToken);
     }
 
@@ -85,15 +98,20 @@ public class JwtUserDetailsService implements UserDetailsService {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
                     authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
+            log.error("JWT USER DETAILS SERVICE: Invalid credentials, when getting new authentication token");
             throw new InvalidLoginException("INVALID CREDENTIALS");
         }
 
-        Person p = personRepository.findByEmail(authenticationRequest.getUsername()).orElseThrow(() -> new InvalidLoginException("Person not found for this email: " + authenticationRequest.getUsername()));
+        Person p = personRepository.findByEmail(authenticationRequest.getUsername()).orElseThrow(() -> {
+            log.error("JWT USER DETAILS SERVICE: Invalid person email, when getting new authentication token");
+            return new InvalidLoginException("Person not found for this email: " + authenticationRequest.getUsername());
+        });
 
         final UserDetails userDetails = this.loadUserByUsername(authenticationRequest.getUsername());
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
+        log.info("JWT USER DETAILS SERVICE: Successfully retrieved new authentication token");
         return new JwtResponse(token, userDetails.getAuthorities().iterator().next(), p.getName());
     }
 }

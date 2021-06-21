@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ua.tqs.deliveryservice.services.PurchaseService;
 import ua.tqs.deliveryservice.services.ManagerService;
+import ua.tqs.deliveryservice.services.PurchaseService;
 import ua.tqs.deliveryservice.services.StoreService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +24,9 @@ public class ManagerRestController {
 
     @Autowired
     private StoreService storeService;
+
+    @Autowired
+    private PurchaseService purchaseService;
 
 
     @GetMapping("riders/all")
@@ -61,4 +64,9 @@ public class ManagerRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("riders/top_delivered_cities")
+    public ResponseEntity<Map<String, Object>> getTopDeliveredCities() {
+        Map<String, Object> response = purchaseService.getTop5Cities();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

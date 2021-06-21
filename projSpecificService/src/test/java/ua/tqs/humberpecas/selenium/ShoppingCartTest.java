@@ -3,6 +3,7 @@ package ua.tqs.humberpecas.selenium;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -183,6 +184,8 @@ public class ShoppingCartTest {
     }
 
     @Test
+    @Disabled("Because the selection of Address before finishing the purchase is in a modal, sometimes Selenium " +
+            "can't click it, even with all the verifications...")
     void makePurchase() {
         ShopPage shopPage = new ShopPage(this.driver, this.webApplicationBaseUrl);
 
