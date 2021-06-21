@@ -52,7 +52,7 @@ class RiderRepositoryTests {
         Rider r = createAndSaveRider(1);
 
         Optional<Rider> res = riderRepository.findById(r.getId());
-        assertThat(res).isNotPresent().contains(r);
+        assertThat(res).isPresent().contains(r);
     }
 
     @Test
@@ -72,7 +72,7 @@ class RiderRepositoryTests {
         Rider r = createAndSaveRider(1);
 
         Optional<Rider> res = riderRepository.findByEmail(r.getEmail());
-        assertThat(res).isNotPresent().contains(r);
+        assertThat(res).isPresent().contains(r);
     }
 
     @Test

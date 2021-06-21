@@ -106,7 +106,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
         Optional<Purchase> res = purchaseRepository.findTopByRiderIsNullOrderByDate();
 
-        assertThat(res).isNotPresent().contains(p2);
+        assertThat(res).isPresent().contains(p2);
     }
 
     @Test
@@ -150,7 +150,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         Purchase p1 = createAndSavePurchase(1, true);
 
         Optional<Purchase> res = purchaseRepository.findTopByRiderAndStatusIsNot(p1.getRider(), Status.PICKED_UP);
-        assertThat(res).isNotPresent().contains(p1);
+        assertThat(res).isPresent().contains(p1);
     }
 
 
@@ -222,7 +222,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         createAndSavePurchase(2, true);
 
         Optional<Purchase> res = purchaseRepository.findTopByOrderByDate();
-        assertThat(res).isNotPresent().contains(p1);
+        assertThat(res).isPresent().contains(p1);
     }
 
     /* ------------------------------------------------- *

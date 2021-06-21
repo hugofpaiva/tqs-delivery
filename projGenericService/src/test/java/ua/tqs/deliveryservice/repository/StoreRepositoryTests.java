@@ -62,7 +62,7 @@ class StoreRepositoryTests {
     @Test
     void testWhenFindByInvalidId_thenReturnEmpty() {
         Optional<Store> res = storeRepository.findById(-1L);
-        assertThat(res).isPresent();
+        assertThat(res).isNotPresent();
     }
 
 
