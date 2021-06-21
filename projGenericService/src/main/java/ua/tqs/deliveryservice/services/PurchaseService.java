@@ -49,8 +49,11 @@ public class PurchaseService {
 
         Store store = storeRepository.findByToken(storeToken).orElseThrow(() -> new InvalidLoginException("Unauthorized store."));
 
+
         // The order_id that was passed did not match any in the db. NOT_FOUND
         Purchase purchase = purchaseRepository.findById(order_id).orElseThrow(() -> new ResourceNotFoundException("Order not found."));
+
+
 
         // A review cannot be added to a purchase that was already reviewed. BAD_REQUEST
         if (purchase.getRiderReview() != null)
@@ -68,7 +71,7 @@ public class PurchaseService {
         if (store_id_of_where_purchase_was_supposedly_made != store_id_associated_to_token_passed)
             throw new InvalidValueException("Token passed belonged to a store where this purchase had not been made.");
 
-
+   
         purchase.setRiderReview(review);
         purchaseRepository.saveAndFlush(purchase);
         return purchase;

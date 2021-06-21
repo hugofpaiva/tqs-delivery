@@ -78,7 +78,7 @@ class DBLoaderProd implements CommandLineRunner {
 
 		Purchase purchase1 = new Purchase(addr1, rider1, store1, "client1");
 		purchase1.setStatus(Status.DELIVERED);
-		purchase1.setRiderReview(4);
+		//purchase1.setRiderReview(4);
 		rider1.setTotalNumReviews(1);
 		rider1.setReviewsSum(4);
 		// Purchase purchase2 = new Purchase(addr3, rider1, store1, "client2");

@@ -28,11 +28,10 @@ public class PurchaseRestController {
         String token = headers.get("authorization").substring(7);
         Long review = payload.get("review");
 
-        System.out.println(review);
 
         if (order_id == null || review == null || review > 5 || review < 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        System.out.println(token);
+
         purchaseService.reviewRiderFromSpecificOrder(token, order_id, review.intValue());
 
         return new ResponseEntity<>(HttpStatus.OK);
