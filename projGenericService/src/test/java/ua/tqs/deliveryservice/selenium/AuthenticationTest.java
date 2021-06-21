@@ -102,6 +102,7 @@ public class AuthenticationTest {
         // Check if loaded page is the Manager one
         assertThat(loginPage.login("joana@email.com", "difficult-pass"), is("Stores Info"));
         StoresInfoPage storesInfoPage = new StoresInfoPage(driver, this.webApplicationBaseUrl, this.manager.getName());
+        assertThat(storesInfoPage.getUserName(), is(this.manager.getName()));
         storesInfoPage.logoutManager();
     }
 
@@ -115,6 +116,7 @@ public class AuthenticationTest {
         // Check if loaded page is the Rider one
         assertThat(loginPage.login("TesteEmail@email.com", "teste123"), is("User profile"));
         UserInfoPage userInfoPage = new UserInfoPage(driver, this.webApplicationBaseUrl, "TesteName");
+        assertThat(userInfoPage.getUserName(), is("TesteName"));
         userInfoPage.logoutRider();
     }
 }

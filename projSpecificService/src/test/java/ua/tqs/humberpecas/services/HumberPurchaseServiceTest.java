@@ -252,12 +252,12 @@ class HumberPurchaseServiceTest {
      */
 
     @Test
-    public void testGetUserPurchases_whenInvalidPersonToken_thenInvalidLoginException() {
+    void testGetUserPurchases_whenInvalidPersonToken_thenInvalidLoginException() {
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         when(personRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         assertThrows(InvalidLoginException.class, () -> {
-            purchaseService.getUserPurchases(0, 9, anyString());
+            purchaseService.getUserPurchases(0, 9, "Invalid Token");
         });
 
         verify(personRepository, times(1)).findByEmail(any());
@@ -268,7 +268,7 @@ class HumberPurchaseServiceTest {
     }
 
     @Test
-    public void testGetUserPurchases_whenEverythingValid_thenReturn () {
+    void testGetUserPurchases_whenEverythingValid_thenReturn () {
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
 

@@ -184,7 +184,8 @@ public class ShoppingCartTest {
     }
 
     @Test
-    @Disabled
+    @Disabled("Because the selection of Address before finishing the purchase is in a modal, sometimes Selenium " +
+            "can't click it, even with all the verifications...")
     void makePurchase() {
         ShopPage shopPage = new ShopPage(this.driver, this.webApplicationBaseUrl);
 

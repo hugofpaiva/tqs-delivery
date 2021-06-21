@@ -228,7 +228,9 @@ public class ProfileTest {
 
 
     @Test
-    @Disabled
+    @Disabled("The endpoint is tested with MockController and TemplateIT and when it is used in the context of " +
+            "Selenium test gives an error related to the state of the database. We weren't unable to find a solution" +
+            " to this. ")
     void testGiveReviewAndGetProductsInDB() {
         ProfilePage profilePage = new ProfilePage(this.driver, this.client.getName());
 
@@ -271,7 +273,8 @@ public class ProfileTest {
     }
 
     @Test
-    @Disabled
+    @Disabled("Because the deletion of Address is in a modal, sometimes Selenium " +
+            "can't click it, even with all the verifications...")
     void testDeleteAddress() {
         ProfilePage profilePage = new ProfilePage(this.driver, this.client.getName());
         profilePage.deleteFirstAddress();
