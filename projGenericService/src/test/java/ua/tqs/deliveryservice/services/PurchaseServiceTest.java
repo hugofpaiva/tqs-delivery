@@ -604,7 +604,6 @@ public class PurchaseServiceTest {
 
         Map<String, Object> input = new HashMap<>();
         input.put("personName", "mmm");
-
         input.put("address", address.getMap());
 
         Purchase purchase = purchaseService.receiveNewOrder("token", input);
@@ -782,7 +781,7 @@ public class PurchaseServiceTest {
      */
 
     @Test
-    public void testPostNewOrder_thenReturnMap() {
+    public void testGetTopDeliveredCities_whenEverythingIsOK_thenReturn() {
         List<Object[]> repositoryResponse = new ArrayList<>();
         repositoryResponse.add(new Object[]{"Lisboa", 5});
         repositoryResponse.add(new Object[]{"Faro", 9});
@@ -806,7 +805,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testPostNewOrder_whenThereAreNot5DifferentCities_thenReturnMap() {
+    public void testGetTopDeliveredCities_whenThereAreNot5DifferentCities_thenReturnMap() {
         List<Object[]> repositoryResponse = new ArrayList<>();
         repositoryResponse.add(new Object[]{"Guarda", 8});
         repositoryResponse.add(new Object[]{"Castelo Branco", 3});
@@ -823,7 +822,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testPostNewOrder_whenNoPurchases_thenReturnMap() {
+    public void testGetTopDeliveredCities_whenNoPurchases_thenReturnMap() {
         List<Object[]> repositoryResponse = new ArrayList<>();
 
         Mockito.when(purchaseRepository.getTopFiveCitiesOfPurchases()).thenReturn(repositoryResponse);

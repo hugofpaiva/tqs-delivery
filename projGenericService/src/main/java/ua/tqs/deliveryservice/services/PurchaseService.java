@@ -196,16 +196,6 @@ public class PurchaseService {
             throw new InvalidValueException(error);
         }
 
-        Object date_obj = Optional.ofNullable(data.get("date")).orElseThrow(() -> {
-            log.error("PURCHASE SERVICE: Invalid data, date, when store tried to get new order");
-            return new InvalidValueException(error);
-        });
-
-        Date date = null;
-        if (date_obj instanceof Long) date = new Date((long) date_obj);
-        if (date_obj instanceof Integer) date = new Date((int) date_obj);
-        if (date == null) throw new InvalidValueException(error);
-
         Object address = Optional.ofNullable(data.get("address")).orElseThrow(() -> {
             log.error("PURCHASE SERVICE: Invalid data, address, when store tried to get new order");
             return new InvalidValueException(error);
