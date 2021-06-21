@@ -96,7 +96,7 @@ public class PurchaseRepositoryTests {
 
 
     /* ------------------------------------------------- *
-     * FIND OLDER IN WHICH RIDER IS NULL TESTS           *
+     * FIND ORDER IN WHICH RIDER IS NULL TESTS           *
      * ------------------------------------------------- *
      */
 
@@ -284,7 +284,7 @@ public class PurchaseRepositoryTests {
     }
 
     /* ------------------------------------------------- *
-     * TODO: GET AVERAGE REVIEW TESTS                    *
+     *       GET AVERAGE REVIEW TESTS                    *
      * ------------------------------------------------- *
      */
 
@@ -332,12 +332,91 @@ public class PurchaseRepositoryTests {
         assertThat(res[1]).isEqualTo(2);
     }
 
+    /* ------------------------------------------------- *
+     *       GET TOP 5 CITIES TESTS                      *
+     * ------------------------------------------------- *
+     */
+
+    @Test
+    public void testGetTop5Cities_whenNoPurchases_thenReturn() {
+        List<Object[]> res = purchaseRepository.getTopFiveCitiesOfPurchases();
+
+        assertThat(res).isNotNull();
+        assertThat(res.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void testGetTop5Cities_when5DifferentCitiesDontExistInPurchases_thenReturn() {
+        Purchase p1 = createAndSavePurchaseForTop5Cities(1, true);
+        Purchase p2 = createAndSavePurchaseForTop5Cities(2, true);
+
+        List<Object[]> res = purchaseRepository.getTopFiveCitiesOfPurchases();
+
+        assertThat(res).isNotNull();
+        assertThat(res.size()).isEqualTo(2);
+
+        assertThat(res.get(0)[0]).isEqualTo(p2.getAddress().getCity());
+        assertThat(res.get(0)[1]).isEqualTo(1L);
+        assertThat(res.get(1)[0]).isEqualTo(p1.getAddress().getCity());
+        assertThat(res.get(1)[1]).isEqualTo(1L);
+    }
+
+    @Test
+    public void testGetTop5Cities_when5DifferentCities_thenReturn() {
+        Purchase p1 = createAndSavePurchaseForTop5Cities(1, true);
+        Purchase p2 = createAndSavePurchaseForTop5Cities(2, true);
+        Purchase p3 = createAndSavePurchaseForTop5Cities(3, true);
+        Purchase p4 = createAndSavePurchaseForTop5Cities(4, true);
+        Purchase p5 = createAndSavePurchaseForTop5Cities(5, true);
+
+        List<Object[]> res = purchaseRepository.getTopFiveCitiesOfPurchases();
+
+        assertThat(res).isNotNull();
+        assertThat(res.size()).isEqualTo(5);
+
+        assertThat(res.get(0)[0]).isEqualTo(p2.getAddress().getCity());
+        assertThat(res.get(0)[1]).isEqualTo(1L);
+
+        assertThat(res.get(1)[0]).isEqualTo(p4.getAddress().getCity());
+        assertThat(res.get(1)[1]).isEqualTo(1L);
+
+        assertThat(res.get(2)[0]).isEqualTo(p1.getAddress().getCity());
+        assertThat(res.get(2)[1]).isEqualTo(1L);
+
+        assertThat(res.get(3)[0]).isEqualTo(p5.getAddress().getCity());
+        assertThat(res.get(3)[1]).isEqualTo(1L);
+
+        assertThat(res.get(4)[0]).isEqualTo(p3.getAddress().getCity());
+        assertThat(res.get(4)[1]).isEqualTo(1L);
+
+    }
 
     /* -- helper -- */
     private Purchase createAndSavePurchase(int i, boolean rider) {
         Address addr_store = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro", "Portugal");
         Store s = new Store("store"+i, "the best store #"+i, "hard-pwd"+i, addr_store);
         Address addr_purchase = new Address("Street Twooo, n. "+ i, "1100-00"+i, "Aveiro", "Portugal");
+        Purchase p = new Purchase(addr_purchase, s, "João");
+
+        if (rider) {
+            Rider r = new Rider("rider"+i, "gvhjbknutcfyvgkupwd"+i, "rider"+i+"@email.com");
+            entityManager.persist(r);
+            p.setStatus(Status.ACCEPTED);
+            p.setRider(r);
+        }
+
+        entityManager.persist(addr_store);
+        entityManager.persist(s);
+        entityManager.persist(addr_purchase);
+        entityManager.persistAndFlush(p);
+        return p;
+    }
+
+    /* -- helper -- */
+    private Purchase createAndSavePurchaseForTop5Cities(int i, boolean rider) {
+        Address addr_store = new Address("Street One, n. "+ i, "0000-00"+i, "Aveiro"+i, "Portugal");
+        Store s = new Store("store"+i, "the best store #"+i, "hard-pwd"+i, addr_store);
+        Address addr_purchase = new Address("Street Twooo, n. "+ i, "1100-00"+i, "Aveiro"+i, "Portugal");
         Purchase p = new Purchase(addr_purchase, s, "João");
 
         if (rider) {

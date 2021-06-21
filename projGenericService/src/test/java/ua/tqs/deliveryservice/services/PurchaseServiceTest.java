@@ -1,6 +1,5 @@
 package ua.tqs.deliveryservice.services;
 
-import com.github.dockerjava.api.exception.BadRequestException;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
