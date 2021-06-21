@@ -118,7 +118,7 @@ class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization", "Bearer " + token);
 
-        mvc.perform( put("/store/order/3/review")
+        mvc.perform(put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)

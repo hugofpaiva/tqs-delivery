@@ -21,13 +21,13 @@ public class PurchaseRestController {
     private PurchaseService purchaseService;
 
     @PutMapping("/order/{order_id}/review")
-    public ResponseEntity<Object> addReviewToRider(@PathVariable Long orderId, @RequestBody Map<String, Long> payload, @RequestHeader Map<String, String> headers)
+    public ResponseEntity<Object> addReviewToRider(@PathVariable Long order_id, @RequestBody Map<String, Long> payload, @RequestHeader Map<String, String> headers)
             throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
         String token = headers.get("authorization").substring(7);
         Long review = payload.get("review");
-        if (orderId == null || review == null || review > 5 || review < 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (order_id == null || review == null || review > 5 || review < 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        purchaseService.reviewRiderFromSpecificOrder(token, orderId, review.intValue());
+        purchaseService.reviewRiderFromSpecificOrder(token, order_id, review.intValue());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
