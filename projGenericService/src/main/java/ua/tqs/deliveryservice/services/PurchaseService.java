@@ -1,6 +1,5 @@
 package ua.tqs.deliveryservice.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -247,25 +246,37 @@ public class PurchaseService {
 
     public Purchase getNewPurchaseLoc(String token, Double latitude, Double longitude) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
         String email = jwtUserDetailsService.getEmailFromToken(token);
-        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> new InvalidLoginException("There is no Rider associated with this token"));
+        Rider rider = riderRepository.findByEmail(email).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: Invalid rider token when trying to get new purchase location");
+            return new InvalidLoginException("There is no Rider associated with this token");
+        });
 
-        if (latitude > 90 || latitude < -90 || longitude > 180 || longitude < -180) throw new InvalidValueException("Invalid values for coordinates");
+        if (latitude > 90 || latitude < -90 || longitude > 180 || longitude < -180) {
+            log.error("PURCHASE SERVICE: Invalid values for coordinates when trying to get new purchase location");
+            throw new InvalidValueException("Invalid values for coordinates");
+        }
 
             // verify if Rider has any purchase to deliver
         if (purchaseRepository.findTopByRiderAndStatusIsNot(rider, Status.DELIVERED).isPresent()) {
+            log.error("PURCHASE SERVICE: Rider still has an order to deliver, when trying to get new purchase location");
             throw new ForbiddenRequestException("This rider still has an order to deliver");
         }
 
         // get available order for rider
         Pageable paging = PageRequest.of(0, 15, Sort.by("date").ascending());
         Page<Purchase> possible = purchaseRepository.findAllByRiderIsNullOrderByDate(paging);
-        Purchase purch = possible.stream().min(Comparator.comparingDouble(purchase -> distance(purchase.getStore(), latitude, longitude))).orElseThrow(() -> new ResourceNotFoundException("There are no more orders available"));
+        Purchase purch = possible.stream().min(Comparator.comparingDouble(purchase ->
+                distance(purchase.getStore(), latitude, longitude))).orElseThrow(() -> {
+            log.error("PURCHASE SERVICE: No available orders, when trying to get new purchase location");
+            return new ResourceNotFoundException("There are no more orders available");
+        });
 
         // accept order
         purch.setRider(rider);
         purch.setStatus(Status.ACCEPTED);
         purchaseRepository.save(purch);
 
+        log.info("PURCHASE SERVICE: Rider successfully retrieved new order location");
         return purch;
     }
 
