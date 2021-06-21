@@ -45,6 +45,8 @@ public class StoresInfoTest {
 
     private List<Store> storeList;
 
+    private Manager manager;
+
     @Container
     public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
@@ -87,15 +89,13 @@ public class StoresInfoTest {
 
         this.driver = this.chromeContainer.getWebDriver();
 
+        this.driver = this.chromeContainer.getWebDriver();
+
         Rider rider = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
         personRepository.saveAndFlush(rider);
 
-        Manager manager = new Manager("João", bcryptEncoder.encode("difficult-pass"), "joao1@email.com");
-        personRepository.saveAndFlush(manager);
-
-        LoginPage loginPage = new LoginPage(this.driver, this.webApplicationBaseUrl);
-        loginPage.login("joao1@email.com", "difficult-pass");
-
+        this.manager = new Manager("João", bcryptEncoder.encode("difficult-pass"), "joao1@email.com");
+        personRepository.saveAndFlush(this.manager);
 
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         addressRepository.saveAndFlush(addr);
@@ -114,26 +114,29 @@ public class StoresInfoTest {
 
         Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2);
         storeRepository.saveAndFlush(store1);
-
         storeList.add(store1);
 
-        Store store2 = new Store("Loja do Manuela", "A melhor loja2.", "eyJhbGciOiJIUzUxMiJ9.eyJleFAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr3);
+        Store store2 = new Store("Loja da Manuela", "A melhor loja2.", "eyJhbGciOiJIUzUxMiJ9.eyJleFAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr4);
         storeRepository.saveAndFlush(store2);
-
         storeList.add(store2);
 
-        Purchase purchase1 = new Purchase(addr1, rider, store1, "client1");
+        Purchase purchase1 = new Purchase(addr, rider, store1, "client1");
         purchase1.setStatus(Status.DELIVERED);
         purchase1.setRiderReview(4);
+        rider.setTotalNumReviews(1);
+        rider.setReviewsSum(4);
 
         Purchase purchase_no_rider = new Purchase(addr1, store1, "client22");
-        Purchase purchase_no_rider2 = new Purchase(addr4, store1, "client222");
+        Purchase purchase_no_rider2 = new Purchase(addr3, store1, "client222");
 
         purchaseRepository.saveAndFlush(purchase_no_rider);
         purchaseRepository.saveAndFlush(purchase_no_rider2);
         purchase1.setDeliveryTime((purchase1.getDate().getTime() + 120000) - purchase1.getDate().getTime());
         purchaseRepository.saveAndFlush(purchase1);
+        personRepository.saveAndFlush(rider);
 
+        LoginPage loginPage = new LoginPage(this.driver, this.webApplicationBaseUrl);
+        loginPage.login("joao1@email.com", "difficult-pass");
     }
 
     @AfterEach
@@ -153,24 +156,43 @@ public class StoresInfoTest {
 
     @Test
     void testSeeStoresInDb() {
-        StoresInfoPage storesInfoPage = new StoresInfoPage(this.driver);
+        StoresInfoPage storesInfoPage = new StoresInfoPage(this.driver, this.webApplicationBaseUrl, this.manager.getName());
 
-        List<Store> reverseView = Lists.reverse(this.storeList);
         List<Store> websiteStores = storesInfoPage.getStores();
 
-        for (int i = 0; i < reverseView.size() - 1; i++) {
-            System.out.println(websiteStores);
+        for (int i = 0; i < this.storeList.size() - 1; i++) {
+            assertThat(this.storeList.get(i).getName(), is(websiteStores.get(i).getName()));
+            assertThat(this.storeList.get(i).getDescription(), is(websiteStores.get(i).getDescription()));
         }
+
+        assertThat(storesInfoPage.getTotalStores(), is(2));
+        assertThat(storesInfoPage.getTotalOrders(), is(3));
+        assertThat(storesInfoPage.getAverageOrdersByWeek(), is(3));
     }
 
     @Test
-    void testNoOrdersInDb() {
+    void testNoStoresInDb() {
         purchaseRepository.deleteAll();
         purchaseRepository.flush();
-        UserInfoPage userInfoPage = new UserInfoPage(this.driver);
 
-        assertThat(userInfoPage.isEmpty(), is(true));
+        storeRepository.deleteAll();
+        storeRepository.flush();
+
+        StoresInfoPage storesInfoPage = new StoresInfoPage(this.driver, this.webApplicationBaseUrl, this.manager.getName());
+
+        storesInfoPage.logoutManager();
+
+        LoginPage loginPage = new LoginPage(this.driver, this.webApplicationBaseUrl);
+        loginPage.login("joao1@email.com", "difficult-pass");
+
+        storesInfoPage = new StoresInfoPage(this.driver, this.webApplicationBaseUrl, this.manager.getName());
+
+        assertThat(storesInfoPage.isEmpty(), is(true));
+        assertThat(storesInfoPage.getTotalStores(), is(0));
+        assertThat(storesInfoPage.getTotalOrders(), is(0));
     }
+
+
 
 
 }

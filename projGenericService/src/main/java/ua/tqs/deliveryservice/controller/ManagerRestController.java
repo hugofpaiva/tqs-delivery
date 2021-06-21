@@ -43,8 +43,7 @@ public class ManagerRestController {
     }
 
     @GetMapping("/stores")
-    public ResponseEntity<Map<String, Object>> getRiderOrders(HttpServletRequest request,
-                                                              @RequestParam(defaultValue = "0") int pageNo,
+    public ResponseEntity<Map<String, Object>> getRiderOrders(@RequestParam(defaultValue = "0") int pageNo,
                                                               @RequestParam(defaultValue = "10") int pageSize) {
         if (pageNo < 0 || pageSize <= 0){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

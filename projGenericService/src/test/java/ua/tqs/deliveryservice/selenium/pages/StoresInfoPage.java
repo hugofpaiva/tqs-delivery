@@ -1,6 +1,7 @@
 package ua.tqs.deliveryservice.selenium.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -17,8 +18,15 @@ import static org.hamcrest.Matchers.is;
 public class StoresInfoPage {
     private WebDriver driver;
 
-    public StoresInfoPage(WebDriver driver) {
+    public StoresInfoPage(WebDriver driver, String baseUrl, String name) {
         this.driver = driver;
+
+        this.driver.manage().window().setSize(new Dimension(1792, 1025));
+        {
+            WebDriverWait wait = new WebDriverWait(this.driver, 10);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id=\"navbar-main\"]/div/ul/li/a/div/div/span")));
+        }
+        assertThat(this.driver.findElement(By.xpath("//*[@id=\"navbar-main\"]/div/ul/li/a/div/div/span")).getText(), is(name));
     }
 
     public void logoutManager() {

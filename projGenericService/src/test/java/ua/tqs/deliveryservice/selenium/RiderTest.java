@@ -18,10 +18,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ua.tqs.deliveryservice.model.*;
-import ua.tqs.deliveryservice.repository.AddressRepository;
-import ua.tqs.deliveryservice.repository.PersonRepository;
-import ua.tqs.deliveryservice.repository.PurchaseRepository;
-import ua.tqs.deliveryservice.repository.StoreRepository;
+import ua.tqs.deliveryservice.repository.*;
 import ua.tqs.deliveryservice.selenium.pages.LoginPage;
 import ua.tqs.deliveryservice.selenium.pages.UserInfoPage;
 
@@ -43,6 +40,8 @@ public class RiderTest {
     private RemoteWebDriver driver;
 
     private List<Purchase> purchaseList;
+
+    private Rider rider;
 
     @Container
     public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
@@ -68,7 +67,7 @@ public class RiderTest {
     private PurchaseRepository purchaseRepository;
 
     @Autowired
-    private PersonRepository personRepository;
+    private RiderRepository riderRepository;
 
     @Autowired
     private StoreRepository storeRepository;
@@ -81,17 +80,12 @@ public class RiderTest {
         if (System.getProperty("os.name").equals("Mac OS X")) {
             this.webApplicationBaseUrl = "host.docker.internal";
         }
-
         this.purchaseList = new ArrayList<>();
 
         this.driver = this.chromeContainer.getWebDriver();
 
-        Rider rider = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
-        personRepository.saveAndFlush(rider);
-
-        LoginPage loginPage = new LoginPage(this.driver, this.webApplicationBaseUrl);
-        loginPage.login("joao@email.com", "difficult-pass");
-
+        rider = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
+        riderRepository.saveAndFlush(rider);
 
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         addressRepository.saveAndFlush(addr);
@@ -111,6 +105,8 @@ public class RiderTest {
         Purchase purchase1 = new Purchase(addr, rider, store1, "client1");
         purchase1.setStatus(Status.DELIVERED);
         purchase1.setRiderReview(4);
+        rider.setTotalNumReviews(1);
+        rider.setReviewsSum(4);
 
         Purchase purchase_no_rider = new Purchase(addr1, store1, "client22");
         Purchase purchase_no_rider2 = new Purchase(addr3, store1, "client222");
@@ -122,7 +118,10 @@ public class RiderTest {
         purchase1.setDeliveryTime((purchase1.getDate().getTime() + 120000) - purchase1.getDate().getTime());
         purchaseRepository.saveAndFlush(purchase1);
         purchaseList.add(purchase1);
+        riderRepository.saveAndFlush(rider);
 
+        LoginPage loginPage = new LoginPage(this.driver, this.webApplicationBaseUrl);
+        loginPage.login("joao@email.com", "difficult-pass");
     }
 
     @AfterEach
@@ -136,29 +135,41 @@ public class RiderTest {
         addressRepository.deleteAll();
         addressRepository.flush();
 
-        personRepository.deleteAll();
-        personRepository.flush();
+        riderRepository.deleteAll();
+        riderRepository.flush();
     }
 
     @Test
     void testSeeLastOrdersInDb() {
-        UserInfoPage userInfoPage = new UserInfoPage(this.driver);
+        UserInfoPage userInfoPage = new UserInfoPage(this.driver, this.webApplicationBaseUrl, this.rider.getName());
 
         List<Purchase> reverseView = Lists.reverse(this.purchaseList);
         List<Purchase> websitePurchases = userInfoPage.getOrders();
 
+        assertThat(websitePurchases.get(0).getStore().getName(), is(purchaseList.get(2).getStore().getName()));
+        assertThat(websitePurchases.get(0).getStatus(), is(purchaseList.get(2).getStatus()));
+        assertThat(websitePurchases.get(0).getClientName(), is(purchaseList.get(2).getClientName()));
 
-        System.out.println(websitePurchases.get(0));
-        assertThat(false, is(true));
+
+        assertThat(userInfoPage.getAvgRating(), is(4.0));
+        assertThat(userInfoPage.getTotalDeliveries(), is(1));
+        assertThat(userInfoPage.getTotalReviews(), is(1));
     }
 
     @Test
     void testNoOrdersInDb() {
         purchaseRepository.deleteAll();
         purchaseRepository.flush();
-        UserInfoPage userInfoPage = new UserInfoPage(this.driver);
+        this.rider.setTotalNumReviews(0);
+        this.rider.setReviewsSum(0);
+        riderRepository.saveAndFlush(this.rider);
+
+
+        UserInfoPage userInfoPage = new UserInfoPage(this.driver, this.webApplicationBaseUrl, this.rider.getName());
 
         assertThat(userInfoPage.isEmpty(), is(true));
+        assertThat(userInfoPage.getTotalDeliveries(), is(0));
+        assertThat(userInfoPage.getTotalReviews(), is(0));
     }
 
 

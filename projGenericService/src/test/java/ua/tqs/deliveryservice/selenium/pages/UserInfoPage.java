@@ -2,12 +2,12 @@ package ua.tqs.deliveryservice.selenium.pages;
 
 import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ua.tqs.deliveryservice.model.Purchase;
-import ua.tqs.deliveryservice.model.Rider;
 import ua.tqs.deliveryservice.model.Status;
 import ua.tqs.deliveryservice.model.Store;
 
@@ -16,12 +16,21 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class UserInfoPage {
     private WebDriver driver;
 
-    public UserInfoPage(WebDriver driver) {
+    public UserInfoPage(WebDriver driver, String baseUrl, String name) {
         this.driver = driver;
+
+        this.driver.get("http://" + baseUrl + ":4200/");
+        this.driver.manage().window().setSize(new Dimension(1792, 1025));
+        {
+            WebDriverWait wait = new WebDriverWait(this.driver, 10);
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id=\"navbar-main\"]/div/ul/li/a/div/div/span")));
+        }
+        assertThat(this.driver.findElement(By.xpath("//*[@id=\"navbar-main\"]/div/ul/li/a/div/div/span")).getText(), is(name));
     }
 
     public void logoutRider() {
@@ -35,7 +44,7 @@ public class UserInfoPage {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > div > small")));
         }
-        assertThat(this.driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > div > small")).getText(), Matchers.is("Sign in with credentials"));
+        assertThat(this.driver.findElement(By.cssSelector("body > app-root > app-auth-layout > div > app-login > div.container.mt--8.pb-5 > div > div > div.card.bg-secondary.shadow.border-0 > div > div > small")).getText(), is("Sign in with credentials"));
     }
 
     public boolean isEmpty() {
@@ -106,7 +115,7 @@ public class UserInfoPage {
             s.setName(purchase.findElement(By.xpath(".//td[1]")).getText());
             p.setStore(s);
             p.setClientName(purchase.findElement(By.xpath(".//td[2]")).getText());
-            p.setStatus(Status.valueOf(purchase.findElement(By.xpath(".//td[3]/span/text()")).getText()));
+            p.setStatus(Status.valueOf(purchase.findElement(By.xpath(".//td[3]/span")).getText()));
             purchases.add(p);
         }
 

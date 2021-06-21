@@ -140,24 +140,6 @@ public class RidersInfoTest {
         personRepository.flush();
     }
 
-    @Test
-    void testSeeLastOrdersInDb() {
-        UserInfoPage userInfoPage = new UserInfoPage(this.driver);
-
-        List<Purchase> reverseView = Lists.reverse(this.purchaseList);
-        List<Purchase> websitePurchases = userInfoPage.getOrders();
 
 
-        System.out.println(websitePurchases.get(0));
-        assertThat(false, is(true));
-    }
-
-    @Test
-    void testNoOrdersInDb() {
-        purchaseRepository.deleteAll();
-        purchaseRepository.flush();
-        UserInfoPage userInfoPage = new UserInfoPage(this.driver);
-
-        assertThat(userInfoPage.isEmpty(), is(true));
-    }
 }
