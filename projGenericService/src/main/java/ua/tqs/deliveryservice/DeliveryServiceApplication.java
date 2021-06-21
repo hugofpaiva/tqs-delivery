@@ -64,13 +64,13 @@ class DBLoaderProd implements CommandLineRunner {
 		Address addr2 = new Address("Rua Loja Loja, n. 23", "3212-333", "Porto", "Portugal");
 		addressRep.saveAndFlush(addr2);
 
-		Address addr3 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+		Address addr3 = new Address("Rua ABC, n. 99", "4444-555", "Viseu", "Portugal");
 		addressRep.saveAndFlush(addr3);
 
-		Address addr4 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+		Address addr4 = new Address("Rua ABC, n. 99", "4444-555", "Coimbra", "Portugal");
 		addressRep.saveAndFlush(addr4);
 
-		Address addr5 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+		Address addr5 = new Address("Rua ABC, n. 99", "4444-555", "Lisboa", "Portugal");
 		addressRep.saveAndFlush(addr5);
 
 		Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2);
@@ -89,7 +89,7 @@ class DBLoaderProd implements CommandLineRunner {
 		purchaseRep.saveAndFlush(purchase_no_rider);
 		purchaseRep.saveAndFlush(purchase_no_rider2);
 		purchaseRep.saveAndFlush(purchase1);
-		purchase1.setDeliveryTime(new Date().getTime() - purchase1.getDate().getTime());
+		purchase1.setDeliveryTime((purchase1.getDate().getTime() + 120000) - purchase1.getDate().getTime());
 		purchaseRep.saveAndFlush(purchase1);
 		riderRep.saveAndFlush(rider1);
 		//purchaseRep.saveAndFlush(purchase2);

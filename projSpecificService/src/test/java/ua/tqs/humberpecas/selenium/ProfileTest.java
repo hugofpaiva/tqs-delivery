@@ -271,6 +271,7 @@ public class ProfileTest {
     }
 
     @Test
+    @Disabled
     void testDeleteAddress() {
         ProfilePage profilePage = new ProfilePage(this.driver, this.client.getName());
         profilePage.deleteFirstAddress();
