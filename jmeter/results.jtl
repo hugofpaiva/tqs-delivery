@@ -1,0 +1,406 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1624316996552,89,client/store - make a purchase,200,,Clients/Stores Pool 1-9,text,true,,457,573,11,11,http://localhost:8081/store/order,78,0,1
+1624316996424,217,client/store - make a purchase,200,,Clients/Stores Pool 1-6,text,true,,457,573,11,11,http://localhost:8081/store/order,206,0,1
+1624316996319,322,client/store - make a purchase,200,,Clients/Stores Pool 1-2,text,true,,457,573,11,11,http://localhost:8081/store/order,310,0,25
+1624316996319,323,client/store - make a purchase,200,,Clients/Stores Pool 1-1,text,true,,457,573,11,11,http://localhost:8081/store/order,311,0,25
+1624316996381,260,client/store - make a purchase,200,,Clients/Stores Pool 1-5,text,true,,457,573,11,11,http://localhost:8081/store/order,249,0,1
+1624316996467,175,client/store - make a purchase,200,,Clients/Stores Pool 1-7,text,true,,457,573,11,11,http://localhost:8081/store/order,163,0,1
+1624316996509,131,client/store - make a purchase,200,,Clients/Stores Pool 1-8,text,true,,457,573,11,11,http://localhost:8081/store/order,121,0,1
+1624316996319,323,client/store - make a purchase,200,,Clients/Stores Pool 1-3,text,true,,457,573,11,11,http://localhost:8081/store/order,311,0,25
+1624316996339,312,client/store - make a purchase,200,,Clients/Stores Pool 1-4,text,true,,457,573,4,4,http://localhost:8081/store/order,291,0,5
+1624316996597,54,client/store - make a purchase,200,,Clients/Stores Pool 1-10,text,true,,457,573,4,4,http://localhost:8081/store/order,54,0,1
+1624316996639,27,client/store - make a purchase,200,,Clients/Stores Pool 1-11,text,true,,457,573,1,1,http://localhost:8081/store/order,26,0,1
+1624316996681,23,client/store - make a purchase,200,,Clients/Stores Pool 1-12,text,true,,457,573,1,1,http://localhost:8081/store/order,23,0,1
+1624316996724,19,client/store - make a purchase,200,,Clients/Stores Pool 1-13,text,true,,457,573,1,1,http://localhost:8081/store/order,19,0,1
+1624316996768,18,client/store - make a purchase,200,,Clients/Stores Pool 1-14,text,true,,457,573,1,1,http://localhost:8081/store/order,18,0,0
+1624316996810,19,client/store - make a purchase,200,,Clients/Stores Pool 1-15,text,true,,457,573,1,1,http://localhost:8081/store/order,19,0,0
+1624316996853,27,client/store - make a purchase,200,,Clients/Stores Pool 1-16,text,true,,457,573,1,1,http://localhost:8081/store/order,27,0,1
+1624316996896,25,client/store - make a purchase,200,,Clients/Stores Pool 1-17,text,true,,457,573,1,1,http://localhost:8081/store/order,25,0,1
+1624316996938,21,client/store - make a purchase,200,,Clients/Stores Pool 1-18,text,true,,457,573,1,1,http://localhost:8081/store/order,21,0,1
+1624316996982,22,client/store - make a purchase,200,,Clients/Stores Pool 1-19,text,true,,457,573,1,1,http://localhost:8081/store/order,22,0,1
+1624316997025,21,client/store - make a purchase,200,,Clients/Stores Pool 1-20,text,true,,457,573,1,1,http://localhost:8081/store/order,20,0,1
+1624316997068,22,client/store - make a purchase,200,,Clients/Stores Pool 1-21,text,true,,457,573,1,1,http://localhost:8081/store/order,22,0,1
+1624316997112,22,client/store - make a purchase,200,,Clients/Stores Pool 1-22,text,true,,457,573,1,1,http://localhost:8081/store/order,22,0,1
+1624316997154,15,client/store - make a purchase,200,,Clients/Stores Pool 1-23,text,true,,457,573,1,1,http://localhost:8081/store/order,14,0,0
+1624316997197,15,client/store - make a purchase,200,,Clients/Stores Pool 1-24,text,true,,457,573,1,1,http://localhost:8081/store/order,15,0,0
+1624316997241,21,client/store - make a purchase,200,,Clients/Stores Pool 1-25,text,true,,457,573,1,1,http://localhost:8081/store/order,21,0,0
+1624316997283,17,client/store - make a purchase,200,,Clients/Stores Pool 1-26,text,true,,457,573,1,1,http://localhost:8081/store/order,17,0,1
+1624316997325,16,client/store - make a purchase,200,,Clients/Stores Pool 1-27,text,true,,457,573,1,1,http://localhost:8081/store/order,16,0,1
+1624316997368,19,client/store - make a purchase,200,,Clients/Stores Pool 1-28,text,true,,457,573,1,1,http://localhost:8081/store/order,19,0,1
+1624316997412,21,client/store - make a purchase,200,,Clients/Stores Pool 1-29,text,true,,457,573,1,1,http://localhost:8081/store/order,21,0,1
+1624316997456,21,client/store - make a purchase,200,,Clients/Stores Pool 1-30,text,true,,457,573,1,1,http://localhost:8081/store/order,21,0,1
+1624316997498,16,client/store - make a purchase,200,,Clients/Stores Pool 1-31,text,true,,457,573,1,1,http://localhost:8081/store/order,16,0,1
+1624316997542,21,client/store - make a purchase,200,,Clients/Stores Pool 1-32,text,true,,457,573,1,1,http://localhost:8081/store/order,20,0,1
+1624316997585,19,client/store - make a purchase,200,,Clients/Stores Pool 1-33,text,true,,457,573,1,1,http://localhost:8081/store/order,18,0,0
+1624316997627,18,client/store - make a purchase,200,,Clients/Stores Pool 1-34,text,true,,457,573,1,1,http://localhost:8081/store/order,18,0,0
+1624316997672,18,client/store - make a purchase,200,,Clients/Stores Pool 1-35,text,true,,457,573,1,1,http://localhost:8081/store/order,18,0,1
+1624316997714,20,client/store - make a purchase,200,,Clients/Stores Pool 1-36,text,true,,457,573,1,1,http://localhost:8081/store/order,20,0,1
+1624316997756,14,client/store - make a purchase,200,,Clients/Stores Pool 1-37,text,true,,457,573,1,1,http://localhost:8081/store/order,14,0,1
+1624316997802,56,client/store - make a purchase,200,,Clients/Stores Pool 1-38,text,true,,457,573,2,2,http://localhost:8081/store/order,53,0,2
+1624316997844,56,client/store - make a purchase,200,,Clients/Stores Pool 1-39,text,true,,457,573,2,2,http://localhost:8081/store/order,55,0,3
+1624316997889,29,client/store - make a purchase,200,,Clients/Stores Pool 1-40,text,true,,457,573,1,1,http://localhost:8081/store/order,29,0,2
+1624316997929,15,client/store - make a purchase,200,,Clients/Stores Pool 1-41,text,true,,457,573,1,1,http://localhost:8081/store/order,15,0,1
+1624316997971,13,client/store - make a purchase,200,,Clients/Stores Pool 1-42,text,true,,457,573,1,1,http://localhost:8081/store/order,13,0,0
+1624316998014,18,client/store - make a purchase,200,,Clients/Stores Pool 1-43,text,true,,457,573,1,1,http://localhost:8081/store/order,17,0,1
+1624316998057,22,client/store - make a purchase,200,,Clients/Stores Pool 1-44,text,true,,458,573,1,1,http://localhost:8081/store/order,21,0,1
+1624316998101,20,client/store - make a purchase,200,,Clients/Stores Pool 1-45,text,true,,458,573,1,1,http://localhost:8081/store/order,20,0,0
+1624316998143,20,client/store - make a purchase,200,,Clients/Stores Pool 1-46,text,true,,458,573,1,1,http://localhost:8081/store/order,19,0,0
+1624316998186,18,client/store - make a purchase,200,,Clients/Stores Pool 1-47,text,true,,458,573,1,1,http://localhost:8081/store/order,18,0,1
+1624316998230,15,client/store - make a purchase,200,,Clients/Stores Pool 1-48,text,true,,458,573,1,1,http://localhost:8081/store/order,15,0,0
+1624316998272,17,client/store - make a purchase,200,,Clients/Stores Pool 1-49,text,true,,458,573,1,1,http://localhost:8081/store/order,17,0,1
+1624316998315,20,client/store - make a purchase,200,,Clients/Stores Pool 1-50,text,true,,458,573,1,1,http://localhost:8081/store/order,19,0,0
+1624316998358,18,client/store - make a purchase,200,,Clients/Stores Pool 1-51,text,true,,458,573,1,1,http://localhost:8081/store/order,18,0,1
+1624316998402,18,client/store - make a purchase,200,,Clients/Stores Pool 1-52,text,true,,458,573,1,1,http://localhost:8081/store/order,18,0,0
+1624316998444,17,client/store - make a purchase,200,,Clients/Stores Pool 1-53,text,true,,458,573,1,1,http://localhost:8081/store/order,17,0,1
+1624316998486,18,client/store - make a purchase,200,,Clients/Stores Pool 1-54,text,true,,458,573,1,1,http://localhost:8081/store/order,18,0,1
+1624316998531,20,client/store - make a purchase,200,,Clients/Stores Pool 1-55,text,true,,458,573,1,1,http://localhost:8081/store/order,20,0,1
+1624316998573,18,client/store - make a purchase,200,,Clients/Stores Pool 1-56,text,true,,458,573,1,1,http://localhost:8081/store/order,18,0,0
+1624316998617,16,client/store - make a purchase,200,,Clients/Stores Pool 1-57,text,true,,458,573,1,1,http://localhost:8081/store/order,16,0,1
+1624316998658,17,client/store - make a purchase,200,,Clients/Stores Pool 1-58,text,true,,458,573,1,1,http://localhost:8081/store/order,17,0,1
+1624316998703,16,client/store - make a purchase,200,,Clients/Stores Pool 1-59,text,true,,458,573,1,1,http://localhost:8081/store/order,16,0,1
+1624316998745,16,client/store - make a purchase,200,,Clients/Stores Pool 1-60,text,true,,458,573,1,1,http://localhost:8081/store/order,16,0,1
+1624316998788,17,client/store - make a purchase,200,,Clients/Stores Pool 1-61,text,true,,458,573,1,1,http://localhost:8081/store/order,17,0,0
+1624316998831,13,client/store - make a purchase,200,,Clients/Stores Pool 1-62,text,true,,458,573,1,1,http://localhost:8081/store/order,13,0,1
+1624316998877,44,client/store - make a purchase,200,,Clients/Stores Pool 1-63,text,true,,458,573,2,2,http://localhost:8081/store/order,43,0,1
+1624316998920,48,client/store - make a purchase,200,,Clients/Stores Pool 1-64,text,true,,458,573,2,2,http://localhost:8081/store/order,48,0,2
+1624316998964,32,client/store - make a purchase,200,,Clients/Stores Pool 1-65,text,true,,458,573,1,1,http://localhost:8081/store/order,31,0,7
+1624316999003,16,client/store - make a purchase,200,,Clients/Stores Pool 1-66,text,true,,458,573,1,1,http://localhost:8081/store/order,15,0,0
+1624316999046,13,client/store - make a purchase,200,,Clients/Stores Pool 1-67,text,true,,458,573,1,1,http://localhost:8081/store/order,13,0,1
+1624316999089,14,client/store - make a purchase,200,,Clients/Stores Pool 1-68,text,true,,458,573,1,1,http://localhost:8081/store/order,14,0,1
+1624316999133,13,client/store - make a purchase,200,,Clients/Stores Pool 1-69,text,true,,458,573,1,1,http://localhost:8081/store/order,13,0,1
+1624316999175,14,client/store - make a purchase,200,,Clients/Stores Pool 1-70,text,true,,458,573,1,1,http://localhost:8081/store/order,14,0,0
+1624316999336,269,rider - login,200,,Riders Pool 2-6,text,true,,686,246,15,15,http://localhost:8081/login,267,0,1
+1624316999192,427,rider - login,200,,Riders Pool 2-1,text,true,,686,246,15,15,http://localhost:8081/login,406,0,1
+1624316999234,365,rider - login,200,,Riders Pool 2-2,text,true,,686,246,15,15,http://localhost:8081/login,365,0,0
+1624316999424,249,rider - login,200,,Riders Pool 2-9,text,true,,686,246,17,17,http://localhost:8081/login,246,0,0
+1624316999252,433,rider - login,200,,Riders Pool 2-3,text,true,,686,246,17,17,http://localhost:8081/login,432,0,1
+1624316999308,405,rider - login,200,,Riders Pool 2-5,text,true,,686,246,18,18,http://localhost:8081/login,403,0,0
+1624316999482,258,rider - login,200,,Riders Pool 2-11,text,true,,686,246,19,19,http://localhost:8081/login,258,0,1
+1624316999453,291,rider - login,200,,Riders Pool 2-10,text,true,,686,246,20,20,http://localhost:8081/login,284,0,1
+1624316999643,130,rider - get all their orders,200,,Riders Pool 2-2,text,true,,918,339,21,21,http://localhost:8081/rider/orders,125,0,0
+1624316999641,138,rider - get all their orders,200,,Riders Pool 2-1,text,true,,918,339,21,21,http://localhost:8081/rider/orders,138,0,0
+1624316999640,145,rider - get all their orders,200,,Riders Pool 2-6,text,true,,918,339,21,21,http://localhost:8081/rider/orders,145,0,0
+1624316999396,425,rider - login,200,,Riders Pool 2-8,text,true,,686,246,22,22,http://localhost:8081/login,423,0,0
+1624316999279,565,rider - login,200,,Riders Pool 2-4,text,true,,686,246,23,23,http://localhost:8081/login,565,0,2
+1624316999740,114,rider - get all their orders,200,,Riders Pool 2-11,text,true,,918,339,23,23,http://localhost:8081/rider/orders,114,0,0
+1624316999569,349,rider - login,200,,Riders Pool 2-14,text,true,,686,246,26,26,http://localhost:8081/login,322,0,1
+1624316999686,241,rider - get all their orders,200,,Riders Pool 2-3,text,true,,918,339,26,26,http://localhost:8081/rider/orders,241,0,0
+1624316999785,150,rider - get reviews statistics,200,,Riders Pool 2-6,text,true,,482,346,26,26,http://localhost:8081/rider/reviews/stats,149,0,0
+1624316999627,308,rider - login,200,,Riders Pool 2-16,text,true,,686,246,26,26,http://localhost:8081/login,307,0,1
+1624316999540,427,rider - login,200,,Riders Pool 2-13,text,true,,686,246,26,26,http://localhost:8081/login,426,0,0
+1624316999657,315,rider - login,200,,Riders Pool 2-17,text,true,,686,246,26,26,http://localhost:8081/login,314,0,0
+1624316999713,262,rider - get all their orders,200,,Riders Pool 2-5,text,true,,918,339,27,27,http://localhost:8081/rider/orders,262,0,0
+1624316999673,305,rider - get all their orders,200,,Riders Pool 2-9,text,true,,918,339,27,27,http://localhost:8081/rider/orders,305,0,0
+1624316999687,307,rider - login,200,,Riders Pool 2-18,text,true,,686,246,27,27,http://localhost:8081/login,306,0,0
+1624316999511,483,rider - login,200,,Riders Pool 2-12,text,true,,686,246,27,27,http://localhost:8081/login,483,0,1
+1624316999774,226,rider - get reviews statistics,200,,Riders Pool 2-2,text,true,,482,346,27,27,http://localhost:8081/rider/reviews/stats,225,0,0
+1624316999366,634,rider - login,200,,Riders Pool 2-7,text,true,,686,246,27,27,http://localhost:8081/login,633,0,1
+1624316999994,16,rider - get all their orders,200,,Riders Pool 2-18,text,true,,918,339,27,27,http://localhost:8081/rider/orders,16,0,0
+1624316999598,416,rider - login,200,,Riders Pool 2-15,text,true,,686,246,27,27,http://localhost:8081/login,416,0,1
+1624316999716,391,rider - login,200,,Riders Pool 2-19,text,true,,686,246,30,30,http://localhost:8081/login,390,0,0
+1624316999855,255,rider - get reviews statistics,200,,Riders Pool 2-11,text,true,,482,346,30,30,http://localhost:8081/rider/reviews/stats,255,0,0
+1624316999968,158,rider - get all their orders,200,,Riders Pool 2-13,text,true,,918,339,30,30,http://localhost:8081/rider/orders,158,0,0
+1624316999801,328,rider - login,200,,Riders Pool 2-22,text,true,,686,246,30,30,http://localhost:8081/login,327,0,0
+1624316999919,215,rider - get all their orders,200,,Riders Pool 2-14,text,true,,918,339,30,30,http://localhost:8081/rider/orders,215,0,0
+1624316999745,395,rider - get all their orders,200,,Riders Pool 2-10,text,true,,918,339,30,30,http://localhost:8081/rider/orders,395,0,0
+1624316999780,365,rider - get reviews statistics,200,,Riders Pool 2-1,text,true,,482,346,30,30,http://localhost:8081/rider/reviews/stats,365,0,0
+1624316999928,222,rider - get reviews statistics,200,,Riders Pool 2-3,text,true,,482,346,30,30,http://localhost:8081/rider/reviews/stats,218,0,0
+1624316999822,334,rider - get all their orders,200,,Riders Pool 2-8,text,true,,918,339,29,29,http://localhost:8081/rider/orders,334,0,0
+1624316999742,475,rider - login,200,,Riders Pool 2-20,text,true,,686,246,31,31,http://localhost:8081/login,475,0,1
+1624316999973,250,rider - get all their orders,200,,Riders Pool 2-17,text,true,,918,339,31,31,http://localhost:8081/rider/orders,249,0,0
+1624316999772,452,rider - login,200,,Riders Pool 2-21,text,true,,686,246,31,31,http://localhost:8081/login,450,0,0
+1624316999979,246,rider - get reviews statistics,200,,Riders Pool 2-9,text,true,,482,346,31,31,http://localhost:8081/rider/reviews/stats,246,0,0
+1624316999917,309,rider - login,200,,Riders Pool 2-26,text,true,,686,246,30,30,http://localhost:8081/login,294,0,0
+1624316999975,252,rider - get reviews statistics,200,,Riders Pool 2-5,text,true,,482,346,30,30,http://localhost:8081/rider/reviews/stats,252,0,0
+1624316999844,387,rider - get all their orders,200,,Riders Pool 2-4,text,true,,918,339,29,29,http://localhost:8081/rider/orders,387,0,0
+1624317000110,132,rider - get all their orders,200,,Riders Pool 2-19,text,true,,918,339,30,30,http://localhost:8081/rider/orders,131,0,0
+1624316999995,260,rider - get all their orders,200,,Riders Pool 2-12,text,true,,918,339,30,30,http://localhost:8081/rider/orders,260,0,0
+1624316999935,325,rider - get all their orders,200,,Riders Pool 2-16,text,true,,918,339,30,30,http://localhost:8081/rider/orders,325,0,0
+1624316999947,373,rider - login,200,,Riders Pool 2-27,text,true,,686,246,32,32,http://localhost:8081/login,371,0,0
+1624317000001,325,rider - get all their orders,200,,Riders Pool 2-7,text,true,,918,339,33,33,http://localhost:8081/rider/orders,325,0,0
+1624317000011,317,rider - get reviews statistics,200,,Riders Pool 2-18,text,true,,482,346,33,33,http://localhost:8081/rider/reviews/stats,317,0,0
+1624317000032,301,rider - login,200,,Riders Pool 2-30,text,true,,686,246,32,32,http://localhost:8081/login,297,0,1
+1624316999830,507,rider - login,200,,Riders Pool 2-23,text,true,,686,246,32,32,http://localhost:8081/login,507,0,1
+1624317000016,322,rider - get all their orders,200,,Riders Pool 2-15,text,true,,918,339,32,32,http://localhost:8081/rider/orders,322,0,0
+1624317000004,357,rider - login,200,,Riders Pool 2-29,text,true,,686,246,33,33,http://localhost:8081/login,357,0,1
+1624317000126,238,rider - get reviews statistics,200,,Riders Pool 2-13,text,true,,482,346,33,33,http://localhost:8081/rider/reviews/stats,237,0,0
+1624317000134,231,rider - get reviews statistics,200,,Riders Pool 2-14,text,true,,482,346,32,32,http://localhost:8081/rider/reviews/stats,231,0,0
+1624316999888,480,rider - login,200,,Riders Pool 2-25,text,true,,686,246,31,31,http://localhost:8081/login,479,0,0
+1624317000231,141,rider - get reviews statistics,200,,Riders Pool 2-4,text,true,,482,346,31,31,http://localhost:8081/rider/reviews/stats,140,0,0
+1624316999975,399,rider - login,200,,Riders Pool 2-28,text,true,,686,246,31,31,http://localhost:8081/login,399,0,0
+1624317000129,248,rider - get all their orders,200,,Riders Pool 2-22,text,true,,918,339,30,30,http://localhost:8081/rider/orders,247,0,0
+1624317000227,152,rider - get all their orders,200,,Riders Pool 2-26,text,true,,918,339,30,30,http://localhost:8081/rider/orders,152,0,0
+1624317000224,161,rider - get all their orders,200,,Riders Pool 2-21,text,true,,918,339,31,31,http://localhost:8081/rider/orders,161,0,0
+1624316999858,541,rider - login,200,,Riders Pool 2-24,text,true,,686,246,31,31,http://localhost:8081/login,541,0,1
+1624317000321,79,rider - get all their orders,200,,Riders Pool 2-27,text,true,,918,339,31,31,http://localhost:8081/rider/orders,76,0,0
+1624317000223,179,rider - get reviews statistics,200,,Riders Pool 2-17,text,true,,482,346,31,31,http://localhost:8081/rider/reviews/stats,179,0,0
+1624317000217,193,rider - get all their orders,200,,Riders Pool 2-20,text,true,,918,339,31,31,http://localhost:8081/rider/orders,187,0,0
+1624317000362,58,rider - get all their orders,200,,Riders Pool 2-29,text,true,,918,339,31,31,http://localhost:8081/rider/orders,58,0,0
+1624317000255,214,rider - get reviews statistics,200,,Riders Pool 2-12,text,true,,482,346,33,33,http://localhost:8081/rider/reviews/stats,213,0,0
+1624317000242,232,rider - get reviews statistics,200,,Riders Pool 2-19,text,true,,482,346,32,32,http://localhost:8081/rider/reviews/stats,228,0,0
+1624317000377,99,rider - get reviews statistics,200,,Riders Pool 2-22,text,true,,482,346,31,31,http://localhost:8081/rider/reviews/stats,99,0,0
+1624317000326,151,rider - get reviews statistics,200,,Riders Pool 2-7,text,true,,482,346,30,30,http://localhost:8081/rider/reviews/stats,151,0,0
+1624317000149,328,rider - login,200,,Riders Pool 2-34,text,true,,686,246,30,30,http://localhost:8081/login,314,0,1
+1624317000157,324,rider - get reviews statistics,200,,Riders Pool 2-8,text,true,,482,346,29,29,http://localhost:8081/rider/reviews/stats,323,0,0
+1624317000386,96,rider - get reviews statistics,200,,Riders Pool 2-21,text,true,,482,346,28,28,http://localhost:8081/rider/reviews/stats,96,0,0
+1624317000379,104,rider - get reviews statistics,200,,Riders Pool 2-26,text,true,,482,346,27,27,http://localhost:8081/rider/reviews/stats,104,0,0
+1624317000120,418,rider - login,200,,Riders Pool 2-33,text,true,,686,246,28,28,http://localhost:8081/login,417,0,1
+1624317000062,481,rider - login,200,,Riders Pool 2-31,text,true,,686,246,28,28,http://localhost:8081/login,481,0,0
+1624317000353,190,rider - login,200,,Riders Pool 2-41,text,true,,686,246,28,28,http://localhost:8081/login,187,0,1
+1624317000179,371,rider - login,200,,Riders Pool 2-35,text,true,,686,246,28,28,http://localhost:8081/login,369,0,0
+1624317000091,462,rider - login,200,,Riders Pool 2-32,text,true,,686,246,28,28,http://localhost:8081/login,461,0,0
+1624317000375,185,rider - get all their orders,200,,Riders Pool 2-28,text,true,,918,339,29,29,http://localhost:8081/rider/orders,185,0,0
+1624317000260,304,rider - get reviews statistics,200,,Riders Pool 2-16,text,true,,482,346,29,29,http://localhost:8081/rider/reviews/stats,304,0,0
+1624317000338,230,rider - get all their orders,200,,Riders Pool 2-23,text,true,,918,339,28,28,http://localhost:8081/rider/orders,230,0,0
+1624317000369,205,rider - get all their orders,200,,Riders Pool 2-25,text,true,,918,339,28,28,http://localhost:8081/rider/orders,205,0,0
+1624317000400,175,rider - get all their orders,200,,Riders Pool 2-24,text,true,,918,339,28,28,http://localhost:8081/rider/orders,175,0,0
+1624317000333,250,rider - get all their orders,200,,Riders Pool 2-30,text,true,,918,339,28,28,http://localhost:8081/rider/orders,250,0,0
+1624317000294,336,rider - login,200,,Riders Pool 2-39,text,true,,686,246,30,30,http://localhost:8081/login,319,0,1
+1624317000265,401,rider - login,200,,Riders Pool 2-38,text,true,,686,246,31,31,http://localhost:8081/login,400,0,1
+1624317000410,261,rider - get reviews statistics,200,,Riders Pool 2-20,text,true,,482,346,32,32,http://localhost:8081/rider/reviews/stats,261,0,0
+1624317000141,531,rider - get reviews statistics,200,,Riders Pool 2-10,text,true,,482,346,31,31,http://localhost:8081/rider/reviews/stats,531,0,0
+1624317000237,440,rider - login,200,,Riders Pool 2-37,text,true,,686,246,30,30,http://localhost:8081/login,440,0,1
+1624317000544,135,rider - get all their orders,200,,Riders Pool 2-31,text,true,,918,339,30,30,http://localhost:8081/rider/orders,134,0,0
+1624317000401,278,rider - get reviews statistics,200,,Riders Pool 2-27,text,true,,482,346,30,30,http://localhost:8081/rider/reviews/stats,278,0,0
+1624317000421,261,rider - get reviews statistics,200,,Riders Pool 2-29,text,true,,482,346,29,29,http://localhost:8081/rider/reviews/stats,261,0,0
+1624317000544,144,rider - get all their orders,200,,Riders Pool 2-41,text,true,,918,339,28,28,http://localhost:8081/rider/orders,143,0,0
+1624317000477,216,rider - get all their orders,200,,Riders Pool 2-34,text,true,,918,339,28,28,http://localhost:8081/rider/orders,216,0,0
+1624317000207,491,rider - login,200,,Riders Pool 2-36,text,true,,686,246,28,28,http://localhost:8081/login,489,0,0
+1624317000496,326,rider - login,200,,Riders Pool 2-46,text,true,,686,246,32,32,http://localhost:8081/login,325,0,1
+1624317000555,299,rider - login,200,,Riders Pool 2-48,text,true,,686,246,34,34,http://localhost:8081/login,288,0,0
+1624317000584,273,rider - login,200,,Riders Pool 2-49,text,true,,686,246,34,34,http://localhost:8081/login,272,0,1
+1624317000338,520,rider - get reviews statistics,200,,Riders Pool 2-15,text,true,,482,346,34,34,http://localhost:8081/rider/reviews/stats,520,0,0
+1624317000538,323,rider - get all their orders,200,,Riders Pool 2-33,text,true,,918,339,33,33,http://localhost:8081/rider/orders,323,0,0
+1624317000667,214,rider - get all their orders,200,,Riders Pool 2-38,text,true,,918,339,34,34,http://localhost:8081/rider/orders,214,0,0
+1624317000409,472,rider - login,200,,Riders Pool 2-43,text,true,,686,246,34,34,http://localhost:8081/login,472,0,0
+1624317000568,318,rider - get reviews statistics,200,,Riders Pool 2-23,text,true,,482,346,34,34,http://localhost:8081/rider/reviews/stats,318,0,0
+1624317000561,326,rider - get reviews statistics,200,,Riders Pool 2-28,text,true,,482,346,33,33,http://localhost:8081/rider/reviews/stats,326,0,0
+1624317000613,274,rider - login,200,,Riders Pool 2-50,text,true,,686,246,32,32,http://localhost:8081/login,274,0,1
+1624317000575,316,rider - get reviews statistics,200,,Riders Pool 2-24,text,true,,482,346,32,32,http://localhost:8081/rider/reviews/stats,316,0,0
+1624317000324,567,rider - login,200,,Riders Pool 2-40,text,true,,686,246,32,32,http://localhost:8081/login,565,0,0
+1624317000584,309,rider - get reviews statistics,200,,Riders Pool 2-30,text,true,,482,346,31,31,http://localhost:8081/rider/reviews/stats,308,0,0
+1624317000694,200,rider - get reviews statistics,200,,Riders Pool 2-34,text,true,,482,346,30,30,http://localhost:8081/rider/reviews/stats,200,0,0
+1624317000550,348,rider - get all their orders,200,,Riders Pool 2-35,text,true,,918,339,29,29,http://localhost:8081/rider/orders,347,0,0
+1624317000439,484,rider - login,200,,Riders Pool 2-44,text,true,,686,246,30,30,http://localhost:8081/login,484,0,1
+1624317000631,297,rider - get all their orders,200,,Riders Pool 2-39,text,true,,918,339,30,30,http://localhost:8081/rider/orders,297,0,0
+1624317000380,575,rider - login,200,,Riders Pool 2-42,text,true,,686,246,31,31,http://localhost:8081/login,572,0,1
+1624317000527,457,rider - login,200,,Riders Pool 2-47,text,true,,686,246,32,32,http://localhost:8081/login,457,0,0
+1624317000554,437,rider - get all their orders,200,,Riders Pool 2-32,text,true,,918,339,33,33,http://localhost:8081/rider/orders,437,0,0
+1624317000679,315,rider - get reviews statistics,200,,Riders Pool 2-31,text,true,,482,346,33,33,http://localhost:8081/rider/reviews/stats,314,0,0
+1624317000468,549,rider - login,200,,Riders Pool 2-45,text,true,,686,246,33,33,http://localhost:8081/login,546,0,0
+1624317000882,144,rider - get all their orders,200,,Riders Pool 2-43,text,true,,918,339,33,33,http://localhost:8081/rider/orders,144,0,0
+1624317000891,146,rider - get all their orders,200,,Riders Pool 2-40,text,true,,918,339,33,33,http://localhost:8081/rider/orders,146,0,0
+1624317000887,153,rider - get reviews statistics,200,,Riders Pool 2-38,text,true,,482,346,33,33,http://localhost:8081/rider/reviews/stats,153,0,0
+1624317000677,367,rider - get all their orders,200,,Riders Pool 2-37,text,true,,918,339,32,32,http://localhost:8081/rider/orders,366,0,0
+1624317000823,227,rider - get all their orders,200,,Riders Pool 2-46,text,true,,918,339,33,33,http://localhost:8081/rider/orders,227,0,0
+1624317000672,409,rider - login,200,,Riders Pool 2-52,text,true,,686,246,34,34,http://localhost:8081/login,409,0,0
+1624317000857,230,rider - get all their orders,200,,Riders Pool 2-49,text,true,,918,339,34,34,http://localhost:8081/rider/orders,230,0,0
+1624317000855,256,rider - get all their orders,200,,Riders Pool 2-48,text,true,,918,339,35,35,http://localhost:8081/rider/orders,256,0,0
+1624317000651,466,rider - login,200,,Riders Pool 2-51,text,true,,686,246,35,35,http://localhost:8081/login,454,0,1
+1624317000735,423,rider - login,200,,Riders Pool 2-54,text,true,,686,246,36,36,http://localhost:8081/login,413,0,0
+1624317000861,306,rider - get reviews statistics,200,,Riders Pool 2-33,text,true,,482,346,37,37,http://localhost:8081/rider/reviews/stats,306,0,0
+1624317000689,480,rider - get reviews statistics,200,,Riders Pool 2-41,text,true,,482,346,36,36,http://localhost:8081/rider/reviews/stats,480,0,0
+1624317000992,180,rider - get reviews statistics,200,,Riders Pool 2-32,text,true,,482,346,35,35,http://localhost:8081/rider/reviews/stats,180,0,0
+1624317000574,601,rider - get reviews statistics,200,,Riders Pool 2-25,text,true,,482,346,34,34,http://localhost:8081/rider/reviews/stats,601,0,0
+1624317001026,151,rider - get reviews statistics,200,,Riders Pool 2-43,text,true,,482,346,33,33,http://localhost:8081/rider/reviews/stats,150,0,0
+1624317000799,378,rider - login,200,,Riders Pool 2-56,text,true,,686,246,33,33,http://localhost:8081/login,377,0,0
+1624317000888,291,rider - get all their orders,200,,Riders Pool 2-50,text,true,,918,339,32,32,http://localhost:8081/rider/orders,291,0,0
+1624317000898,281,rider - get reviews statistics,200,,Riders Pool 2-35,text,true,,482,346,32,32,http://localhost:8081/rider/reviews/stats,280,0,0
+1624317000699,486,rider - get all their orders,200,,Riders Pool 2-36,text,true,,918,339,31,31,http://localhost:8081/rider/orders,486,0,0
+1624317000924,262,rider - get all their orders,200,,Riders Pool 2-44,text,true,,918,339,31,31,http://localhost:8081/rider/orders,262,0,0
+1624317000929,258,rider - get reviews statistics,200,,Riders Pool 2-39,text,true,,482,346,31,31,http://localhost:8081/rider/reviews/stats,258,0,0
+1624317001159,40,rider - get all their orders,200,,Riders Pool 2-54,text,true,,918,339,31,31,http://localhost:8081/rider/orders,40,0,0
+1624317000955,251,rider - get all their orders,200,,Riders Pool 2-42,text,true,,918,339,31,31,http://localhost:8081/rider/orders,250,0,0
+1624317000985,224,rider - get all their orders,200,,Riders Pool 2-47,text,true,,918,339,31,31,http://localhost:8081/rider/orders,224,0,0
+1624317001117,97,rider - get all their orders,200,,Riders Pool 2-51,text,true,,918,339,31,31,http://localhost:8081/rider/orders,97,0,0
+1624317000758,459,rider - login,200,,Riders Pool 2-55,text,true,,686,246,31,31,http://localhost:8081/login,400,0,1
+1624317000932,288,rider - login,200,,Riders Pool 2-61,text,true,,686,246,31,31,http://localhost:8081/login,287,0,0
+1624317000701,536,rider - login,200,,Riders Pool 2-53,text,true,,686,246,31,31,http://localhost:8081/login,536,0,1
+1624317001018,226,rider - get all their orders,200,,Riders Pool 2-45,text,true,,918,339,31,31,http://localhost:8081/rider/orders,226,0,0
+1624317000845,412,rider - login,200,,Riders Pool 2-58,text,true,,686,246,31,31,http://localhost:8081/login,396,0,1
+1624317000874,385,rider - login,200,,Riders Pool 2-59,text,true,,686,246,31,31,http://localhost:8081/login,385,0,0
+1624317001179,94,rider - get reviews statistics,200,,Riders Pool 2-50,text,true,,482,346,31,31,http://localhost:8081/rider/reviews/stats,94,0,0
+1624317001051,224,rider - get reviews statistics,200,,Riders Pool 2-46,text,true,,482,346,30,30,http://localhost:8081/rider/reviews/stats,224,0,0
+1624317001186,96,rider - get reviews statistics,200,,Riders Pool 2-36,text,true,,482,346,29,29,http://localhost:8081/rider/reviews/stats,92,0,0
+1624317001087,198,rider - get reviews statistics,200,,Riders Pool 2-49,text,true,,482,346,28,28,http://localhost:8081/rider/reviews/stats,198,0,0
+1624317001177,114,rider - get all their orders,200,,Riders Pool 2-56,text,true,,918,339,27,27,http://localhost:8081/rider/orders,114,0,0
+1624317001200,95,rider - get reviews statistics,200,,Riders Pool 2-54,text,true,,482,346,27,27,http://localhost:8081/rider/reviews/stats,95,0,0
+1624317000832,467,rider - login,200,,Riders Pool 2-57,text,true,,686,246,26,26,http://localhost:8081/login,466,0,0
+1624317001245,57,rider - get reviews statistics,200,,Riders Pool 2-45,text,true,,482,346,26,26,http://localhost:8081/rider/reviews/stats,57,0,0
+1624317001044,260,rider - get reviews statistics,200,,Riders Pool 2-37,text,true,,482,346,25,25,http://localhost:8081/rider/reviews/stats,260,0,0
+1624317001217,90,rider - get all their orders,200,,Riders Pool 2-55,text,true,,918,339,24,24,http://localhost:8081/rider/orders,89,0,0
+1624317001186,128,rider - get reviews statistics,200,,Riders Pool 2-44,text,true,,482,346,24,24,http://localhost:8081/rider/reviews/stats,128,0,0
+1624317001082,237,rider - get all their orders,200,,Riders Pool 2-52,text,true,,918,339,23,23,http://localhost:8081/rider/orders,237,0,0
+1624317001206,155,rider - get reviews statistics,200,,Riders Pool 2-42,text,true,,482,346,23,23,http://localhost:8081/rider/reviews/stats,155,0,0
+1624317001291,71,rider - get reviews statistics,200,,Riders Pool 2-56,text,true,,482,346,22,22,http://localhost:8081/rider/reviews/stats,71,0,0
+1624317001210,157,rider - get reviews statistics,200,,Riders Pool 2-47,text,true,,482,346,21,21,http://localhost:8081/rider/reviews/stats,156,0,0
+1624317001037,332,rider - get reviews statistics,200,,Riders Pool 2-40,text,true,,482,346,20,20,http://localhost:8081/rider/reviews/stats,331,0,0
+1624317000989,381,rider - login,200,,Riders Pool 2-63,text,true,,686,246,19,19,http://localhost:8081/login,370,0,1
+1624317001220,152,rider - get all their orders,200,,Riders Pool 2-61,text,true,,918,339,19,19,http://localhost:8081/rider/orders,152,0,0
+1624317000961,411,rider - login,200,,Riders Pool 2-62,text,true,,686,246,19,19,http://localhost:8081/login,402,0,0
+1624317001238,139,rider - get all their orders,200,,Riders Pool 2-53,text,true,,918,339,19,19,http://localhost:8081/rider/orders,139,0,0
+1624317001258,125,rider - get all their orders,200,,Riders Pool 2-58,text,true,,918,339,19,19,http://localhost:8081/rider/orders,125,0,0
+1624317001111,276,rider - get reviews statistics,200,,Riders Pool 2-48,text,true,,482,346,19,19,http://localhost:8081/rider/reviews/stats,276,0,0
+1624317001260,127,rider - get all their orders,200,,Riders Pool 2-59,text,true,,918,339,19,19,http://localhost:8081/rider/orders,126,0,0
+1624317001382,7,rider - get reviews statistics,200,,Riders Pool 2-58,text,true,,482,346,18,18,http://localhost:8081/rider/reviews/stats,7,0,0
+1624317001307,85,rider - get reviews statistics,200,,Riders Pool 2-55,text,true,,482,346,17,17,http://localhost:8081/rider/reviews/stats,85,0,0
+1624317001319,76,rider - get reviews statistics,200,,Riders Pool 2-52,text,true,,482,346,16,16,http://localhost:8081/rider/reviews/stats,74,0,0
+1624317001298,97,rider - get all their orders,200,,Riders Pool 2-57,text,true,,918,339,16,16,http://localhost:8081/rider/orders,97,0,0
+1624317001371,25,rider - get reviews statistics,200,,Riders Pool 2-61,text,true,,482,346,15,15,http://localhost:8081/rider/reviews/stats,21,0,0
+1624317001214,185,rider - get reviews statistics,200,,Riders Pool 2-51,text,true,,482,346,14,14,http://localhost:8081/rider/reviews/stats,185,0,0
+1624317001376,24,rider - get reviews statistics,200,,Riders Pool 2-53,text,true,,482,346,13,13,http://localhost:8081/rider/reviews/stats,24,0,0
+1624317001396,7,rider - get reviews statistics,200,,Riders Pool 2-57,text,true,,482,346,12,12,http://localhost:8081/rider/reviews/stats,7,0,0
+1624317001387,18,rider - get reviews statistics,200,,Riders Pool 2-59,text,true,,482,346,11,11,http://localhost:8081/rider/reviews/stats,18,0,0
+1624317001370,41,rider - get all their orders,200,,Riders Pool 2-63,text,true,,918,339,10,10,http://localhost:8081/rider/orders,41,0,0
+1624317001412,6,rider - get reviews statistics,200,,Riders Pool 2-63,text,true,,482,346,10,10,http://localhost:8081/rider/reviews/stats,5,0,0
+1624317001371,48,rider - get all their orders,200,,Riders Pool 2-62,text,true,,918,339,9,9,http://localhost:8081/rider/orders,48,0,0
+1624317001419,4,rider - get reviews statistics,200,,Riders Pool 2-62,text,true,,482,346,9,9,http://localhost:8081/rider/reviews/stats,4,0,0
+1624317001048,387,rider - login,200,,Riders Pool 2-65,text,true,,686,246,8,8,http://localhost:8081/login,387,0,1
+1624317001018,422,rider - login,200,,Riders Pool 2-64,text,true,,686,246,8,8,http://localhost:8081/login,422,0,0
+1624317000904,536,rider - login,200,,Riders Pool 2-60,text,true,,686,246,8,8,http://localhost:8081/login,536,0,0
+1624317001135,305,rider - login,200,,Riders Pool 2-68,text,true,,686,246,8,8,http://localhost:8081/login,305,0,1
+1624317001434,7,rider - get all their orders,200,,Riders Pool 2-65,text,true,,918,339,8,8,http://localhost:8081/rider/orders,7,0,0
+1624317001441,6,rider - get reviews statistics,200,,Riders Pool 2-65,text,true,,482,346,8,8,http://localhost:8081/rider/reviews/stats,6,0,0
+1624317001440,11,rider - get all their orders,200,,Riders Pool 2-64,text,true,,918,339,7,7,http://localhost:8081/rider/orders,10,0,0
+1624317001440,15,rider - get all their orders,200,,Riders Pool 2-68,text,true,,918,339,7,7,http://localhost:8081/rider/orders,15,0,0
+1624317001451,5,rider - get reviews statistics,200,,Riders Pool 2-64,text,true,,482,346,7,7,http://localhost:8081/rider/reviews/stats,5,0,0
+1624317001455,4,rider - get reviews statistics,200,,Riders Pool 2-68,text,true,,482,346,6,6,http://localhost:8081/rider/reviews/stats,4,0,0
+1624317001440,19,rider - get all their orders,200,,Riders Pool 2-60,text,true,,918,339,6,6,http://localhost:8081/rider/orders,19,0,0
+1624317001460,4,rider - get reviews statistics,200,,Riders Pool 2-60,text,true,,482,346,5,5,http://localhost:8081/rider/reviews/stats,4,0,0
+1624317001193,293,rider - login,200,,Riders Pool 2-70,text,true,,686,246,4,4,http://localhost:8081/login,293,0,0
+1624317001486,6,rider - get all their orders,200,,Riders Pool 2-70,text,true,,918,339,4,4,http://localhost:8081/rider/orders,6,0,0
+1624317001492,4,rider - get reviews statistics,200,,Riders Pool 2-70,text,true,,482,346,4,4,http://localhost:8081/rider/reviews/stats,4,0,0
+1624317001163,344,rider - login,200,,Riders Pool 2-69,text,true,,686,246,3,3,http://localhost:8081/login,344,0,1
+1624317001106,401,rider - login,200,,Riders Pool 2-67,text,true,,686,246,3,3,http://localhost:8081/login,401,0,0
+1624317001076,435,rider - login,200,,Riders Pool 2-66,text,true,,686,246,3,3,http://localhost:8081/login,435,0,1
+1624317001507,5,rider - get all their orders,200,,Riders Pool 2-67,text,true,,918,339,3,3,http://localhost:8081/rider/orders,5,0,0
+1624317001507,5,rider - get all their orders,200,,Riders Pool 2-69,text,true,,918,339,3,3,http://localhost:8081/rider/orders,5,0,0
+1624317001513,3,rider - get reviews statistics,200,,Riders Pool 2-69,text,true,,482,346,3,3,http://localhost:8081/rider/reviews/stats,3,0,0
+1624317001512,4,rider - get reviews statistics,200,,Riders Pool 2-67,text,true,,482,346,3,3,http://localhost:8081/rider/reviews/stats,4,0,0
+1624317001510,7,rider - get all their orders,200,,Riders Pool 2-66,text,true,,918,339,1,1,http://localhost:8081/rider/orders,6,0,0
+1624317001517,3,rider - get reviews statistics,200,,Riders Pool 2-66,text,true,,482,346,1,1,http://localhost:8081/rider/reviews/stats,3,0,0
+1624317001523,93,manager - login,200,,Managers Pool 3-1,text,true,,689,247,1,1,http://localhost:8081/login,93,0,0
+1624317001616,15,manager - get all riders info,200,,Managers Pool 3-1,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,15,0,0
+1624317001631,9,manager - get all stores' info,200,,Managers Pool 3-1,text,true,,719,342,1,1,http://localhost:8081/manager/stores,9,0,0
+1624317001641,11,manager - get general statistics,200,,Managers Pool 3-1,text,true,,508,346,2,2,http://localhost:8081/manager/statistics,11,0,0
+1624317001652,8,manager - get riders' statistics,200,,Managers Pool 3-1,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,8,0,0
+1624317001642,102,manager - login,200,,Managers Pool 3-2,text,true,,689,247,1,1,http://localhost:8081/login,102,0,0
+1624317001744,7,manager - get all riders info,200,,Managers Pool 3-2,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,7,0,0
+1624317001751,7,manager - get all stores' info,200,,Managers Pool 3-2,text,true,,719,342,1,1,http://localhost:8081/manager/stores,6,0,0
+1624317001758,7,manager - get general statistics,200,,Managers Pool 3-2,text,true,,508,346,2,2,http://localhost:8081/manager/statistics,6,0,0
+1624317001765,6,manager - get riders' statistics,200,,Managers Pool 3-2,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,6,0,0
+1624317001762,106,manager - login,200,,Managers Pool 3-3,text,true,,689,247,1,1,http://localhost:8081/login,106,0,0
+1624317001869,6,manager - get all riders info,200,,Managers Pool 3-3,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317001875,6,manager - get all stores' info,200,,Managers Pool 3-3,text,true,,719,342,2,2,http://localhost:8081/manager/stores,6,0,0
+1624317001882,6,manager - get general statistics,200,,Managers Pool 3-3,text,true,,508,346,2,2,http://localhost:8081/manager/statistics,6,0,0
+1624317001889,4,manager - get riders' statistics,200,,Managers Pool 3-3,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,4,0,0
+1624317001881,105,manager - login,200,,Managers Pool 3-4,text,true,,689,247,1,1,http://localhost:8081/login,105,0,1
+1624317001986,6,manager - get all riders info,200,,Managers Pool 3-4,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317001993,5,manager - get all stores' info,200,,Managers Pool 3-4,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317001998,7,manager - get general statistics,200,,Managers Pool 3-4,text,true,,508,346,2,2,http://localhost:8081/manager/statistics,6,0,0
+1624317002005,5,manager - get riders' statistics,200,,Managers Pool 3-4,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,5,0,0
+1624317002001,95,manager - login,200,,Managers Pool 3-5,text,true,,689,247,1,1,http://localhost:8081/login,95,0,1
+1624317002096,7,manager - get all riders info,200,,Managers Pool 3-5,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,7,0,0
+1624317002104,5,manager - get all stores' info,200,,Managers Pool 3-5,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317002110,6,manager - get general statistics,200,,Managers Pool 3-5,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,6,0,0
+1624317002117,5,manager - get riders' statistics,200,,Managers Pool 3-5,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,5,0,0
+1624317002122,97,manager - login,200,,Managers Pool 3-6,text,true,,689,247,1,1,http://localhost:8081/login,97,0,1
+1624317002220,6,manager - get all riders info,200,,Managers Pool 3-6,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317002226,6,manager - get all stores' info,200,,Managers Pool 3-6,text,true,,719,342,1,1,http://localhost:8081/manager/stores,6,0,0
+1624317002232,7,manager - get general statistics,200,,Managers Pool 3-6,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,7,0,0
+1624317002239,7,manager - get riders' statistics,200,,Managers Pool 3-6,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,7,0,0
+1624317002242,97,manager - login,200,,Managers Pool 3-7,text,true,,689,247,1,1,http://localhost:8081/login,97,0,1
+1624317002340,6,manager - get all riders info,200,,Managers Pool 3-7,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317002346,6,manager - get all stores' info,200,,Managers Pool 3-7,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317002352,6,manager - get general statistics,200,,Managers Pool 3-7,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,6,0,0
+1624317002358,6,manager - get riders' statistics,200,,Managers Pool 3-7,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,6,0,0
+1624317002361,97,manager - login,200,,Managers Pool 3-8,text,true,,689,247,1,1,http://localhost:8081/login,97,0,1
+1624317002458,8,manager - get all riders info,200,,Managers Pool 3-8,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,8,0,0
+1624317002466,5,manager - get all stores' info,200,,Managers Pool 3-8,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317002471,7,manager - get general statistics,200,,Managers Pool 3-8,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,7,0,0
+1624317002479,5,manager - get riders' statistics,200,,Managers Pool 3-8,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,5,0,0
+1624317002482,98,manager - login,200,,Managers Pool 3-9,text,true,,689,247,1,1,http://localhost:8081/login,98,0,0
+1624317002581,8,manager - get all riders info,200,,Managers Pool 3-9,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,8,0,0
+1624317002589,6,manager - get all stores' info,200,,Managers Pool 3-9,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317002595,6,manager - get general statistics,200,,Managers Pool 3-9,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,6,0,0
+1624317002601,4,manager - get riders' statistics,200,,Managers Pool 3-9,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,4,0,0
+1624317002602,94,manager - login,200,,Managers Pool 3-10,text,true,,689,247,1,1,http://localhost:8081/login,94,0,0
+1624317002696,8,manager - get all riders info,200,,Managers Pool 3-10,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,8,0,0
+1624317002704,4,manager - get all stores' info,200,,Managers Pool 3-10,text,true,,719,342,1,1,http://localhost:8081/manager/stores,4,0,0
+1624317002708,7,manager - get general statistics,200,,Managers Pool 3-10,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,7,0,0
+1624317002715,5,manager - get riders' statistics,200,,Managers Pool 3-10,text,true,,492,348,1,1,http://localhost:8081/manager/riders/stats,5,0,0
+1624317002722,93,manager - login,200,,Managers Pool 3-11,text,true,,689,247,1,1,http://localhost:8081/login,93,0,0
+1624317002816,6,manager - get all riders info,200,,Managers Pool 3-11,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317002822,5,manager - get all stores' info,200,,Managers Pool 3-11,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317002827,8,manager - get general statistics,200,,Managers Pool 3-11,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,8,0,0
+1624317002835,5,manager - get riders' statistics,200,,Managers Pool 3-11,text,true,,492,348,1,1,http://localhost:8081/manager/riders/stats,5,0,0
+1624317002841,94,manager - login,200,,Managers Pool 3-12,text,true,,689,247,1,1,http://localhost:8081/login,94,0,1
+1624317002936,6,manager - get all riders info,200,,Managers Pool 3-12,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317002942,5,manager - get all stores' info,200,,Managers Pool 3-12,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317002948,6,manager - get general statistics,200,,Managers Pool 3-12,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,6,0,0
+1624317002954,4,manager - get riders' statistics,200,,Managers Pool 3-12,text,true,,492,348,1,1,http://localhost:8081/manager/riders/stats,4,0,0
+1624317002962,95,manager - login,200,,Managers Pool 3-13,text,true,,689,247,1,1,http://localhost:8081/login,95,0,0
+1624317003057,6,manager - get all riders info,200,,Managers Pool 3-13,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,5,0,0
+1624317003063,5,manager - get all stores' info,200,,Managers Pool 3-13,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317003068,6,manager - get general statistics,200,,Managers Pool 3-13,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,6,0,0
+1624317003074,5,manager - get riders' statistics,200,,Managers Pool 3-13,text,true,,492,348,1,1,http://localhost:8081/manager/riders/stats,5,0,0
+1624317003081,103,manager - login,200,,Managers Pool 3-14,text,true,,689,247,1,1,http://localhost:8081/login,102,0,0
+1624317003184,6,manager - get all riders info,200,,Managers Pool 3-14,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317003190,5,manager - get all stores' info,200,,Managers Pool 3-14,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317003196,6,manager - get general statistics,200,,Managers Pool 3-14,text,true,,508,346,2,2,http://localhost:8081/manager/statistics,6,0,0
+1624317003202,4,manager - get riders' statistics,200,,Managers Pool 3-14,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,3,0,0
+1624317003202,107,manager - login,200,,Managers Pool 3-15,text,true,,689,247,1,1,http://localhost:8081/login,107,0,0
+1624317003310,6,manager - get all riders info,200,,Managers Pool 3-15,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317003316,5,manager - get all stores' info,200,,Managers Pool 3-15,text,true,,719,342,2,2,http://localhost:8081/manager/stores,5,0,0
+1624317003321,6,manager - get general statistics,200,,Managers Pool 3-15,text,true,,508,346,2,2,http://localhost:8081/manager/statistics,6,0,0
+1624317003328,4,manager - get riders' statistics,200,,Managers Pool 3-15,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,4,0,0
+1624317003321,98,manager - login,200,,Managers Pool 3-16,text,true,,689,247,1,1,http://localhost:8081/login,98,0,1
+1624317003419,6,manager - get all riders info,200,,Managers Pool 3-16,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317003425,7,manager - get all stores' info,200,,Managers Pool 3-16,text,true,,719,342,1,1,http://localhost:8081/manager/stores,7,0,0
+1624317003433,5,manager - get general statistics,200,,Managers Pool 3-16,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,5,0,0
+1624317003438,5,manager - get riders' statistics,200,,Managers Pool 3-16,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,4,0,0
+1624317003442,98,manager - login,200,,Managers Pool 3-17,text,true,,689,247,1,1,http://localhost:8081/login,98,0,0
+1624317003540,5,manager - get all riders info,200,,Managers Pool 3-17,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,5,0,0
+1624317003546,4,manager - get all stores' info,200,,Managers Pool 3-17,text,true,,719,342,1,1,http://localhost:8081/manager/stores,4,0,0
+1624317003551,5,manager - get general statistics,200,,Managers Pool 3-17,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,4,0,0
+1624317003556,4,manager - get riders' statistics,200,,Managers Pool 3-17,text,true,,492,348,1,1,http://localhost:8081/manager/riders/stats,4,0,0
+1624317003562,95,manager - login,200,,Managers Pool 3-18,text,true,,689,247,1,1,http://localhost:8081/login,95,0,0
+1624317003658,6,manager - get all riders info,200,,Managers Pool 3-18,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317003664,5,manager - get all stores' info,200,,Managers Pool 3-18,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317003669,5,manager - get general statistics,200,,Managers Pool 3-18,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,5,0,0
+1624317003675,4,manager - get riders' statistics,200,,Managers Pool 3-18,text,true,,492,348,1,1,http://localhost:8081/manager/riders/stats,4,0,0
+1624317003681,93,manager - login,200,,Managers Pool 3-19,text,true,,689,247,1,1,http://localhost:8081/login,93,0,1
+1624317003775,5,manager - get all riders info,200,,Managers Pool 3-19,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,5,0,0
+1624317003781,4,manager - get all stores' info,200,,Managers Pool 3-19,text,true,,719,342,1,1,http://localhost:8081/manager/stores,4,0,0
+1624317003785,6,manager - get general statistics,200,,Managers Pool 3-19,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,6,0,0
+1624317003791,3,manager - get riders' statistics,200,,Managers Pool 3-19,text,true,,492,348,1,1,http://localhost:8081/manager/riders/stats,3,0,0
+1624317003801,97,manager - login,200,,Managers Pool 3-20,text,true,,689,247,1,1,http://localhost:8081/login,97,0,1
+1624317003898,7,manager - get all riders info,200,,Managers Pool 3-20,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,7,0,0
+1624317003905,4,manager - get all stores' info,200,,Managers Pool 3-20,text,true,,719,342,1,1,http://localhost:8081/manager/stores,4,0,0
+1624317003909,7,manager - get general statistics,200,,Managers Pool 3-20,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,7,0,0
+1624317003916,4,manager - get riders' statistics,200,,Managers Pool 3-20,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,4,0,0
+1624317003921,94,manager - login,200,,Managers Pool 3-21,text,true,,689,247,1,1,http://localhost:8081/login,94,0,0
+1624317004015,5,manager - get all riders info,200,,Managers Pool 3-21,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,5,0,0
+1624317004020,5,manager - get all stores' info,200,,Managers Pool 3-21,text,true,,719,342,1,1,http://localhost:8081/manager/stores,4,0,0
+1624317004025,6,manager - get general statistics,200,,Managers Pool 3-21,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,6,0,0
+1624317004032,4,manager - get riders' statistics,200,,Managers Pool 3-21,text,true,,492,348,1,1,http://localhost:8081/manager/riders/stats,4,0,0
+1624317004042,109,manager - login,200,,Managers Pool 3-22,text,true,,689,247,1,1,http://localhost:8081/login,109,0,0
+1624317004152,5,manager - get all riders info,200,,Managers Pool 3-22,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,5,0,0
+1624317004157,6,manager - get all stores' info,200,,Managers Pool 3-22,text,true,,719,342,2,2,http://localhost:8081/manager/stores,6,0,0
+1624317004163,6,manager - get general statistics,200,,Managers Pool 3-22,text,true,,508,346,2,2,http://localhost:8081/manager/statistics,6,0,0
+1624317004170,3,manager - get riders' statistics,200,,Managers Pool 3-22,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,3,0,0
+1624317004162,93,manager - login,200,,Managers Pool 3-23,text,true,,689,247,1,1,http://localhost:8081/login,93,0,0
+1624317004256,4,manager - get all riders info,200,,Managers Pool 3-23,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,4,0,0
+1624317004260,5,manager - get all stores' info,200,,Managers Pool 3-23,text,true,,719,342,1,1,http://localhost:8081/manager/stores,5,0,0
+1624317004265,4,manager - get general statistics,200,,Managers Pool 3-23,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,4,0,0
+1624317004270,4,manager - get riders' statistics,200,,Managers Pool 3-23,text,true,,492,348,1,1,http://localhost:8081/manager/riders/stats,4,0,0
+1624317004281,114,manager - login,200,,Managers Pool 3-24,text,true,,689,247,1,1,http://localhost:8081/login,114,0,1
+1624317004395,6,manager - get all riders info,200,,Managers Pool 3-24,text,true,,600,346,2,2,http://localhost:8081/manager/riders/all,6,0,0
+1624317004401,4,manager - get all stores' info,200,,Managers Pool 3-24,text,true,,719,342,2,2,http://localhost:8081/manager/stores,4,0,0
+1624317004405,5,manager - get general statistics,200,,Managers Pool 3-24,text,true,,508,346,2,2,http://localhost:8081/manager/statistics,5,0,0
+1624317004410,4,manager - get riders' statistics,200,,Managers Pool 3-24,text,true,,492,348,2,2,http://localhost:8081/manager/riders/stats,4,0,0
+1624317004401,92,manager - login,200,,Managers Pool 3-25,text,true,,689,247,1,1,http://localhost:8081/login,92,0,0
+1624317004494,6,manager - get all riders info,200,,Managers Pool 3-25,text,true,,600,346,1,1,http://localhost:8081/manager/riders/all,6,0,0
+1624317004500,4,manager - get all stores' info,200,,Managers Pool 3-25,text,true,,719,342,1,1,http://localhost:8081/manager/stores,4,0,0
+1624317004504,5,manager - get general statistics,200,,Managers Pool 3-25,text,true,,508,346,1,1,http://localhost:8081/manager/statistics,5,0,0
+1624317004509,4,manager - get riders' statistics,200,,Managers Pool 3-25,text,true,,492,348,1,1,http://localhost:8081/manager/riders/stats,4,0,0
