@@ -113,6 +113,6 @@ Password | difficult-pass1 |
 
 ### [**Final Presentation Slides**](./presenting/presentation.pdf)
 
-### [**Product Specification Report**]()
+### [**Product Specification Report**](./reporting/product_specification_report.pdf)
 
-### [**QA Manual**]()
+### [**QA Manual**](./reporting/qa_manual.pdf)
