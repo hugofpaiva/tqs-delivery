@@ -22,3 +22,5 @@ This project aims to create a viable software product (functional specification,
 ### [**TQS Delivery REST API Docs**](http://35.246.29.122:8081/swagger-ui/index.html) 
 
 ### [**Humber Peças REST API Docs**](http://35.246.29.122:8081/swagger-ui/index.html) 
+
+### [**Backlog management with ZenHub**](https://app.zenhub.com/workspaces/tqs-delivery-60ba8a5d5a66c400143cb9dd/board)
