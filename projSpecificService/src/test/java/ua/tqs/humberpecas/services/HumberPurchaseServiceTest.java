@@ -1,6 +1,5 @@
 package ua.tqs.humberpecas.services;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,6 @@ import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -67,15 +65,14 @@ class HumberPurchaseServiceTest {
     private String userToken;
     private PurchaseDeliveryDTO purchaseDeliveryDTO;
     private PurchaseDTO purchaseDTO;
-    private Date date;
     private List<Long> productsIds;
+    private Date date;
     private Purchase purchase;
 
     @BeforeEach
     public void setUp() {
         person = new Person("Fernando", "12345678", "fernando@ua.pt");
         address = new Address("Aveiro", "3730-123", "Aveiro", "Portugal", person);
-
 
 
         productList = Arrays.asList(
@@ -108,8 +105,7 @@ class HumberPurchaseServiceTest {
 
         when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
         when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
-        when(productRepository.findAllById(anyList())).thenReturn(productList);
-
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(productList.get(0)));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         doThrow(UnreachableServiceException.class).when(deliveryService).newOrder(purchaseDeliveryDTO);
 
@@ -122,20 +118,16 @@ class HumberPurchaseServiceTest {
         verify(purchaseRepository, times(0)).saveAndFlush(any());
         verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
         verify(addressRepository, times(1)).findById(2L);
-        verify(productRepository, times(1)).findAllById(productsIds);
+        verify(productRepository, times(2)).findById(any());
 
     }
 
     @Test
     @DisplayName("Make Purchase when Generic Server not available throws UnreachableServiceException")
     void whenPurchaseWhenGenericNotAvailable_thenThrowsUnreachableServiceException() {
-
-        Person person1 = new Person("Antonio", "12345678", "to@ua.pt");
-
         when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
         when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
-        when(productRepository.findAllById(anyList())).thenReturn(productList);
-
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(productList.get(0)));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         doThrow(UnreachableServiceException.class).when(deliveryService).newOrder(purchaseDeliveryDTO);
 
@@ -148,7 +140,7 @@ class HumberPurchaseServiceTest {
         verify(purchaseRepository, times(0)).saveAndFlush(any());
         verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
         verify(addressRepository, times(1)).findById(2L);
-        verify(productRepository, times(1)).findAllById(productsIds);
+        verify(productRepository, times(2)).findById(any());
 
     }
 
@@ -200,7 +192,6 @@ class HumberPurchaseServiceTest {
         when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
-        when(productRepository.findAllById(productsIds)).thenReturn(new ArrayList<>());
 
         assertThrows(ResourceNotFoundException.class, () -> {
             purchaseService.newPurchase(purchaseDTO, userToken);
@@ -210,23 +201,20 @@ class HumberPurchaseServiceTest {
         verify(purchaseRepository, times(0)).saveAndFlush(any());
         verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
         verify(addressRepository, times(1)).findById(2L);
-        verify(productRepository, times(1)).findAllById(productsIds);
-
-
+        verify(productRepository, times(1)).findById(any());
     }
 
     @Test
     @DisplayName("Make Purchase")
     void whenValidPurchase_thenReturnPurchase() {
-
-
         Purchase p = new Purchase(person, address, productList);
         p.setServiceOrderId(5L);
 
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
         when(addressRepository.findById(anyLong())).thenReturn(Optional.of(address));
-        when(productRepository.findAllById(productsIds)).thenReturn(productList);
+        when(productRepository.findById(anyLong())).thenReturn(Optional.ofNullable(productList.get(0)))
+                .thenReturn(Optional.ofNullable(productList.get(1)));
         when(deliveryService.newOrder(purchaseDeliveryDTO)).thenReturn(5L);
         when(purchaseRepository.save(p)).thenReturn(p);
 
@@ -242,7 +230,7 @@ class HumberPurchaseServiceTest {
         verify(purchaseRepository, times(1)).save(p);
         verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
         verify(addressRepository, times(1)).findById(2L);
-        verify(productRepository, times(1)).findAllById(productsIds);
+        verify(productRepository, times(2)).findById(any());
 
     }
 
@@ -268,7 +256,7 @@ class HumberPurchaseServiceTest {
     }
 
     @Test
-    void testGetUserPurchases_whenEverythingValid_thenReturn () {
+    void testGetUserPurchases_whenEverythingValid_thenReturn() {
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
 

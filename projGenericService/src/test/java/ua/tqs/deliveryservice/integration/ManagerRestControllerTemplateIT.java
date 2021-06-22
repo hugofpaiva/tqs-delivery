@@ -481,7 +481,7 @@ class ManagerRestControllerTemplateIT {
         purchaseRepository.saveAndFlush(p3);
 
         double exp_time = (double) (p1.getDeliveryTime() + p2.getDeliveryTime() + p3.getDeliveryTime()) / 3;
-        double exp_rev = (7 / 2 + 1) / 2.0;
+        double exp_rev = (7.0 / 2.0 + 1.0) / 2.0;
 
         // test
         HttpHeaders headers = new HttpHeaders();
