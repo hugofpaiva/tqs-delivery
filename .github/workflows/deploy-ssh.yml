@@ -18,6 +18,7 @@ jobs:
             git pull
             export API_URL=35.246.29.122
             export PROFILE=prod
+            export GENERIC_URL=generic
             docker container stop $(docker container ls -aq)
             docker container rm $(docker container ls -aq)
             docker run --rm \
