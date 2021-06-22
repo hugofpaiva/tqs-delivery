@@ -29,6 +29,10 @@ public class StoresInfoPage {
         assertThat(this.driver.findElement(By.xpath("//*[@id=\"navbar-main\"]/div/ul/li/a/div/div/span")).getText(), is(name));
     }
 
+    public String getUserName(){
+        return this.driver.findElement(By.xpath("//*[@id=\"navbar-main\"]/div/ul/li/a/div/div/span")).getText();
+    }
+
     public void logoutManager() {
         this.driver.findElement(By.cssSelector("#navbar-main > div > ul > li > a")).click();
         {

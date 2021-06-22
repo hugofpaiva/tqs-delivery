@@ -24,10 +24,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class StoreRepositoryTests {
+class StoreRepositoryTests {
 
     @Container
-    public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
+    static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
             .withPassword("demopw")
             .withDatabaseName("delivery");
@@ -52,18 +52,17 @@ public class StoreRepositoryTests {
      */
 
     @Test
-    public void testWhenCreateStoreAndFindById_thenReturnSameStore() {
+    void testWhenCreateStoreAndFindById_thenReturnSameStore() {
         Store s = createAndSaveStore(1);
 
         Optional<Store> res = storeRepository.findById(s.getId());
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(s);
+        assertThat(res).isPresent().contains(s);
     }
 
     @Test
-    public void testWhenFindByInvalidId_thenReturnEmpty() {
+    void testWhenFindByInvalidId_thenReturnEmpty() {
         Optional<Store> res = storeRepository.findById(-1L);
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
 
@@ -73,24 +72,23 @@ public class StoreRepositoryTests {
      */
 
     @Test
-    public void testWhenCreateStoresAndFindByAll_thenReturnSameStores() {
+    void testWhenCreateStoresAndFindByAll_thenReturnSameStores() {
         Store s1 = createAndSaveStore(1);
         Store s2 = createAndSaveStore(2);
 
         List<Store> all = storeRepository.findAll();
 
-        assertThat(all).isNotNull();
         assertThat(all)
+                .isNotNull()
                 .hasSize(2)
                 .extracting(Store::getId)
                 .contains(s1.getId(), s2.getId());
     }
 
     @Test
-    public void testGivenNoStores_whenFindAll_thenReturnEmpty() {
+    void testGivenNoStores_whenFindAll_thenReturnEmpty() {
         List<Store> all = storeRepository.findAll();
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(0);
+        assertThat(all).isNotNull().isEmpty();
     }
 
 
@@ -100,18 +98,17 @@ public class StoreRepositoryTests {
      */
 
     @Test
-    public void testWhenCreateStoreAndFindByToken_thenReturnSameStore() {
+    void testWhenCreateStoreAndFindByToken_thenReturnSameStore() {
         Store s = createAndSaveStore(1);
 
         Optional<Store> res = storeRepository.findByToken(s.getToken());
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(s);
+        assertThat(res).isPresent().contains(s);
     }
 
     @Test
-    public void testWhenFindByInvalidToken_thenReturnEmpty() {
+    void testWhenFindByInvalidToken_thenReturnEmpty() {
         Optional<Store> res = storeRepository.findByToken("invalid-token");
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
 

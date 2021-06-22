@@ -2,6 +2,7 @@ package ua.tqs.humberpecas.selenium.pages;
 
 import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -121,6 +122,13 @@ public class ShoppingCartPage {
         List<WebElement> addressesTrs = table.findElements(By.xpath("./child::*"));
 
         this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
+        //scrolling
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        WebElement element = addressesTrs.get(0).findElement(By.xpath(".//td[5]/input"));
+        JavascriptExecutor js = ((JavascriptExecutor) driver);
+        js.executeScript("arguments[0].scrollIntoView(true);", element);
+        wait.until(ExpectedConditions.elementToBeClickable(element));
 
         addressesTrs.get(0).findElement(By.xpath(".//td[5]/input")).click();
 

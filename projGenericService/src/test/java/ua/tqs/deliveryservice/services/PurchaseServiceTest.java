@@ -30,6 +30,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
+
 import org.springframework.data.domain.*;
 import ua.tqs.deliveryservice.specific.ISpecificService;
 
@@ -40,7 +41,7 @@ import static org.mockito.Mockito.*;
 import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PurchaseServiceTest {
+class PurchaseServiceTest {
     private Rider rider = new Rider("example", "pwd", "email@email.com");
     private Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
     private Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", this.address, "http://localhost:8081/delivery/");
@@ -75,7 +76,7 @@ public class PurchaseServiceTest {
      */
 
     @Test
-    public void testUpdatePurchaseStatusOfRider_whenInvalidUser() {
+    void testUpdatePurchaseStatusOfRider_whenInvalidUser() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
 
@@ -90,7 +91,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testUpdatePurchaseStatusOfRider_whenRiderHasNoPurchaseThrows() {
+    void testUpdatePurchaseStatusOfRider_whenRiderHasNoPurchaseThrows() {
         Rider r1 = new Rider("example", "pwd", "email@email.com");
 
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
@@ -115,7 +116,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testUpdateCurrentPurchaseOfRiderValid() throws InvalidLoginException, ResourceNotFoundException {
+    void testUpdateCurrentPurchaseOfRiderValid() throws InvalidLoginException, ResourceNotFoundException {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
@@ -226,7 +227,7 @@ public class PurchaseServiceTest {
 
 
     @Test
-    public void testUpdateCurrentPurchaseOfRiderValid_whenStatusWasPICKED_UP_thenVerifyDeliveryTime() throws InvalidLoginException, ResourceNotFoundException {
+    void testUpdateCurrentPurchaseOfRiderValid_whenStatusWasPICKED_UP_thenVerifyDeliveryTime() throws InvalidLoginException, ResourceNotFoundException {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
@@ -264,7 +265,7 @@ public class PurchaseServiceTest {
      */
 
     @Test
-    public void testGetCurrentPurchaseOfRider_whenInvalidUser() {
+    void testGetCurrentPurchaseOfRider_whenInvalidUser() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
 
@@ -280,7 +281,7 @@ public class PurchaseServiceTest {
 
 
     @Test
-    public void testGetCurrentPurchaseOfRider_whenRiderHasNoOrderThrows() {
+    void testGetCurrentPurchaseOfRider_whenRiderHasNoOrderThrows() {
         Rider r1 = new Rider("example", "pwd", "email@email.com");
 
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
@@ -305,7 +306,7 @@ public class PurchaseServiceTest {
 
 
     @Test
-    public void testGetCurrentPurchaseOfRiderValid() throws InvalidLoginException, ResourceNotFoundException {
+    void testGetCurrentPurchaseOfRiderValid() throws InvalidLoginException, ResourceNotFoundException {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
@@ -339,7 +340,7 @@ public class PurchaseServiceTest {
      */
 
     @Test
-    public void testGetNewPurchaseForRider_whenInvalidUser() {
+    void testGetNewPurchaseForRider_whenInvalidUser() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
 
@@ -354,7 +355,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testGetNewPurchaseForRider_whenRiderHasAnOrderAlreadyThrows() {
+    void testGetNewPurchaseForRider_whenRiderHasAnOrderAlreadyThrows() {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
@@ -384,7 +385,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testGetNewPurchaseForRider_whenThereIsNoMorePurchases() {
+    void testGetNewPurchaseForRider_whenThereIsNoMorePurchases() {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
 
@@ -533,7 +534,7 @@ public class PurchaseServiceTest {
      */
 
     @Test
-    public void testWhenStoreRepositoryDoesntFindStoreByToken_ThenThrowInvalidLogin() {
+    void testWhenStoreRepositoryDoesntFindStoreByToken_ThenThrowInvalidLogin() {
         this.store.setToken("somerandomtoken_" + this.store.getToken());
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.empty());
 
@@ -547,7 +548,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testWhenPurchaseRepositoryDoesntFindPurchaseByOrderId_ThenThrowResourceNotFound() {
+    void testWhenPurchaseRepositoryDoesntFindPurchaseByOrderId_ThenThrowResourceNotFound() {
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
         Mockito.when(purchaseRepository.findById(-1L)).thenReturn(Optional.empty());
 
@@ -564,7 +565,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void whenPurchaseAlreadyHasAnAssociatedReviewValue_ThenThrowInvalidValue() {
+    void whenPurchaseAlreadyHasAnAssociatedReviewValue_ThenThrowInvalidValue() {
         this.purchase.setRiderReview(3);
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
         Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
@@ -582,7 +583,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void whenPurchaseIsFromAnotherStore_thenThrowInvalidValue() {
+    void whenPurchaseIsFromAnotherStore_thenThrowInvalidValue() {
         Address new_address = new Address();
         new_address.setAddress(RandomStringUtils.randomAlphabetic(17));
         new_address.setPostalCode(RandomStringUtils.randomAlphabetic(8));
@@ -612,7 +613,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void whenReviewNotDelivered_thenBadRequest() throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
+    void whenReviewNotDelivered_thenBadRequest() throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
         Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
 
@@ -626,7 +627,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void whenEverythingIsOk_thenReturnPurchase() throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
+    void whenEverythingIsOk_thenReturnPurchase() throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
 
         this.purchase.setStatus(Status.DELIVERED);
@@ -651,7 +652,7 @@ public class PurchaseServiceTest {
      */
 
     @Test
-    public void testGetLastOrderForRiderWhenGetWithInvalidUser_thenThrow() {
+    void testGetLastOrderForRiderWhenGetWithInvalidUser_thenThrow() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
 
@@ -666,7 +667,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testGetLastOrderForRiderWhenGetInvalidPageNo_thenThrow() {
+    void testGetLastOrderForRiderWhenGetInvalidPageNo_thenThrow() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.rider));
 
@@ -683,7 +684,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testGetLastOrderForRiderWhenGetInvalidPageSize_thenThrow() {
+    void testGetLastOrderForRiderWhenGetInvalidPageSize_thenThrow() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.rider));
 
@@ -700,7 +701,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testGetLastOrderForRiderGivenNoPurchases_whenGetPurchases_thenReturn0Records() throws InvalidLoginException {
+    void testGetLastOrderForRiderGivenNoPurchases_whenGetPurchases_thenReturn0Records() throws InvalidLoginException {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.rider));
 
@@ -716,13 +717,11 @@ public class PurchaseServiceTest {
                 .findAllByRider(any(Rider.class), any(Pageable.class));
 
         assertThat(((List<Purchase>) found.get("orders"))).isEmpty();
-        assertThat(found.get("currentPage")).isEqualTo(0);
-        assertThat(found.get("totalItems")).isEqualTo(0L);
-        assertThat(found.get("totalPages")).isEqualTo(0);
+        assertThat(found).containsEntry("currentPage", 0).containsEntry("totalItems", 0L).containsEntry("totalPages", 0);
     }
 
     @Test
-    public void testGetLastOrderForRiderGiven3Requests_whenGetRequests_thenReturn3Records() throws InvalidLoginException {
+    void testGetLastOrderForRiderGiven3Requests_whenGetRequests_thenReturn3Records() throws InvalidLoginException {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(this.rider));
 
@@ -750,9 +749,8 @@ public class PurchaseServiceTest {
         assertThat(((List<Purchase>) found.get("orders"))).hasSize(3).extracting(Purchase::getClientName).contains(p1.getClientName(), p2.getClientName(),
                 p3.getClientName());
 
-        assertThat(found.get("currentPage")).isEqualTo(0);
-        assertThat(found.get("totalItems")).isEqualTo(3L);
-        assertThat(found.get("totalPages")).isEqualTo(1);
+        assertThat(found).containsEntry("currentPage", 0).containsEntry("totalItems", 3L)
+                .containsEntry("totalPages", 1);
     }
 
 
@@ -762,7 +760,7 @@ public class PurchaseServiceTest {
      */
 
     @Test
-    public void testPostNewOrder_whenInvalidStoreToken_thenThrow() {
+    void testPostNewOrder_whenInvalidStoreToken_thenThrow() {
         Mockito.when(jwtUserDetailsService.getStoreFromToken("invalid-token")).thenReturn(null);
 
         assertThrows(InvalidLoginException.class, () -> {
@@ -821,7 +819,6 @@ public class PurchaseServiceTest {
 
         Map<String, Object> input = new HashMap<>();
         input.put("personName", "mmm");
-
         input.put("address", address.getMap());
 
         Purchase purchase = purchaseService.receiveNewOrder("token", input);
@@ -844,7 +841,7 @@ public class PurchaseServiceTest {
      */
 
     @Test
-    public void testGetNewPurchaseWithLocForRider_whenInvalidUser() {
+    void testGetNewPurchaseWithLocForRider_whenInvalidUser() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
 
@@ -865,7 +862,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testGetNewPurchaseForRiderLoc_whenRiderHasAnOrderAlreadyThrows() {
+    void testGetNewPurchaseForRiderLoc_whenRiderHasAnOrderAlreadyThrows() {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
@@ -897,7 +894,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testGetNewPurchaseForRiderLoc_whenThereIsNoMorePurchases() {
+    void testGetNewPurchaseForRiderLoc_whenThereIsNoMorePurchases() {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
 
@@ -930,7 +927,7 @@ public class PurchaseServiceTest {
     }
 
     @Test
-    public void testGetNewPurchaseWithLocForRider_whithInvalidLoc_thenThrow() throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
+    void testGetNewPurchaseWithLocForRider_whithInvalidLoc_thenThrow() throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
@@ -963,7 +960,7 @@ public class PurchaseServiceTest {
 
 
     @Test
-    public void testGetNewPurchaseWithLocForRiderValid() throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
+    void testGetNewPurchaseWithLocForRiderValid() throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException, InvalidValueException {
         // set up ...
         Rider r1 = new Rider("example", "pwd", "email@email.com");
         Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
@@ -1107,5 +1104,63 @@ public class PurchaseServiceTest {
         Mockito.verify(purchaseRepository, times(0)).save(any());
     }
 
+    /* ----------------------------- *
+     * GET TOP DELIVERED CITIES      *
+     * ----------------------------- *
+     */
+
+    @Test
+    void testGetTopDeliveredCities_whenEverythingIsOK_thenReturn() {
+        List<Object[]> repositoryResponse = new ArrayList<>();
+        repositoryResponse.add(new Object[]{"Lisboa", 5});
+        repositoryResponse.add(new Object[]{"Faro", 9});
+        repositoryResponse.add(new Object[]{"Mirandela", 11});
+        repositoryResponse.add(new Object[]{"Figueira da Foz", 1});
+        repositoryResponse.add(new Object[]{"Minho", 2});
+
+        Mockito.when(purchaseRepository.getTopFiveCitiesOfPurchases()).thenReturn(repositoryResponse);
+
+        Map<String, Object> response = purchaseService.getTop5Cities();
+
+        assertThat(response.get("Lisboa")).isEqualTo(5);
+        assertThat(response.get("Faro")).isEqualTo(9);
+        assertThat(response.get("Mirandela")).isEqualTo(11);
+        assertThat(response.get("Figueira da Foz")).isEqualTo(1);
+        assertThat(response.get("Minho")).isEqualTo(2);
+        assertThat(response.size()).isEqualTo(5);
+
+
+        Mockito.verify(purchaseRepository, times(1)).getTopFiveCitiesOfPurchases();
+    }
+
+    @Test
+    void testGetTopDeliveredCities_whenThereAreNot5DifferentCities_thenReturnMap() {
+        List<Object[]> repositoryResponse = new ArrayList<>();
+        repositoryResponse.add(new Object[]{"Guarda", 8});
+        repositoryResponse.add(new Object[]{"Castelo Branco", 3});
+
+        Mockito.when(purchaseRepository.getTopFiveCitiesOfPurchases()).thenReturn(repositoryResponse);
+
+        Map<String, Object> response = purchaseService.getTop5Cities();
+
+        assertThat(response.get("Guarda")).isEqualTo(8);
+        assertThat(response.get("Castelo Branco")).isEqualTo(3);
+        assertThat(response.size()).isEqualTo(2);
+
+        Mockito.verify(purchaseRepository, times(1)).getTopFiveCitiesOfPurchases();
+    }
+
+    @Test
+    void testGetTopDeliveredCities_whenNoPurchases_thenReturnMap() {
+        List<Object[]> repositoryResponse = new ArrayList<>();
+
+        Mockito.when(purchaseRepository.getTopFiveCitiesOfPurchases()).thenReturn(repositoryResponse);
+
+        Map<String, Object> response = purchaseService.getTop5Cities();
+
+        assertThat(response).isEmpty();
+
+        Mockito.verify(purchaseRepository, times(1)).getTopFiveCitiesOfPurchases();
+    }
 
 }

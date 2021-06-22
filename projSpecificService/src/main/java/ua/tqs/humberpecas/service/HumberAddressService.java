@@ -29,7 +29,7 @@ public class HumberAddressService {
     public Address addNewAddress(String token, AddressDTO addressDTO) throws InvalidLoginException {
         Person p = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(token))
                 .orElseThrow(() -> {
-                            log.error("Invalid User");
+                            log.error("HUMBER ADDRESS SERVICE: Invalid User, when adding new address");
                             return new InvalidLoginException("Invalid User"); });
 
         var newAddress = new Address(addressDTO.getAddress(), addressDTO.getPostalCode(), addressDTO.getCity(), addressDTO.getCountry(), p);
@@ -40,19 +40,22 @@ public class HumberAddressService {
     public Address delAddress(String token, long addressId) throws InvalidLoginException {
         Person p = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(token))
                 .orElseThrow(() -> {
-                    log.error("Invalid User");
+                    log.error("HUMBER ADDRESS SERVICE: Invalid User, when deleting address");
                     return new InvalidLoginException("Invalid User"); });
 
         var address = addressRepository.findById(addressId)
                 .orElseThrow(() ->  {
-                            log.error("Invalid Address");
+                    log.error("HUMBER ADDRESS SERVICE: Invalid address, when deleting address");
                             return new ResourceNotFoundException("Invalid Address"); });
 
         if (!p.getAddresses().contains(address)) {
+            log.error("HUMBER ADDRESS SERVICE: Address does not belong to this user, when deleting address");
             throw new ResourceNotFoundException("Address to be deleted does not belong to this user.");
         }
 
         address.setDeleted(true);
+
+        log.info("HUMBER ADDRESS SERVICE: Successfully deleted address");
         return addressRepository.saveAndFlush(address);
     }
 
@@ -60,10 +63,11 @@ public class HumberAddressService {
 
         Person person = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(userToken))
                 .orElseThrow(()-> {
-                    log.error("HumberPurchaseService: invalid user token" );
+                    log.error("HUMBER ADDRESS SERVICE: Invalid user token, when getting user address" );
                     return new InvalidLoginException("Invalid user token");
                 });
 
+        log.info("HUMBER ADDRESS SERVICE: Successfully got user address");
         return addressRepository.findAllByPersonAndDeletedIsFalse(person);
     }
 

@@ -55,7 +55,7 @@ class PurchaseRestControllerTemplateIT {
     int randomServerPort;
 
     @Container
-    public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
+    static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
             .withPassword("demopw")
             .withDatabaseName("delivery");
@@ -68,7 +68,7 @@ class PurchaseRestControllerTemplateIT {
     }
 
     @AfterEach
-    public void destroyAll() {
+    void destroyAll() {
         purchaseRepository.deleteAll();
         purchaseRepository.flush();
 
@@ -83,7 +83,7 @@ class PurchaseRestControllerTemplateIT {
     }
 
     @BeforeEach
-    public void beforeEachSetUp() {
+    void beforeEachSetUp() {
         this.rider = new Rider("Joao", bcryptEncoder.encode("aRightPassword"), "TQS_delivery@example.com");
         this.address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
         this.store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", this.address, "http://localhost:8080/delivery/");
@@ -100,7 +100,7 @@ class PurchaseRestControllerTemplateIT {
     // --               review tests               --
     // ----------------------------------------------
     @Test
-    public void testReviewWhenNullOrderId_thenBadRequest() {
+    void testReviewWhenNullOrderId_thenBadRequest() {
         Map<String, Long> data = new HashMap<>();
         data.put("review", 3L);
 
@@ -115,7 +115,7 @@ class PurchaseRestControllerTemplateIT {
     }
 
     @Test
-    public void testReviewWhenNullReview_thenBadRequest() {
+    void testReviewWhenNullReview_thenBadRequest() {
         Map<String, Long> data = new HashMap<>();
         data.put("review", null);
 
@@ -129,7 +129,7 @@ class PurchaseRestControllerTemplateIT {
     }
 
     @Test
-    public void testReviewWhenInvalidMin_thenBadRequest() {
+    void testReviewWhenInvalidMin_thenBadRequest() {
         Map<String, Long> data = new HashMap<>();
         data.put("review", -1L);
 
@@ -144,7 +144,7 @@ class PurchaseRestControllerTemplateIT {
     }
 
     @Test
-    public void testReviewWhenInvalidMax_thenBadRequest() {
+    void testReviewWhenInvalidMax_thenBadRequest() {
         Map<String, Long> data = new HashMap<>();
         data.put("review", 6L);
 
@@ -158,7 +158,7 @@ class PurchaseRestControllerTemplateIT {
     }
 
     @Test
-    public void testReviewWhenWrongToken_thenUnauthorized() {
+    void testReviewWhenWrongToken_thenUnauthorized() {
         Map<String, Long> data = new HashMap<>();
         data.put("review", 3L);
 
@@ -173,7 +173,7 @@ class PurchaseRestControllerTemplateIT {
     }
 
     @Test
-    public void testValidOrderIdValidReviewValueInvalidStatus_thenCodeBadRequest() {
+    void testValidOrderIdValidReviewValueInvalidStatus_thenCodeBadRequest() {
         Long review = 3L;
 
         Map<String, Long> data = new HashMap<>();
@@ -190,7 +190,7 @@ class PurchaseRestControllerTemplateIT {
     }
 
     @Test
-    public void testValidOrderIdValidReviewValue_thenCodeOK() {
+    void testValidOrderIdValidReviewValue_thenCodeOK() {
         Long review = 3L;
         this.purchase.setStatus(Status.DELIVERED);
         purchaseRepository.saveAndFlush(this.purchase);
@@ -208,7 +208,7 @@ class PurchaseRestControllerTemplateIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
     }
 
-    public String getBaseUrl() { return "http://localhost:" + randomServerPort + "/store"; }
+    String getBaseUrl() { return "http://localhost:" + randomServerPort + "/store"; }
 
 
     /* ----------------------------- *
@@ -218,7 +218,7 @@ class PurchaseRestControllerTemplateIT {
 
 
     @Test
-    public void givenStoreHasNoAuthorization_whenPostNewOrder_thenUnauthorized() {
+    void givenStoreHasNoAuthorization_whenPostNewOrder_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "/order", HttpMethod.POST, new HttpEntity<Object>(headers),
@@ -228,7 +228,7 @@ class PurchaseRestControllerTemplateIT {
     }
 
     @Test
-    public void givenStore_whenPostNewOrderWithMissingField_then400() {
+    void givenStore_whenPostNewOrderWithMissingField_then400() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
 
@@ -247,7 +247,7 @@ class PurchaseRestControllerTemplateIT {
 
 
     @Test
-    public void givenStore_whenPostNewOrderGood_then200() {
+    void givenStore_whenPostNewOrderGood_then200() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("authorization", "Bearer " + "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw");
 

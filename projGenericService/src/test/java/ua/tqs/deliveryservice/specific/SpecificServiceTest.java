@@ -1,7 +1,6 @@
 package ua.tqs.deliveryservice.specific;
 
 
-import org.hamcrest.core.Is;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import org.springframework.web.client.RestTemplate;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.UnreachableServiceException;
 import ua.tqs.deliveryservice.model.Status;
-import ua.tqs.deliveryservice.services.PurchaseService;
 
 import static org.junit.Assert.assertThrows;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;

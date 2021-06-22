@@ -32,7 +32,7 @@ import java.util.List;
 @ExtendWith({ScreenshotOnFailureExtension.class})
 @DirtiesContext
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class RiderTest {
+class RiderTest {
 
     private String webApplicationBaseUrl = "172.17.0.1";
 

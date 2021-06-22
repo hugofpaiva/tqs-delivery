@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AuthControllerTemplateIT  {
 
     @Container
-    public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
+    static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
             .withPassword("demopw")
             .withDatabaseName("shop");
@@ -64,13 +64,13 @@ class AuthControllerTemplateIT  {
     // ----------------------------------
 
     @AfterEach
-    public void cleanUp() {
+    void cleanUp() {
         riderRepository.deleteAll();
         riderRepository.flush();
     }
 
     @Test
-    public void testLoginWhenInvalidEmail_thenUnauthorized() {
+    void testLoginWhenInvalidEmail_thenUnauthorized() {
         JwtRequest request = new JwtRequest("email@asd.com", "aswdd");
         ResponseEntity<String> response =
                 testRestTemplate.postForEntity(getBaseUrl()+"/login", request, String.class);
@@ -79,7 +79,7 @@ class AuthControllerTemplateIT  {
     }
 
     @Test
-    public void testLoginWhenInvalidPwRider_thenUnauthorized() {
+    void testLoginWhenInvalidPwRider_thenUnauthorized() {
         Rider rider = new Rider();
         rider.setEmail("mail@example.com");
         rider.setPwd(bcryptEncoder.encode("aRightPassword"));
@@ -95,7 +95,7 @@ class AuthControllerTemplateIT  {
     }
 
     @Test
-    public void testLoginWhenInvalidPwManager_thenUnauthorized() {
+    void testLoginWhenInvalidPwManager_thenUnauthorized() {
         Manager manager = new Manager();
         manager.setEmail("mail@example.com");
         manager.setPwd(bcryptEncoder.encode("aRightPassword"));
@@ -111,7 +111,7 @@ class AuthControllerTemplateIT  {
     }
 
     @Test
-    public void testLoginWhenValidDataRider_thenAuthorized() {
+    void testLoginWhenValidDataRider_thenAuthorized() {
         Rider rider = new Rider();
         rider.setEmail("mail@example.com");
         rider.setPwd(bcryptEncoder.encode("aRightPassword"));
@@ -131,7 +131,7 @@ class AuthControllerTemplateIT  {
     }
 
     @Test
-    public void testLoginWhenValidDataManager_thenAuthorized() {
+    void testLoginWhenValidDataManager_thenAuthorized() {
         Manager manager = new Manager();
         manager.setEmail("mail@example.com");
         manager.setPwd(bcryptEncoder.encode("aRightPassword"));
@@ -155,7 +155,7 @@ class AuthControllerTemplateIT  {
     // ----------------------------------
 
     @Test
-    public void testInvalidEmail_thenBadRequest() {
+    void testInvalidEmail_thenBadRequest() {
         Map<String, String> data = new HashMap<>();
         data.put("email", null);
         data.put("name", "A Nice Name");
@@ -171,7 +171,7 @@ class AuthControllerTemplateIT  {
     }
 
     @Test
-    public void testInvalidPwd_thenBadRequest() {
+    void testInvalidPwd_thenBadRequest() {
         Map<String, String> data = new HashMap<>();
         data.put("email", "example@tqs.ua");
         data.put("name", "A Nice Name");
@@ -187,7 +187,7 @@ class AuthControllerTemplateIT  {
     }
 
     @Test
-    public void testInvalidName_thenBadRequest() {
+    void testInvalidName_thenBadRequest() {
         Map<String, String> data = new HashMap<>();
         data.put("email", "example@tqs.ua");
         data.put("name", null);
@@ -203,7 +203,7 @@ class AuthControllerTemplateIT  {
     }
 
     @Test
-    public void testEverythingValid_thenCreated() {
+    void testEverythingValid_thenCreated() {
         Map<String, String> data = new HashMap<>();
         data.put("email", "example@tqs.ua");
         data.put("name", "A very nice name");
@@ -221,7 +221,7 @@ class AuthControllerTemplateIT  {
     }
 
     @Test
-    public void testRegister_whenEmailAlreadyInUse_thenCONFLICT() {
+    void testRegister_whenEmailAlreadyInUse_thenCONFLICT() {
         Map<String, String> data = new HashMap<>();
         data.put("email", "example@tqs.ua");
         data.put("name", "A very nice name");
@@ -239,7 +239,7 @@ class AuthControllerTemplateIT  {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.CONFLICT));
     }
 
-    public String getBaseUrl() {
+    String getBaseUrl() {
         return "http://localhost:"+randomServerPort;
     }
 

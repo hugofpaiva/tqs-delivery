@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -10,8 +11,6 @@ import org.springframework.stereotype.Component;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.repository.*;
 
-import java.util.Date;
-
 @SpringBootApplication
 public class DeliveryServiceApplication {
 
@@ -21,6 +20,7 @@ public class DeliveryServiceApplication {
 }
 
 @Profile("!test && !CI")
+@Log4j2
 @Component
 class DBLoaderProd implements CommandLineRunner {
 
@@ -44,7 +44,7 @@ class DBLoaderProd implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		System.out.println("Populating database");
+		log.info("Populating database");
 
 		Rider rider1 = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
 		riderRep.saveAndFlush(rider1);
@@ -64,13 +64,13 @@ class DBLoaderProd implements CommandLineRunner {
 		Address addr2 = new Address("Rua Loja Loja, n. 23", "3212-333", "Porto", "Portugal");
 		addressRep.saveAndFlush(addr2);
 
-		Address addr3 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+		Address addr3 = new Address("Rua ABC, n. 99", "4444-555", "Viseu", "Portugal");
 		addressRep.saveAndFlush(addr3);
 
-		Address addr4 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+		Address addr4 = new Address("Rua ABC, n. 99", "4444-555", "Coimbra", "Portugal");
 		addressRep.saveAndFlush(addr4);
 
-		Address addr5 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
+		Address addr5 = new Address("Rua ABC, n. 99", "4444-555", "Lisboa", "Portugal");
 		addressRep.saveAndFlush(addr5);
 		String storeUrl = "http://localhost:8081/delivery/";
 		Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2, storeUrl);
@@ -89,7 +89,7 @@ class DBLoaderProd implements CommandLineRunner {
 		purchaseRep.saveAndFlush(purchase_no_rider);
 		purchaseRep.saveAndFlush(purchase_no_rider2);
 		purchaseRep.saveAndFlush(purchase1);
-		purchase1.setDeliveryTime(new Date().getTime() - purchase1.getDate().getTime());
+		purchase1.setDeliveryTime((purchase1.getDate().getTime() + 120000) - purchase1.getDate().getTime());
 		purchaseRep.saveAndFlush(purchase1);
 		riderRep.saveAndFlush(rider1);
 		//purchaseRep.saveAndFlush(purchase2);
@@ -99,6 +99,7 @@ class DBLoaderProd implements CommandLineRunner {
 }
 
 @Profile("CI")
+@Log4j2
 @Component
 class DBLoaderCI implements CommandLineRunner {
 
@@ -119,7 +120,7 @@ class DBLoaderCI implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		System.out.println("Populating database");
+		log.info("Populating database");
 
 		Rider rider1 = new Rider("João", bcryptEncoder.encode("difficult-pass"), "joao@email.com");
 		riderRep.saveAndFlush(rider1);
@@ -149,10 +150,10 @@ class DBLoaderCI implements CommandLineRunner {
 		storeRep.saveAndFlush(store1);
 
 
-		Purchase purchase_no_rider = new Purchase(addr4, store1, "client22");
-		Purchase purchase_no_rider2 = new Purchase(addr5, store1, "client222");
-		purchaseRep.saveAndFlush(purchase_no_rider);
-		purchaseRep.saveAndFlush(purchase_no_rider2);
+		Purchase purchaseNoRider = new Purchase(addr4, store1, "client22");
+		Purchase purchaseNoRider2 = new Purchase(addr5, store1, "client222");
+		purchaseRep.saveAndFlush(purchaseNoRider);
+		purchaseRep.saveAndFlush(purchaseNoRider2);
 
 		Purchase purchase1 = new Purchase(addr1, rider1, store1, "client1");
 		purchase1.setStatus(Status.DELIVERED);

@@ -59,7 +59,7 @@ class RiderRestControllerTemplateIT {
 
 
     @Container
-    public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
+    static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
             .withPassword("demopw")
             .withDatabaseName("delivery");
@@ -94,8 +94,7 @@ class RiderRestControllerTemplateIT {
 
 
     @BeforeEach
-    public void beforeEachSetUp() {
-
+    void beforeEachSetUp() {
         this.rider = new Rider("Joao", bcryptEncoder.encode("aRightPassword"), "TQS_delivery@example.com");
         personRepository.saveAndFlush(this.rider);
 
@@ -109,27 +108,26 @@ class RiderRestControllerTemplateIT {
 
         this.purchase = new Purchase(purchAddres, this.rider, this.store, "Joana");
 
-
         JwtRequest request = new JwtRequest(this.rider.getEmail(), "aRightPassword");
         ResponseEntity<Map> response = testRestTemplate.postForEntity("http://localhost:" + randomServerPort + "/login", request, Map.class);
         this.token = response.getBody().get("token").toString();
 
-      
+
         storeRepository.saveAndFlush(this.store);
         purchaseRepository.saveAndFlush(this.purchase);
     }
 
     @AfterEach
-    public void destroyAll() {
+    void destroyAll() {
         this.deleteAll();
     }
 
-    public String getBaseUrl() {
+    String getBaseUrl() {
         return "http://localhost:" + randomServerPort + "/rider/";
 
     }
 
-    public void deleteAll() {
+    void deleteAll() {
         purchaseRepository.deleteAll();
         purchaseRepository.flush();
 
@@ -150,7 +148,7 @@ class RiderRestControllerTemplateIT {
      */
 
     @Test
-    public void testGetRiderOrderHistoryWhenInvalidPageNo_thenBadRequest() {
+    void testGetRiderOrderHistoryWhenInvalidPageNo_thenBadRequest() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<String> response = testRestTemplate.exchange(
@@ -161,7 +159,7 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
-    public void testGetRiderOrderHistoryWhenInvalidPageSize_thenBadRequest() {
+    void testGetRiderOrderHistoryWhenInvalidPageSize_thenBadRequest() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<String> response = testRestTemplate.exchange(
@@ -172,7 +170,7 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
-    public void testGetRiderOrderHistory_thenStatus200() {
+    void testGetRiderOrderHistory_thenStatus200() {
         ObjectMapper mapper = new ObjectMapper();
 
         HttpHeaders headers = new HttpHeaders();
@@ -193,14 +191,13 @@ class RiderRestControllerTemplateIT {
 
         Assertions.assertThat(orders).hasSize(1).extracting(Purchase::getDate).contains(this.purchase.getDate());
 
-        Assertions.assertThat(found.get("currentPage")).isEqualTo(0);
-        Assertions.assertThat(found.get("totalItems")).isEqualTo(1);
-        Assertions.assertThat(found.get("totalPages")).isEqualTo(1);
+        Assertions.assertThat(found).containsEntry("currentPage", 0).containsEntry("totalItems", 1)
+                .containsEntry("totalPages", 1);
 
     }
 
     @Test
-    public void testGetRiderOrderHistoryPageNoWithoutResults_thenNoResults() {
+    void testGetRiderOrderHistoryPageNoWithoutResults_thenNoResults() {
         purchaseRepository.delete(this.purchase);
         ObjectMapper mapper = new ObjectMapper();
 
@@ -220,15 +217,14 @@ class RiderRestControllerTemplateIT {
                 }
         );
 
-        Assertions.assertThat(orders).hasSize(0);
+        Assertions.assertThat(orders).isEmpty();
 
-        Assertions.assertThat(found.get("currentPage")).isEqualTo(0);
-        Assertions.assertThat(found.get("totalItems")).isEqualTo(0);
-        Assertions.assertThat(found.get("totalPages")).isEqualTo(0);
+        Assertions.assertThat(found).containsEntry("currentPage", 0).containsEntry("totalItems", 0)
+                .containsEntry("totalPages", 0);
     }
 
     @Test
-    public void testGetRiderOrderHistoryPageNoAndLimitedPageSize_thenLimitedResults() {
+    void testGetRiderOrderHistoryPageNoAndLimitedPageSize_thenLimitedResults() {
         Address addr1 = new Address("Rua ABC, n. 89", "4444-555", "Aveiro", "Portugal");
         Address addr2 = new Address("Rua ABC, n. 79", "4444-555", "Aveiro", "Portugal");
         addressRepository.saveAndFlush(addr1);
@@ -258,13 +254,12 @@ class RiderRestControllerTemplateIT {
 
         Assertions.assertThat(orders).hasSize(2);
 
-        Assertions.assertThat(found.get("currentPage")).isEqualTo(0);
-        Assertions.assertThat(found.get("totalItems")).isEqualTo(3);
-        Assertions.assertThat(found.get("totalPages")).isEqualTo(2);
+        Assertions.assertThat(found).containsEntry("currentPage", 0).containsEntry("totalItems", 3)
+                .containsEntry("totalPages", 2);
     }
 
     @Test
-    public void testGetRiderOrderHistoryButNoAuthorization_thenUnauthorized() {
+    void testGetRiderOrderHistoryButNoAuthorization_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "orders?pageSize=2", HttpMethod.GET, new HttpEntity<Object>(headers),
@@ -280,7 +275,7 @@ class RiderRestControllerTemplateIT {
 
 
     @Test
-    public void whenRiderHasCurrentOrderButNoAuthorization_thenUnauthorized() {
+    void whenRiderHasCurrentOrderButNoAuthorization_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "order/current", HttpMethod.GET, new HttpEntity<Object>(headers),
@@ -290,7 +285,7 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
-    public void whenRiderHasNoCurrentOrder_whenGetCurrentOrder_get404() {
+    void whenRiderHasNoCurrentOrder_whenGetCurrentOrder_get404() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
 
@@ -304,7 +299,7 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
-    public void whenRiderHasCurrentOrder_testGetCurrentOrder() {
+    void whenRiderHasCurrentOrder_testGetCurrentOrder() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
@@ -316,8 +311,7 @@ class RiderRestControllerTemplateIT {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> found = response.getBody();
 
-        Assertions.assertThat(found).isNotNull();
-        Assertions.assertThat(found.containsKey("data")).isTrue();
+        Assertions.assertThat(found).isNotNull().containsKey("data");
 
         Map<String, Object> info = mapper.convertValue(
                 found.get("data"),
@@ -325,9 +319,8 @@ class RiderRestControllerTemplateIT {
                 }
         );
 
-        Assertions.assertThat(info.containsKey("clientAddress")).isTrue();
-        Assertions.assertThat(info.containsKey("orderId")).isTrue();
-        Assertions.assertThat(info.get("status")).isEqualTo("ACCEPTED");
+        Assertions.assertThat(info).containsKey("clientAddress").containsKey("orderId")
+                .containsEntry("status", "ACCEPTED");
     }
 
     /* ----------------------------- *
@@ -337,7 +330,7 @@ class RiderRestControllerTemplateIT {
 
 
     @Test
-    public void givenRiderHasNoAuthorization_whenGetNewPurchase_thenUnauthorized() {
+    void givenRiderHasNoAuthorization_whenGetNewPurchase_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "order/new", HttpMethod.GET, new HttpEntity<Object>(headers),
@@ -347,7 +340,7 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
-    public void whenRiderHasCurrentOrder_whenGetNewOrder_thenForbidden() {
+    void whenRiderHasCurrentOrder_whenGetNewOrder_thenForbidden() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
@@ -358,7 +351,7 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
-    public void givenThereAreNoOrders_whenGetNewOrder_thenNotFound() {
+    void givenThereAreNoOrders_whenGetNewOrder_thenNotFound() {
         purchaseRepository.delete(this.purchase);
 
         HttpHeaders headers = new HttpHeaders();
@@ -383,6 +376,7 @@ class RiderRestControllerTemplateIT {
 
         System.out.println(purchase.getId());
 
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
@@ -394,8 +388,7 @@ class RiderRestControllerTemplateIT {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> found = response.getBody();
 
-        Assertions.assertThat(found).isNotNull();
-        Assertions.assertThat(found.containsKey("data")).isTrue();
+        Assertions.assertThat(found).isNotNull().containsKey("data");
 
         Map<String, Object> info = mapper.convertValue(
                 found.get("data"),
@@ -403,9 +396,8 @@ class RiderRestControllerTemplateIT {
                 }
         );
 
-        Assertions.assertThat(info.containsKey("clientAddress")).isTrue();
-        Assertions.assertThat(info.containsKey("orderId")).isTrue();
-        Assertions.assertThat(info.get("status")).isEqualTo("ACCEPTED");
+        Assertions.assertThat(info).containsKey("clientAddress").containsKey("orderId")
+                .containsEntry("status", "ACCEPTED");
     }
 
 
@@ -415,7 +407,7 @@ class RiderRestControllerTemplateIT {
      */
 
     @Test
-    public void givenRiderHasNoAuthorization_whenUpdatePurchase_thenUnauthorized() {
+    void givenRiderHasNoAuthorization_whenUpdatePurchase_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "order/status", HttpMethod.PUT, new HttpEntity<Object>(headers),
@@ -426,7 +418,7 @@ class RiderRestControllerTemplateIT {
 
 
     @Test
-    public void givenRiderHasNoCurrentOrder_whenUpdatePurchase_get404() {
+    void givenRiderHasNoCurrentOrder_whenUpdatePurchase_get404() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
 
@@ -442,7 +434,6 @@ class RiderRestControllerTemplateIT {
     @Test
     @Order(2)
     public void givenRiderHasCurrentOrder_whenUpdatePurchaseStatus_thenSuccess() {
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("authorization", "Bearer " + this.token);
 
@@ -456,14 +447,30 @@ class RiderRestControllerTemplateIT {
 
         Map<String, Object> found = response.getBody();
 
-        Assertions.assertThat(found).isNotNull();
-        Assertions.assertThat(found.containsKey("order_id")).isTrue();
-        Assertions.assertThat(found.containsKey("status")).isTrue();
+        Assertions.assertThat(found).isNotNull().containsKey("order_id").containsKey("status")
+                .containsEntry("status", "PICKED_UP");
         Assertions.assertThat(found.containsKey("delivery_time")).isFalse();
-
-        Assertions.assertThat(found.get("status")).isEqualTo("PICKED_UP");
     }
 
+
+    @Test
+    void givenRiderHasCurrentOrder_whenUpdatePurchaseStatusIsPickedUp_thenSuccess() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        this.purchase.setStatus(Status.PICKED_UP);
+        purchaseRepository.saveAndFlush(this.purchase);
+
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "order/status", HttpMethod.PATCH, new HttpEntity<Object>(headers),
+                Map.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        Assertions.assertThat(found).isNotNull().containsKey("order_id").containsKey("status")
+                .containsKey("delivery_time").containsEntry("status", "DELIVERED");
+    }
 
 
 
@@ -476,7 +483,7 @@ class RiderRestControllerTemplateIT {
 
 
     @Test
-    public void givenRiderHasNoAuthorization_whenGetReviewsStatistics_thenUnauthorized() {
+    void givenRiderHasNoAuthorization_whenGetReviewsStatistics_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "reviews", HttpMethod.GET, new HttpEntity<Object>(headers),
@@ -486,7 +493,7 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
-    public void givenRiderWithoutReviews_whenGetReviewsStatistics_thenReturnStatistics() {
+    void givenRiderWithoutReviews_whenGetReviewsStatistics_thenReturnStatistics() {
         HttpHeaders headers = new HttpHeaders();
 
         System.out.println(purchase.getId());
@@ -502,7 +509,7 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
-    public void givenRiderWithReviews_whenGetReviewsStatistics_thenReturnStatistics() {
+    void givenRiderWithReviews_whenGetReviewsStatistics_thenReturnStatistics() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
 
@@ -517,7 +524,7 @@ class RiderRestControllerTemplateIT {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
         Map<String, Object> found = response.getBody();
         assertThat(found.get("totalNumReviews"), equalTo(4));
-        assertThat(found.get("avgReviews"), equalTo((double) 15/4));
+        assertThat(found.get("avgReviews"), equalTo((double) 15 / 4));
     }
 
 
@@ -528,7 +535,7 @@ class RiderRestControllerTemplateIT {
      */
 
     @Test
-    public void givenRiderHasNoAuthorization_whenGetNewPurchaseWithLoc_thenUnauthorized() {
+    void givenRiderHasNoAuthorization_whenGetNewPurchaseWithLoc_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "order/new?latitude=30.2312&longitude=50.234", HttpMethod.GET, new HttpEntity<Object>(headers),
@@ -537,8 +544,9 @@ class RiderRestControllerTemplateIT {
         System.out.println(purchase.getId());
         assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
     }
+
     @Test
-    public void whenRiderHasCurrentOrder_whenGetNewOrderWithLoc_thenForbidden() {
+    void whenRiderHasCurrentOrder_whenGetNewOrderWithLoc_thenForbidden() {
         HttpHeaders headers = new HttpHeaders();
         System.out.println(purchase.getId());
         headers.set("Authorization", "Bearer " + this.token);
@@ -550,7 +558,7 @@ class RiderRestControllerTemplateIT {
     }
 
     @Test
-    public void givenThereAreNoOrders_whenGetNewOrderWithLoc_thenNotFound() {
+    void givenThereAreNoOrders_whenGetNewOrderWithLoc_thenNotFound() {
         purchaseRepository.delete(this.purchase);
 
         HttpHeaders headers = new HttpHeaders();
@@ -564,7 +572,7 @@ class RiderRestControllerTemplateIT {
 
 
     @Test
-    public void givenThereAreOrders_whenGetNewOrderWithInvalidLoc_then400() {
+    void givenThereAreOrders_whenGetNewOrderWithInvalidLoc_then400() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Map> response = testRestTemplate.exchange(
@@ -577,6 +585,7 @@ class RiderRestControllerTemplateIT {
     @Test
     @Order(3)
     public void givenRiderHasNoOrder_whenGetNewOrderWithLoc_thenGetClosestOrder() {
+
         purchaseRepository.delete(this.purchase);
 
         Address addr_store_far = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
@@ -591,9 +600,15 @@ class RiderRestControllerTemplateIT {
         Address addr_close = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Purchase p1_close = new Purchase(addr_close, store, "Miguel");
 
-        addressRepository.save(addr_store_far); addressRepository.save(addr_store_close); addressRepository.save(addr_close); addressRepository.save(addr_far);
-        storeRepository.save(store); storeRepository.save(store_far);
-        purchaseRepository.save(p1_far); purchaseRepository.save(p1_close);
+
+        addressRepository.save(addr_store_far);
+        addressRepository.save(addr_store_close);
+        addressRepository.save(addr_close);
+        addressRepository.save(addr_far);
+        storeRepository.save(store_far);
+        purchaseRepository.save(p1_far);
+        purchaseRepository.save(p1_close);
+
 
         System.out.println(p1_close.getId());
         System.out.println(p1_far.getId());
@@ -609,8 +624,7 @@ class RiderRestControllerTemplateIT {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> found = response.getBody();
 
-        Assertions.assertThat(found).isNotNull();
-        Assertions.assertThat(found.containsKey("data")).isTrue();
+        Assertions.assertThat(found).isNotNull().containsKey("data");
 
         Map<String, Object> info = mapper.convertValue(
                 found.get("data"),
@@ -618,12 +632,13 @@ class RiderRestControllerTemplateIT {
                 }
         );
 
-        Assertions.assertThat(info.containsKey("store")).isTrue();
-        Assertions.assertThat(((Map<String, Object>)info.get("store")).containsKey("latitude")).isTrue();
-        Assertions.assertThat(((Map<String, Object>)info.get("store")).get("latitude")).isEqualTo(store.getLatitude());
-        Assertions.assertThat(info.containsKey("clientAddress")).isTrue();
-        Assertions.assertThat(info.containsKey("orderId")).isTrue();
-        Assertions.assertThat(info.get("status")).isEqualTo("ACCEPTED");
+
+        Assertions.assertThat(info).containsKey("store");
+        Assertions.assertThat((Map<String, Object>) info.get("store")).containsKey("latitude");
+        Assertions.assertThat(((Map<String, Object>) info.get("store")))
+                .containsEntry("latitude", store.getLatitude());
+        Assertions.assertThat(info).containsKey("clientAddress").containsKey("orderId")
+                .containsEntry("status", "ACCEPTED");
     }
 
 }

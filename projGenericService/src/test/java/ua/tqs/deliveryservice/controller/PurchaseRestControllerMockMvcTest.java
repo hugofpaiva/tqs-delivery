@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = PurchaseRestController.class, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = WebSecurityConfig.class)})
 @AutoConfigureMockMvc(addFilters = false)
-public class PurchaseRestControllerMockMvcTest {
+class PurchaseRestControllerMockMvcTest {
     @Autowired
     private MockMvc mvc;
 
@@ -50,7 +50,7 @@ public class PurchaseRestControllerMockMvcTest {
 
     // 1. despoletar erros no controller e ver se o service não é chamado, se quer
     @Test
-    public void testNullOrderId_thenBadRequest() throws Exception {
+    void testNullOrderId_thenBadRequest() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", 3L);
 
@@ -70,7 +70,7 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    public void testNullReview_thenBadRequest() throws Exception {
+    void testNullReview_thenBadRequest() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", null);
 
@@ -90,7 +90,7 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    public void testInvalidMinReview_thenBadRequest() throws Exception {
+    void testInvalidMinReview_thenBadRequest() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", -1);
 
@@ -110,7 +110,7 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    public void testInvalidMaxReview_thenBadRequest() throws Exception {
+    void testInvalidMaxReview_thenBadRequest() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", 6);
 
@@ -120,7 +120,7 @@ public class PurchaseRestControllerMockMvcTest {
 
         headers.set("authorization", "Bearer " + token);
 
-        mvc.perform( put("/store/order/3/review")
+        mvc.perform(put("/store/order/3/review")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -131,7 +131,7 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    public void testNotDeliveredPurchaseReview_thenBadRequest() throws Exception {
+    void testNotDeliveredPurchaseReview_thenBadRequest() throws Exception {
         Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
         Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address, "http://localhost:8080");
@@ -159,7 +159,7 @@ public class PurchaseRestControllerMockMvcTest {
 
     // 2. despoletar erros no service e ver se o controller ainda faz o que é suposto
     @Test
-    public void testEverythingOK_thenIsOk() throws Exception {
+    void testEverythingOK_thenIsOk() throws Exception {
         Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
         Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address, "http://localhost:8080/delivery/");
@@ -187,7 +187,7 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    public void testPurchaseNotFound_thenResourceNotFound() throws Exception {
+    void testPurchaseNotFound_thenResourceNotFound() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", 3);
 
@@ -209,7 +209,7 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    public void testStoreNotFound_thenUnauthorized() throws Exception {
+    void testStoreNotFound_thenUnauthorized() throws Exception {
         JSONObject json = new JSONObject();
         json.put("review", 3);
 
@@ -231,7 +231,7 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    public void testWhenPurchaseAlreadyHas_thenBadRequest() throws Exception {
+    void testWhenPurchaseAlreadyHas_thenBadRequest() throws Exception {
         // this can either happen when the purchase already has a review or the store where the purchase was made is
         // not the same that has the token passed.
         JSONObject json = new JSONObject();
@@ -260,7 +260,7 @@ public class PurchaseRestControllerMockMvcTest {
      */
 
     @Test
-    public void testMakeNewOrderButNoStoreAuthorization_thenUnauthorized() throws Exception {
+    void testMakeNewOrderButNoStoreAuthorization_thenUnauthorized() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String exampleBody = "{ \"personName\" : \"nomeee\", \"date\" : 1623709488744, \"address\" : {\"address\" : \"Rua 1123\", \"postalCode\" : \"3423-234\", \"city\" : \"aveiro\", \"country\" : \"pt\" }}}";
@@ -278,7 +278,7 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    public void testMakeNewOrderButFieldMissing_then400() throws Exception {
+    void testMakeNewOrderButFieldMissing_then400() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String exampleBody = "{\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
@@ -294,7 +294,7 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    public void testMakeNewOrderButBadField_then400() throws Exception {
+    void testMakeNewOrderButBadField_then400() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + token);
@@ -312,7 +312,7 @@ public class PurchaseRestControllerMockMvcTest {
     }
 
     @Test
-    public void testMakeNewOrderGood_then200() throws Exception {
+    void testMakeNewOrderGood_then200() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("authorization", "Bearer " + token);
