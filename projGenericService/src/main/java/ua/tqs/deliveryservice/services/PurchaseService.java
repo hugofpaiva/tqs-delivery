@@ -81,9 +81,13 @@ public class PurchaseService {
             throw new InvalidValueException("Token passed belonged to a store where this purchase had not been made.");
         }
 
-
         purchase.setRiderReview(review);
         purchaseRepository.saveAndFlush(purchase);
+
+        Rider rider = purchase.getRider();
+        rider.setReviewsSum(rider.getReviewsSum() + review);
+        rider.setTotalNumReviews(rider.getTotalNumReviews() + 1);
+        riderRepository.saveAndFlush(rider);
 
         log.info("PURCHASE SERVICE: Review for rider saved successfully");
         return purchase;

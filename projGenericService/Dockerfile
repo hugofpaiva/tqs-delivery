@@ -2,7 +2,7 @@ FROM maven:3.8.1-adoptopenjdk-11
 
 WORKDIR /app
 
-ARG PROFILE=${PROFILE}
+ARG PROFILE=prod
 
 COPY . /app/
 

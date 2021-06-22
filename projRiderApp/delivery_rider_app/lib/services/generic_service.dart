@@ -190,7 +190,7 @@ class GenericService {
     error = false;
     errorMsg = '';
     requested = true;
-    var response = await http.patch(Uri.parse(BASE_URL + "/rider/order/status"),
+    var response = await http.put(Uri.parse(BASE_URL + "/rider/order/status"),
         headers: {"Content-Type": "application/json", "Authorization": token});
 
     if (response.statusCode == 200) {

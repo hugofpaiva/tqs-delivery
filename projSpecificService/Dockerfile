@@ -2,9 +2,9 @@ FROM maven:3.8.1-adoptopenjdk-11
 
 WORKDIR /app
 
-ARG PROFILE=${PROFILE}
+ARG PROFILE=prod
 
-ARG GENERIC_URL=${GENERIC_URL}
+ARG GENERIC_URL=generic
 
 COPY . /app/
 
