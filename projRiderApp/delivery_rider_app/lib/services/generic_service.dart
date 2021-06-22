@@ -2,10 +2,11 @@ import 'package:delivery_rider_app/models/address.dart';
 import 'package:delivery_rider_app/models/order.dart';
 import 'package:delivery_rider_app/models/store.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 import 'dart:convert';
 
 class GenericService {
-  static const BASE_URL = "http://127.0.0.1:8081";
+  static const BASE_URL = "http://35.246.29.122:8081";
   static bool loggedIn = false;
   static bool error = false;
   static String errorMsg = '';
@@ -129,7 +130,28 @@ class GenericService {
     error = false;
     errorMsg = '';
     requested = true;
-    var response = await http.get(Uri.parse(BASE_URL + "/rider/order/new"),
+
+    var latitude;
+    var longitude;
+
+    try{
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+      latitude = position.latitude;
+      longitude = position.longitude;
+    } catch (exception){
+      error = true;
+      errorMsg = 'Location could not be get, requesting without it...';
+      await Future.delayed(const Duration(seconds: 2), (){});
+    }
+
+    String options = '';
+
+    if (latitude != null && longitude != null){
+      options = "?latitude=$latitude&longitude=$longitude";
+    }
+
+
+    var response = await http.get(Uri.parse(BASE_URL + "/rider/order/new" + options),
         headers: {"Content-Type": "application/json", "Authorization": token});
 
     if (response.statusCode == 200) {

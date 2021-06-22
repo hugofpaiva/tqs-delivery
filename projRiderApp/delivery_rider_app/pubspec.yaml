@@ -20,6 +20,7 @@ dependencies:
   auto_size_text: ^2.1.0
   http: ^0.13.3
   intl: ^0.17.0
+  geolocator: ^7.1.0
 
 dev_dependencies:
   flutter_test:

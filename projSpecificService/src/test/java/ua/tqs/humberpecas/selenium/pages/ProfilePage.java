@@ -129,6 +129,9 @@ public class ProfilePage {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-profile/main/section[2]/div/div/div/div[1]/div[2]/div/a")));
         }
         this.driver.findElement(By.xpath("/html/body/app-root/app-profile/main/section[2]/div/div/div/div[1]/div[2]/div/a")).click();
+
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
         {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[2]/div/h5")));

@@ -9,7 +9,5 @@ import java.util.List;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
-
-    //TODO: testar este metodo
     List<Address> findAllByPersonAndDeletedIsFalse(Person person);
 }
