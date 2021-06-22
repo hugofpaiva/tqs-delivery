@@ -16,15 +16,37 @@ This project aims to create a viable software product (functional specification,
 
 ### [**Code Quality Dashboard (SonarQube)**](http://34.89.70.141:9000/) 
 
-- Login: admin
-- Password: delivery
+Login | admin |
+--- | --- |
+Password | delivery |
 
 ### [**TQS Delivery Web App (Manager and Rider)**](http://35.246.29.122:81) 
+
+**Rider Credentials**
+Login | joao@email.com | antonio@email.com |
+--- | --- | --- |
+Password | difficult-pass | difficult-pass |
+
+**Manager Credentials**
+Login | joao1@email.com |
+--- | --- |
+Password | difficult-pass |
 
 ### [**TQS Delivery REST API Docs**](http://35.246.29.122:8081/swagger-ui/index.html) 
 
 ### [**Humber Peças Web App (Client)**](http://35.246.29.122:80) 
 
+**Client Credentials**
+Login | joao@email.com | joao@email.com |
+--- | --- | --- |
+Password | difficult-pass1 | difficult-pass |
+
 ### [**Humber Peças REST API Docs**](http://35.246.29.122:8080/swagger-ui/index.html) 
 
 ### [**Backlog management with ZenHub**](https://app.zenhub.com/workspaces/tqs-delivery-60ba8a5d5a66c400143cb9dd/board)
+
+### [**Final Presentation Slides**](https://docs.google.com/presentation/d/e/2PACX-1vTEp13R3pRr-GRUCWH0q1N_jbehr25QlrRjgvGc1IJbX03JZ5MjLNadyj7AmIF7I_zc8oa2TFhNsuGG/pub?start=false&loop=false&delayms=10000)
+
+### [**Product Specification Report**]()
+
+### [**QA Manual**]()
