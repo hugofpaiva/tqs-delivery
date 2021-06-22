@@ -4,8 +4,6 @@ WORKDIR /app
 
 ARG PROFILE=${PROFILE}
 
-
-
 COPY . /app/
 
 RUN sed -i "s/localhost/db-generic/g" src/main/resources/application.properties
