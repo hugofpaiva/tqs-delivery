@@ -461,7 +461,7 @@ class RiderRestControllerTemplateIT {
         purchaseRepository.saveAndFlush(this.purchase);
 
         ResponseEntity<Map> response = testRestTemplate.exchange(
-                getBaseUrl() + "order/status", HttpMethod.PATCH, new HttpEntity<Object>(headers),
+                getBaseUrl() + "order/status", HttpMethod.PUT, new HttpEntity<Object>(headers),
                 Map.class);
 
         assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
