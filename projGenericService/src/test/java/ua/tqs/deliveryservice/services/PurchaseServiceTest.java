@@ -1,7 +1,6 @@
 package ua.tqs.deliveryservice.services;
 
 
-import com.github.dockerjava.api.exception.BadRequestException;
 import org.assertj.core.data.Percentage;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -552,8 +551,10 @@ class PurchaseServiceTest {
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
         Mockito.when(purchaseRepository.findById(-1L)).thenReturn(Optional.empty());
 
+        String token = store.getToken();
+
         assertThrows(ResourceNotFoundException.class, () -> {
-            purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), -1L, 3);
+            purchaseService.reviewRiderFromSpecificOrder(token, -1L, 3);
         }, "Order not found.");
 
 
@@ -570,8 +571,11 @@ class PurchaseServiceTest {
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
         Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
 
+        long purch_id = this.purchase.getId();
+        String token = store.getToken();
+
         assertThrows(InvalidValueException.class, () -> {
-            purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), this.purchase.getId(), 4);
+            purchaseService.reviewRiderFromSpecificOrder(token,purch_id , 4);
         }, "Invalid, purchased already had review.");
 
 
@@ -600,8 +604,11 @@ class PurchaseServiceTest {
         Mockito.when(storeRepository.findByToken(new_store.getToken())).thenReturn(Optional.of(new_store));
         Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
 
+        long purch_id = this.purchase.getId();
+        String token = new_store.getToken();
+
         assertThrows(InvalidValueException.class, () -> {
-            purchaseService.reviewRiderFromSpecificOrder(new_store.getToken(), this.purchase.getId(), 4);
+            purchaseService.reviewRiderFromSpecificOrder(token, purch_id , 4);
         }, "Token passed belonged to a store where this purchase had not been made.");
 
 
@@ -617,8 +624,12 @@ class PurchaseServiceTest {
         Mockito.when(storeRepository.findByToken(this.store.getToken())).thenReturn(Optional.of(this.store));
         Mockito.when(purchaseRepository.findById(this.purchase.getId())).thenReturn(Optional.of(this.purchase));
 
+        long purch_id = this.purchase.getId();
+        String token = store.getToken();
+
+
         assertThrows(InvalidValueException.class, () -> {
-            purchaseService.reviewRiderFromSpecificOrder(this.store.getToken(), this.purchase.getId(), 4);
+            purchaseService.reviewRiderFromSpecificOrder(token, purch_id, 4);
         }, "Invalid, purchase must be delivered first.");
 
         Mockito.verify(storeRepository, VerificationModeFactory.times(1)).findByToken(anyString());
