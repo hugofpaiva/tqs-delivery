@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:convert';
 
 class GenericService {
-  static const BASE_URL = "http://127.0.0.1:8081";
+  static const BASE_URL = "http://35.246.29.122:8081";
   static bool loggedIn = false;
   static bool error = false;
   static String errorMsg = '';
