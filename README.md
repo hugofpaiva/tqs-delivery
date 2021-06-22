@@ -19,8 +19,12 @@ This project aims to create a viable software product (functional specification,
 - Login: admin
 - Password: delivery
 
+### [**TQS Delivery Web App (Manager and Rider)**](http://35.246.29.122:81) 
+
 ### [**TQS Delivery REST API Docs**](http://35.246.29.122:8081/swagger-ui/index.html) 
 
-### [**Humber Peças REST API Docs**](http://35.246.29.122:8081/swagger-ui/index.html) 
+### [**Humber Peças Web App (Client)**](http://35.246.29.122:80) 
+
+### [**Humber Peças REST API Docs**](http://35.246.29.122:8080/swagger-ui/index.html) 
 
 ### [**Backlog management with ZenHub**](https://app.zenhub.com/workspaces/tqs-delivery-60ba8a5d5a66c400143cb9dd/board)
