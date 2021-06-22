@@ -4,8 +4,8 @@ TQS Delivery
 
 <p align="center">
 
-<a href="https://www.youtube.com/watch?v=">
-    <img src="./report/demo.gif" alt="Demo">
+<a href="https://www.youtube.com/watch?v=Z-K_IZGJV-Q">
+    <img src="./reporting/demo.gif" alt="Demo">
   </a>
 
 > Demo video available by clicking on the image
