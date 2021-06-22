@@ -72,9 +72,9 @@ That said, the steps are as follows:
     $ docker-compose up -d
     ```
     
-The Client **Web application** will be available at: [localhost:80](http://localhost:80)
+The **Client Web application** will be available at: [localhost:80](http://localhost:80)
 
-The Rider and Manager **Web application** will be available at: [localhost:81](http://localhost:81)
+The **Rider and Manager Web application** will be available at: [localhost:81](http://localhost:81)
 
 ## Project Bookmarks
 
