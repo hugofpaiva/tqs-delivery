@@ -104,7 +104,7 @@ class DBLoaderProd implements CommandLineRunner {
 		productRepository.saveAndFlush(product9);
 
 
-		Product product11 = new Product("Frearson Driver", 10.20, Category.SCREWDRIVER, "Frearson Driver Description", "https://itslondon.s3.amazonaws.com/p/xxl/VIST0902EL4.jpg");
+		Product product11 = new Product("Frearson Driver", 10.20, Category.SCREWDRIVER, "Frearson Driver Description", "https://cdn.shopify.com/s/files/1/0665/9843/products/386075_1024x1024.jpg?v=1443713197");
 		productRepository.saveAndFlush(product11);
 
 		Product product12 = new Product("Bolster Screwdriver", 18.50, Category.SCREWDRIVER, "Bolster Screwdriver Description", "http://www.expert-toolstore.com/4450-thickbox_default/britool-expert-phillips-bolster-screwdrivers.jpg");
