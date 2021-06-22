@@ -41,9 +41,6 @@ class DBLoaderProd implements CommandLineRunner {
 	private ProductRepository productRepository;
 
 	@Autowired
-	private PurchaseRepository purchaseRepository;
-
-	@Autowired
 	private GenericRepository genericRepository;
 
 	@Autowired
@@ -67,9 +64,6 @@ class DBLoaderProd implements CommandLineRunner {
 
 		Address address3 = new Address("Canidelo", "3800-000", "Porto", "Portugal", person);
 		addressRepository.saveAndFlush(address3);
-
-		Product product = new Product("Parafuso", 0.50, Category.SCREWS, "xpto", "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
-		productRepository.saveAndFlush(product);
 
 		Product product10 = new Product("Hex Bolt", 0.50, Category.SCREWS, "Hex Bolt Description", "https://images.homedepot-static.com/productImages/c31796fc-fdd9-4994-9c5a-97d7ee2b6d4f/svn/everbilt-hex-bolts-80450-64_1000.jpg");
 		productRepository.saveAndFlush(product10);
