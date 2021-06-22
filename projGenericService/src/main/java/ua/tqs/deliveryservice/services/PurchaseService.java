@@ -20,15 +20,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import ua.tqs.deliveryservice.specific.ISpecificService;
 
 @Service
 @Log4j2
 public class PurchaseService {
-    @Autowired
-    private StoreRepository storeRepository;
 
     @Autowired
     private PurchaseRepository purchaseRepository;
+
+    @Autowired
+    private ISpecificService specificService;
+
+    @Autowired
+    private StoreRepository storeRepository;
 
     @Autowired
     private RiderRepository riderRepository;
@@ -47,11 +52,14 @@ public class PurchaseService {
             return new InvalidLoginException("Unauthorized store.");
         });
 
+
         // The order_id that was passed did not match any in the db. NOT_FOUND
         Purchase purchase = purchaseRepository.findById(orderId).orElseThrow(() -> {
             log.error("PURCHASE SERVICE: Order not found, when reviewing rider");
             return new ResourceNotFoundException("Order not found.");
         });
+
+
 
         // A review cannot be added to a purchase that was already reviewed. BAD_REQUEST
         if (purchase.getRiderReview() != null) {
@@ -72,6 +80,7 @@ public class PurchaseService {
             log.error("PURCHASE SERVICE: Invalid token for purchase ID, when reviewing rider");
             throw new InvalidValueException("Token passed belonged to a store where this purchase had not been made.");
         }
+
 
         purchase.setRiderReview(review);
         purchaseRepository.saveAndFlush(purchase);
@@ -100,8 +109,19 @@ public class PurchaseService {
             unfinished.setDeliveryTime(now.getTime() - unfinished.getDate().getTime());
         }
 
+        Store store = unfinished.getStore();
+
+        StringBuilder url  = new StringBuilder().append(store.getStoreUrl())
+                .append("updateStatus?serverOrderId=")
+                .append( unfinished.getId());
+
+
+        specificService.updateOrderStatus(unfinished.getStatus(), url.toString());
+
         purchaseRepository.save(unfinished);
+
         log.info("PURCHASE SERVICE: Purchase status updated successfully");
+
         return unfinished;
     }
 
@@ -127,6 +147,15 @@ public class PurchaseService {
         // accept order
         purch.setRider(rider);
         purch.setStatus(Status.ACCEPTED);
+
+        Store store = purch.getStore();
+
+        StringBuilder url  = new StringBuilder().append(store.getStoreUrl())
+                .append("setRider?serverOrderId=")
+                .append( purch.getId());
+
+        specificService.setRiderName(rider.getName(), url.toString());
+
         purchaseRepository.save(purch);
 
         log.info("PURCHASE SERVICE: Rider successfully accepted a new order to deliver");
@@ -264,6 +293,17 @@ public class PurchaseService {
         // accept order
         purch.setRider(rider);
         purch.setStatus(Status.ACCEPTED);
+
+        Store store = purch.getStore();
+
+
+        StringBuilder url  = new StringBuilder().append(store.getStoreUrl())
+                .append("setRider?serverOrderId=")
+                .append( purch.getId());
+
+        specificService.setRiderName(rider.getName(), url.toString());
+
+
         purchaseRepository.save(purch);
 
         log.info("PURCHASE SERVICE: Rider successfully retrieved new order location");
@@ -273,4 +313,6 @@ public class PurchaseService {
     public static double distance(Store store, double x2, double y2) {
         return Math.sqrt((y2 - store.getLongitude()) * (y2 - store.getLongitude()) + (x2 - store.getLatitude()) * (x2 - store.getLatitude()));
     }
+
 }
+

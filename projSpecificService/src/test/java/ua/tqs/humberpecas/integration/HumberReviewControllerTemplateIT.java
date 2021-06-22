@@ -1,7 +1,10 @@
 package ua.tqs.humberpecas.integration;
 
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -13,6 +16,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import ua.tqs.humberpecas.exception.AccessNotAllowedException;
 import ua.tqs.humberpecas.model.*;
 import ua.tqs.humberpecas.repository.AddressRepository;
 import ua.tqs.humberpecas.repository.PersonRepository;
@@ -22,6 +27,9 @@ import ua.tqs.humberpecas.repository.PurchaseRepository;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -84,9 +92,14 @@ public class HumberReviewControllerTemplateIT {
                 new Product("hammer", 10.50, Category.SCREWDRIVER , "the best hammer", "image_url"),
                 new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", "image_url")));
 
-        this.purchase = purchaseRepository.saveAndFlush(new Purchase(person, address, productList));
+        Purchase p = new Purchase(person, address, productList);
+        p.setServiceOrderId(12L);
+        p.setStatus(PurchaseStatus.DELIVERED);
 
-        review = new Review(12, 5);
+        this.purchase = purchaseRepository.saveAndFlush(p);
+
+        review = new Review( this.purchase.getId(), 5);
+
     }
 
     @AfterEach
@@ -105,37 +118,57 @@ public class HumberReviewControllerTemplateIT {
     }
 
 
-//    @Test
-//    @DisplayName("Add review to Rider")
-//    void whenValidReview_sendToDeliveryApp() {
-//
-//        RestAssured.given()
-//                .header("Authorization", "Bearer " + this.token)
-//                .contentType("application/json")
-//                .body(review)
-//                .when()
-//                .post(getBaseUrl() + "/add")
-//                .then()
-//                .statusCode(200);
-//
-//    }
-//
-//    @Test
-//    @DisplayName("Add review of invalid order throws ResourseNotFound")
-//    void whenInvalidOrder_thenThrowsStatusResourseNotFound(){
-//
-//        review.setOrderId(0);
-//
-//        RestAssured.given()
-//                .header("Authorization", "Bearer " + this.token)
-//                .contentType("application/json")
-//                .body(review)
-//                .when()
-//                .post(getBaseUrl() + "/add")
-//                .then()
-//                .statusCode(404);
-//
-//    }
+    @Test
+    @DisplayName("Add review to Rider")
+    void whenValidReview_sendToDeliveryApp() {
+
+        RestAssured.given()
+                .header("Authorization", "Bearer " + this.token)
+                .contentType("application/json")
+                .body(review)
+                .when()
+                .post(getBaseUrl() + "/add")
+                .then()
+                .statusCode(200);
+
+        List<Purchase> purchaseList = purchaseRepository.findAll();
+
+        assertThat(purchaseList).hasSize(1).extracting(Purchase::getRiderReview).containsOnly(review.getReview());
+        assertThat(purchaseList).hasSize(1).extracting(Purchase::getId).containsOnly(purchase.getId());
+    }
+
+
+    @Test
+    @DisplayName("Add review of invalid order throws ResourseNotFound")
+    void whenInvalidOrder_thenThrowsStatusResourseNotFound(){
+
+        review.setOrderId(0);
+
+        RestAssured.given()
+                .header("Authorization", "Bearer " + this.token)
+                .contentType("application/json")
+                .body(review)
+                .when()
+                .post(getBaseUrl() + "/add")
+                .then()
+                .statusCode(404);
+
+    }
+
+    @Test
+    @DisplayName("Add review with invalid token throws HTTP Unauthorized")
+    void whenAddReviewInvalidToken_thenThrowsStatus401() throws AccessNotAllowedException {
+
+        RestAssured.given()
+                .contentType("application/json")
+                .body(review)
+                .when()
+                .post(getBaseUrl() + "/add")
+                .then()
+                .statusCode(401);
+
+    }
+
 
 
 

@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.services;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,11 +39,26 @@ class ManagerServiceTest {
     @InjectMocks
     private ManagerService managerService;
 
-    private Manager manager = new Manager("joao", "aRightPassword", "TQS_delivery@example.com");
-    private Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-    private Rider rider = new Rider("Raquel", "aRightPassword", "TQS_delivery@ua.com");
-    private Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address);
-    private Purchase purchase = new Purchase(this.address, this.rider, this.store, "Joana");
+    private String storeUrl;
+
+    private Manager manager;
+    private Address address;
+    private Rider rider;
+    private Store store;
+    private Purchase purchase;
+
+
+    @BeforeEach
+    void setUp(){
+        storeUrl = "http://localhost:8081/delivery/";
+        manager = new Manager("joao", "aRightPassword", "TQS_delivery@example.com");
+        address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        rider = new Rider("Raquel", "aRightPassword", "TQS_delivery@ua.com");
+        store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address, storeUrl);
+        purchase = new Purchase(this.address, this.rider, this.store, "Joana");
+
+
+    }
 
     // --------------------------------------------
     // --      MANAGER: GET ALL RIDERS INFO      --
@@ -133,7 +149,7 @@ class ManagerServiceTest {
     void testWhenGetRidersStatistics_thenReturn() {
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, storeUrl);
 
         Purchase p1 = new Purchase(addr, this.rider, store, "Miguel");
         Purchase p2 = new Purchase(addr, this.rider, store, "Mariana");

@@ -2,6 +2,9 @@ package ua.tqs.deliveryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Entity;
@@ -10,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class Rider extends Person {
     @JsonIgnore
@@ -32,5 +36,7 @@ public class Rider extends Person {
     }
 
     public Rider() {}
+
+
 
 }

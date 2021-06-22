@@ -79,7 +79,7 @@ class ManagerRestControllerTemplateIT {
         this.manager = new Manager("joao", bcryptEncoder.encode("aRightPassword"), "TQS_delivery@example.com");
 
         this.address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address);
+        this.store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", this.address, "http://localhost:8081/delivery/");
 
         this.rider = new Rider("Raquel", bcryptEncoder.encode("aRightPassword"), "TQS_delivery@ua.com");
         this.purchase = new Purchase(this.address, this.rider, this.store, "Joana");
@@ -451,7 +451,7 @@ class ManagerRestControllerTemplateIT {
         Address addr3 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
 
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8082/delivery/");
 
         Purchase p1 = new Purchase(addr1, rider, store, "Miguel");
         Purchase p2 = new Purchase(addr2, rider, store, "Mariana");
@@ -526,7 +526,7 @@ class ManagerRestControllerTemplateIT {
         Address addr11 = new Address("Rua de Festa, n. 23", "5830-912", "Viseu", "Portugal");
 
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http:localhost:8081");
 
         Purchase p1 = new Purchase(addr1, rider, store, "Miguel");
         Purchase p2 = new Purchase(addr2, rider, store, "Mariana");
@@ -584,7 +584,7 @@ class ManagerRestControllerTemplateIT {
         Address addr11 = new Address("Rua de Festa, n. 23", "5830-912", "Viseu", "Portugal");
 
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http://localhost:8080");
 
         Purchase p1 = new Purchase(addr1, rider, store, "Miguel");
         Purchase p2 = new Purchase(addr2, rider, store, "Mariana");
@@ -641,7 +641,7 @@ class ManagerRestControllerTemplateIT {
         Address addr11 = new Address("Rua de Festa, n. 23", "5830-912", "Viseu", "Portugal");
 
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Puerto", "Portugal");
-        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
+        Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store, "http:localhost:8080");
 
 
         riderRepository.save(rider);

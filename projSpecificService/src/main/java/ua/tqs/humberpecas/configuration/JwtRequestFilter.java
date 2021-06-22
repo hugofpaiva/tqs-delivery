@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ua.tqs.humberpecas.exception.ResourceNotFoundException;
+import ua.tqs.humberpecas.model.Generic;
+import ua.tqs.humberpecas.repository.GenericRepository;
 import ua.tqs.humberpecas.service.JwtUserDetailsService;
 
 import javax.servlet.FilterChain;
@@ -23,6 +26,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private JwtUserDetailsService jwtUserDetailsService;
 
     @Autowired
+    private GenericRepository genericRepository;
+
+    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     @Override
@@ -33,14 +39,25 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String username = null;
         String jwtToken = null;
+        Generic generic = null;
         // JWT Token is in the form "Bearer token". Remove Bearer word and get
         // only the Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+
+                if (username == null){
+                    throw new IllegalArgumentException("Username not found for this Token.");
+                }
             } catch (IllegalArgumentException e) {
-                logger.info("Unable to get JWT Token");
+                logger.info("Unable to get JWT Token, Checking if it is a Store Token...");
+                try {
+                    generic = genericRepository.findByToken(jwtToken).orElseThrow(() -> new ResourceNotFoundException("Generic not found for this Token"));
+                } catch (ResourceNotFoundException e1) {
+                    logger.info("Unable to get JWT Token for Generic");
+                }
+
             } catch (ExpiredJwtException e) {
                 logger.info("JWT Token has expired");
             }
@@ -49,13 +66,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         // Once we get the token validate it.
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+        if ((username != null || generic != null) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = null;
+            if (username != null) {
+                userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+            } else {
+                userDetails = this.jwtUserDetailsService.loadUserByGeneric(generic);
+            }
 
             // if token is valid configure Spring Security to manually set
             // authentication
-            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+            if ( generic!= null || jwtTokenUtil.validateToken(jwtToken, userDetails)) {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());

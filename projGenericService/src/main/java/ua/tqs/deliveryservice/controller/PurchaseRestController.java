@@ -23,9 +23,13 @@ public class PurchaseRestController {
     @PutMapping("/order/{order_id}/review")
     public ResponseEntity<Object> addReviewToRider(@PathVariable Long order_id, @RequestBody Map<String, Long> payload, @RequestHeader Map<String, String> headers)
             throws InvalidValueException, InvalidLoginException, ResourceNotFoundException {
+
         String token = headers.get("authorization").substring(7);
         Long review = payload.get("review");
+
+
         if (order_id == null || review == null || review > 5 || review < 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
 
         purchaseService.reviewRiderFromSpecificOrder(token, order_id, review.intValue());
 

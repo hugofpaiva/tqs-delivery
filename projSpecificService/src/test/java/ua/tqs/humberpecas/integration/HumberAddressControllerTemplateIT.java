@@ -147,8 +147,6 @@ public class HumberAddressControllerTemplateIT {
     @DisplayName("Delete Address: everything OK then return address")
     public void testDeleteAddress_thenUnauthorized() {
         HttpHeaders headers = new HttpHeaders();
-        System.out.println(person.getAddresses());
-        System.out.println(address);
         headers.set("Authorization", "Bearer " + this.token);
         ResponseEntity<Address> response = testRestTemplate.exchange(
                 getBaseUrl() + "/del?addressId=" + address.getId(), HttpMethod.DELETE, new HttpEntity<Object>(headers),

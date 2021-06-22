@@ -1,5 +1,6 @@
 package ua.tqs.deliveryservice.controller;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+@Log4j2
 @RestController
 @RequestMapping("/rider")
 public class RiderRestController {
@@ -28,8 +30,8 @@ public class RiderRestController {
     @Autowired
     private RiderService riderService;
 
-    @PatchMapping("order/status")
-    public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(HttpServletRequest request) throws InvalidLoginException, ResourceNotFoundException {
+    @PutMapping("order/status")
+    public ResponseEntity<Map<String, Object>> updateOrderStatusAuto(HttpServletRequest request) throws InvalidLoginException, ForbiddenRequestException, ResourceNotFoundException {
         String requestTokenHeader = request.getHeader("Authorization");
 
         Purchase purchase = purchaseService.updatePurchaseStatus(requestTokenHeader);
@@ -42,6 +44,9 @@ public class RiderRestController {
         if (time != null) {
             ret.put("delivery_time", time);
         }
+
+        log.info("RiderRestController: Order status updated with success ");
+
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
@@ -59,6 +64,8 @@ public class RiderRestController {
 
         HashMap<String, Object> ret = new HashMap<>();
         ret.put("data", purch.getMap());
+
+        log.info("RiderRestController: Order assigned to Rider");
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
@@ -69,6 +76,7 @@ public class RiderRestController {
 
         Map<String, Object> ret = new TreeMap<>();
         ret.put("data", current.getMap());
+        log.info("RiderRestController: Rider current Order");
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
@@ -82,6 +90,7 @@ public class RiderRestController {
 
         String requestTokenHeader = request.getHeader("Authorization");
         Map<String, Object> response = purchaseService.getLastOrderForRider(pageNo, pageSize, requestTokenHeader);
+        log.info("RiderRestController: Rider Orders");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -89,6 +98,7 @@ public class RiderRestController {
     public ResponseEntity<Map<String, Object>> getRatingStatistics(HttpServletRequest request) throws InvalidLoginException {
         String requestTokenHeader = request.getHeader("Authorization");
         Map<String, Object> resp = riderService.getRatingStatistics(requestTokenHeader);
+        log.info("RiderRestController: Review Statistics");
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 

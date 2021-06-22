@@ -1,14 +1,15 @@
 package ua.tqs.deliveryservice.exception;
 
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class InvalidValueException extends RuntimeException{
+@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+public class UnreachableServiceException extends RuntimeException{
 
     private static final long serialVersionUID = 1L;
 
-    public InvalidValueException(String message){
+    public UnreachableServiceException(String message){
         super(message);
     }
 }

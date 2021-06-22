@@ -66,9 +66,9 @@ public class DeliveryServiceImpl implements IDeliveryService {
                 .append(review.getOrderId())
                 .append("/review");
 
-        ResponseEntity<ServerReviewDTO> response = restTemplate.exchange(
+        ResponseEntity<HttpStatus> response = restTemplate.exchange(
                 url.toString(), HttpMethod.PUT, new HttpEntity<>(review, headers),
-                ServerReviewDTO.class);
+                HttpStatus.class);
 
         log.info("Generic responded with the status code: " + response.getStatusCode());
 

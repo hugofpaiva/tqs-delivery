@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.exception.AccessNotAllowedException;
+import ua.tqs.humberpecas.exception.InvalidOperationException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.model.*;
@@ -57,11 +58,12 @@ class HumberReviewServiceTest {
         products.add(new Product("hammer v2", 20.50, Category.SCREWDRIVER , "the best hammer 2.0", "url"));
 
         purchase = new Purchase(person, address, products);
-        purchase.setId(1L);
-        purchase.setServiceOrderId(5L);
+        purchase.setId(1);
+        purchase.setStatus(PurchaseStatus.DELIVERED);
+        purchase.setServiceOrderId( 4L);
 
 
-        review = new Review(1, 4);
+        review = new Review(1L, 4);
 
         this.userToken = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTYyMzYyMDQzMiwiaWF0IjoxNjIzNjIwNDMyfQ.Gib-gCJyL8-__G3zN4E-9VV1q75eYHZ8X6sS1WUNZB8";
 
@@ -69,7 +71,8 @@ class HumberReviewServiceTest {
 
     @Test
     @DisplayName("Review Rider")
-    void whenValidPurchase_thenSendReview() throws ResourceNotFoundException, AccessNotAllowedException {
+    void whenValidPurchage_thenSendReview() throws ResourceNotFoundException, AccessNotAllowedException {
+
         when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         when(purchaseRepository.saveAndFlush(any())).thenReturn(purchase);
@@ -88,11 +91,32 @@ class HumberReviewServiceTest {
 
 
 
+    @Test
+    @DisplayName("Review Rider When Review not deliverd throws InvalidOperationException")
+    void whenReviewNotDeliveredOrder_thenThrowsInvalidOperation(){
+
+        purchase.setStatus(PurchaseStatus.PENDENT);
+
+        when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
+
+        assertThrows( InvalidOperationException.class, () -> {
+            service.addReview(review, userToken);
+        } );
+
+        verify(deliveryService, times(0)).reviewRider(review);
+        verify(purchaseRepository, times(1)).findById(purchase.getId());
+        verify(jwtUserDetailsService, times(0)).getEmailFromToken(userToken);
+        verify(purchaseRepository, times(0)).saveAndFlush(purchase);
+
+
+    }
+
 
 
     @Test
     @DisplayName("Review Rider with invalid order in Delivery Service throws ResourceNotFoundException")
     void whenInvalidOrderService_thenThrowsStatusResourceNotFound(){
+
         when(purchaseRepository.findById(anyLong())).thenReturn(Optional.of(purchase));
         when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
         doThrow(ResourceNotFoundException.class).when(deliveryService).reviewRider(review);
@@ -116,7 +140,7 @@ class HumberReviewServiceTest {
         } );
 
         verify(deliveryService, times(0)).reviewRider(review);
-        verify(purchaseRepository, times(1)).findById(review.getOrderId());
+        verify(purchaseRepository, times(1)).findById(purchase.getId());
         verify(jwtUserDetailsService, times(0)).getEmailFromToken(userToken);
 
     }
@@ -153,7 +177,7 @@ class HumberReviewServiceTest {
         } );
 
         verify(deliveryService, times(0)).reviewRider(review);
-        verify(purchaseRepository, times(1)).findById(review.getOrderId());
+        verify(purchaseRepository, times(1)).findById(purchase.getId());
         verify(jwtUserDetailsService, times(1)).getEmailFromToken(userToken);
 
     }

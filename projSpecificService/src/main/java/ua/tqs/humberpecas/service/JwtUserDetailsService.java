@@ -13,13 +13,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ua.tqs.humberpecas.configuration.JwtTokenUtil;
 import ua.tqs.humberpecas.exception.InvalidLoginException;
+import ua.tqs.humberpecas.exception.ResourceNotFoundException;
+import ua.tqs.humberpecas.model.Generic;
 import ua.tqs.humberpecas.model.JwtRequest;
 import ua.tqs.humberpecas.model.JwtResponse;
 import ua.tqs.humberpecas.model.Person;
+import ua.tqs.humberpecas.repository.GenericRepository;
 import ua.tqs.humberpecas.repository.PersonRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 @Log4j2
@@ -30,6 +34,9 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private GenericRepository genericRepository;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -48,6 +55,29 @@ public class JwtUserDetailsService implements UserDetailsService {
         log.info("HUMBER JWT USER DETAILS SERVICE: Successfully retrieved user by username");
         return new org.springframework.security.core.userdetails.
                 User(user.getEmail(), user.getPwd(), authorities);
+    }
+
+    public UserDetails loadUserByGeneric(Generic generic) throws BadCredentialsException {
+        if (generic == null) {
+            throw new BadCredentialsException("Generic cannot be null to create User");
+        }
+
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(generic.getClass().getSimpleName()));
+        return new org.springframework.security.core.userdetails.User(generic.getName(), generic.getToken(),
+                authorities);
+    }
+
+    public Generic getGenericFromToken(String headerAuthorization) {
+        String jwtToken = headerAuthorization.substring(7);
+        Generic generic = null;
+        try {
+            generic = genericRepository.findByToken(jwtToken).orElseThrow(() -> new ResourceNotFoundException("Generic not found for this Token"));
+        } catch (ResourceNotFoundException e1) {
+            log.info("Unable to get Generic from JWT Token");
+        }
+
+        return generic;
     }
 
     public String getEmailFromToken(String headerAuthorization) {

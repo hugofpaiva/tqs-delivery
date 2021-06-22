@@ -18,6 +18,7 @@ import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
 import ua.tqs.deliveryservice.exception.ResourceNotFoundException;
+import ua.tqs.deliveryservice.exception.UnreachableServiceException;
 import ua.tqs.deliveryservice.model.*;
 import ua.tqs.deliveryservice.services.PurchaseService;
 
@@ -26,6 +27,7 @@ import java.util.Date;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -132,7 +134,7 @@ class PurchaseRestControllerMockMvcTest {
     void testNotDeliveredPurchaseReview_thenBadRequest() throws Exception {
         Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address, "http://localhost:8080");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
 
         JSONObject json = new JSONObject();
@@ -160,7 +162,7 @@ class PurchaseRestControllerMockMvcTest {
     void testEverythingOK_thenIsOk() throws Exception {
         Rider rider = new Rider("Joao", "aRightPassword", "TQS_delivery@example.com");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw", address, "http://localhost:8080/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
         purchase.setStatus(Status.DELIVERED);
 
@@ -328,6 +330,51 @@ class PurchaseRestControllerMockMvcTest {
                 .andExpect(jsonPath("orderId").exists())
         ;
         verify(purchaseService, times(1)).receiveNewOrder(any(), any());
+    }
+
+
+    @Test
+    public void testMakeNewOrderNoConnection_thenThrowStatus500() throws Exception {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + token);
+
+        String exampleBody = "{\"personName\":\"nomeee\",\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Store(), "nomeee");
+        when(purchaseService.receiveNewOrder(any(), any())).thenThrow(new UnreachableServiceException("no connection"));
+
+        mvc.perform(post("/store/order")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .content(exampleBody)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
+        verify(purchaseService, times(1)).receiveNewOrder(any(), any());
+
+
+    }
+
+    @Test
+    public void testMakeNewOrderInvalidServerData_thenThrowBadRequest() throws Exception {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + token);
+
+        String exampleBody = "{\"personName\":\"nomeee\",\"date\":1623709488744,\"address\":{\"address\":\"Rua1123\",\"postalCode\":\"3423-234\",\"city\":\"aveiro\",\"country\":\"pt\"}}";
+        Purchase purchase = new Purchase(new Address("Rua1123", "3423-234", "aveiro", "pt"), new Store(), "nomeee");
+        when(purchaseService.receiveNewOrder(any(), any())).thenThrow(new InvalidValueException("invalid data"));
+
+        mvc.perform(post("/store/order")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .content(exampleBody)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+        verify(purchaseService, times(1)).receiveNewOrder(any(), any());
+
+
     }
 
 }

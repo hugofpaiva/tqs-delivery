@@ -98,9 +98,9 @@ class StoreServiceTest {
         Address addr1 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr2 = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
         Address addr3 = new Address("Rua ABC, n. 944", "4444-555", "Aveiro", "Portugal");
-        Store store1 = new Store("Loja do Manel11", "A melhor loja.", "exToken1", addr1);
-        Store store2 = new Store("Loja do Manel22", "A melhor loja.", "exToken2", addr2);
-        Store store3 = new Store("Loja do Manel33", "A melhor loja.", "exToken3", addr3);
+        Store store1 = new Store("Loja do Manel11", "A melhor loja.", "exToken1", addr1, "http://localhost:8081/delivery/");
+        Store store2 = new Store("Loja do Manel22", "A melhor loja.", "exToken2", addr2, "http://localhost:8082/delivery/");
+        Store store3 = new Store("Loja do Manel33", "A melhor loja.", "exToken3", addr3, "http://localhost:8083/delivery/");
 
 
         List<Store> allStores = Arrays.asList(store1, store2, store3);

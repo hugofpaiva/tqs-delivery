@@ -85,11 +85,11 @@ class ManagerRestControllerMockMvcTest {
         Address addr1 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr2 = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
         Address addr3 = new Address("Rua ABC, n. 944", "4444-555", "Aveiro", "Portugal");
-        Map<String, Object> store1 = new Store("Loja do Manel11", "A melhor loja.", "exToken1", addr1).getMap();
+        Map<String, Object> store1 = new Store("Loja do Manel11", "A melhor loja.", "exToken1", addr1, "http://localhost:8081/delivery/").getMap();
         store1.put("totalOrders", 1);
-        Map<String, Object> store2 = new Store("Loja do Manel22", "A melhor loja.", "exToken2", addr2).getMap();
+        Map<String, Object> store2 = new Store("Loja do Manel22", "A melhor loja.", "exToken2", addr2, "http://localhost:8082/delivery/").getMap();
         store2.put("totalOrders", 2);
-        Map<String, Object> store3 = new Store("Loja do Manel33", "A melhor loja.", "exToken3", addr3).getMap();
+        Map<String, Object> store3 = new Store("Loja do Manel33", "A melhor loja.", "exToken3",  addr3, "http://localhost:8083/delivery/").getMap();
         store3.put("totalOrders", 3);
 
         List<Map<String, Object>> stores = Arrays.asList(store1, store2, store3);
@@ -127,9 +127,9 @@ class ManagerRestControllerMockMvcTest {
         Address addr1 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr2 = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
         Address addr3 = new Address("Rua ABC, n. 944", "4444-555", "Aveiro", "Portugal");
-        Map<String, Object> store1 = new Store("Loja do Manel11", "A melhor loja.", "exToken1", addr1).getMap();
+        Map<String, Object> store1 = new Store("Loja do Manel11", "A melhor loja.", "exToken1", addr1, "http://localhost:8081/delivery/").getMap();
         store1.put("totalOrders", 1);
-        Map<String, Object> store2 = new Store("Loja do Manel22", "A melhor loja.", "exToken2", addr2).getMap();
+        Map<String, Object> store2 = new Store("Loja do Manel22", "A melhor loja.", "exToken2", addr2, "http://localhost:8082/delivery/").getMap();
         store2.put("totalOrders", 2);
 
         List<Map<String, Object>> stores = Arrays.asList(store1, store2);
@@ -278,8 +278,8 @@ class ManagerRestControllerMockMvcTest {
         Rider rider1 = new Rider("Rider 1", "goodpwd", "rider1@ua.pt");
         Rider rider2 = new Rider("Rider 2", "goodpwd", "rider2@ua.pt");
 
-        Purchase purchase1 = new Purchase(addr1, rider1, new Store("Loja do Manel11", "A melhor loja.", "exToken1", addr1), "Adelaide");
-        Purchase purchase2 = new Purchase(addr2, rider1,  new Store("Loja do Manel22", "A melhor loja.", "exToken2", addr2), "Rita");
+        Purchase purchase1 = new Purchase(addr1, rider1, new Store("Loja do Manel11", "A melhor loja.", "exToken1", addr1, "http://localhost:8081/delivery/"), "Adelaide");
+        Purchase purchase2 = new Purchase(addr2, rider1,  new Store("Loja do Manel22", "A melhor loja.", "exToken2", addr2, "http://localhost:8082/delivery/"), "Rita");
 
         rider1.setReviewsSum(7); rider1.setTotalNumReviews(2); rider1.setPurchases(Arrays.asList(purchase1, purchase2));
 

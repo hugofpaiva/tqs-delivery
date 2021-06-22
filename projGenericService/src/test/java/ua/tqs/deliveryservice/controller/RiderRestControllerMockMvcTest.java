@@ -12,6 +12,7 @@ import org.springframework.http.*;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.tqs.deliveryservice.configuration.JwtRequestFilter;
 import ua.tqs.deliveryservice.configuration.WebSecurityConfig;
+import ua.tqs.deliveryservice.exception.*;
 import ua.tqs.deliveryservice.exception.ForbiddenRequestException;
 import ua.tqs.deliveryservice.exception.InvalidLoginException;
 import ua.tqs.deliveryservice.exception.InvalidValueException;
@@ -28,7 +29,7 @@ import java.util.Map;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,7 +86,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
         List<Purchase> purchases = new ArrayList<>();
         purchases.add(purchase);
@@ -149,7 +150,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
 
         Address address1 = new Address("Universidade de Lisboa", "3800-000", "Aveiro", "Portugal");
@@ -243,7 +244,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
 
         when(purchaseService.getCurrentPurchase("Bearer example_token")).thenReturn(purchase);
@@ -321,7 +322,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
 
         when(purchaseService.getNewPurchase("Bearer example_token")).thenReturn(purchase);
@@ -350,7 +351,7 @@ class RiderRestControllerMockMvcTest {
         headers.set("authorization", "Bearer " + "example_token");
 
         when(purchaseService.updatePurchaseStatus("Bearer example_token")).thenThrow(InvalidLoginException.class);
-        mvc.perform(patch("/rider/order/status")
+        mvc.perform(put("/rider/order/status")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
@@ -358,6 +359,8 @@ class RiderRestControllerMockMvcTest {
 
         verify(purchaseService, times(1)).updatePurchaseStatus(any());
     }
+
+
 
 
     @Test
@@ -368,7 +371,7 @@ class RiderRestControllerMockMvcTest {
 
         when(purchaseService.updatePurchaseStatus("Bearer example_token")).thenThrow(ResourceNotFoundException.class);
 
-        mvc.perform(patch("/rider/order/status")
+        mvc.perform(put("/rider/order/status")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -384,19 +387,72 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
         purchase.setStatus(Status.PICKED_UP);
 
         when(purchaseService.updatePurchaseStatus("Bearer example_token")).thenReturn(purchase);
 
 
-        mvc.perform(patch("/rider/order/status")
+        mvc.perform(put("/rider/order/status")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("order_id", is(((Long) purchase.getId()).intValue())))
                 .andExpect(jsonPath("status", is("PICKED_UP")))
+        ;
+
+        verify(purchaseService, times(1)).updatePurchaseStatus(any());
+
+    }
+
+
+    @Test
+    public void givenRiderWithPurchase_whenUpdateStatusNoConnection_thenThrowStatus500() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
+        Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
+        Purchase purchase = new Purchase(address, rider, store, "Joana");
+        purchase.setStatus(Status.PICKED_UP);
+
+        when(purchaseService.updatePurchaseStatus("Bearer example_token")).thenThrow(new UnreachableServiceException("No connection"));
+
+
+        mvc.perform(put("/rider/order/status")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError())
+
+        ;
+
+        verify(purchaseService, times(1)).updatePurchaseStatus(any());
+
+    }
+
+    @Test
+    public void givenRiderWithPurchase_whenUpdateStatusInvalidServerData_thenThrowBadRequest() throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("authorization", "Bearer " + "example_token");
+
+        Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
+        Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
+        Purchase purchase = new Purchase(address, rider, store, "Joana");
+        purchase.setStatus(Status.PICKED_UP);
+
+        when(purchaseService.updatePurchaseStatus("Bearer example_token")).thenThrow(new InvalidValueException("No connection"));
+
+
+        mvc.perform(put("/rider/order/status")
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+
         ;
 
         verify(purchaseService, times(1)).updatePurchaseStatus(any());
@@ -411,7 +467,7 @@ class RiderRestControllerMockMvcTest {
 
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
         Address address = new Address("Universidade de Aveiro", "3800-000", "Aveiro", "Portugal");
-        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address);
+        Store store = new Store("HumberPecas", "Peça(s) rápido", "somestringnewtoken", address, "http://localhost:8081/delivery/");
         Purchase purchase = new Purchase(address, rider, store, "Joana");
         purchase.setStatus(Status.PICKED_UP);
         purchase.setDeliveryTime(15L);
@@ -419,7 +475,7 @@ class RiderRestControllerMockMvcTest {
         when(purchaseService.updatePurchaseStatus("Bearer example_token")).thenReturn(purchase);
 
 
-        mvc.perform(patch("/rider/order/status")
+        mvc.perform(put("/rider/order/status")
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -584,7 +640,7 @@ class RiderRestControllerMockMvcTest {
         Rider rider = new Rider("TQS_delivery@example.com", "aRightPassword", "Joao");
 
         Address addr_store_close = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
-        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V71", addr_store_close, 1.0, 1.0);
+        Store store_close = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V71", addr_store_close,"http://localhost:8081/delivery/", 1.0, 1.0);
 
         Address addr_close = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Purchase purchase = new Purchase(addr_close, rider, store_close, "Miguel");
