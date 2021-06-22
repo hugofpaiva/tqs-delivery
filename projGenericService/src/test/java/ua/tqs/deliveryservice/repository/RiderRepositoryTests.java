@@ -148,7 +148,7 @@ class RiderRepositoryTests {
 
         Double res = riderRepository.getAverageRiderRating();
 
-        assertThat(res).isNotNull().isEqualTo((double) (32/10 + 1)/2);
+        assertThat(res).isNotNull().isEqualTo((double) (32.0/10.0 + 1.0)/2.0);
     }
 
 
