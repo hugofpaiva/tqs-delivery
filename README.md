@@ -103,9 +103,9 @@ Password | difficult-pass |
 ### [**Humber Peças Web App (Client)**](http://35.246.29.122:80) 
 
 **Client Credentials**
-Login | joao@email.com | joao@email.com |
---- | --- | --- |
-Password | difficult-pass1 | difficult-pass |
+Login | joao@email.com |
+--- | --- |
+Password | difficult-pass1 |
 
 ### [**Humber Peças REST API Docs**](http://35.246.29.122:8080/swagger-ui/index.html) 
 
