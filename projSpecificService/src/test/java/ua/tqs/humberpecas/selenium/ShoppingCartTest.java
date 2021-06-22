@@ -116,7 +116,7 @@ public class ShoppingCartTest {
 
         Product product5 = new Product("Slotted Driver", 4.20, Category.SCREWDRIVER, "Slotted Driver Description", "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
         productRepository.saveAndFlush(product5);
-        productList.add(product5);
+
 
         Product product6 = new Product("Torx Driver", 4.20, Category.SCREWDRIVER, "Torx Driver Description", "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.megalojista.com.br%2Fmedia%2Fcatalog%2Fproduct%2Fp%2Fa%2Fparafuso_auto_atarraxante_cabeca_panela_phillips_passivado_base.png_61.jpg&f=1&nofb=1");
         productRepository.saveAndFlush(product6);

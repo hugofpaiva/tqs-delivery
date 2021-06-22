@@ -72,7 +72,7 @@ class DBLoaderProd implements CommandLineRunner {
 
 		Address addr5 = new Address("Rua ABC, n. 99", "4444-555", "Lisboa", "Portugal");
 		addressRep.saveAndFlush(addr5);
-		String storeUrl = "http://localhost:8081/delivery/";
+		String storeUrl = "http://specific:8080/delivery/";
 		Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2, storeUrl);
 		storeRep.saveAndFlush(store1);
 
@@ -146,7 +146,7 @@ class DBLoaderCI implements CommandLineRunner {
 		Address addr6 = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
 		addressRep.saveAndFlush(addr6);
 
-		Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2, "http://localhost:8080/delivery");
+		Store store1 = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr2, "http://specific:8080/delivery");
 		storeRep.saveAndFlush(store1);
 
 
