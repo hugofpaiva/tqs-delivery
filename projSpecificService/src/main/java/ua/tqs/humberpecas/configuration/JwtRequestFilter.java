@@ -70,7 +70,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             UserDetails userDetails = null;
             if (username != null) {
                 userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-            } else if (generic != null) {
+            } else {
                 userDetails = this.jwtUserDetailsService.loadUserByGeneric(generic);
             }
 

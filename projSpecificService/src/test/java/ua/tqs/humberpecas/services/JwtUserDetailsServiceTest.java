@@ -131,7 +131,7 @@ class JwtUserDetailsServiceTest {
         Mockito.when(genericRepository.findByToken(anyString())).thenReturn(Optional.empty());
 
         Generic returnedGeneric = jwtUserDetailsService.getGenericFromToken(token);
-        assertEquals(returnedGeneric, null);
+        assertNull(returnedGeneric);
 
         Mockito.verify(genericRepository, VerificationModeFactory.times(1))
                 .findByToken(anyString());
@@ -183,7 +183,7 @@ class JwtUserDetailsServiceTest {
         JwtResponse response = jwtUserDetailsService.newAuthenticationToken(request);
 
         assertEquals(response.getName(), person.getName());
-        assertEquals(response.getType().toString(), "Person");
+        assertEquals( "Person", response.getType().toString());
 
         Mockito.verify(authenticationManager, VerificationModeFactory.times(1))
                 .authenticate(any());

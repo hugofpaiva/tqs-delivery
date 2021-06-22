@@ -24,7 +24,7 @@ public class LoginPage {
         }
     }
 
-    public void login(String email, String password) {
+    public String login(String email, String password) {
         this.driver.findElement(By.cssSelector("body > app-root > app-login > main > section > div.container.pt-lg-md > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")).click();
         this.driver.findElement(By.cssSelector("body > app-root > app-login > main > section > div.container.pt-lg-md > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div.form-group.mb-3 > div > input")).sendKeys(email);
         this.driver.findElement(By.cssSelector("body > app-root > app-login > main > section > div.container.pt-lg-md > div > div > div.card.bg-secondary.shadow.border-0 > div > form > div:nth-child(2) > div > input")).sendKeys(password);
@@ -35,6 +35,6 @@ public class LoginPage {
         }
 
         assertThat(this.driver.findElement(By.cssSelector("body > app-root > app-shop > main > section.section-content.padding-y > div > div > aside > div > article:nth-child(1) > header > a > h6")).getText(), is("Category"));
-        assertThat(this.driver.findElement(By.cssSelector("body > app-root > app-shop > main > section.section-content.padding-y > div > div > aside > div > article:nth-child(2) > header > a > h6")).getText(), is("Price range"));
+        return this.driver.findElement(By.cssSelector("body > app-root > app-shop > main > section.section-content.padding-y > div > div > aside > div > article:nth-child(2) > header > a > h6")).getText();
     }
 }

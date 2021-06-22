@@ -22,6 +22,9 @@ import ua.tqs.humberpecas.selenium.pages.LoginPage;
 import ua.tqs.humberpecas.selenium.pages.RegisterPage;
 import ua.tqs.humberpecas.selenium.pages.ShopPage;
 
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 
 // SpringBootTest to run the REST API
 @Testcontainers
@@ -80,7 +83,8 @@ public class AuthenticationTest {
         RemoteWebDriver driver = this.chromeContainer.getWebDriver();
 
         LoginPage loginPage = new LoginPage(driver, this.webApplicationBaseUrl);
-        loginPage.login("joao@email.com", "difficult-pass");
+        assertThat(loginPage.login("joao@email.com", "difficult-pass"), is("Price range"));
+
 
         ShopPage shopPage = new ShopPage(driver, this.webApplicationBaseUrl);
         shopPage.logoutClient();
@@ -94,7 +98,7 @@ public class AuthenticationTest {
         registerPage.register("TesteEmail@email.com", "teste123", "TesteName");
 
         LoginPage loginPage = new LoginPage(driver, this.webApplicationBaseUrl);
-        loginPage.login("TesteEmail@email.com", "teste123");
+        assertThat(loginPage.login("TesteEmail@email.com", "teste123"), is("Price range"));
 
         ShopPage shopPage = new ShopPage(driver, this.webApplicationBaseUrl);
         shopPage.logoutClient();
