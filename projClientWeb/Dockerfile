@@ -1,7 +1,7 @@
 ### STAGE 1: Build ###
 FROM node:15.14.0-alpine AS build
 WORKDIR /usr/src/app
-ARG API_URL=${API_URL}
+ARG API_URL=35.246.29.122
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
