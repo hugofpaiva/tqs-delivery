@@ -24,9 +24,7 @@ jobs:
     - name: Start Angular on Docker
       run: docker-compose run -p 4200:80 -d web-application-manager-rider
     - name: Build Specific Service
-      run: |
-        export PROFILE=CI
-        docker-compose build specific
+      run: docker-compose build --build-arg PROFILE=CI specific
     - name: Build Specific Service on Docker
       run: docker-compose up -d specific
     - name: Verify and send code to SonarQube server and wait for quality gate for Generic Service
