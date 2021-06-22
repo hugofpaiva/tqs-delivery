@@ -454,11 +454,14 @@ class RiderRestControllerTemplateIT {
 
 
     @Test
+    @Order(4)
     void givenRiderHasCurrentOrder_whenUpdatePurchaseStatusIsPickedUp_thenSuccess() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + this.token);
         this.purchase.setStatus(Status.PICKED_UP);
         purchaseRepository.saveAndFlush(this.purchase);
+
+        System.out.println(this.purchase.getId());
 
         ResponseEntity<Map> response = testRestTemplate.exchange(
                 getBaseUrl() + "order/status", HttpMethod.PUT, new HttpEntity<Object>(headers),

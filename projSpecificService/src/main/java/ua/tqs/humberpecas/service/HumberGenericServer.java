@@ -13,6 +13,7 @@ import ua.tqs.humberpecas.repository.GenericRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
 
+
 @Log4j2
 @Service
 public class HumberGenericServer {
@@ -25,13 +26,12 @@ public class HumberGenericServer {
 
     public Purchase updateOrderStatus(Long serverOrderId, String genericToken, PurchaseStatus purchaseStatus){
 
-        genericRepository.findByToken(genericToken)
-                .orElseThrow(()-> {
-                    log.error("HumberGenericServer: invalid token" );
-                    throw new InvalidLoginException("Invalid token");
-                });
+        if (genericRepository.findByToken(genericToken).isEmpty()){
 
-        Purchase purchase = purchaseRepository.findByServiceOrderId(serverOrderId)
+            throw new InvalidLoginException("HumberGenericServer: invalid login ");
+        }
+
+        var purchase = purchaseRepository.findByServiceOrderId(serverOrderId)
                 .orElseThrow(()-> {
                     log.error("HumberGenericServer: invalid purchase server id" );
                     throw new ResourceNotFoundException("Invalid purchase");
@@ -47,13 +47,13 @@ public class HumberGenericServer {
 
     public Purchase setRider(Long serverOrderId, String genericToken, String riderName){
 
-        genericRepository.findByToken(genericToken)
-                .orElseThrow(()-> {
-                    log.error("HumberGenericServer: invalid token" );
-                    throw new InvalidLoginException("Invalid token");
-                });
 
-        Purchase purchase = purchaseRepository.findByServiceOrderId(serverOrderId)
+        if (genericRepository.findByToken(genericToken).isEmpty()){
+
+            throw new InvalidLoginException("HumberGenericServer: invalid login ");
+        }
+
+        var purchase = purchaseRepository.findByServiceOrderId(serverOrderId)
                 .orElseThrow(()-> {
                     log.error("HumberGenericServer: invalid purchase server id" );
                     throw new ResourceNotFoundException("Invalid purchase");
