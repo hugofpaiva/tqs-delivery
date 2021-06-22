@@ -23,7 +23,6 @@ import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -47,37 +46,35 @@ public class HumberPurchaseService {
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
-    public Purchase newPurchase(PurchaseDTO purchaseDTO, String userToken){
+    public Purchase newPurchase(PurchaseDTO purchaseDTO, String userToken) {
 
         var person = personRepository.findByEmail(jwtUserDetailsService.getEmailFromToken(userToken))
-                .orElseThrow(()-> {
-                    log.error("HUMBER PURCHASE SERVICE: invalid user token" );
+                .orElseThrow(() -> {
+                    log.error("HUMBER PURCHASE SERVICE: invalid user token");
                     throw new InvalidLoginException("Invalid user token");
                 });
 
         var address = addressRepository.findById(purchaseDTO.getAddressId())
-                .orElseThrow(()-> {
-                    log.error("HUMBER PURCHASE SERVICE: invalid user address" );
+                .orElseThrow(() -> {
+                    log.error("HUMBER PURCHASE SERVICE: invalid user address");
                     throw new ResourceNotFoundException("Invalid Address");
                 });
 
-        if (!address.getPerson().getEmail().equals(person.getEmail())){
+        if (!address.getPerson().getEmail().equals(person.getEmail())) {
 
-            log.error("HUMBER PURCHASE SERVICE: Address don't belong to user " );
+            log.error("HUMBER PURCHASE SERVICE: Address don't belong to user ");
             throw new AccessNotAllowedException("Invalid Address");
         }
 
+        List<Long> productsIds = purchaseDTO.getProductsId();
 
-        List<Product> productList = productRepository.findAllById(purchaseDTO.getProductsId());
-
-        if (productList.size() < new HashSet<>(purchaseDTO.getProductsId()).size()){
-
-            List<Long> differences = productList.stream().map(Product::getId).collect(Collectors.toList());
-            purchaseDTO.getProductsId().forEach(differences::remove);
-
-            log.error("HUMBER PURCHASE SERVICE: Invalid Product Id " + differences);
-            throw new ResourceNotFoundException("Invalid Product");
-
+        List<Product> productList = new ArrayList<>();
+        for (Long productId : productsIds) {
+            Product productToAdd = productRepository.findById(productId).orElseThrow(() -> {
+                log.error("HUMBER PURCHASE SERVICE: Invalid Product Id found:" + productId);
+                throw new ResourceNotFoundException("Invalid Product");
+            });
+            productList.add(productToAdd);
         }
 
         var purchaseDeliveryDTO = new PurchaseDeliveryDTO(

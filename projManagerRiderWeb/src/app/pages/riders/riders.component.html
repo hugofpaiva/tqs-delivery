@@ -119,11 +119,11 @@
               <td>
                 <ng-container *ngIf="rider.average !== null">
                   <ng-container
-                    *ngFor="let i of [].constructor(math.ceil(rider.average))">
+                    *ngFor="let i of [].constructor(math.floor(rider.average))">
                     <fa-icon [icon]="starIcon"></fa-icon>
                   </ng-container>
                   <ng-container
-                    *ngFor="let i of [].constructor(math.round(rider.average) - math.ceil(rider.average))">
+                    *ngFor="let i of [].constructor((math.round(rider.average) - math.floor(rider.average)))">
                     <fa-icon [icon]="halfStarIcon"></fa-icon>
                   </ng-container>
                 </ng-container>

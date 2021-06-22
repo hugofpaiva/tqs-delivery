@@ -131,7 +131,7 @@ export class NgbModalOrderDetails {
     getEach(purchase: Purchase): Product[] {
         const products = [];
         purchase.products.forEach((p) => {
-            const index = products.indexOf(p);
+            const index = products.findIndex(element => element.id === p.id);
             if (index !== -1) {
                 products[index].quantity = products[index].quantity + 1;
             } else {
