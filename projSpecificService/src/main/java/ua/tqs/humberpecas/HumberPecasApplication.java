@@ -122,7 +122,7 @@ class DBLoaderProd implements CommandLineRunner {
 		Product product14 = new Product("Tri-angle Driver", 12.50, Category.SCREWDRIVER, "Tri-angle Driver Description", "https://ae01.alicdn.com/kf/HTB1LNHLb1GSBuNjSspbq6AiipXa9/Magnetic-Triangle-Screwdriver-2-3mm-Triangle-Head-Screw-driver-repair-tool-for-toys-Cheap.jpg");
 		productRepository.saveAndFlush(product14);
 
-		
+
 		String genericToken = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDcwOTYwNDMsImlhdCI6MTYyMzA5OTI0MywiU3ViamVjdCI6Ikh1bWJlclBlY2FzIn0.oEZD63J134yUxHl658oSDJrw32BZcYHQbveZw8koAgP-2_d-8aH2wgJYJMlGnKIugOiI8H9Aa4OjPMWMUl9BFw";
 		Generic generic = new Generic("generic", genericToken);
 		genericRepository.save(generic);
