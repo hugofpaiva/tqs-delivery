@@ -49,21 +49,21 @@ class ManagerServiceTest {
     // --------------------------------------------
 
     @Test
-    public void testGetRidersButInvalidPageNo_thenThrow() {
+    void testGetRidersButInvalidPageNo_thenThrow() {
         assertThrows(IllegalArgumentException.class, () -> {
             managerService.getRidersInformation(-1, 10);
         });
     }
 
     @Test
-    public void testGetRidersButInvalidPageSize_thenThrow() {
+    void testGetRidersButInvalidPageSize_thenThrow() {
         assertThrows(IllegalArgumentException.class, () -> {
             managerService.getRidersInformation(0, -1);
         });
     }
 
     @Test
-    public void testGetRiderInfoEverythingValid_thenReturn1Record() throws InvalidLoginException {
+    void testGetRiderInfoEverythingValid_thenReturn1Record() throws InvalidLoginException {
         this.rider.setPurchases(Arrays.asList(this.purchase));
         this.rider.setReviewsSum(4);
         this.rider.setTotalNumReviews(1);
@@ -82,14 +82,12 @@ class ManagerServiceTest {
         assertThat(((List<Map<String, Object>>) found.get("riders"))).hasSize(1).extracting("numberOrders").contains(1);
         assertThat(((List<Map<String, Object>>) found.get("riders"))).hasSize(1).extracting("average").contains(4.0);
 
-        assertThat(found.get("currentPage")).isEqualTo(0);
-        assertThat(found.get("totalItems")).isEqualTo(1L);
-        assertThat(found.get("totalPages")).isEqualTo(1);
+        assertThat(found).containsEntry("currentPage", 0).containsEntry("totalItems", 1L).containsEntry("totalPages", 1);
     }
 
 
     @Test
-    public void testGetRiderInfoButNoRiders_thenReturn0Records() throws InvalidLoginException {
+    void testGetRiderInfoButNoRiders_thenReturn0Records() throws InvalidLoginException {
         List<Rider> riderList = new ArrayList<>();
         Page<Rider> pageRequest = new PageImpl(riderList, PageRequest.of(0, 10), riderList.size());
 
@@ -102,9 +100,7 @@ class ManagerServiceTest {
 
         assertThat(((List<Map<String, Object>>) found.get("riders"))).isEmpty();
 
-        assertThat(found.get("currentPage")).isEqualTo(0);
-        assertThat(found.get("totalItems")).isEqualTo(0L);
-        assertThat(found.get("totalPages")).isEqualTo(0);
+        assertThat(found).containsEntry("currentPage", 0).containsEntry("totalItems", 0L).containsEntry("totalPages", 0);
     }
 
 
@@ -114,7 +110,7 @@ class ManagerServiceTest {
      */
 
     @Test
-    public void testWhenGetRidersStatisticsButNoPurchasesHaveBeenDelivered_thenReturn() {
+    void testWhenGetRidersStatisticsButNoPurchasesHaveBeenDelivered_thenReturn() {
         List<Long[]> time = new LinkedList<>();
         time.add(new Long[]{null, 0L});
 
@@ -124,9 +120,8 @@ class ManagerServiceTest {
 
         Map<String, Object> found = managerService.getRidersStatistics();
 
-        assertThat(found.get("avgReviews")).isEqualTo(null);
-        assertThat(found.get("avgTimes")).isEqualTo(null);
-        assertThat(found.get("inProcess")).isEqualTo(0L);
+        assertThat(found).containsEntry("avgReviews", null).containsEntry("avgTimes", null)
+                .containsEntry("inProcess", 0L);
 
         Mockito.verify(purchaseRepository, times(1)).getSumDeliveryTimeAndCountPurchases();
         Mockito.verify(purchaseRepository, times(1)).countPurchaseByStatusIsNot(any());
@@ -135,7 +130,7 @@ class ManagerServiceTest {
     }
 
     @Test
-    public void testWhenGetRidersStatistics_thenReturn() {
+    void testWhenGetRidersStatistics_thenReturn() {
         Address addr = new Address("Rua ABC, n. 99", "4444-555", "Aveiro", "Portugal");
         Address addr_store = new Address("Rua ABC, n. 922", "4444-555", "Aveiro", "Portugal");
         Store store = new Store("Loja do Manel", "A melhor loja.", "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g", addr_store);
@@ -168,8 +163,7 @@ class ManagerServiceTest {
         Mockito.verify(purchaseRepository, times(1)).countPurchaseByStatusIsNot(any());
         Mockito.verify(riderRepository, times(1)).getAverageRiderRating();
 
-        assertThat(found.get("avgTimes")).isEqualTo(exp_time);
-        assertThat(found.get("avgReviews")).isEqualTo(exp_rev);
-        assertThat(found.get("inProcess")).isEqualTo(3L);
+        assertThat(found).containsEntry("avgTimes", exp_time).containsEntry("avgReviews", exp_rev)
+                .containsEntry("inProcess", 3L);
     }
 }

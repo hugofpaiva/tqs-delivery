@@ -55,7 +55,7 @@ class AuthControllerMockMvcTest {
     // 1. despoletar erros no controller e ver se o service não chega a ser chamado
 
     @Test
-    public void testInvalidEmail_thenBadRequest() throws Exception {
+    void testInvalidEmail_thenBadRequest() throws Exception {
         Map<String, String> data = new HashMap<>();
         data.put("email", null);
         data.put("name", "A Nice Name");
@@ -74,7 +74,7 @@ class AuthControllerMockMvcTest {
     }
 
     @Test
-    public void testInvalidPwd_thenBadRequest() throws Exception {
+    void testInvalidPwd_thenBadRequest() throws Exception {
         Map<String, String> data = new HashMap<>();
         data.put("email", "example@tqs.ua");
         data.put("name", "A Nice Name");
@@ -93,7 +93,7 @@ class AuthControllerMockMvcTest {
     }
 
     @Test
-    public void testInvalidName_thenBadRequest() throws Exception {
+    void testInvalidName_thenBadRequest() throws Exception {
         JSONObject data = new JSONObject();
         data.put("email", "example@tqs.ua");
         data.put("name", null);
@@ -111,7 +111,7 @@ class AuthControllerMockMvcTest {
     }
 
     @Test
-    public void testEverythingValid_thenCreated() throws Exception {
+    void testEverythingValid_thenCreated() throws Exception {
         Rider rider = new Rider("A very nice name", "strongggg", "example@tqs.ua");
 
         JSONObject data = new JSONObject();
@@ -136,7 +136,7 @@ class AuthControllerMockMvcTest {
     // erros no service
 
     @Test
-    public void testRegister_whenEmailAlreadyInUse_then409() throws Exception {
+    void testRegister_whenEmailAlreadyInUse_then409() throws Exception {
         Rider rider = new Rider("A very nice name", "strongggg", "example@tqs.ua");
 
         JSONObject data = new JSONObject();
@@ -161,7 +161,7 @@ class AuthControllerMockMvcTest {
     // ----------------------------------------------
 
     @Test
-    public void testLoginWhenInvalidCredentials_thenUnauthorized() throws Exception {
+    void testLoginWhenInvalidCredentials_thenUnauthorized() throws Exception {
         JSONObject data = new JSONObject();
         data.put("username", "email@asd.com");
         data.put("password", "aswdd");
@@ -179,7 +179,7 @@ class AuthControllerMockMvcTest {
     }
 
     @Test
-    public void testLoginWhenValidDataRider_thenAuthorized() throws Exception {
+    void testLoginWhenValidDataRider_thenAuthorized() throws Exception {
         JSONObject data = new JSONObject();
         data.put("username", "mail@example.com");
         data.put("password", "aRightPassword");
@@ -199,7 +199,7 @@ class AuthControllerMockMvcTest {
     }
 
     @Test
-    public void testLoginWhenValidDataManager_thenAuthorized() throws Exception {
+    void testLoginWhenValidDataManager_thenAuthorized() throws Exception {
         JSONObject data = new JSONObject();
         data.put("username", "mail@example.com");
         data.put("password", "aRightPassword");

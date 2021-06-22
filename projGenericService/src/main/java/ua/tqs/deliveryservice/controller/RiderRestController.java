@@ -85,7 +85,7 @@ public class RiderRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/reviews")
+    @GetMapping("/reviews/stats")
     public ResponseEntity<Map<String, Object>> getRatingStatistics(HttpServletRequest request) throws InvalidLoginException {
         String requestTokenHeader = request.getHeader("Authorization");
         Map<String, Object> resp = riderService.getRatingStatistics(requestTokenHeader);

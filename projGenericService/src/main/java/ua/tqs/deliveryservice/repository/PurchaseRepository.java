@@ -23,12 +23,16 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
     Long countPurchaseByStore(Store store);
     Long countPurchaseByStatusIs(Status status);
-    Long countPurchaseByStatusIsNot(Status status); // todo: not tested
+    Long countPurchaseByStatusIsNot(Status status);
 
-    Page<Purchase> findAllByRiderIsNullOrderByDate(Pageable pageable); // todo: not tested
+    Page<Purchase> findAllByRiderIsNullOrderByDate(Pageable pageable);
 
 
     @Query("SELECT SUM(p.deliveryTime), COUNT(p) FROM Purchase p WHERE p.status = 'DELIVERED'")
     List<Long[]> getSumDeliveryTimeAndCountPurchases();
+
+    @Query(value = "SELECT a.city, COUNT(a.city) FROM Purchase p JOIN p.address a " +
+            "GROUP BY p.address.city ORDER BY count(a.city) DESC")
+    List<Object[]> getTopFiveCitiesOfPurchases();
 
 }

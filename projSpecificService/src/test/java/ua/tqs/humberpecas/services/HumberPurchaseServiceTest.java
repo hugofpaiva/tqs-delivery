@@ -1,5 +1,6 @@
 package ua.tqs.humberpecas.services;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,11 +8,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 import ua.tqs.humberpecas.delivery.IDeliveryService;
 import ua.tqs.humberpecas.dto.AddressDTO;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
 import ua.tqs.humberpecas.dto.PurchaseDeliveryDTO;
 import ua.tqs.humberpecas.exception.AccessNotAllowedException;
+import ua.tqs.humberpecas.exception.InvalidLoginException;
 import ua.tqs.humberpecas.exception.ResourceNotFoundException;
 import ua.tqs.humberpecas.exception.UnreachableServiceException;
 import ua.tqs.humberpecas.model.*;
@@ -25,7 +28,8 @@ import ua.tqs.humberpecas.service.JwtUserDetailsService;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -65,11 +69,14 @@ class HumberPurchaseServiceTest {
     private PurchaseDTO purchaseDTO;
     private Date date;
     private List<Long> productsIds;
+    private Purchase purchase;
 
     @BeforeEach
     public void setUp() {
         person = new Person("Fernando", "12345678", "fernando@ua.pt");
         address = new Address("Aveiro", "3730-123", "Aveiro", "Portugal", person);
+
+
 
         productList = Arrays.asList(
                 new Product("hammer", 10.50, Category.SCREWDRIVER, "the best hammer", "image_url"),
@@ -81,12 +88,19 @@ class HumberPurchaseServiceTest {
         productsIds = Arrays.asList(3L, 4L);
         purchaseDTO = new PurchaseDTO(2L, productsIds);
 
+        purchase = new Purchase(person, address, productList);
+
         this.purchaseDeliveryDTO = new PurchaseDeliveryDTO(
                 person.getName(),
                 date,
                 new AddressDTO(address.getAddress(), address.getPostalCode(), address.getCity(), address.getCountry())
         );
     }
+
+    /* *******************************************
+     *             MAKE NEW PURCHASE             *
+     * *******************************************
+     */
 
     @Test
     @DisplayName("Cant communicate with delivery service throws UnreachableServiceExcption")
@@ -203,7 +217,7 @@ class HumberPurchaseServiceTest {
 
     @Test
     @DisplayName("Make Purchase")
-    void whenValidPurchase_thenReturnPuchase() {
+    void whenValidPurchase_thenReturnPurchase() {
 
 
         Purchase p = new Purchase(person, address, productList);
@@ -231,4 +245,55 @@ class HumberPurchaseServiceTest {
         verify(productRepository, times(1)).findAllById(productsIds);
 
     }
+
+    /* *******************************************
+     *             GET USER PURCHASES            *
+     * *******************************************
+     */
+
+    @Test
+    void testGetUserPurchases_whenInvalidPersonToken_thenInvalidLoginException() {
+        when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
+        when(personRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(InvalidLoginException.class, () -> {
+            purchaseService.getUserPurchases(0, 9, "Invalid Token");
+        });
+
+        verify(personRepository, times(1)).findByEmail(any());
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken(any());
+
+        verify(purchaseRepository, times(0)).findAllByPerson(any(), any());
+        verify(purchaseRepository, times(0)).countPurchaseByPersonAndRiderReviewNotNull(any());
+    }
+
+    @Test
+    void testGetUserPurchases_whenEverythingValid_thenReturn () {
+        when(jwtUserDetailsService.getEmailFromToken(anyString())).thenReturn(person.getEmail());
+        when(personRepository.findByEmail(anyString())).thenReturn(Optional.of(person));
+
+        Page<Purchase> result = new PageImpl<>(Arrays.asList(purchase));
+        when(purchaseRepository.findAllByPerson(any(), any())).thenReturn(result);
+        when(purchaseRepository.countPurchaseByPersonAndRiderReviewNotNull(person)).thenReturn(1);
+
+        Map<String, Object> response = purchaseService.
+                getUserPurchases(0, 9, anyString());
+
+        verify(personRepository, times(1)).findByEmail(any());
+        verify(jwtUserDetailsService, times(1)).getEmailFromToken(any());
+
+        verify(purchaseRepository, times(1)).findAllByPerson(any(), any());
+        verify(purchaseRepository, times(1)).countPurchaseByPersonAndRiderReviewNotNull(any());
+
+        assertThat((List<Purchase>) response.get("orders"), hasSize(1));
+        assertThat(response.get("currentPage"), equalTo(0));
+        assertThat(response.get("totalItems"), equalTo(1L));
+        assertThat(response.get("totalPages"), equalTo(1));
+        assertThat(response.get("reviewsGiven"), equalTo(1));
+
+        assertThat((List<Product>) response.get("orders"), equalTo(Arrays.asList(purchase)));
+
+    }
+
+
 }

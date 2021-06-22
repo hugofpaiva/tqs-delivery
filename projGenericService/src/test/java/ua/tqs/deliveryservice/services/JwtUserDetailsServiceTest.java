@@ -43,7 +43,7 @@ class JwtUserDetailsServiceTest {
     private JwtUserDetailsService jwtUserDetailsService;
 
     @Test
-    public void testGivenNoRiderOrManager_whenGetUserByUsername_thenThrow() {
+    void testGivenNoRiderOrManager_whenGetUserByUsername_thenThrow() {
         Mockito.when(personRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> {
@@ -54,14 +54,14 @@ class JwtUserDetailsServiceTest {
     }
 
     @Test
-    public void testGivenNoStore_whenGetUserByStore_thenThrow() {
+    void testGivenNoStore_whenGetUserByStore_thenThrow() {
         assertThrows(BadCredentialsException.class, () -> {
             jwtUserDetailsService.loadUserByStore(null);
         }, "Store cannot be null to create User");
     }
 
     @Test
-    public void testGivenStore_whenGetUserByStore_thenReturnUserDetails() {
+    void testGivenStore_whenGetUserByStore_thenReturnUserDetails() {
         Store store = new Store();
         String name = "Cool Store";
         String token = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODk1OX0.dgYxgi4nRUUpyL_hcNvkjei2_TX9AAPoUFJo99U_SlTrpE5zH7bTTxubl8-_slIvYSlyvgc_IVHvqTxZTskSsA";
@@ -75,7 +75,7 @@ class JwtUserDetailsServiceTest {
     }
 
     @Test
-    public void testGivenRider_whenGetUserByUsername_thenReturnUserDetails() {
+    void testGivenRider_whenGetUserByUsername_thenReturnUserDetails() {
         Rider rider = new Rider();
         String email = "asd@gmail.com";
         String name = "asd";
@@ -95,7 +95,7 @@ class JwtUserDetailsServiceTest {
     }
 
     @Test
-    public void testGivenManager_whenGetUserByUsername_thenReturnUserDetails() {
+    void testGivenManager_whenGetUserByUsername_thenReturnUserDetails() {
         Manager manager = new Manager();
         String email = "asd@gmail.com";
         String name = "asd";
@@ -115,7 +115,7 @@ class JwtUserDetailsServiceTest {
     }
 
     @Test
-    public void testGivenHeaderAuthorization_whenGetEmailFromToken_thenReturnEmail() {
+    void testGivenHeaderAuthorization_whenGetEmailFromToken_thenReturnEmail() {
         String headerAuthorization = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb2FvQGVtYWlsLmNvbSIsImV4cCI6MTYyMjg2NzY5MywiaWF0IjoxNjIyODQ5NjkzfQ.2kkxTG5mX0UcPGDnqFHElRJ-ny3jfh_qCfy_0lLbwo-XKZoz3eOu_pGyPKEi9zjkNvJs0Lwf51hU3l-dYzfaE";
         String email = "joao@example.com";
         Mockito.when(jwtTokenUtil.getUsernameFromToken(headerAuthorization.substring(7))).thenReturn(email);
@@ -128,7 +128,7 @@ class JwtUserDetailsServiceTest {
     }
 
     @Test
-    public void testGivenHeaderAuthorizationAndStore_whenGetStoreFromToken_thenReturnStore() {
+    void testGivenHeaderAuthorizationAndStore_whenGetStoreFromToken_thenReturnStore() {
         Store store = new Store();
         String name = "Cool Store";
         String token = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODk1OX0.dgYxgi4nRUUpyL_hcNvkjei2_TX9AAPoUFJo99U_SlTrpE5zH7bTTxubl8-_slIvYSlyvgc_IVHvqTxZTskSsA";
@@ -144,7 +144,7 @@ class JwtUserDetailsServiceTest {
     }
 
     @Test
-    public void testGivenOnlyHeaderAuthorization_whenGetStoreFromToken_thenReturnStore() {
+    void testGivenOnlyHeaderAuthorization_whenGetStoreFromToken_thenReturnStore() {
         String token = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODk1OX0.dgYxgi4nRUUpyL_hcNvkjei2_TX9AAPoUFJo99U_SlTrpE5zH7bTTxubl8-_slIvYSlyvgc_IVHvqTxZTskSsA";
         Mockito.when(storeRepository.findByToken(anyString())).thenReturn(Optional.empty());
 
@@ -156,7 +156,7 @@ class JwtUserDetailsServiceTest {
     }
 
     @Test
-    public void testJwtRequestWithInvalidCredentials_thenThrow() {
+    void testJwtRequestWithInvalidCredentials_thenThrow() {
         Mockito.when(authenticationManager.authenticate(any())).thenThrow(BadCredentialsException.class);
 
         JwtRequest request = new JwtRequest("mail@example.com", "pw");
@@ -174,7 +174,7 @@ class JwtUserDetailsServiceTest {
     }
 
     @Test
-    public void testJwtRequestWithPersonInvalid_thenThrow() {
+    void testJwtRequestWithPersonInvalid_thenThrow() {
         Mockito.when(personRepository.findByEmail("mail@example.com")).thenReturn(Optional.empty());
 
         JwtRequest request = new JwtRequest("mail@example.com", "pw");
@@ -192,7 +192,7 @@ class JwtUserDetailsServiceTest {
     }
 
     @Test
-    public void testJwtRequestValid_thenReturnJwtResponse() throws InvalidLoginException {
+    void testJwtRequestValid_thenReturnJwtResponse() throws InvalidLoginException {
         Rider rider = new Rider("João", "password123", "mail@example.com");
         Mockito.when(personRepository.findByEmail("mail@example.com")).thenReturn(Optional.of(rider));
 

@@ -7,13 +7,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 
 @Data
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class AddressDTO {
-
+public class AddressDTO implements Serializable {
 
     private Long addressId;
 

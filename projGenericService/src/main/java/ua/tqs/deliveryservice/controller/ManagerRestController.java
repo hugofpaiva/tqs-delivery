@@ -7,9 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ua.tqs.deliveryservice.exception.InvalidLoginException;
-import ua.tqs.deliveryservice.services.PurchaseService;
 import ua.tqs.deliveryservice.services.ManagerService;
+import ua.tqs.deliveryservice.services.PurchaseService;
 import ua.tqs.deliveryservice.services.StoreService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +32,7 @@ public class ManagerRestController {
     @GetMapping("riders/all")
     public ResponseEntity<Map<String, Object>> getAllRidersInfo(
         @RequestParam(defaultValue = "0") int pageNo,
-        @RequestParam(defaultValue = "10") int pageSize) throws InvalidLoginException {
+        @RequestParam(defaultValue = "10") int pageSize) {
 
         if (pageNo < 0 || pageSize <= 0){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -44,8 +43,7 @@ public class ManagerRestController {
     }
 
     @GetMapping("/stores")
-    public ResponseEntity<Map<String, Object>> getRiderOrders(HttpServletRequest request,
-                                                              @RequestParam(defaultValue = "0") int pageNo,
+    public ResponseEntity<Map<String, Object>> getRiderOrders(@RequestParam(defaultValue = "0") int pageNo,
                                                               @RequestParam(defaultValue = "10") int pageSize) {
         if (pageNo < 0 || pageSize <= 0){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -66,4 +64,9 @@ public class ManagerRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("riders/top_delivered_cities")
+    public ResponseEntity<Map<String, Object>> getTopDeliveredCities() {
+        Map<String, Object> response = purchaseService.getTop5Cities();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

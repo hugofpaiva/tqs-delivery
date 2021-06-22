@@ -9,7 +9,7 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Total Riders</h5>
-                  <span class="h2 font-weight-bold mb-0">1</span>
+                  <span class="h2 font-weight-bold mb-0">{{totalItems}}</span>
                 </div>
                 <div class="col-auto">
                   <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
@@ -17,9 +17,7 @@
                   </div>
                 </div>
               </div>
-              <p class="mt-3 mb-0 text-muted text-sm">
-                <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 1</span>
-                <span class="text-nowrap">Since last day</span>
+              <p class="mt-3 mb-0 text-muted text-sm" style="height: 20px">
               </p>
             </div>
           </div>
@@ -30,11 +28,11 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Average Time of Delivery</h5>
-                  <span class="h2 font-weight-bold mb-0">2 min</span>
+                  <span class="h2 font-weight-bold mb-0">{{avgTime === null ? '-' : millisToMinutesAndSeconds(avgTime) + ' min' }}</span>
                 </div>
                 <div class="col-auto">
-                  <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
-                    <i class="fas fa-chart-pie"></i>
+                  <div class="icon icon-shape bg-dark text-white rounded-circle shadow">
+                    <i class="fas fa-clock"></i>
                   </div>
                 </div>
               </div>
@@ -49,17 +47,11 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Average Rating of All Riders</h5>
-                  <span class="h2 font-weight-bold mb-0">
-                    <fa-icon [icon]="starIcon"></fa-icon>
-                    <fa-icon [icon]="starIcon"></fa-icon>
-                    <fa-icon [icon]="starIcon"></fa-icon>
-                    <fa-icon [icon]="starIcon"></fa-icon>
-                    <fa-icon [icon]="halfStarIcon"></fa-icon>
-                  </span>
+                  <span class="h2 font-weight-bold mb-0">{{avgRating !== null ? avgRating.toFixed(1) : "-"}}</span>
                 </div>
                 <div class="col-auto">
-                  <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
-                    <i class="fas fa-chart-pie"></i>
+                  <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                    <i class="fas fa-star"></i>
                   </div>
                 </div>
               </div>
@@ -76,12 +68,12 @@
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">Orders in Progress</h5>
                   <span class="h2 font-weight-bold mb-0">
-                    1
+                    {{inProgress}}
                   </span>
                 </div>
                 <div class="col-auto">
-                  <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
-                    <i class="fas fa-chart-pie"></i>
+                  <div class="icon icon-shape bg-dark text-white rounded-circle shadow">
+                    <i class="fas fa-motorcycle"></i>
                   </div>
                 </div>
               </div>
@@ -114,52 +106,54 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
+            <tr *ngFor="let rider of riders | paginate: { itemsPerPage: 7 , currentPage: currentPage,
+                            totalItems: totalItems }">
               <th scope="row">
                 <div class="media-body">
-                  <span class="mb-0 text-sm">João Gonçalves</span>
+                  <span class="mb-0 text-sm">{{rider.name}}</span>
                 </div>
               </th>
               <td>
-                5
+                {{rider.numberOrders}}
               </td>
               <td>
-                <fa-icon [icon]="starIcon"></fa-icon>
-                <fa-icon [icon]="starIcon"></fa-icon>
-                <fa-icon [icon]="starIcon"></fa-icon>
-                <fa-icon [icon]="starIcon"></fa-icon>
-                <fa-icon [icon]="halfStarIcon"></fa-icon>
+                <ng-container *ngIf="rider.average !== null">
+                  <ng-container
+                    *ngFor="let i of [].constructor(math.ceil(rider.average))">
+                    <fa-icon [icon]="starIcon"></fa-icon>
+                  </ng-container>
+                  <ng-container
+                    *ngFor="let i of [].constructor(math.round(rider.average) - math.ceil(rider.average))">
+                    <fa-icon [icon]="halfStarIcon"></fa-icon>
+                  </ng-container>
+                </ng-container>
+                <ng-container *ngIf="rider.average === 0">-</ng-container>
               </td>
             </tr>
             </tbody>
           </table>
+          <h3 *ngIf="riders.length === 0"
+              style="width: 100%; height: 100%; text-align: center; vertical-align: center">
+            There are no Riders</h3>
         </div>
         <div class="card-footer py-4">
-          <nav aria-label="...">
-            <ul class="pagination justify-content-end mb-0">
-              <li class="page-item disabled">
-                <a class="page-link" href="javascript:void(0)" tabindex="-1">
-                  <i class="fas fa-angle-left"></i>
-                  <span class="sr-only">Previous</span>
-                </a>
-              </li>
-              <li class="page-item active">
-                <a class="page-link" href="javascript:void(0)">1</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="javascript:void(0)">2 <span class="sr-only">(current)</span></a>
-              </li>
-              <li class="page-item"><a class="page-link" href="javascript:void(0)">3</a></li>
-              <li class="page-item">
-                <a class="page-link" href="javascript:void(0)">
-                  <i class="fas fa-angle-right"></i>
-                  <span class="sr-only">Next</span>
-                </a>
-              </li>
-            </ul>
+          <nav *ngIf="riders.length !== 0"
+               style="display: flex; justify-content: center" class="mt-4"
+               aria-label="Page navigation sample">
+            <pagination-controls
+              (pageChange)="getPage($event)"></pagination-controls>
           </nav>
         </div>
       </div>
     </div>
+  </div>
+  <div class="row" style="display: flex; justify-content: center; margin-top: 25px">
+    <div class="card card-stats">
+      <div class="card-header">Most Delivered Cities</div>
+      <div class="card-body" >
+        <canvas style="height: 300px" id="chartLocations"></canvas>
+      </div>
+    </div>
+
   </div>
 </div>

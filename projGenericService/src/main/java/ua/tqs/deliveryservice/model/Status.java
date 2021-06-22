@@ -1,6 +1,5 @@
 package ua.tqs.deliveryservice.model;
 
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public enum Status {

@@ -2,6 +2,7 @@ package ua.tqs.humberpecas.selenium.pages;
 
 import org.hamcrest.Matchers;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -106,9 +107,11 @@ public class ShoppingCartPage {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("/html/body/app-root/app-shopping-cart/main/section[2]/div/div/main/div/div/a[1]")));
         }
 
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
         this.driver.findElement(By.xpath("/html/body/app-root/app-shopping-cart/main/section[2]/div/div/main/div/div/a[1]")).click();
 
-        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+        this.driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
         {
             WebDriverWait wait = new WebDriverWait(this.driver, 10);
@@ -118,9 +121,18 @@ public class ShoppingCartPage {
 
         List<WebElement> addressesTrs = table.findElements(By.xpath("./child::*"));
 
+        this.driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+
+        //scrolling
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        WebElement element = addressesTrs.get(0).findElement(By.xpath(".//td[5]/input"));
+        JavascriptExecutor js = ((JavascriptExecutor) driver);
+        js.executeScript("arguments[0].scrollIntoView(true);", element);
+        wait.until(ExpectedConditions.elementToBeClickable(element));
+
         addressesTrs.get(0).findElement(By.xpath(".//td[5]/input")).click();
 
-        this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        this.driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
         this.driver.findElement(By.xpath("/html/body/ngb-modal-window/div/div/app-modal-manage-addresses/div[3]/button[1]")).click();
 

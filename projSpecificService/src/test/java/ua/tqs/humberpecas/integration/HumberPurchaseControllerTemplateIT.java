@@ -1,6 +1,8 @@
 package ua.tqs.humberpecas.integration;
 
 import io.restassured.RestAssured;
+import org.assertj.core.api.Assertions;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,13 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.shaded.com.fasterxml.jackson.core.type.TypeReference;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import ua.tqs.humberpecas.dto.PurchaseDTO;
 import ua.tqs.humberpecas.exception.AccessNotAllowedException;
 import ua.tqs.humberpecas.model.*;
@@ -24,11 +31,13 @@ import ua.tqs.humberpecas.repository.PersonRepository;
 import ua.tqs.humberpecas.repository.ProductRepository;
 import ua.tqs.humberpecas.repository.PurchaseRepository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -115,6 +124,10 @@ public class HumberPurchaseControllerTemplateIT {
 
     }
 
+    /* ******************************************
+    *               MAKE NEW PURCHASE           *
+    * *******************************************
+    */
     @Test
     @DisplayName("Make Purchase")
     void whenValidPurchase_thenReturnOk(){
@@ -168,6 +181,110 @@ public class HumberPurchaseControllerTemplateIT {
                 .then()
                 .statusCode(404);
 
+    }
+
+    /* *******************************************
+     *              GET ALL PURCHASES            *
+     * *******************************************
+     */
+
+
+    @Test
+    @DisplayName("Get all user purchases when pageNo invalid")
+    void testGetAllUserPurchases_whenInvalidPageNo_then400(){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/getAll?pageNo=" + -1, HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        MatcherAssert.assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+
+    }
+
+    @Test
+    @DisplayName("Get all user purchases when pageSize invalid")
+    void testGetAllUserPurchases_whenInvalidPageSize_then400(){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + this.token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/getAll?pageSize=" + 0, HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        MatcherAssert.assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    @DisplayName("Get all user purchases when invalid token")
+    void testGetAllUserPurchases_whenInvalidToken_then400(){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer bad_token");
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/getAll", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        MatcherAssert.assertThat(response.getStatusCode(), equalTo(HttpStatus.UNAUTHORIZED));
+
+    }
+
+    @Test
+    @DisplayName("Get all user purchases when everything is valid but no purchases")
+    void testGetAllUserPurchases_whenEverythingValidButNoPurchases_thenOK_Return(){
+        HttpHeaders headers = new HttpHeaders();
+        ObjectMapper mapper = new ObjectMapper();
+
+        headers.set("Authorization", "Bearer " + token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/getAll", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        MatcherAssert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+
+        Map<String, Object> found = response.getBody();
+
+        List<Product> products = mapper.convertValue(
+                found.get("products"), new TypeReference<List<Product>>() {
+                }
+        );
+
+        Assertions.assertThat(found.get("orders")).isEqualTo(new ArrayList<>());
+        Assertions.assertThat(found.get("currentPage")).isEqualTo(0);
+        Assertions.assertThat(found.get("totalItems")).isEqualTo(0);
+        Assertions.assertThat(found.get("totalPages")).isEqualTo(0);
+        Assertions.assertThat(found.get("reviewsGiven")).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Get all user purchases when everything is valid ")
+    void testGetAllUserPurchases_whenEverythingValid_thenOK_Return(){
+        Product prego = new Product("Prego Grande", 0.35, Category.NAILS, "10/10 recomendo", "randomFakeImageNail.png");
+        productRepository.saveAndFlush(prego);
+        purchaseRepository.saveAndFlush(new Purchase(person, address, Arrays.asList(prego)));
+
+        HttpHeaders headers = new HttpHeaders();
+        ObjectMapper mapper = new ObjectMapper();
+
+        headers.set("Authorization", "Bearer " + token);
+        ResponseEntity<Map> response = testRestTemplate.exchange(
+                getBaseUrl() + "/getAll", HttpMethod.GET, new HttpEntity<Object>(headers),
+                Map.class);
+
+        MatcherAssert.assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+        Map<String, Object> found = response.getBody();
+
+        List<Purchase> orders = mapper.convertValue(
+                found.get("orders"), new TypeReference<List<Purchase>>() {
+                }
+        );
+
+        Assertions.assertThat(orders.get(0).getProducts()).contains(prego);
+        Assertions.assertThat(found.get("currentPage")).isEqualTo(0);
+        Assertions.assertThat(found.get("totalItems")).isEqualTo(1);
+        Assertions.assertThat(found.get("totalPages")).isEqualTo(1);
+        Assertions.assertThat(found.get("reviewsGiven")).isEqualTo(0);
     }
 
 

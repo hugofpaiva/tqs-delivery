@@ -46,7 +46,7 @@ class RiderServiceTest {
      */
 
     @Test
-    public void testRiderSave_WhenRiderValid_thenReturnIt() throws DuplicatedObjectException {
+    void testRiderSave_WhenRiderValid_thenReturnIt() throws DuplicatedObjectException {
         Mockito.when(riderRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         Mockito.when(riderRepository.saveAndFlush(rider)).thenReturn(rider);
         Mockito.when(bcryptEncoder.encode(rider.getPwd())).thenReturn(rider.getPwd());
@@ -59,7 +59,7 @@ class RiderServiceTest {
     }
 
     @Test
-    public void testRiderSave_WhenEmailAlreadyExists_thenThrow() throws DuplicatedObjectException {
+    void testRiderSave_WhenEmailAlreadyExists_thenThrow() throws DuplicatedObjectException {
         Mockito.when(riderRepository.findByEmail(anyString())).thenReturn(Optional.of(rider));
 
         assertThrows(DuplicatedObjectException.class, () -> {
@@ -76,7 +76,7 @@ class RiderServiceTest {
      */
 
     @Test
-    public void givenInvalidRider_whenGetRatingStatistics_throwException() {
+    void givenInvalidRider_whenGetRatingStatistics_throwException() {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.empty());
 
@@ -92,18 +92,18 @@ class RiderServiceTest {
 
 
     @Test
-    public void givenRiderWithNoReviews_whenGetStatistics_thenReturnStatistics() throws InvalidLoginException {
+    void givenRiderWithNoReviews_whenGetStatistics_thenReturnStatistics() throws InvalidLoginException {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(rider));
 
         Map<String, Object> found = riderService.getRatingStatistics("exampleToken");
 
-        assertThat(found.get("totalNumReviews")).isEqualTo(0L);
+        assertThat(found).containsEntry("totalNumReviews", 0L);
         assertThat(found.get("avgReviews")).isNull();
     }
 
     @Test
-    public void givenRiderWithReviews_whenGetStatistics_thenReturnStatistics() throws InvalidLoginException {
+    void givenRiderWithReviews_whenGetStatistics_thenReturnStatistics() throws InvalidLoginException {
         Mockito.when(jwtUserDetailsService.getEmailFromToken("exampleToken")).thenReturn("email@email.com");
         Mockito.when(riderRepository.findByEmail("email@email.com")).thenReturn(Optional.of(rider));
 
@@ -112,8 +112,7 @@ class RiderServiceTest {
 
         Map<String, Object> found = riderService.getRatingStatistics("exampleToken");
 
-        assertThat(found.get("totalNumReviews")).isEqualTo(4L);
-        assertThat(found.get("avgReviews")).isEqualTo((double) 15/4.0 );
+        assertThat(found).containsEntry("totalNumReviews", 4L).containsEntry("avgReviews", (double) 15/4.0);
     }
 
 }

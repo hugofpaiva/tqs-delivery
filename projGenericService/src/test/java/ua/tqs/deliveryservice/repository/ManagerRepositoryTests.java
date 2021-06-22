@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ManagerRepositoryTests {
+class ManagerRepositoryTests {
 
     @Container
-    public static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
+    static PostgreSQLContainer container = new PostgreSQLContainer("postgres:11.12")
             .withUsername("demo")
             .withPassword("demopw")
             .withDatabaseName("delivery");
@@ -50,18 +50,18 @@ public class ManagerRepositoryTests {
 
 
     @Test
-    public void testWhenCreateManagerAndFindById_thenReturnSameManager() {
+    void testWhenCreateManagerAndFindById_thenReturnSameManager() {
         Manager m = createAndSaveManager(1);
 
         Optional<Manager> res = managerRepository.findById(m.getId());
-        assertThat(res.isPresent()).isTrue();
-        assertThat(res.get()).isEqualTo(m);
+        assertThat(res).isPresent();
+        assertThat(res).contains(m);
     }
 
     @Test
-    public void testWhenFindByInvalidId_thenReturnNull() {
+    void testWhenFindByInvalidId_thenReturnNull() {
         Optional<Manager> res = managerRepository.findById(-1L);
-        assertThat(res.isPresent()).isFalse();
+        assertThat(res).isNotPresent();
     }
 
     /* ------------------------------------------------- *
@@ -70,31 +70,28 @@ public class ManagerRepositoryTests {
      */
 
     @Test
-    public void testGivenManagersAndFindByAll_thenReturnSameManagers() {
+    void testGivenManagersAndFindByAll_thenReturnSameManagers() {
         Manager m1 = createAndSaveManager(1);
         Manager m2 = createAndSaveManager(2);
 
         List<Manager> all = managerRepository.findAll();
 
-        assertThat(all).isNotNull();
-        assertThat(all)
+        assertThat(all).isNotNull()
                 .hasSize(2)
                 .extracting(Manager::getId)
                 .contains(m1.getId(), m2.getId());
     }
 
     @Test
-    public void testGivenNoManagers_whenFindAll_thenReturnEmpty() {
+    void testGivenNoManagers_whenFindAll_thenReturnEmpty() {
         List<Manager> all = managerRepository.findAll();
-        assertThat(all).isNotNull();
-        assertThat(all).hasSize(0);
+        assertThat(all).isNotNull().isEmpty();
     }
-
 
 
     /* -- helper -- */
     private Manager createAndSaveManager(int i) {
-        Manager m = new Manager("managerName"+i, "managerPwd"+i, "manager"+i+"@email.com");
+        Manager m = new Manager("managerName" + i, "managerPwd" + i, "manager" + i + "@email.com");
         entityManager.persistAndFlush(m);
         return m;
     }

@@ -28,14 +28,14 @@ public class HumberReviewService {
 
         Purchase purchase = purchaseRepository.findById(review.getOrderId())
                 .orElseThrow(() -> {
-                    log.error("ReviewService: Invalid Purchase");
+                    log.error("HUMBER REVIEW SERVICE: Invalid Purchase");
                     throw new ResourceNotFoundException("Invalid Purchase");
                 });
 
         String personEmail = purchase.getPerson().getEmail();
 
         if (!personEmail.equals(jwtUserDetailsService.getEmailFromToken(userToken))) {
-            log.error("ReviewService: Invalid Purchase Access");
+            log.error("HUMBER REVIEW SERVICE: Invalid Purchase Access");
             throw new AccessNotAllowedException("Not Allowed");
         }
 
@@ -44,6 +44,7 @@ public class HumberReviewService {
 
         purchase.setRiderReview(review.getReview());
 
+        log.info("HUMBER REVIEW SERVICE: Successfully added new review");
         return purchaseRepository.saveAndFlush(purchase);
     }
 
