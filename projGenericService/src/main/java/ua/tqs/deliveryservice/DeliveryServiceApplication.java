@@ -84,8 +84,12 @@ class DBLoaderProd implements CommandLineRunner {
 		rider1.setReviewsSum(4);
 	
 
-		Purchase purchase_no_rider = new Purchase(addr4, store1, "client22");
-		Purchase purchase_no_rider2 = new Purchase(addr5, store1, "client222");
+		Purchase purchase_no_rider = new Purchase(addr4, rider1, store1, "client22");
+		purchase_no_rider.setStatus(Status.DELIVERED);
+		purchase_no_rider.setDeliveryTime((purchase_no_rider.getDate().getTime() + 120000) - purchase_no_rider.getDate().getTime());
+		Purchase purchase_no_rider2 = new Purchase(addr5, rider1, store1, "client222");
+		purchase_no_rider2.setStatus(Status.DELIVERED);
+		purchase_no_rider2.setDeliveryTime((purchase_no_rider2.getDate().getTime() + 120000) - purchase_no_rider2.getDate().getTime());
 
 		purchaseRep.saveAndFlush(purchase_no_rider);
 		purchaseRep.saveAndFlush(purchase_no_rider2);
