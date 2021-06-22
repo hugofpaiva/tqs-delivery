@@ -24,7 +24,7 @@ public class DeliveryServiceImpl implements IDeliveryService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private static final String HOST = "http://generic:8081/store";
+    private static final String HOST = "http://GENERIC_URL:8081/store";
     private static final String TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE5MDY4OTU2OTksImlhdCI6MTYyMjg5ODg5OX0.tNilyrTKno-BY118_2wmzwpPAWVxo-14R7U8WUPozUFx0yDKJ-5iPrhaNg-NXmiEqZa8zfcL_1gVrjHNX00V7g";
 
     private HttpHeaders headers;

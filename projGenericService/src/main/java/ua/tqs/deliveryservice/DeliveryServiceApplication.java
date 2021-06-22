@@ -82,7 +82,7 @@ class DBLoaderProd implements CommandLineRunner {
 		purchase1.setRiderReview(4);
 		rider1.setTotalNumReviews(1);
 		rider1.setReviewsSum(4);
-
+	
 
 		Purchase purchase_no_rider = new Purchase(addr4, store1, "client22");
 		Purchase purchase_no_rider2 = new Purchase(addr5, store1, "client222");
