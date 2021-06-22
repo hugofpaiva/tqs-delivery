@@ -99,7 +99,7 @@ public class HumberReviewControllerTemplateIT {
         this.purchase = purchaseRepository.saveAndFlush(p);
 
         review = new Review( this.purchase.getId(), 5);
-        System.out.println(review);
+
     }
 
     @AfterEach

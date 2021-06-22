@@ -45,7 +45,6 @@ public class SpecificServiceImpl implements ISpecificService{
     @Override
     public void setRiderName(String rider, String storeUrl) throws UnreachableServiceException, InvalidValueException {
 
-        System.out.println(storeUrl);
 
         Map<String,String> purchaseStatus = new HashMap<>();
         purchaseStatus.put("rider", rider);

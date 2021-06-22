@@ -296,7 +296,6 @@ public class PurchaseService {
 
         Store store = purch.getStore();
 
-        System.out.println(store.getStoreUrl());
 
         StringBuilder url  = new StringBuilder().append(store.getStoreUrl())
                 .append("setRider?serverOrderId=")

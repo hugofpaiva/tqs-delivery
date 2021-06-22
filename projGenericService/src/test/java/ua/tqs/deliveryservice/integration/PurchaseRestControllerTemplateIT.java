@@ -121,7 +121,7 @@ class PurchaseRestControllerTemplateIT {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        System.out.println(this.store.getToken());
+  
         headers.set("authorization", "Bearer " + this.store.getToken());
 
         ResponseEntity<Object> response = testRestTemplate.exchange(getBaseUrl() + "/order/" + purchase.getId() + "/review", HttpMethod.PUT, new HttpEntity<>(data, headers), Object.class);
